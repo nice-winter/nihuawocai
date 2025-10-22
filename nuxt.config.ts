@@ -14,5 +14,6 @@ export default defineNuxtConfig({
     '@nuxt/scripts',
     '@nuxt/test-utils',
     'nuxt-auth-utils'
-  ]
+  ],
+  css: ['~/assets/css/main.css']
 })

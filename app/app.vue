@@ -4,8 +4,8 @@ console.log(data.value)
 </script>
 
 <template>
-  <div>
+  <UApp>
     <NuxtRouteAnnouncer />
     <NuxtWelcome />
-  </div>
+  </UApp>
 </template>
