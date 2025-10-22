@@ -1,0 +1,29 @@
+name: ${REPO_NAME}
+
+services:
+  nitro:
+    image: ${REPOSITORY:-${COMPOSE_PROJECT_NAME}}/nitro:${TAG:-latest}
+    container_name: nitro
+    environment:
+      NODE_ENV: production
+    env_file:
+      - ./.env
+    restart: always
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+      args:
+        CI: ${CI:-false}
+      tags:
+        - '${REPOSITORY:-${COMPOSE_PROJECT_NAME}}/nitro:latest'
+    networks:
+      - app-network
+    ports:
+      - 3000:3000
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  logs:
