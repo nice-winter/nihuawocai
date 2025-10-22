@@ -15,5 +15,13 @@ export default defineNuxtConfig({
     '@nuxt/test-utils',
     'nuxt-auth-utils'
   ],
-  css: ['~/assets/css/main.css']
+  css: ['~/assets/css/main.css'],
+  icon: {
+    customCollections: [
+      {
+        prefix: 'custom',
+        dir: './app/assets/icons'
+      }
+    ]
+  }
 })
