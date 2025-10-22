@@ -6,7 +6,8 @@ export default withNuxt(
   {
     name: 'app/custom-rules',
     rules: {
-      '@typescript-eslint/no-unused-vars': 'warn'
+      '@typescript-eslint/no-unused-vars': 'warn',
+      'vue/no-parsing-error': 'off'
     }
   }
 )
