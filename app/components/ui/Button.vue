@@ -1,12 +1,12 @@
 <template>
-  <button class="n-button" :class="[classNameSize, classNameColor]">
-    <span class="n-button__text">
+  <button class="game-button" :class="[classNameSize, classNameColor]">
+    <span class="game-button__text">
       <slot />
     </span>
 
     <svg
-      v-if="size === 'large'"
-      class="n-button__svg"
+      v-if="type === 'normal' && size === 'large'"
+      class="game-button__svg"
       viewBox="0 0 131.000000 51.000000"
       version="1.0"
       xmlns="http://www.w3.org/2000/svg"
@@ -45,8 +45,8 @@
       </g>
     </svg>
     <svg
-      v-if="size === 'small'"
-      class="n-button__svg"
+      v-if="type === 'normal' && size === 'small'"
+      class="game-button__svg"
       version="1.0"
       xmlns="http://www.w3.org/2000/svg"
       width="51.000000pt"
@@ -76,8 +76,8 @@
       </g>
     </svg>
     <svg
-      v-if="size === 'medium'"
-      class="n-button__svg"
+      v-if="type === 'normal' && size === 'medium'"
+      class="game-button__svg"
       version="1.0"
       xmlns="http://www.w3.org/2000/svg"
       width="75.000000pt"
@@ -106,23 +106,76 @@
         />
       </g>
     </svg>
+    <svg
+      v-if="type === 'arrow-left'"
+      class="game-button__svg"
+      version="1.0"
+      xmlns="http://www.w3.org/2000/svg"
+      width="16.000000pt"
+      height="26.000000pt"
+      viewBox="0 0 16.000000 26.000000"
+      preserveAspectRatio="xMidYMid meet"
+    >
+      <g
+        transform="translate(0.000000,26.000000) scale(0.100000,-0.100000)"
+        fill="#000000"
+        stroke="none"
+      >
+        <path
+          d="M67 188 c-58 -62 -70 -85 -41 -74 14 5 15 4 5 -8 -10 -12 -9 -17 8
+          -28 12 -7 21 -18 21 -25 0 -7 6 -13 14 -13 8 0 16 -7 20 -15 3 -8 12 -15 21
+          -15 27 0 16 28 -25 62 l-41 33 46 62 c74 103 57 115 -28 21z"
+        />
+      </g>
+    </svg>
+    <svg
+      v-if="type === 'arrow-right'"
+      class="game-button__svg"
+      version="1.0"
+      xmlns="http://www.w3.org/2000/svg"
+      width="16.000000pt"
+      height="26.000000pt"
+      viewBox="0 0 16.000000 26.000000"
+      preserveAspectRatio="xMidYMid meet"
+    >
+      <g
+        transform="translate(0.000000,26.000000) scale(0.100000,-0.100000)"
+        fill="#000000"
+        stroke="none"
+      >
+        <path
+          d="M20 245 c-8 -10 -9 -15 -1 -15 6 0 11 -7 11 -15 0 -8 3 -15 8 -15 12
+          0 62 -50 62 -63 0 -7 -20 -35 -45 -64 -49 -56 -52 -63 -31 -63 8 0 39 28 70
+          62 l55 62 -39 45 c-62 75 -75 84 -90 66z"
+        />
+      </g>
+    </svg>
   </button>
 </template>
 
 <script setup lang="ts">
 interface NButtonProps {
+  type?: 'normal' | 'arrow-left' | 'arrow-right'
   size?: 'small' | 'medium' | 'large'
   color?: 'normal' | 'red' | 'green' | 'blue'
 }
 
-const { size = 'medium', color = 'normal' } = defineProps<NButtonProps>()
+const { type = 'normal', size = 'medium', color = 'normal' } = defineProps<NButtonProps>()
 
-const classNameSize = computed(() => `n-button-size__${size}`)
-const classNameColor = computed(() => `n-button-color__${color}`)
+const classNameSize = computed(() => {
+  if (type === 'normal') {
+    return `game-button-size__${size}`
+  } else if (type.concat('arrow')) {
+    return `game-button-size__arrow`
+  } else {
+    return 'game-button-size__medium'
+  }
+})
+const classNameColor = computed(() => `game-button-color__${color}`)
 </script>
 
 <style lang="less" scoped>
-.n-button {
+.game-button {
   position: relative;
   cursor: pointer;
   display: flex;
@@ -132,42 +185,51 @@ const classNameColor = computed(() => `n-button-color__${color}`)
     cursor: not-allowed;
   }
 
-  > span.n-button__text {
+  > span.game-button__text {
     z-index: 2;
     color: #fff;
     text-shadow: 1px 1px 0px rgba(0, 0, 0, 0.5);
   }
 
-  > svg.n-button__svg {
+  > svg.game-button__svg {
     position: absolute;
     z-index: 1;
     width: 100%;
     height: 100%;
   }
 
-  &.n-button-size__small {
+  &.game-button-size__arrow {
+    width: 16px;
+    height: 26px;
+
+    > span.game-button__text {
+      display: none;
+    }
+  }
+
+  &.game-button-size__small {
     width: 51px;
     height: 26px;
 
-    > span.n-button__text {
+    > span.game-button__text {
       font-size: 0.8rem;
       line-height: 1.6rem;
     }
   }
-  &.n-button-size__medium {
+  &.game-button-size__medium {
     width: 75px;
     height: 26px;
 
-    > span.n-button__text {
+    > span.game-button__text {
       font-size: 0.8rem;
       line-height: 1.6rem;
     }
   }
-  &.n-button-size__large {
+  &.game-button-size__large {
     width: 131px;
     height: 51px;
 
-    > span.n-button__text {
+    > span.game-button__text {
       font-size: 1.5rem;
       line-height: 3.1rem;
       font-weight: bolder;
@@ -175,89 +237,89 @@ const classNameColor = computed(() => `n-button-color__${color}`)
   }
 
   // 'normal'
-  &.n-button-color__normal {
-    > svg.n-button__svg path {
+  &.game-button-color__normal {
+    > svg.game-button__svg path {
       fill: #7a6955;
     }
   }
-  &.n-button-color__normal:hover {
-    > svg.n-button__svg path {
+  &.game-button-color__normal:hover {
+    > svg.game-button__svg path {
       fill: #8d7860;
     }
   }
-  &.n-button-color__normal:active {
-    > svg.n-button__svg path {
+  &.game-button-color__normal:active {
+    > svg.game-button__svg path {
       fill: #6d5e4c;
     }
   }
-  &.n-button-color__normal:disabled {
-    > svg.n-button__svg path {
+  &.game-button-color__normal:disabled {
+    > svg.game-button__svg path {
       fill: #a3968b;
     }
   }
 
   //  'red'
-  &.n-button-color__red {
-    > svg.n-button__svg path {
+  &.game-button-color__red {
+    > svg.game-button__svg path {
       fill: #e20032;
     }
   }
-  &.n-button-color__red:hover {
-    > svg.n-button__svg path {
+  &.game-button-color__red:hover {
+    > svg.game-button__svg path {
       fill: #ff0038;
     }
   }
-  &.n-button-color__red:active {
-    > svg.n-button__svg path {
+  &.game-button-color__red:active {
+    > svg.game-button__svg path {
       fill: #d2012f;
     }
   }
-  &.n-button-color__red:disabled {
-    > svg.n-button__svg path {
+  &.game-button-color__red:disabled {
+    > svg.game-button__svg path {
       fill: #ff849f;
     }
   }
 
   //  'green'
-  &.n-button-color__green {
-    > svg.n-button__svg path {
+  &.game-button-color__green {
+    > svg.game-button__svg path {
       fill: #5e6e25;
     }
   }
-  &.n-button-color__green:hover {
-    > svg.n-button__svg path {
+  &.game-button-color__green:hover {
+    > svg.game-button__svg path {
       fill: #7e9233;
     }
   }
-  &.n-button-color__green:active {
-    > svg.n-button__svg path {
+  &.game-button-color__green:active {
+    > svg.game-button__svg path {
       fill: #5c6b24;
     }
   }
-  &.n-button-color__green:disabled {
-    > svg.n-button__svg path {
+  &.game-button-color__green:disabled {
+    > svg.game-button__svg path {
       fill: #99a766;
     }
   }
 
   //  'blue'
-  &.n-button-color__blue {
-    > svg.n-button__svg path {
+  &.game-button-color__blue {
+    > svg.game-button__svg path {
       fill: #3e96ec;
     }
   }
-  &.n-button-color__blue:hover {
-    > svg.n-button__svg path {
+  &.game-button-color__blue:hover {
+    > svg.game-button__svg path {
       fill: #49a4ff;
     }
   }
-  &.n-button-color__blue:active {
-    > svg.n-button__svg path {
+  &.game-button-color__blue:active {
+    > svg.game-button__svg path {
       fill: #3782ce;
     }
   }
-  &.n-button-color__blue:disabled {
-    > svg.n-button__svg path {
+  &.game-button-color__blue:disabled {
+    > svg.game-button__svg path {
       fill: #6aacee;
     }
   }
