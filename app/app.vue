@@ -16,6 +16,8 @@ console.log(data.value)
           <UiButton>等待房间</UiButton>
           <UiButton color="green">发送广播</UiButton>
           <UiButton color="blue">邀请好友</UiButton>
+          <UiButton type="arrow-left" color="red" />
+          <UiButton type="arrow-right" color="red" />
         </UiGameMainPanel>
       </template>
     </UiGameMainFrame>
