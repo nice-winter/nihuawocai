@@ -17,6 +17,11 @@ export default defineNuxtConfig({
     '@pinia/nuxt'
   ],
   css: ['~/assets/css/main.css'],
+  ui: {
+    experimental: {
+      componentDetection: true
+    }
+  },
   icon: {
     customCollections: [
       {
