@@ -26,7 +26,7 @@
 
   &.foreground {
     z-index: 2;
-    border: 1px solid #eee;
+    border: 1px solid #eae0d0;
     background-color: #f7ebdf;
     background-image:
       linear-gradient(#eae0d0 1px, transparent 1px),

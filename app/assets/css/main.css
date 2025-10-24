@@ -45,6 +45,7 @@ span.avatar {
   .truncate {
     cursor: pointer;
     font-size: 0.8rem;
+    font-weight: bold;
     text-shadow: 0px 1px #fff;
   }
 
