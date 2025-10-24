@@ -58,7 +58,15 @@
           </div>
         </div>
       </div>
-      <div class="room-main"></div>
+      <div class="room-main">
+        <div v-for="i in 8" :key="i" class="player-seat select-none" :class="[`seat-${i}`]">
+          <div class="seat-box">
+            <span>等待玩家</span>
+          </div>
+
+          <p class="player-seat__nickname">玩家昵称ABC哈哈哈</p>
+        </div>
+      </div>
     </div>
     <div class="room right-wrapper">
       <div class="invitation-tab-wrapper">
@@ -218,6 +226,36 @@ const tabItems = [
   }
   .room-main {
     flex-grow: 1;
+    display: grid;
+    grid-template-rows: 1fr 1fr;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    padding: 2rem;
+    gap: 0.785rem;
+
+    justify-content: center;
+
+    .player-seat {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 0.785rem;
+
+      .seat-box {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 114px;
+        height: 114px;
+        background-color: #ddc9a9;
+        font-size: 14px;
+      }
+
+      p.player-seat__nickname {
+        font-size: 14px;
+        text-align: center;
+      }
+    }
   }
 }
 
