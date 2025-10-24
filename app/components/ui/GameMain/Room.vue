@@ -17,6 +17,7 @@
             <UCheckbox
               v-model="locked"
               size="sm"
+              icon="ph:check-bold"
               style="border-radius: 0; background-color: #f7ede3"
             />
             <span
