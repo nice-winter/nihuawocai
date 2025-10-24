@@ -26,6 +26,7 @@
             <span v-show="showPasswordInput" style="position: absolute; left: 58px; width: 4rem">
               <UInput
                 ref="passwordInput"
+                class="game-input"
                 :default-value="password"
                 size="xs"
                 maxlength="4"
@@ -47,7 +48,7 @@
           <div class="button-wrapper">
             <UiButton color="green">广播邀请</UiButton>
             <UiButton color="blue">邀请好友</UiButton>
-            <UiButton>加ㅤ时</UiButton>
+            <UiButton>再等一会</UiButton>
             <UiButton color="red" @click="start">开始游戏</UiButton>
           </div>
         </div>
