@@ -3,13 +3,15 @@
     <div class="wrapper select-none">
       <div class="base-info">
         <UAvatar class="avatar author-avatar" :src="players[0]?.avatar" />
-        <UIcon
-          v-show="locked"
-          name="ph:lock-simple-fill"
-          class="size-4"
-          style="position: absolute; left: 4.5rem; top: 0; color: #f4b12d"
-        />
-        <span class="room-number">{{ roomNumberText }}</span>
+        <UTooltip text="非公开房间" :delay-duration="100" :content="{ side: 'right' }" arrow>
+          <UIcon
+            v-show="locked"
+            name="ph:lock-simple-fill"
+            class="size-4"
+            style="position: absolute; left: 4.5rem; top: 0; color: #f4b12d"
+          />
+        </UTooltip>
+        <UiGameMainRoomNumber :room-number="roomNumber || 0" style="float: right" />
         <span class="author-nickname">
           <UIcon
             :name="players[0]?.gender ? `ph:gender-female-bold` : `ph:gender-male-bold`"
@@ -59,8 +61,6 @@ const {
   playing = false,
   locked = false
 } = defineProps<RoomListItemProps>()
-
-const roomNumberText = computed(() => roomNumber?.toString().padStart(3, '0'))
 </script>
 
 <style scoped>
@@ -89,17 +89,6 @@ const roomNumberText = computed(() => roomNumber?.toString().padStart(3, '0'))
       font-size: 14px;
       line-height: 14px;
     }
-
-    .room-number {
-      float: right;
-      font-size: 3.5rem;
-      line-height: 3rem;
-      font-weight: bolder;
-      font-style: italic;
-      color: #ecd3c1;
-      text-shadow: -2px -0.5px 0px #cbad91;
-      user-select: none;
-    }
   }
 
   & > .players {
@@ -110,6 +99,10 @@ const roomNumberText = computed(() => roomNumber?.toString().padStart(3, '0'))
       width: 46px;
       height: 46px;
     }
+  }
+
+  & > .actions {
+    padding-left: 1.5px;
   }
 }
 </style>
