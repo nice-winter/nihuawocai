@@ -6,6 +6,11 @@
   --game-border-color: #ae9783;
 }
 
+img {
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
 div[data-reka-popper-content-wrapper] {
   z-index: 114514 !important;
   div[data-dismissable-layer] {

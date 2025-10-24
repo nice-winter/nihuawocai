@@ -8,8 +8,8 @@ console.log(data.value)
     <UiGameMainFrame>
       <template #panel>
         <UiGameMainPanel>
-          <!-- <UiGameMainLobby /> -->
-          <UiGameMainRoom />
+          <UiGameMainLobby />
+          <!-- <UiGameMainRoom /> -->
         </UiGameMainPanel>
       </template>
     </UiGameMainFrame>
