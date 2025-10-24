@@ -1,2 +1,12 @@
 @import 'tailwindcss';
 @import '@nuxt/ui';
+
+span.avatar {
+  border-radius: 0;
+  background-color: #ddc9a9;
+
+  img {
+    user-select: none;
+    -webkit-user-drag: none;
+  }
+}
