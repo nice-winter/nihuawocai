@@ -2,7 +2,7 @@
   <div class="flex flex-row h-full">
     <div class="flex flex-col w-[74.4%]">
       <div class="h-[87.72%] flex flex-wrap relative">
-        <div class="z-2 flex flex-wrap">
+        <div class="z-1 flex flex-wrap">
           <UiGameMainRoomListItem
             v-for="room in Array.from(rooms).slice(0, 6)"
             :key="room.roomNumber"
@@ -13,7 +13,7 @@
             :locked="room.locked"
           />
         </div>
-        <div class="flex flex-wrap w-full h-full absolute z-1">
+        <div class="flex flex-wrap w-full h-full absolute">
           <div
             v-for="i in 6"
             :key="i + Date.now()"
@@ -28,7 +28,14 @@
           快速开始
         </UiButton>
         <div class="px-4 flex gap-2 items-center">
-          <UInput v-model="roomNumberInputValue" size="sm" placeholder="房间号" class="w-14" />
+          <UInput
+            v-model="roomNumberInputValue"
+            size="xs"
+            placeholder="房间号"
+            maxlength="3"
+            class="game-input w-14"
+            style="background-color: #fff"
+          />
           <UiButton size="small" :disabled="roomNumberInputValue === ''">加入</UiButton>
         </div>
         <UiButton>等待房间</UiButton>
