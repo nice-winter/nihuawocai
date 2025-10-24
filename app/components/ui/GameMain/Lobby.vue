@@ -1,6 +1,6 @@
 <template>
   <div class="game-main-panel__lobby">
-    <div class="lobby room-list">
+    <div class="lobby left-wrapper">
       <div class="list">
         <div class="item-wrapper">
           <UiGameMainRoomListItem
@@ -17,7 +17,7 @@
           <div v-for="i in 6" :key="i + Date.now()" class="border-item" />
         </div>
       </div>
-      <div class="panel">
+      <div class="actions">
         <UiButton size="large" color="red" @click="() => console.log('快速开始')">
           快速开始
         </UiButton>
@@ -40,7 +40,7 @@
         </div>
       </div>
     </div>
-    <div class="lobby chat-message"></div>
+    <div class="lobby right-wrapper"></div>
   </div>
 </template>
 
@@ -58,7 +58,7 @@ const rooms = ref(roomList)
   height: 100%;
 }
 
-.lobby.room-list {
+.lobby.left-wrapper {
   display: flex;
   flex-direction: column;
   width: 74.4%;
@@ -111,7 +111,7 @@ const rooms = ref(roomList)
       }
     }
   }
-  .panel {
+  .actions {
     flex-grow: 1;
     display: flex;
     align-items: center;
@@ -121,7 +121,7 @@ const rooms = ref(roomList)
     border-top: 2px solid color(srgb 1 1 1 / 0.6);
   }
 }
-.lobby.chat-message {
+.lobby.right-wrapper {
   flex-grow: 1;
   background-color: #f1d0ae42;
   border-left: 2px solid color(srgb 1 1 1 / 0.6);
