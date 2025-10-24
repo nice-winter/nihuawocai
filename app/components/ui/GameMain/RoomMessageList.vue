@@ -7,7 +7,7 @@
     :size="7"
   >
     <div class="message-list">
-      <template v-for="(i, index) in messageList" :key="index">
+      <template v-for="(i, index) in messageList" :key="index + i.type">
         <p
           v-if="i.type === 'text'"
           class="message-item"
