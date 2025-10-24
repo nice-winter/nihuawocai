@@ -4,7 +4,7 @@
   "private": true,
   "author": "nice-winter",
   "repository": {
-    "url": "git+https://github.com/pkgtoolsjs/template-ts.git"
+    "url": "git+https://github.com/nice-winter/nihuawocai.git"
   },
   "scripts": {
     "build": "nuxt build",
