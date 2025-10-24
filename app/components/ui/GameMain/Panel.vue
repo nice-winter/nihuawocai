@@ -22,6 +22,7 @@
   height: 640px;
   border-radius: 14px;
   box-shadow: 0 0 4px 2px rgb(176 129 73);
+  overflow: hidden;
 
   &.foreground {
     z-index: 2;
