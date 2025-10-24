@@ -2,7 +2,7 @@
   <div class="flex flex-row h-full">
     <div class="flex flex-col w-[74.4%]">
       <div class="h-[87.72%] flex flex-wrap relative">
-        <div class="z-20 flex flex-wrap">
+        <div class="z-2 flex flex-wrap">
           <UiGameMainRoomListItem
             v-for="room in Array.from(rooms).slice(0, 6)"
             :key="room.roomNumber"
@@ -13,7 +13,7 @@
             :locked="room.locked"
           />
         </div>
-        <div class="flex flex-wrap w-full h-full absolute z-10">
+        <div class="flex flex-wrap w-full h-full absolute z-1">
           <div
             v-for="i in 6"
             :key="i + Date.now()"
