@@ -16,7 +16,7 @@
       <UInput
         v-model="chatMessageInputValue"
         placeholder="说点儿什么吧..."
-        class="game-input"
+        class="game-input w-full"
         size="sm"
       />
     </div>
