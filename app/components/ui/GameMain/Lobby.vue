@@ -40,7 +40,9 @@
         </div>
       </div>
     </div>
-    <div class="lobby right-wrapper"></div>
+    <div class="lobby right-wrapper">
+      <UiGameMainChatPanel />
+    </div>
   </div>
 </template>
 
@@ -123,6 +125,8 @@ const rooms = ref(roomList)
 }
 .lobby.right-wrapper {
   flex-grow: 1;
+  display: flex;
+  flex-direction: column;
   background-color: #f1d0ae42;
   border-left: 2px solid color(srgb 1 1 1 / 0.6);
 }
