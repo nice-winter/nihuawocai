@@ -13,7 +13,12 @@
     </span>
     <ui-game-main-room-message-list ref="RoomMessageList" class="chat-message-list" />
     <div class="chat-message-input">
-      <UInput v-model="chatMessageInputValue" placeholder="说点儿什么吧..." class="game-input" />
+      <UInput
+        v-model="chatMessageInputValue"
+        placeholder="说点儿什么吧..."
+        class="game-input"
+        size="sm"
+      />
     </div>
   </div>
 </template>
