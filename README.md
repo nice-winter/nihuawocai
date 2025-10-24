@@ -1,4 +1,3 @@
 # nihuawocai
 
-Look at the [Nuxt documentation](https://nuxt.com/docs/getting-started/introduction) to learn more.
-
+你画我猜经典版复刻项目
