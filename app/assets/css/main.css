@@ -20,6 +20,14 @@ span.avatar {
   > input {
     background-color: #f4e9d6;
     border-radius: 0;
+    box-shadow: 0px 0px 0px 1px #ae9783;
+
+    &:focus-visible {
+    }
+
+    &::placeholder {
+      color: #c3b4a0;
+    }
   }
 }
 
