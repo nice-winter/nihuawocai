@@ -38,6 +38,13 @@
     position: absolute;
     transform: rotate(-1.6deg);
     background-color: #cdb69b;
+    background-image: repeating-linear-gradient(
+      -45deg,
+      #b19b79 0,
+      #c3b6a2 1px,
+      #cdb59a 1px,
+      #cdb59a 3px
+    );
   }
 }
 </style>
