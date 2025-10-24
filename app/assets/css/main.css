@@ -52,6 +52,19 @@ div[data-reka-popper-content-wrapper] {
   }
 }
 
+.game-checkbox {
+  button {
+    border-radius: 0;
+    background-color: #f7ede3;
+    box-shadow: 0 0 0 1px #ae9783;
+
+    span[data-state='checked'] {
+      color: #ae9783;
+      background-color: unset;
+    }
+  }
+}
+
 .game-tabs {
   gap: 0;
   background: #f6ede6;
