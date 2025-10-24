@@ -5,11 +5,11 @@
       style="position: absolute; top: 8px; right: 10px; color: var(--game-font-color)"
     >
       <UIcon
-        name="ph:chat-circle-dots-fill"
-        class="size-5"
-        style="vertical-align: text-bottom; margin-right: 6px"
+        name="ph:telegram-logo-fill"
+        class="size-6"
+        style="vertical-align: middle; margin-right: 8px"
       />
-      <span style="font-weight: bolder">聊天消息</span>
+      <span style="font-weight: bolder; font-size: 0.8rem">聊天信息</span>
     </span>
     <ui-game-main-room-message-list ref="RoomMessageList" class="chat-message-list" />
     <div class="chat-message-input">
