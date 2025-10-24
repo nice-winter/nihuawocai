@@ -14,7 +14,11 @@
               gap: 4px;
             "
           >
-            <UCheckbox v-model="locked" size="sm" style="border-radius: 0" />
+            <UCheckbox
+              v-model="locked"
+              size="sm"
+              style="border-radius: 0; background-color: #f7ede3"
+            />
             <span
               style="cursor: pointer; font-size: 14px"
               :style="{ minWidth: !password ? `inherit` : `5rem` }"
