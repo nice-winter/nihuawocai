@@ -1,6 +1,10 @@
 @import 'tailwindcss';
 @import '@nuxt/ui';
 
+:root {
+  --game-font-color: #9f7c59;
+}
+
 span.avatar {
   border-radius: 0;
   background-color: #ddc9a9;
@@ -8,5 +12,43 @@ span.avatar {
   img {
     user-select: none;
     -webkit-user-drag: none;
+  }
+}
+
+.game-input {
+  width: 100%;
+  > input {
+    background-color: #f4e9d6;
+    border-radius: 0;
+  }
+}
+
+.game-tabs {
+  gap: 0;
+  background: #f6ede6;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 1px 1px 1px 1px #ebdbc6;
+
+  > div {
+    background-color: unset;
+  }
+
+  .truncate {
+    cursor: pointer;
+    font-size: 0.8rem;
+    text-shadow: 0px 1px #fff;
+  }
+
+  [data-state='active'] {
+    color: var(--game-font-color);
+  }
+
+  [data-state='inactive'] {
+    color: var(--game-font-color);
+  }
+
+  div.bg-primary {
+    background-color: #fff;
   }
 }
