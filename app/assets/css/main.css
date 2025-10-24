@@ -5,7 +5,7 @@
   --game-font-color: #9f7c59;
 }
 
-span.avatar {
+.game-avatar {
   border-radius: 0;
   background-color: #ddc9a9;
 
