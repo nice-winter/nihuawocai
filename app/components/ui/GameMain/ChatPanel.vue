@@ -1,18 +1,11 @@
 <template>
-  <div class="chat-panel">
-    <span
-      class="select-none"
-      style="position: absolute; top: 8px; right: 10px; color: var(--game-font-color)"
-    >
-      <UIcon
-        name="ph:telegram-logo-fill"
-        class="size-6"
-        style="vertical-align: middle; margin-right: 8px"
-      />
-      <span style="font-weight: bolder; font-size: 0.8rem">聊天信息</span>
+  <div class="relative grow flex flex-col pt-10">
+    <span class="absolute top-2 right-2.5 select-none" style="color: var(--game-font-color)">
+      <UIcon name="ph:telegram-logo-fill" class="size-5 align-middle mr-1.5" />
+      <img src="~/assets/icons/chat-msg-title.png" class="h-4 inline-block" />
     </span>
-    <ui-game-main-room-message-list ref="RoomMessageList" class="chat-message-list" />
-    <div class="chat-message-input">
+    <ui-game-main-room-message-list ref="RoomMessageList" class="grow" />
+    <div class="p-[0.785rem]">
       <UInput
         v-model="chatMessageInputValue"
         placeholder="说点儿什么吧..."
@@ -29,19 +22,4 @@ const RoomMessageListRef = useTemplateRef('RoomMessageList')
 const chatMessageInputValue = ref('')
 </script>
 
-<style scoped>
-.chat-panel {
-  flex-grow: 1;
-  display: flex;
-  flex-direction: column;
-  position: relative;
-  padding-top: 2.5rem;
-
-  .chat-message-list {
-    flex-grow: 1;
-  }
-  .chat-message-input {
-    padding: 0.785rem;
-  }
-}
-</style>
+<style scoped></style>
