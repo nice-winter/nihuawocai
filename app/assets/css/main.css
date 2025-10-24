@@ -5,6 +5,10 @@
   --game-font-color: #9f7c59;
 }
 
+div[data-reka-popper-content-wrapper] {
+  z-index: 114514 !important;
+}
+
 .game-avatar {
   border-radius: 0;
   background-color: #ddc9a9;
@@ -16,7 +20,6 @@
 }
 
 .game-input {
-  width: 100%;
   > input {
     background-color: #f4e9d6;
     border-radius: 0;
