@@ -3,13 +3,7 @@
     <div class="flex flex-col gap-[0.7rem] select-none">
       <div class="relative">
         <UAvatar class="w-16 h-16 game-avatar" :src="players[0]?.avatar" />
-        <UTooltip
-          :default-open="true"
-          text="非公开房间"
-          :delay-duration="500"
-          :content="{ side: 'right' }"
-          arrow
-        >
+        <UTooltip text="非公开房间" :delay-duration="500" :content="{ side: 'right' }" arrow>
           <UIcon
             v-show="locked"
             name="ph:lock-simple-fill"
