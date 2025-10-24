@@ -5,6 +5,49 @@
     </span>
 
     <svg
+      v-if="type === 'normal' && size === 'xl'"
+      class="game-button__svg"
+      version="1.0"
+      xmlns="http://www.w3.org/2000/svg"
+      width="307.000000pt"
+      height="26.000000pt"
+      viewBox="0 0 307.000000 26.000000"
+      preserveAspectRatio="xMidYMid meet"
+    >
+      <g
+        transform="translate(0.000000,26.000000) scale(0.100000,-0.100000)"
+        fill="#000000"
+        stroke="none"
+      >
+        <path
+          d="M19 242 c-16 -11 -19 -27 -19 -107 0 -72 4 -97 16 -109 8 -9 20 -17
+          25 -17 5 -1 15 -2 22 -3 6 -1 20 5 30 13 15 13 17 13 12 0 -4 -10 1 -15 15
+          -16 11 -1 20 2 20 7 0 5 9 14 21 20 18 10 19 10 10 -8 -10 -18 -7 -19 30 -17
+          34 2 50 11 97 56 l57 54 -48 -50 c-26 -28 -47 -53 -47 -57 0 -3 143 -6 318 -6
+          l317 0 35 31 35 32 -29 -32 -30 -33 345 1 344 1 60 57 c58 54 59 55 12 6 -26
+          -28 -47 -53 -47 -56 0 -3 62 -6 138 -6 l137 -1 60 57 c58 54 59 55 12 6 -26
+          -28 -47 -53 -47 -56 0 -3 62 -6 138 -6 l137 -1 60 57 c58 54 59 55 12 6 -26
+          -28 -47 -53 -47 -56 0 -3 62 -6 138 -6 l137 -1 60 57 c58 54 59 55 12 6 -26
+          -28 -47 -53 -47 -56 0 -3 79 -6 176 -8 124 -1 180 1 190 10 8 7 14 7 14 1 0
+          -6 27 -8 73 -6 94 6 98 12 95 134 -3 92 -4 95 -31 110 -24 13 -29 13 -37 0 -6
+          -10 -10 -11 -10 -2 0 17 -29 15 -36 -3 -4 -8 -10 -15 -15 -15 -4 0 -6 7 -3 15
+          5 12 -3 15 -41 15 -36 0 -51 -5 -66 -22 l-20 -23 6 22 6 22 -1068 0 c-989 0
+          -1069 -1 -1087 -17 -16 -14 -19 -15 -14 -1 10 26 -61 22 -84 -4 l-19 -22 6 22
+          c6 22 5 22 -112 22 l-118 0 -55 -52 -54 -52 42 47 c23 26 42 49 42 51 0 2 -17
+          4 -37 5 -31 1 -45 -5 -78 -36 -22 -20 -30 -26 -19 -12 41 49 41 50 -47 47 -47
+          -1 -89 -7 -100 -15z m401 -6 c0 -2 -8 -10 -17 -17 -16 -13 -17 -12 -4 4 13 16
+          21 21 21 13z m360 0 c0 -2 -8 -10 -17 -17 -16 -13 -17 -12 -4 4 13 16 21 21
+          21 13z m300 0 c0 -2 -8 -10 -17 -17 -16 -13 -17 -12 -4 4 13 16 21 21 21 13z
+          m700 0 c0 -2 -8 -10 -17 -17 -16 -13 -17 -12 -4 4 13 16 21 21 21 13z m300 0
+          c0 -2 -8 -10 -17 -17 -16 -13 -17 -12 -4 4 13 16 21 21 21 13z m300 0 c0 -2
+          -8 -10 -17 -17 -16 -13 -17 -12 -4 4 13 16 21 21 21 13z m300 0 c0 -2 -8 -10
+          -17 -17 -16 -13 -17 -12 -4 4 13 16 21 21 21 13z m-1970 -129 c0 -2 -15 -16
+          -32 -33 l-33 -29 29 33 c28 30 36 37 36 29z m2260 -78 c-7 -11 -14 -18 -17
+          -15 -3 3 0 12 7 21 18 21 23 19 10 -6z"
+        />
+      </g>
+    </svg>
+    <svg
       v-if="type === 'normal' && size === 'large'"
       class="game-button__svg"
       viewBox="0 0 131.000000 51.000000"
@@ -156,8 +199,8 @@
 <script setup lang="ts">
 interface NButtonProps {
   type?: 'normal' | 'arrow-left' | 'arrow-right'
-  size?: 'small' | 'medium' | 'large'
-  color?: 'normal' | 'red' | 'green' | 'blue'
+  size?: 'small' | 'medium' | 'large' | 'xl'
+  color?: 'normal' | 'red' | 'green' | 'blue' | 'playing'
 }
 
 const { type = 'normal', size = 'medium', color = 'normal' } = defineProps<NButtonProps>()
@@ -178,7 +221,8 @@ const classNameColor = computed(() => `game-button-color__${color}`)
 .game-button {
   position: relative;
   cursor: pointer;
-  display: flex;
+  display: inline-flex;
+  vertical-align: middle;
   justify-content: center;
   user-select: none;
   &:disabled {
@@ -235,6 +279,21 @@ const classNameColor = computed(() => `game-button-color__${color}`)
       font-weight: bolder;
     }
   }
+  &.game-button-size__xl {
+    width: 307px;
+    height: 26px;
+
+    > span.game-button__text {
+      font-size: 0.8rem;
+      line-height: 1.6rem;
+    }
+  }
+
+  &:disabled {
+    > span.game-button__text {
+      color: #ddd;
+    }
+  }
 
   // 'normal'
   &.game-button-color__normal {
@@ -254,7 +313,7 @@ const classNameColor = computed(() => `game-button-color__${color}`)
   }
   &.game-button-color__normal:disabled {
     > svg.game-button__svg path {
-      fill: #a3968b;
+      fill: #b3aca5;
     }
   }
 
@@ -321,6 +380,33 @@ const classNameColor = computed(() => `game-button-color__${color}`)
   &.game-button-color__blue:disabled {
     > svg.game-button__svg path {
       fill: #6aacee;
+    }
+  }
+
+  //  'playing'
+  &.game-button-color__playing {
+    > span.game-button__text {
+      color: #766746;
+      text-shadow: none;
+    }
+
+    > svg.game-button__svg path {
+      fill: #c9bc9c;
+    }
+  }
+  &.game-button-color__playing:hover {
+    > svg.game-button__svg path {
+      fill: #d6c9a7;
+    }
+  }
+  &.game-button-color__playing:active {
+    > svg.game-button__svg path {
+      fill: #c2b598;
+    }
+  }
+  &.game-button-color__playing:disabled {
+    > svg.game-button__svg path {
+      fill: #cfcbbf;
     }
   }
 }
