@@ -1,5 +1,7 @@
 <template>
-  <span class="room-number">{{ displayText }}</span>
+  <span class="text-[3.5rem] leading-12 font-black italic text-[#ecd3c1] select-none">
+    {{ displayText }}
+  </span>
 </template>
 
 <script setup lang="ts">
@@ -13,13 +15,7 @@ const displayText = computed(() => roomNumber.toString().padStart(3, '0'))
 </script>
 
 <style scoped>
-span.room-number {
-  font-size: 3.5rem;
-  line-height: 3rem;
-  font-weight: bolder;
-  font-style: italic;
-  color: #ecd3c1;
+span {
   text-shadow: -2px -0.5px 0px #cbad91;
-  user-select: none;
 }
 </style>
