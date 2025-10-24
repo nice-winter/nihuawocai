@@ -3,10 +3,22 @@
 
 :root {
   --game-font-color: #9f7c59;
+  --game-border-color: #ae9783;
 }
 
 div[data-reka-popper-content-wrapper] {
   z-index: 114514 !important;
+  div[data-dismissable-layer] {
+    border-radius: 1px;
+    background-color: #e7d6c5;
+    box-shadow: 0 0 0 1px #432410;
+    span {
+      color: #432410;
+    }
+    span > svg path {
+      fill: #432410;
+    }
+  }
 }
 
 .game-avatar {
@@ -23,9 +35,10 @@ div[data-reka-popper-content-wrapper] {
   > input {
     background-color: #f4e9d6;
     border-radius: 0;
-    box-shadow: 0px 0px 0px 1px #ae9783;
+    box-shadow: 0 0 0 1px #ae9783;
 
     &:focus-visible {
+      box-shadow: 0 0 0 1px #432410;
     }
 
     &::placeholder {
