@@ -43,7 +43,7 @@ const roomList: RoomListItemProps[] = [
     playing: true,
     locked: true,
     author: '550e8400-e29b-41d4-a716-446655440000',
-    seats: [true, true, true, true, false, false, false]
+    seats: [true, true, true, true, false, false, true]
   },
   {
     roomNumber: 1,

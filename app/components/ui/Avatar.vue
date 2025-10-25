@@ -46,7 +46,7 @@ const {
   player = undefined
 } = defineProps<AvatarProps>()
 
-const open = defineModel<boolean>({ default: true })
+const open = defineModel<boolean>('open', { default: true })
 
 const emit = defineEmits<{
   (e: 'switch', open: boolean, id?: number | string): void

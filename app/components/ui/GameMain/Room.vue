@@ -52,16 +52,22 @@
           class="flex flex-col items-center justify-center gap-[0.785rem] select-none"
           :class="[`seat-${i}`]"
         >
-          <div class="flex items-center justify-center w-[114px] h-[114px] bg-[#ddc9a8] text-sm">
-            <span>等待玩家</span>
-          </div>
+          <UiAvatar
+            :id="i"
+            :open="roomInfo?.seats![i - 1]"
+            class="size-[114px]"
+            :player="roomInfo?.players![i - 1] || undefined"
+            mode="seat"
+            :disabled="false"
+            @switch="onSwitch"
+          />
 
-          <p class="text-sm text-center">玩家昵称ABC哈哈哈</p>
+          <p class="text-sm text-center">{{ roomInfo?.players![i - 1]?.nickname || `ㅤ` }}</p>
         </div>
 
         <div class="flex flex-col items-center justify-center gap-[0.785rem] select-none">
           <div class="flex items-center justify-center w-[114px] h-[114px] bg-[#ad8665] text-sm">
-            <span>ㅤ</span>
+            <UIcon :name="`fe:disabled`" class="text-[#7A6955] size-14" />
           </div>
           <p class="text-sm text-center">ㅤ</p>
         </div>
@@ -84,7 +90,7 @@
 </template>
 
 <script setup lang="ts">
-import { roomList } from '~/assets/common/test'
+import { roomList } from '~/stores/test'
 
 const roomInfo = ref(roomList[0])
 const locked = ref(roomList[0]?.locked)
@@ -165,6 +171,10 @@ const tabItems = [
     slot: 'user2'
   }
 ]
+
+const onSwitch = (open?: boolean, id?: number | string) => {
+  console.log(id, open)
+}
 </script>
 
 <style scoped></style>
