@@ -6,8 +6,10 @@
           <UiGameMainRoomListItem
             v-for="room in Array.from(rooms).slice(0, 6)"
             :key="room.roomNumber"
+            :author="room.author"
             :players="room.players"
             :onlookers="room.onlookers"
+            :seats="room.seats"
             :playing="room.playing"
             :room-number="room.roomNumber"
             :locked="room.locked"
@@ -53,7 +55,7 @@
 </template>
 
 <script setup lang="ts">
-import { roomList } from '~/assets/common/test'
+import { roomList } from '~/stores/test'
 
 const roomNumberInputValue = ref('')
 const rooms = ref(roomList)
