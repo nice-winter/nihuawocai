@@ -4,6 +4,8 @@ interface Player {
   nickname: string
   gender: number
   exinfo: {
+    score: number
+    flowers: number
     count: number
   }
 }

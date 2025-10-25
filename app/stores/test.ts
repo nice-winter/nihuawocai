@@ -10,14 +10,14 @@ const roomList: RoomListItemProps[] = [
         avatar: 'https://free.picui.cn/free/2025/10/23/68fa1e1631516.jpg',
         nickname: '娉娉袅袅十三余',
         gender: 1,
-        exinfo: { count: 156 }
+        exinfo: { count: 2186, score: 164000, flowers: 87200 }
       },
       {
         uuid: '550e8400-e29b-41d4-a716-446655440001',
         avatar: 'https://example.com/avatar2.jpg',
         nickname: '李四',
         gender: 1,
-        exinfo: { count: 89 }
+        exinfo: { count: 1240, score: 93000, flowers: 54300 }
       },
       null,
       null,
@@ -28,7 +28,7 @@ const roomList: RoomListItemProps[] = [
         avatar: 'https://example.com/avatar3.jpg',
         nickname: '王五',
         gender: 1,
-        exinfo: { count: 234 }
+        exinfo: { count: 3120, score: 234000, flowers: 156800 }
       }
     ],
     onlookers: [
@@ -37,7 +37,7 @@ const roomList: RoomListItemProps[] = [
         avatar: 'https://example.com/avatar4.jpg',
         nickname: '赵六',
         gender: 1,
-        exinfo: { count: 67 }
+        exinfo: { count: 893, score: 67000, flowers: 32100 }
       }
     ],
     playing: true,
@@ -54,7 +54,7 @@ const roomList: RoomListItemProps[] = [
         avatar: 'https://example.com/avatar5.jpg',
         nickname: '小红',
         gender: 0,
-        exinfo: { count: 312 }
+        exinfo: { count: 4160, score: 312000, flowers: 208000 }
       },
       null,
       {
@@ -62,7 +62,7 @@ const roomList: RoomListItemProps[] = [
         avatar: 'https://example.com/avatar6.jpg',
         nickname: '小明',
         gender: 1,
-        exinfo: { count: 178 }
+        exinfo: { count: 2373, score: 178000, flowers: 118700 }
       },
       null,
       null,
@@ -74,21 +74,21 @@ const roomList: RoomListItemProps[] = [
         avatar: 'https://example.com/avatar7.jpg',
         nickname: '小刚',
         gender: 1,
-        exinfo: { count: 45 }
+        exinfo: { count: 600, score: 45000, flowers: 30000 }
       },
       {
         uuid: '550e8400-e29b-41d4-a716-446655440007',
         avatar: 'https://example.com/avatar8.jpg',
         nickname: '小美',
         gender: 0,
-        exinfo: { count: 267 }
+        exinfo: { count: 3560, score: 267000, flowers: 178000 }
       },
       {
         uuid: '550e8400-e29b-41d4-a716-446655440008',
         avatar: 'https://example.com/avatar9.jpg',
         nickname: '匿名用户',
         gender: 2,
-        exinfo: { count: 123 }
+        exinfo: { count: 1640, score: 123000, flowers: 82000 }
       }
     ],
     playing: false,
@@ -104,28 +104,28 @@ const roomList: RoomListItemProps[] = [
         avatar: 'https://example.com/avatar10.jpg',
         nickname: '游戏高手',
         gender: 0,
-        exinfo: { count: 589 }
+        exinfo: { count: 7853, score: 589000, flowers: 392700 }
       },
       {
         uuid: '550e8400-e29b-41d4-a716-446655440010',
         avatar: 'https://example.com/avatar11.jpg',
         nickname: '幸运星',
         gender: 0,
-        exinfo: { count: 276 }
+        exinfo: { count: 3680, score: 276000, flowers: 184000 }
       },
       {
         uuid: '550e8400-e29b-41d4-a716-446655440011',
         avatar: 'https://example.com/avatar12.jpg',
         nickname: '技术宅',
         gender: 1,
-        exinfo: { count: 432 }
+        exinfo: { count: 5760, score: 432000, flowers: 288000 }
       },
       {
         uuid: '550e8400-e29b-41d4-a716-446655440012',
         avatar: 'https://example.com/avatar13.jpg',
         nickname: '开心果',
         gender: 0,
-        exinfo: { count: 198 }
+        exinfo: { count: 2640, score: 198000, flowers: 132000 }
       },
       null,
       null,
@@ -145,14 +145,14 @@ const roomList: RoomListItemProps[] = [
         avatar: 'https://example.com/avatar14.jpg',
         nickname: '老玩家',
         gender: 1,
-        exinfo: { count: 765 }
+        exinfo: { count: 10200, score: 765000, flowers: 510000 }
       },
       {
         uuid: '550e8400-e29b-41d4-a716-446655440014',
         avatar: 'https://example.com/avatar15.jpg',
         nickname: '新手小白',
         gender: 1,
-        exinfo: { count: 23 }
+        exinfo: { count: 307, score: 23000, flowers: 15300 }
       },
       null,
       {
@@ -160,21 +160,21 @@ const roomList: RoomListItemProps[] = [
         avatar: 'https://example.com/avatar16.jpg',
         nickname: '游戏达人',
         gender: 1,
-        exinfo: { count: 654 }
+        exinfo: { count: 8720, score: 654000, flowers: 436000 }
       },
       {
         uuid: '550e8400-e29b-41d4-a716-446655440016',
         avatar: 'https://example.com/avatar17.jpg',
         nickname: '快乐玩家',
         gender: 0,
-        exinfo: { count: 321 }
+        exinfo: { count: 4280, score: 321000, flowers: 214000 }
       },
       {
         uuid: '550e8400-e29b-41d4-a716-446655440017',
         avatar: 'https://example.com/avatar18.jpg',
         nickname: '竞技选手',
         gender: 1,
-        exinfo: { count: 876 }
+        exinfo: { count: 11680, score: 876000, flowers: 584000 }
       },
       null
     ],
@@ -184,7 +184,7 @@ const roomList: RoomListItemProps[] = [
         avatar: 'https://example.com/avatar19.jpg',
         nickname: '旁观者1号',
         gender: 2,
-        exinfo: { count: 54 }
+        exinfo: { count: 720, score: 54000, flowers: 36000 }
       }
     ],
     playing: true,
@@ -200,49 +200,49 @@ const roomList: RoomListItemProps[] = [
         avatar: 'https://example.com/avatar20.jpg',
         nickname: '独行侠',
         gender: 0,
-        exinfo: { count: 432 }
+        exinfo: { count: 5760, score: 432000, flowers: 288000 }
       },
       {
         uuid: '550e8400-e29b-41d4-a716-446655440020',
         avatar: 'https://example.com/avatar21.jpg',
         nickname: '团队之星',
         gender: 0,
-        exinfo: { count: 298 }
+        exinfo: { count: 3973, score: 298000, flowers: 198700 }
       },
       {
         uuid: '550e8400-e29b-41d4-a716-446655440021',
         avatar: 'https://example.com/avatar22.jpg',
         nickname: '策略大师',
         gender: 1,
-        exinfo: { count: 567 }
+        exinfo: { count: 7560, score: 567000, flowers: 378000 }
       },
       {
         uuid: '550e8400-e29b-41d4-a716-446655440022',
         avatar: 'https://example.com/avatar23.jpg',
         nickname: '速度之王',
         gender: 1,
-        exinfo: { count: 489 }
+        exinfo: { count: 6520, score: 489000, flowers: 326000 }
       },
       {
         uuid: '550e8400-e29b-41d4-a716-446655440023',
         avatar: 'https://example.com/avatar24.jpg',
         nickname: '幸运儿',
         gender: 0,
-        exinfo: { count: 345 }
+        exinfo: { count: 4600, score: 345000, flowers: 230000 }
       },
       {
         uuid: '550e8400-e29b-41d4-a716-446655440024',
         avatar: 'https://example.com/avatar25.jpg',
         nickname: '挑战者',
         gender: 1,
-        exinfo: { count: 234 }
+        exinfo: { count: 3120, score: 234000, flowers: 156000 }
       },
       {
         uuid: '550e8400-e29b-41d4-a716-446655440025',
         avatar: 'https://example.com/avatar26.jpg',
         nickname: '终结者',
         gender: 1,
-        exinfo: { count: 678 }
+        exinfo: { count: 9040, score: 678000, flowers: 452000 }
       }
     ],
     onlookers: [
@@ -251,14 +251,14 @@ const roomList: RoomListItemProps[] = [
         avatar: 'https://example.com/avatar27.jpg',
         nickname: '学习委员',
         gender: 0,
-        exinfo: { count: 156 }
+        exinfo: { count: 2080, score: 156000, flowers: 104000 }
       },
       {
         uuid: '550e8400-e29b-41d4-a716-446655440027',
         avatar: 'https://example.com/avatar28.jpg',
         nickname: '观察员',
         gender: 2,
-        exinfo: { count: 89 }
+        exinfo: { count: 1187, score: 89000, flowers: 59300 }
       }
     ],
     playing: false,
@@ -276,7 +276,7 @@ const roomList: RoomListItemProps[] = [
         avatar: 'https://example.com/avatar29.jpg',
         nickname: '最后一人',
         gender: 1,
-        exinfo: { count: 123 }
+        exinfo: { count: 1640, score: 123000, flowers: 82000 }
       },
       null,
       null,
@@ -289,21 +289,21 @@ const roomList: RoomListItemProps[] = [
         avatar: 'https://example.com/avatar30.jpg',
         nickname: '观众A',
         gender: 0,
-        exinfo: { count: 45 }
+        exinfo: { count: 600, score: 45000, flowers: 30000 }
       },
       {
         uuid: '550e8400-e29b-41d4-a716-446655440030',
         avatar: 'https://example.com/avatar31.jpg',
         nickname: '观众B',
         gender: 1,
-        exinfo: { count: 67 }
+        exinfo: { count: 893, score: 67000, flowers: 44700 }
       },
       {
         uuid: '550e8400-e29b-41d4-a716-446655440031',
         avatar: 'https://example.com/avatar32.jpg',
         nickname: '观众C',
         gender: 2,
-        exinfo: { count: 89 }
+        exinfo: { count: 1187, score: 89000, flowers: 59300 }
       }
     ],
     playing: false,
