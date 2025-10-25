@@ -12,11 +12,7 @@
         </UTooltip>
         <UiGameMainRoomNumber :room-number="roomNumber || 0" class="float-right" />
         <span class="absolute right-0 bottom-0 text-sm leading-3.5">
-          <UIcon
-            :name="players[0]?.gender ? `ph:gender-female-bold` : `ph:gender-male-bold`"
-            class="size-4 align-text-top"
-            :class="players[0]?.gender ? 'text-[#ff7cb2]' : 'text-[rgb(94,191,255)]'"
-          />
+          <UiGenderIcon :gender="players[0]?.gender" class="align-text-top" />
           {{ players[0]?.nickname }}
         </span>
       </div>
