@@ -1,9 +1,13 @@
 import type { Player } from './player'
 
+type Players = (Player | null)[]
+
 interface RoomListItemProps {
   roomNumber?: number
-  players?: Player[]
+  author?: string
+  players?: Players
   onlookers?: Player[]
+  seats?: boolean[]
   playing?: boolean
   locked?: boolean
 }
