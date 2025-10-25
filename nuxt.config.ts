@@ -2,7 +2,6 @@
 export default defineNuxtConfig({
   compatibilityDate: '2025-07-15',
   devtools: { enabled: true },
-  // debug: true,
   ssr: false,
   modules: [
     '@nuxt/eslint',
@@ -20,6 +19,9 @@ export default defineNuxtConfig({
     experimental: {
       componentDetection: true
     }
+  },
+  fonts: {
+    provider: 'none'
   },
   icon: {
     provider: 'none',
