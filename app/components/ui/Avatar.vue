@@ -10,12 +10,36 @@
         side: 'right',
         sideOffset: 8
       }"
-      arrow
     >
       <UAvatar v-if="player" class="game-avatar size-full cursor-pointer" :src="player.avatar" />
       <template #content>
-        <div class="w-30 h-50 inline-flex bg-[#f5e4d2]">
-          <UAvatar class="game-avatar w-30 h-30" :src="player?.avatar" />
+        <div class="w-35 h-75 inline-flex flex-col select-none bg-[#EFC189] custom-bg">
+          <div class="p-1.5">
+            <UAvatar class="game-avatar size-32" :src="player?.avatar" />
+          </div>
+
+          <span class="pr-1.5 pl-1.5 text-[13px] text-[#432410] text-light">
+            <UiGenderIcon :gender="player?.gender" class="align-text-bottom" />
+            {{ player?.nickname }}
+          </span>
+
+          <div class="mt-4 flex flex-col gap-1 p-2 bg-[#dd6b0969]">
+            <div class="flex flex-row text-[#432410] text-light">
+              <span class="text-[1rem] font-bold italic min-w-[42px]">LV.60</span>
+              <span class="text-right text-[12px] mt-1.5 ml-[0.6rem] leading-none">空前绝后</span>
+            </div>
+
+            <div class="flex flex-col text-[12px]">
+              <span class="text-[#9d601f]">
+                鲜ㅤ花：
+                <span class="text-[#432410]">{{ player?.exinfo.flowers }}</span>
+              </span>
+              <span class="text-[#9d601f]">
+                盘ㅤ数：
+                <span class="text-[#432410]">{{ player?.exinfo.count }}</span>
+              </span>
+            </div>
+          </div>
         </div>
       </template>
     </UPopover>
@@ -62,4 +86,10 @@ const onClick = () => {
 }
 </script>
 
-<style scoped></style>
+<style scoped>
+.custom-bg {
+  background-image: url(~/assets/icons/common-texture.jpg);
+  background-repeat: repeat;
+  background-size: 46px;
+}
+</style>
