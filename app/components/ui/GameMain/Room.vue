@@ -41,7 +41,7 @@
             <UiButton color="green">广播邀请</UiButton>
             <UiButton color="blue">邀请好友</UiButton>
             <UiButton>再等一会</UiButton>
-            <UiButton color="red" @click="start">开始游戏</UiButton>
+            <UiButton color="red" @click="start">立即开始</UiButton>
           </div>
         </div>
       </div>
