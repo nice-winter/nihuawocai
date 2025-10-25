@@ -14,7 +14,7 @@
         <span class="absolute right-0 bottom-0 text-sm leading-3.5">
           <UIcon
             :name="players[0]?.gender ? `ph:gender-female-bold` : `ph:gender-male-bold`"
-            class="size-4 align-text-bottom"
+            class="size-4 align-text-top"
             :class="players[0]?.gender ? 'text-[#ff7cb2]' : 'text-[rgb(94,191,255)]'"
           />
           {{ players[0]?.nickname }}
