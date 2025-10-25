@@ -2,7 +2,7 @@
   <div class="p-[0.785rem] w-1/2">
     <div class="flex flex-col gap-[0.7rem] select-none">
       <div class="relative">
-        <UAvatar class="w-16 h-16 game-avatar" :src="players[0]?.avatar" />
+        <UiAvatar v-if="players[0]" class="size-16" :player="players[0]" />
         <UTooltip text="非公开房间" :delay-duration="500" :content="{ side: 'right' }" arrow>
           <UIcon
             v-show="locked"
@@ -22,11 +22,7 @@
       </div>
       <div class="flex justify-between">
         <template v-for="i in 6" :key="players[i]?.uuid">
-          <UAvatar
-            v-if="players[i] && players[i].avatar"
-            class="w-[46px] h-[46px] game-avatar"
-            :src="players[i].avatar"
-          />
+          <UiAvatar v-if="players[i]" class="size-[46px]" :player="players[i]" />
           <span v-else class="inline-block w-[46px] h-[46px] bg-[#ddc9a9]" />
         </template>
       </div>
