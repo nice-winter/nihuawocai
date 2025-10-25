@@ -47,16 +47,23 @@
       </div>
       <div class="grow grid grid-rows-2 grid-cols-4 p-8 gap-[0.785rem] justify-center">
         <div
-          v-for="i in 8"
+          v-for="i in 7"
           :key="i"
           class="flex flex-col items-center justify-center gap-[0.785rem] select-none"
           :class="[`seat-${i}`]"
         >
-          <div class="flex items-center justify-center w-[114px] h-[114px] bg-[#ddc9a9] text-sm">
+          <div class="flex items-center justify-center w-[114px] h-[114px] bg-[#ddc9a8] text-sm">
             <span>等待玩家</span>
           </div>
 
           <p class="text-sm text-center">玩家昵称ABC哈哈哈</p>
+        </div>
+
+        <div class="flex flex-col items-center justify-center gap-[0.785rem] select-none">
+          <div class="flex items-center justify-center w-[114px] h-[114px] bg-[#ad8665] text-sm">
+            <span>ㅤ</span>
+          </div>
+          <p class="text-sm text-center">ㅤ</p>
         </div>
       </div>
     </div>
