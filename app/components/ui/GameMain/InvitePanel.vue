@@ -48,6 +48,7 @@ const tabItems = [
     slot: 'user1'
   },
   {
+    disabled: true,
     label: '同城玩家',
     icon: 'ph:users-fill',
     slot: 'user2'

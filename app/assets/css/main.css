@@ -82,11 +82,11 @@ div[data-reka-popper-content-wrapper] {
     text-shadow: 0px 1px #fff;
   } */
 
-  [data-state='active'] {
+  [data-state='active'] > span {
     color: var(--game-font-color);
   }
 
-  [data-state='inactive'] {
+  [data-state='inactive'] > span {
     color: var(--game-font-color);
   }
 
