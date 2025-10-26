@@ -1,6 +1,6 @@
 <template>
   <div class="relative grow flex flex-col pt-10">
-    <span class="absolute top-2 right-2.5 select-none" style="color: var(--game-font-color)">
+    <span class="absolute top-2 right-[.785rem] select-none" style="color: var(--game-font-color)">
       <UIcon name="ph:telegram-logo-fill" class="size-5 align-middle mr-1.5" />
       <img src="~/assets/icons/chat.png" class="h-4 inline-block" />
     </span>
