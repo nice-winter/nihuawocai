@@ -96,11 +96,9 @@
         </UiLinkButton>
       </div>
 
-      <div class="p-0">
-        <UiGameMainInvitePanel />
-      </div>
+      <UiGameMainInvitePanel />
 
-      <UiGameMainChatPanel />
+      <UiGameMainChatPanel class="max-w-[227.89px] min-h-0 max-h-[318px]" />
     </div>
   </div>
 </template>

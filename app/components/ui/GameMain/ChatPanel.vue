@@ -4,22 +4,35 @@
       <UIcon name="ph:telegram-logo-fill" class="size-5 align-middle mr-1.5" />
       <img src="~/assets/icons/chat.png" class="h-4 inline-block" />
     </span>
-    <ui-game-main-room-message-list ref="RoomMessageList" class="grow" />
+    <ui-game-main-room-message-list ref="RoomMessageList" class="grow px-[0.785rem]" />
     <div class="p-[0.785rem]">
       <UInput
         v-model="chatMessageInputValue"
         placeholder="说点儿什么吧..."
         class="game-input w-full"
         size="sm"
+        @keydown.enter="sendChatMessage"
       />
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
+const testPlayer = ref(players[0]!)
+
 const RoomMessageListRef = useTemplateRef('RoomMessageList')
 
 const chatMessageInputValue = ref('')
+const sendChatMessage = () => {
+  if (chatMessageInputValue.value.trim()) {
+    RoomMessageListRef.value?.addMessage({
+      type: 'chat',
+      sender: testPlayer.value,
+      msg: chatMessageInputValue.value
+    })
+    chatMessageInputValue.value = ''
+  }
+}
 </script>
 
 <style scoped></style>

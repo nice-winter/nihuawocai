@@ -7,25 +7,35 @@
     :size="7"
   >
     <div class="message-list">
-      <template v-for="(i, index) in messageList" :key="index + i.type">
+      <template v-for="(item, index) in messageList" :key="index + item.type">
         <p
-          v-if="i.type === 'text'"
+          v-if="item.type === 'text'"
           class="message-item"
-          :class="[`message-item-${i.type}`]"
+          :class="[`message-item-${item.type}`]"
           :style="{
-            color: i.style?.color || 'inherit',
-            fontSize: i.style?.fontSize || `13px`,
-            fontWeight: i.style?.fontWeight || 'normal'
+            color: item.style?.color || 'inherit',
+            fontSize: item.style?.fontSize || `13px`,
+            fontWeight: item.style?.fontWeight || 'normal'
           }"
         >
-          {{ i.msg }}
+          {{ item.msg }}
         </p>
+
+        <div v-else-if="item.type === 'chat'" class="my-2 first:mt-0 last:mb-0">
+          <span>
+            <UiAvatar class="size-6.5 align-bottom" :player="item.sender" />
+            <span class="ml-2 text-[13px]"> {{ item.sender.nickname }}： </span>
+            <span class="text-[13px] break-normal wrap-break-word">{{ item.msg }}</span>
+          </span>
+        </div>
       </template>
     </div>
   </UiScrollBar>
 </template>
 
 <script setup lang="ts">
+import type { Player } from '~/interfaces/player'
+
 interface TextStyle {
   color?: string
   fontSize?: number
@@ -40,31 +50,19 @@ type IMessage =
     }
   | {
       type: 'chat'
-      sender: {
-        uuid: string
-        avatar: string
-        nickname: string
-      }
+      sender: Player
       msg: string
       style?: TextStyle
     }
   | {
       type: 'action'
-      sender: {
-        uuid: string
-        avatar: string
-        nickname: string
-      }
+      sender: Player
       msg: string
       style?: TextStyle
     }
   | {
       type: 'broadcast'
-      sender: {
-        uuid: string
-        avatar: string
-        nickname: string
-      }
+      sender: Player
       roomNumber: number
       style?: TextStyle
     }
