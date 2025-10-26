@@ -6,13 +6,9 @@
           <UiGameMainRoomListItem
             v-for="room in Array.from(rooms).slice(0, 6)"
             :key="room.roomNumber"
-            :owner="room.owner"
-            :players="room.players"
-            :onlookers="room.onlookers"
-            :seats="room.seats"
-            :playing="room.playing"
-            :room-number="room.roomNumber"
-            :locked="room.locked"
+            :room-info="room"
+            @join-button-click="join"
+            @look-button-click="look"
           />
         </div>
         <div class="flex flex-wrap w-full h-full absolute">
@@ -59,6 +55,14 @@ import { roomList } from '~/stores/test'
 
 const roomNumberInputValue = ref('')
 const rooms = ref(roomList)
+
+const join = (roomNumber: number) => {
+  console.log(`[join]`, roomNumber)
+}
+
+const look = (roomNumber: number) => {
+  console.log(`[look]`, roomNumber)
+}
 </script>
 
 <style scoped>

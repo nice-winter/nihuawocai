@@ -1,7 +1,7 @@
 import type { Player } from '~/interfaces/player'
-import type { RoomListItemProps } from '~/interfaces/room'
+import type { RoomInfo } from '~/interfaces/room'
 
-const roomList: RoomListItemProps[] = [
+const roomList: RoomInfo[] = [
   {
     roomNumber: 0,
     players: [
