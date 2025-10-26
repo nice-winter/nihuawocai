@@ -5,7 +5,7 @@
         class="px-[0.785rem] h-[21.05%] border-b-4 border-[#eeddcb] flex flex-row gap-[0.785rem] relative"
       >
         <div class="flex flex-col justify-center gap-[0.785rem] w-36">
-          <ui-game-main-room-number :room-number="roomInfo?.roomNumber || 0" />
+          <UiGameMainRoomNumber :room-number="roomInfo?.roomNumber || 0" />
           <span class="relative inline-flex items-center gap-1 pl-1 align-text-bottom">
             <UCheckbox v-model="locked" size="sm" icon="ph:check-bold" class="game-checkbox" />
             <span
@@ -84,17 +84,18 @@
         </div>
       </div>
     </div>
+
     <div class="grow flex flex-col bg-[#f1d0ae42] border-l-2 border-white/60">
-      <div class="mt-16 p-0">
-        <UTabs :items="tabItems" size="xs" class="game-tabs select-none">
-          <template #user1>
-            <div class="h-56"></div>
-          </template>
-          <template #user2>
-            <div class="h-56"></div>
-          </template>
-        </UTabs>
+      <div class="relative p-[.785rem] h-16">
+        <UiLinkButton :icon="`ph:arrow-u-up-left-bold`" class="absolute top-5.5 right-[.785rem]">
+          离开房间
+        </UiLinkButton>
       </div>
+
+      <div class="p-0">
+        <UiGameMainInvitePanel />
+      </div>
+
       <UiGameMainChatPanel />
     </div>
   </div>
@@ -104,8 +105,9 @@
 import { roomList } from '~/stores/test'
 
 const roomInfo = ref(roomList[0])
+
 const locked = ref(roomList[0]?.locked)
-const password = ref('')
+const password = ref(roomList[0]?.locked ? roomInfo.value?.password || '1145' : '')
 const passwordInputRef = useTemplateRef('passwordInput')
 const showPasswordInput = ref(false)
 const roomMessageListRef = useTemplateRef('RoomMessageList')
@@ -169,19 +171,6 @@ watch(
     }
   }
 )
-
-const tabItems = [
-  {
-    label: '空闲玩家',
-    icon: 'ph:user-check-fill',
-    slot: 'user1'
-  },
-  {
-    label: '同城玩家',
-    icon: 'ph:users-fill',
-    slot: 'user2'
-  }
-]
 
 const onSwitch = (open?: boolean, id?: number | string) => {
   console.log(id, open)
