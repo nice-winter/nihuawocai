@@ -4,7 +4,7 @@ type Players = (Player | null)[]
 
 interface RoomListItemProps {
   roomNumber?: number
-  author?: string
+  owner?: string
   players?: Players
   onlookers?: Player[]
   seats?: boolean[]
