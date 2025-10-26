@@ -55,7 +55,7 @@
         >
           <span
             v-if="roomInfo?.players![i - 1]?.uuid === roomInfo?.owner"
-            class="absolute top-2.5 left-10 flex"
+            class="absolute top-0 left-10 flex"
           >
             <UIcon name="ph:arrow-bend-left-down-bold" />
             <img src="~/assets/icons/owner.png" class="h-5 mt-[-0.4rem]" />
@@ -87,7 +87,11 @@
 
     <div class="grow flex flex-col bg-[#f1d0ae42] border-l-2 border-white/60">
       <div class="relative p-[.785rem] h-16">
-        <UiLinkButton :icon="`ph:arrow-u-up-left-bold`" class="absolute top-5.5 right-[.785rem]">
+        <UiLinkButton
+          type="button"
+          :icon="`ph:arrow-u-up-left-bold`"
+          class="absolute top-5.5 right-[.785rem] text-[13px]"
+        >
           离开房间
         </UiLinkButton>
       </div>
