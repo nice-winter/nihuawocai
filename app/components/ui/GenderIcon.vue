@@ -14,17 +14,17 @@ const genderComputed = computed(() => {
     case 0:
       return {
         icon: `ph:gender-male-bold`,
-        class: 'text-[#5ebfff]'
+        class: 'text-[#23a9ce]'
       }
     case 1:
       return {
         icon: `ph:gender-female-bold`,
-        class: 'text-[#ff7cb2]'
+        class: 'text-[#dd243c]'
       }
     default:
       return {
         icon: `ph:gender-male-bold`,
-        class: 'text-[#5ebfff]'
+        class: 'text-[#23a9ce]'
       }
   }
 })
