@@ -8,7 +8,8 @@
       :content="{
         align: 'end',
         side: 'right',
-        sideOffset: 8
+        sideOffset: 8,
+        collisionBoundary: panelDom
       }"
     >
       <UAvatar v-if="player" class="game-avatar size-full cursor-pointer" :src="player.avatar" />
@@ -18,26 +19,29 @@
             <UAvatar class="game-avatar size-32" :src="player?.avatar" />
           </div>
 
-          <span class="pr-1.5 pl-1.5 text-[13px] text-(--game-primary-color) text-light">
+          <span class="px-1.5 text-[13px] truncate">
             <UiGenderIcon :gender="player?.gender" class="align-text-bottom" />
             {{ player?.nickname }}
           </span>
 
-          <div class="mt-4 flex flex-col gap-1 p-2 bg-[#c5630e69]">
-            <div class="flex flex-row text-(--game-primary-color)">
-              <span class="text-[1rem] font-bold italic min-w-[42px]">LV.60</span>
-              <span class="text-right text-[12px] mt-1.5 ml-[0.6rem] leading-none">空前绝后</span>
+          <span class="w-full h-4.5 px-1.5 text-xs truncate" style="margin: 2px 0 6px 0"> </span>
+
+          <div class="px-3.5 py-2 flex flex-col gap-1 bg-[#c5630e69]">
+            <div class="inline-flex items-end gap-2">
+              <span class="text-base font-bold italic leading-4 min-w-10.5">LV.60</span>
+              <span class="text-xs leading-[15px] grow">空前绝后</span>
             </div>
 
-            <div class="flex flex-col text-[12px]">
-              <span class="text-[#804B19]">
-                鲜ㅤ花：
-                <span class="text-(--game-primary-color)">{{ player?.exinfo.flowers }}</span>
-              </span>
-              <span class="text-[#804B19]">
-                盘ㅤ数：
-                <span class="text-(--game-primary-color)">{{ player?.exinfo.count }}</span>
-              </span>
+            <div class="flex flex-col gap-1">
+              <div class="h-3.5 text-xs leading-3.5 inline-flex items-end gap-0.5">
+                <span class="text-[#804B19] min-w-[42px]"> 鲜ㅤ花： </span>
+                <span class="grow leading-[13px]">{{ player?.exinfo.flowers }}</span>
+              </div>
+
+              <div class="h-3.5 text-xs leading-3.5 inline-flex items-end gap-0.5">
+                <span class="text-[#804B19] min-w-[42px]"> 盘ㅤ数： </span>
+                <span class="grow leading-[13px]">{{ player?.exinfo.count }}</span>
+              </div>
             </div>
           </div>
         </div>
@@ -48,7 +52,7 @@
 
     <template v-if="mode === 'seat' && !player">
       <UIcon v-if="!open" :name="`fe:disabled`" class="text-[#E20032] size-14" />
-      <span v-if="open">等待玩家</span>
+      <span v-if="open" class="text-[.8rem]">等待玩家</span>
     </template>
   </span>
 </template>
@@ -84,6 +88,11 @@ const onClick = () => {
     }
   }
 }
+
+const panelDom = ref<Element | null>(null)
+onMounted(() => {
+  panelDom.value = document.querySelector('#game-panel')
+})
 </script>
 
 <style scoped>
