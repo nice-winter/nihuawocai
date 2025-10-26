@@ -15,8 +15,8 @@ const roomList: RoomListItemProps[] = [
       {
         uuid: '550e8400-e29b-41d4-a716-446655440001',
         avatar: 'https://example.com/avatar2.jpg',
-        nickname: '李四',
-        gender: 1,
+        nickname: '豆蔻梢头二月初',
+        gender: 0,
         exinfo: { count: 1240, score: 93000, flowers: 54300 }
       },
       null,
@@ -25,9 +25,9 @@ const roomList: RoomListItemProps[] = [
       null,
       {
         uuid: '550e8400-e29b-41d4-a716-446655440002',
-        avatar: 'https://example.com/avatar3.jpg',
-        nickname: '王五',
-        gender: 1,
+        avatar: 'https://free.picui.cn/free/2025/10/26/68fd638d6ea7a.png',
+        nickname: '佐々木淳平',
+        gender: 0,
         exinfo: { count: 3120, score: 234000, flowers: 156800 }
       }
     ],
