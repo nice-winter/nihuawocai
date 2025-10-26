@@ -21,6 +21,16 @@ const genderComputed = computed(() => {
         icon: `ph:gender-female-bold`,
         class: 'text-[#dd243c]'
       }
+    case 3:
+      return {
+        icon: `tabler:shopping-bag`,
+        class: 'text-[#00ab07]'
+      }
+    case 4:
+      return {
+        icon: `tabler:helicopter`,
+        class: 'text-[#ad1ef4]'
+      }
     default:
       return {
         icon: `ph:gender-male-bold`,
