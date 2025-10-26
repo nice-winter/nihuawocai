@@ -25,9 +25,13 @@
         <div
           class="flex flex-row justify-center items-center gap-9.5 h-8 border-t-2 border-t-white"
         >
-          <UiLinkButton @click="previousPageClick">上一页</UiLinkButton>
+          <UiLinkButton class="text-[13px]" type="button" @click="previousPageClick"
+            >上一页</UiLinkButton
+          >
           <USeparator orientation="vertical" class="h-4" />
-          <UiLinkButton @click="nextPageClick">下一页</UiLinkButton>
+          <UiLinkButton class="text-[13px]" type="button" @click="nextPageClick"
+            >下一页</UiLinkButton
+          >
         </div>
       </div>
     </template>
