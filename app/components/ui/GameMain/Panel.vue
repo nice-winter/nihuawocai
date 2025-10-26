@@ -1,5 +1,5 @@
 <template>
-  <div class="relative flex justify-center items-center">
+  <div id="game-panel" class="relative flex justify-center items-center">
     <div
       class="relative z-1 w-[900px] h-[640px] rounded-[14px] overflow-hidden border border-[#eae0d0] bg-[#f7ebdf] shadow-[0_0_4px_2px_rgb(176,129,73)] custom-foreground-bg"
     >
