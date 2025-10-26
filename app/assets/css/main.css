@@ -3,7 +3,9 @@
 
 :root {
   --game-font-color: #9f7c59;
+  --game-primary-color: #1d2020;
   --game-border-color: #ae9783;
+  --ui-text: #1d2020;
 }
 
 img {

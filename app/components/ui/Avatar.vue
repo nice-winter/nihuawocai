@@ -18,25 +18,25 @@
             <UAvatar class="game-avatar size-32" :src="player?.avatar" />
           </div>
 
-          <span class="pr-1.5 pl-1.5 text-[13px] text-[#432410] text-light">
+          <span class="pr-1.5 pl-1.5 text-[13px] text-(--game-primary-color) text-light">
             <UiGenderIcon :gender="player?.gender" class="align-text-bottom" />
             {{ player?.nickname }}
           </span>
 
-          <div class="mt-4 flex flex-col gap-1 p-2 bg-[#dd6b0969]">
-            <div class="flex flex-row text-[#432410] text-light">
+          <div class="mt-4 flex flex-col gap-1 p-2 bg-[#c5630e69]">
+            <div class="flex flex-row text-(--game-primary-color)">
               <span class="text-[1rem] font-bold italic min-w-[42px]">LV.60</span>
               <span class="text-right text-[12px] mt-1.5 ml-[0.6rem] leading-none">空前绝后</span>
             </div>
 
             <div class="flex flex-col text-[12px]">
-              <span class="text-[#9d601f]">
+              <span class="text-[#804B19]">
                 鲜ㅤ花：
-                <span class="text-[#432410]">{{ player?.exinfo.flowers }}</span>
+                <span class="text-(--game-primary-color)">{{ player?.exinfo.flowers }}</span>
               </span>
-              <span class="text-[#9d601f]">
+              <span class="text-[#804B19]">
                 盘ㅤ数：
-                <span class="text-[#432410]">{{ player?.exinfo.count }}</span>
+                <span class="text-(--game-primary-color)">{{ player?.exinfo.count }}</span>
               </span>
             </div>
           </div>
@@ -88,7 +88,7 @@ const onClick = () => {
 
 <style scoped>
 .custom-bg {
-  background-image: url(~/assets/icons/common-texture.jpg);
+  background-image: url(~/assets/icons/common-bg-texture.jpg);
   background-repeat: repeat;
   background-size: 46px;
 }

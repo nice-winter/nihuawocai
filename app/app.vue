@@ -11,7 +11,7 @@ console.log(data.value)
         <div class="w-full h-10 flex justify-center items-center">
           <div class="w-[900px] flex flex-row justify-center">
             <span class="font-sans text-5xl quotation" style="margin-left: -28px">“</span>
-            <span class="grow text-light text-[#432410] px-2">
+            <span class="grow text-light text-(--game-primary-color) px-2">
               【公告】阿星啊，你总得计划一下吧，这么年轻难道不工作，就混小太保啊。
             </span>
             <span class="font-sans text-5xl quotation" style="margin-right: -28px">”</span>
@@ -20,8 +20,8 @@ console.log(data.value)
         <UiGameMainFrame class="">
           <template #panel>
             <UiGameMainPanel>
-              <UiGameMainLobby />
-              <!-- <UiGameMainRoom /> -->
+              <!-- <UiGameMainLobby /> -->
+              <UiGameMainRoom />
             </UiGameMainPanel>
           </template>
         </UiGameMainFrame>
