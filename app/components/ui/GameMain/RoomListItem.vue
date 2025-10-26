@@ -2,7 +2,8 @@
   <div class="p-[0.785rem] w-1/2">
     <div class="flex flex-col gap-[0.7rem] select-none">
       <div class="relative h-16">
-        <UiAvatar v-if="roomInfo.owner" class="size-16" :player="ownerPlayer" />
+        <UiAvatar class="size-16" :player="ownerPlayer" />
+
         <UTooltip text="非公开房间" :delay-duration="500" :content="{ side: 'right' }" arrow>
           <UIcon
             v-show="roomInfo.locked"
@@ -10,6 +11,7 @@
             class="size-4 absolute left-18 top-0 text-[#f4b12d]"
           />
         </UTooltip>
+
         <UiGameMainRoomNumber :room-number="roomInfo.roomNumber || 0" class="float-right" />
         <span class="absolute right-0 bottom-0 text-sm leading-3.5">
           <UiGenderIcon :gender="ownerPlayer.gender" class="align-text-top" />
@@ -21,11 +23,11 @@
         class="flex min-h-[46px]"
         :class="[openSeatCount >= 7 ? `justify-between` : `gap-[6.666px]`]"
       >
-        <template v-for="(i, index) in openSeatCount - 1" :key="playersWithOutowner[index]?.uuid">
+        <template v-for="(i, index) in openSeatCount - 1" :key="playersWithoutOwner[index]?.uuid">
           <UiAvatar
-            v-if="playersWithOutowner[index]"
+            v-if="playersWithoutOwner[index]"
             class="size-[46px]"
-            :player="playersWithOutowner[index]"
+            :player="playersWithoutOwner[index]"
           />
           <span v-else class="inline-block size-[46px] bg-[#ddc9a9]" />
         </template>
@@ -63,7 +65,7 @@ type RoomListItemProps = RoomInfo
 
 const { roomInfo } = defineProps<{ roomInfo: RoomListItemProps }>()
 
-const playersWithOutowner = computed(() =>
+const playersWithoutOwner = computed(() =>
   roomInfo.players.filter((p) => p !== null && p.uuid !== roomInfo.owner)
 )
 const ownerPlayer = computed(() => roomInfo.players.find((p) => p?.uuid === roomInfo.owner)!)
