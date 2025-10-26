@@ -10,11 +10,11 @@ console.log(data.value)
         <div class="w-full h-40"></div>
         <div class="w-full h-10 flex justify-center items-center">
           <div class="w-[900px] flex flex-row justify-center">
-            <span class="font-sans text-5xl quotation" style="margin-left: -28px">“</span>
+            <span class="-ml-7 font-sans text-5xl quotation">“</span>
             <span class="grow text-light px-2">
               【公告】阿星啊，你总得计划一下吧，这么年轻难道不工作，就混小太保啊。
             </span>
-            <span class="font-sans text-5xl quotation" style="margin-right: -28px">”</span>
+            <span class="-mr-7 font-sans text-5xl quotation">”</span>
           </div>
         </div>
         <UiGameMainFrame class="">
