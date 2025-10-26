@@ -313,6 +313,184 @@ const roomList: RoomInfo[] = [
   }
 ]
 
+const players: Player[] = [
+  {
+    uuid: '6ba7b810-9dad-11d1-80b4-00c04fd430c1',
+    avatar: 'https://example.com/avatar1.jpg',
+    nickname: '清风徐来',
+    gender: 1,
+    exinfo: { count: 2456, score: 184200, flowers: 92300 }
+  },
+  {
+    uuid: '6ba7b811-9dad-11d1-80b4-00c04fd430c2',
+    avatar: 'https://example.com/avatar2.jpg',
+    nickname: '明月几时有',
+    gender: 0,
+    exinfo: { count: 3120, score: 234000, flowers: 117000 }
+  },
+  {
+    uuid: '6ba7b812-9dad-11d1-80b4-00c04fd430c3',
+    avatar: 'https://example.com/avatar3.jpg',
+    nickname: '星河滚烫',
+    gender: 1,
+    exinfo: { count: 1789, score: 134175, flowers: 67100 }
+  },
+  {
+    uuid: '6ba7b813-9dad-11d1-80b4-00c04fd430c4',
+    avatar: 'https://example.com/avatar4.jpg',
+    nickname: '人间理想',
+    gender: 0,
+    exinfo: { count: 4321, score: 324075, flowers: 162200 }
+  },
+  {
+    uuid: '6ba7b814-9dad-11d1-80b4-00c04fd430c5',
+    avatar: 'https://example.com/avatar5.jpg',
+    nickname: '山河故人',
+    gender: 1,
+    exinfo: { count: 2987, score: 224025, flowers: 112100 }
+  },
+  {
+    uuid: '6ba7b815-9dad-11d1-80b4-00c04fd430c6',
+    avatar: 'https://example.com/avatar6.jpg',
+    nickname: '云深不知处',
+    gender: 2,
+    exinfo: { count: 1567, score: 117525, flowers: 58800 }
+  },
+  {
+    uuid: '6ba7b816-9dad-11d1-80b4-00c04fd430c7',
+    avatar: 'https://example.com/avatar7.jpg',
+    nickname: '花间一壶酒',
+    gender: 0,
+    exinfo: { count: 3890, score: 291750, flowers: 146000 }
+  },
+  {
+    uuid: '6ba7b817-9dad-11d1-80b4-00c04fd430c8',
+    avatar: 'https://example.com/avatar8.jpg',
+    nickname: '独酌无相亲',
+    gender: 1,
+    exinfo: { count: 2234, score: 167550, flowers: 83800 }
+  },
+  {
+    uuid: '6ba7b818-9dad-11d1-80b4-00c04fd430c9',
+    avatar: 'https://example.com/avatar9.jpg',
+    nickname: '举杯邀明月',
+    gender: 0,
+    exinfo: { count: 3456, score: 259200, flowers: 129700 }
+  },
+  {
+    uuid: '6ba7b819-9dad-11d1-80b4-00c04fd430ca',
+    avatar: 'https://example.com/avatar10.jpg',
+    nickname: '对影成三人',
+    gender: 1,
+    exinfo: { count: 2789, score: 209175, flowers: 104600 }
+  },
+  {
+    uuid: '6ba7b81a-9dad-11d1-80b4-00c04fd430cb',
+    avatar: 'https://example.com/avatar11.jpg',
+    nickname: '月既不解饮',
+    gender: 2,
+    exinfo: { count: 1987, score: 149025, flowers: 74500 }
+  },
+  {
+    uuid: '6ba7b81b-9dad-11d1-80b4-00c04fd430cc',
+    avatar: 'https://example.com/avatar12.jpg',
+    nickname: '影徒随我身',
+    gender: 0,
+    exinfo: { count: 4123, score: 309225, flowers: 154700 }
+  },
+  {
+    uuid: '6ba7b81c-9dad-11d1-80b4-00c04fd430cd',
+    avatar: 'https://example.com/avatar13.jpg',
+    nickname: '暂伴月将影',
+    gender: 1,
+    exinfo: { count: 2678, score: 200850, flowers: 100500 }
+  },
+  {
+    uuid: '6ba7b81d-9dad-11d1-80b4-00c04fd430ce',
+    avatar: 'https://example.com/avatar14.jpg',
+    nickname: '行乐须及春',
+    gender: 0,
+    exinfo: { count: 3345, score: 250875, flowers: 125500 }
+  },
+  {
+    uuid: '6ba7b81e-9dad-11d1-80b4-00c04fd430cf',
+    avatar: 'https://example.com/avatar15.jpg',
+    nickname: '我歌月徘徊',
+    gender: 1,
+    exinfo: { count: 2890, score: 216750, flowers: 108400 }
+  },
+  {
+    uuid: '6ba7b81f-9dad-11d1-80b4-00c04fd430d0',
+    avatar: 'https://example.com/avatar16.jpg',
+    nickname: '我舞影零乱',
+    gender: 0,
+    exinfo: { count: 3765, score: 282375, flowers: 141200 }
+  },
+  {
+    uuid: '6ba7b820-9dad-11d1-80b4-00c04fd430d1',
+    avatar: 'https://example.com/avatar17.jpg',
+    nickname: '醒时同交欢',
+    gender: 1,
+    exinfo: { count: 2134, score: 160050, flowers: 80000 }
+  },
+  {
+    uuid: '6ba7b821-9dad-11d1-80b4-00c04fd430d2',
+    avatar: 'https://example.com/avatar18.jpg',
+    nickname: '醉后各分散',
+    gender: 2,
+    exinfo: { count: 1876, score: 140700, flowers: 70300 }
+  },
+  {
+    uuid: '6ba7b822-9dad-11d1-80b4-00c04fd430d3',
+    avatar: 'https://example.com/avatar19.jpg',
+    nickname: '永结无情游',
+    gender: 0,
+    exinfo: { count: 3987, score: 299025, flowers: 149600 }
+  },
+  {
+    uuid: '6ba7b823-9dad-11d1-80b4-00c04fd430d4',
+    avatar: 'https://example.com/avatar20.jpg',
+    nickname: '相期邈云汉',
+    gender: 1,
+    exinfo: { count: 2567, score: 192525, flowers: 96200 }
+  },
+  {
+    uuid: '6ba7b824-9dad-11d1-80b4-00c04fd430d5',
+    avatar: 'https://example.com/avatar21.jpg',
+    nickname: '青山绿水间',
+    gender: 0,
+    exinfo: { count: 3210, score: 240750, flowers: 120400 }
+  },
+  {
+    uuid: '6ba7b825-9dad-11d1-80b4-00c04fd430d6',
+    avatar: 'https://example.com/avatar22.jpg',
+    nickname: '白鹭上青天',
+    gender: 1,
+    exinfo: { count: 2345, score: 175875, flowers: 87900 }
+  },
+  {
+    uuid: '6ba7b826-9dad-11d1-80b4-00c04fd430d7',
+    avatar: 'https://example.com/avatar23.jpg',
+    nickname: '窗含西岭雪',
+    gender: 0,
+    exinfo: { count: 2876, score: 215700, flowers: 107900 }
+  },
+  {
+    uuid: '6ba7b827-9dad-11d1-80b4-00c04fd430d8',
+    avatar: 'https://example.com/avatar24.jpg',
+    nickname: '门泊东吴船',
+    gender: 1,
+    exinfo: { count: 3543, score: 265725, flowers: 132900 }
+  },
+  {
+    uuid: '6ba7b828-9dad-11d1-80b4-00c04fd430d9',
+    avatar: 'https://example.com/avatar25.jpg',
+    nickname: '春风又绿江南岸',
+    gender: 2,
+    exinfo: { count: 2987, score: 224025, flowers: 112100 }
+  }
+]
+
 const _roomList = roomList.map((i) => {
   return {
     ...i,
@@ -328,4 +506,15 @@ const _roomList = roomList.map((i) => {
   }
 })
 
-export { _roomList as roomList }
+const _players = players.map((p) => {
+  const api = {
+    female: `https://api.bducds.com/api/pic/?pic=girl`,
+    male: `https://testingbot.com/free-online-tools/random-avatar/64?u=${Math.random() * Date.now()}`
+  }
+  return {
+    ...p,
+    avatar: p.avatar.includes('example.com') ? (p.gender >= 1 ? api.female : api.male) : p.avatar
+  }
+})
+
+export { _roomList as roomList, _players as players }
