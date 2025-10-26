@@ -1,13 +1,13 @@
 <template>
   <span
-    class="inline-flex items-center justify-center size-8 bg-[#ddc9a9]"
+    class="inline-flex items-center justify-center size-4 bg-[#ddc9a9]"
     :class="{ 'cursor-pointer': !disabled }"
     @click="onClick"
   >
     <UPopover
       :content="{
-        align: 'end',
-        side: 'right',
+        side: (position.split('-')[0] as Side) || 'right',
+        align: (position.split('-')[1] as Align) || 'end',
         sideOffset: 8,
         collisionBoundary: panelDom
       }"
@@ -65,13 +65,17 @@ interface AvatarProps {
   mode?: 'display' | 'seat'
   disabled?: boolean
   player?: Player
+  position?: `${Side}-${Align}`
 }
+type Side = 'top' | 'right' | 'bottom' | 'left'
+type Align = 'end' | 'start' | 'center'
 
 const {
   id = undefined,
   mode = 'display',
   disabled = true,
-  player = undefined
+  player = undefined,
+  position = 'right-end'
 } = defineProps<AvatarProps>()
 
 const open = defineModel<boolean>('open', { default: true })
