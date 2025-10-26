@@ -2,7 +2,7 @@
   <div class="p-[0.785rem] w-1/2">
     <div class="flex flex-col gap-[0.7rem] select-none">
       <div class="relative h-16">
-        <UiAvatar v-if="author" class="size-16" :player="authorPlayer" />
+        <UiAvatar v-if="owner" class="size-16" :player="ownerPlayer" />
         <UTooltip text="非公开房间" :delay-duration="500" :content="{ side: 'right' }" arrow>
           <UIcon
             v-show="locked"
@@ -12,8 +12,8 @@
         </UTooltip>
         <UiGameMainRoomNumber :room-number="roomNumber || 0" class="float-right" />
         <span class="absolute right-0 bottom-0 text-sm leading-3.5">
-          <UiGenderIcon :gender="authorPlayer.gender" class="align-text-top" />
-          {{ authorPlayer.nickname }}
+          <UiGenderIcon :gender="ownerPlayer.gender" class="align-text-top" />
+          {{ ownerPlayer.nickname }}
         </span>
       </div>
 
@@ -21,11 +21,11 @@
         class="flex min-h-[46px]"
         :class="[openSeatCount >= 7 ? `justify-between` : `gap-[6.666px]`]"
       >
-        <template v-for="(i, index) in openSeatCount - 1" :key="playersWithOutAuthor[index]?.uuid">
+        <template v-for="(i, index) in openSeatCount - 1" :key="playersWithOutowner[index]?.uuid">
           <UiAvatar
-            v-if="playersWithOutAuthor[index]"
+            v-if="playersWithOutowner[index]"
             class="size-[46px]"
-            :player="playersWithOutAuthor[index]"
+            :player="playersWithOutowner[index]"
           />
           <span v-else class="inline-block size-[46px] bg-[#ddc9a9]" />
         </template>
@@ -54,7 +54,7 @@ import type { RoomListItemProps } from '~/interfaces/room'
 
 const {
   roomNumber = undefined,
-  author = undefined,
+  owner = undefined,
   players = [],
   onlookers = [],
   playing = false,
@@ -62,8 +62,8 @@ const {
   locked = false
 } = defineProps<RoomListItemProps>()
 
-const playersWithOutAuthor = computed(() => players.filter((p) => p !== null && p.uuid !== author))
-const authorPlayer = computed(() => players.find((p) => p?.uuid === author)!)
+const playersWithOutowner = computed(() => players.filter((p) => p !== null && p.uuid !== owner))
+const ownerPlayer = computed(() => players.find((p) => p?.uuid === owner)!)
 const totalPlayerCount = computed(() => players.filter((p) => p).length)
 const openSeatCount = computed(() => seats.filter((s) => s).length)
 </script>

@@ -45,13 +45,22 @@
           </div>
         </div>
       </div>
+
       <div class="grow grid grid-rows-2 grid-cols-4 p-8 gap-[0.785rem] justify-center">
         <div
           v-for="i in 7"
           :key="i"
-          class="flex flex-col items-center justify-center gap-[0.785rem] select-none"
-          :class="[`seat-${i}`]"
+          class="relative flex flex-col items-center justify-center gap-[0.785rem] select-none"
+          :data-seat-number="i"
         >
+          <span
+            v-if="roomInfo?.players![i - 1]?.uuid === roomInfo?.owner"
+            class="absolute top-2.5 left-10 flex"
+          >
+            <UIcon name="ph:arrow-bend-left-down-bold" />
+            <img src="~/assets/icons/owner.png" class="h-5 mt-[-0.4rem]" />
+          </span>
+
           <UiAvatar
             :id="i"
             :open="roomInfo?.seats![i - 1]"
@@ -62,10 +71,12 @@
             @switch="onSwitch"
           />
 
-          <p class="text-sm text-center">{{ roomInfo?.players![i - 1]?.nickname || `ㅤ` }}</p>
+          <p class="w-full text-sm text-center text-light truncate">
+            {{ roomInfo?.players![i - 1]?.nickname || `ㅤ` }}
+          </p>
         </div>
 
-        <div class="flex flex-col items-center justify-center gap-[0.785rem] select-none">
+        <div class="relative flex flex-col items-center justify-center gap-[0.785rem] select-none">
           <div class="flex items-center justify-center w-[114px] h-[114px] bg-[#ad8665] text-sm">
             <UIcon :name="`fe:disabled`" class="text-[#7A6955] size-14" />
           </div>

@@ -6,7 +6,7 @@
           <UiGameMainRoomListItem
             v-for="room in Array.from(rooms).slice(0, 6)"
             :key="room.roomNumber"
-            :author="room.author"
+            :owner="room.owner"
             :players="room.players"
             :onlookers="room.onlookers"
             :seats="room.seats"

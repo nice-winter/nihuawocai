@@ -42,7 +42,7 @@ const roomList: RoomListItemProps[] = [
     ],
     playing: true,
     locked: true,
-    author: '550e8400-e29b-41d4-a716-446655440000',
+    owner: '550e8400-e29b-41d4-a716-446655440000',
     seats: [true, true, true, true, false, false, true]
   },
   {
@@ -93,7 +93,7 @@ const roomList: RoomListItemProps[] = [
     ],
     playing: false,
     locked: true,
-    author: '550e8400-e29b-41d4-a716-446655440005',
+    owner: '550e8400-e29b-41d4-a716-446655440005',
     seats: [true, true, true, true, true, true, false]
   },
   {
@@ -134,7 +134,7 @@ const roomList: RoomListItemProps[] = [
     onlookers: [],
     playing: true,
     locked: false,
-    author: '550e8400-e29b-41d4-a716-446655440011',
+    owner: '550e8400-e29b-41d4-a716-446655440011',
     seats: [true, true, true, true, false, false, true]
   },
   {
@@ -189,7 +189,7 @@ const roomList: RoomListItemProps[] = [
     ],
     playing: true,
     locked: true,
-    author: '550e8400-e29b-41d4-a716-446655440016',
+    owner: '550e8400-e29b-41d4-a716-446655440016',
     seats: [true, true, true, true, true, true, true]
   },
   {
@@ -263,7 +263,7 @@ const roomList: RoomListItemProps[] = [
     ],
     playing: false,
     locked: false,
-    author: '550e8400-e29b-41d4-a716-446655440022',
+    owner: '550e8400-e29b-41d4-a716-446655440022',
     seats: [true, true, true, true, true, true, true]
   },
   {
@@ -308,7 +308,7 @@ const roomList: RoomListItemProps[] = [
     ],
     playing: false,
     locked: true,
-    author: '550e8400-e29b-41d4-a716-446655440028',
+    owner: '550e8400-e29b-41d4-a716-446655440028',
     seats: [false, false, true, false, false, false, false]
   }
 ]
