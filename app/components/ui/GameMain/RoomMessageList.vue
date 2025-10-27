@@ -1,12 +1,27 @@
 <template>
   <UiScrollBar
     ref="MessageListScrollBar"
+    v-model:scroll-on-buttom="isScrollOnBottom"
     :auto-hide="false"
     :delay="1"
     :style="{ '--scrollbar-color': '#bc966f', '--scrollbar-color-hover': '#cea57c' }"
     :size="7"
   >
-    <div class="message-list">
+    <div class="message-list relative">
+      <div
+        v-show="autoScroll && showNewMessageIndicator && newMessageCount > 0"
+        class="absolute bottom-0 right-[0.8rem] p-1 text-xs text-center text-(--game-font-color) rounded-sm select-none cursor-pointer"
+        style="background-color: rgba(110, 64, 0, 0.17)"
+        @click="
+          () => {
+            scrollToBottom()
+            newMessageCount = 0
+          }
+        "
+      >
+        <span class="text-light">新消息 {{ newMessageCount }}</span>
+      </div>
+
       <template v-for="(item, index) in messageList" :key="index + item.type">
         <p
           v-if="item.type === 'text'"
@@ -35,6 +50,11 @@
 
 <script setup lang="ts">
 import type { Player } from '~/interfaces/player'
+
+interface MessageListProps {
+  autoScroll?: boolean
+  showNewMessageIndicator?: boolean
+}
 
 interface TextStyle {
   color?: string
@@ -67,14 +87,20 @@ type IMessage =
       style?: TextStyle
     }
 
-const messageList = reactive<IMessage[]>([])
+const { autoScroll = true, showNewMessageIndicator = false } = defineProps<MessageListProps>()
 
+const messageList = reactive<IMessage[]>([])
+const newMessageCount = ref(0)
 const messageListScrollBarRef = useTemplateRef('MessageListScrollBar')
 
 const addMessage = (msg: IMessage) => {
   messageList.push(msg)
-  if (isScrollOnBottom()) {
-    scrollToBottom()
+  if (autoScroll) {
+    if (isScrollOnBottom.value) {
+      scrollToBottom()
+    } else {
+      newMessageCount.value++
+    }
   }
 }
 const scrollToBottom = () => {
@@ -87,19 +113,14 @@ const scrollToTop = () => {
     messageListScrollBarRef.value?.scrollTo({ top: 0 })
   }, 1)
 }
-const isScrollOnBottom = () => {
-  const scrollData = messageListScrollBarRef.value?.getScrollData()
-
-  if (scrollData) {
-    const { scrollTop, scrollHeight, clientHeight } = scrollData
-
-    if (scrollHeight < clientHeight) return true // 小于容器高度时，直接返回 true
-
-    return scrollTop + clientHeight >= scrollHeight - 10 // 留点余量，就当它到底了吧...
-  }
-
-  return false
-}
+const isScrollOnBottom = ref(false)
+watch(
+  () => isScrollOnBottom.value,
+  (newValue) => {
+    if (newValue) newMessageCount.value = 0
+  },
+  { immediate: true }
+)
 
 defineExpose({
   addMessage,
@@ -108,7 +129,4 @@ defineExpose({
 })
 </script>
 
-<style scoped>
-.message-item {
-}
-</style>
+<style scoped></style>
