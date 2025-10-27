@@ -20,11 +20,11 @@ console.log(data.value)
           </div>
         </div>
         <UiGameMainFrame class="">
-          <template #panel>
-            <UiGameMainPanel>
+          <template #main>
+            <UiGameMain>
               <!-- <UiGameMainLobby /> -->
               <UiGameMainRoom />
-            </UiGameMainPanel>
+            </UiGameMain>
           </template>
         </UiGameMainFrame>
       </div>

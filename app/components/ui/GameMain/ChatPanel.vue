@@ -10,8 +10,8 @@
       </span>
     </div>
 
-    <UiGameMainRoomMessageList
-      ref="RoomMessageList"
+    <UiGameMainMessageList
+      ref="ChatPanelMessageList"
       class="grow basis-0 px-[0.785rem] min-h-0"
       :show-new-message-indicator="true"
     />
@@ -31,12 +31,12 @@
 <script setup lang="ts">
 const testPlayer = ref(players[0]!)
 
-const RoomMessageListRef = useTemplateRef('RoomMessageList')
+const ChatPanelMessageListRef = useTemplateRef('ChatPanelMessageList')
 
 const chatMessageInputValue = ref('')
 const sendChatMessage = () => {
   if (chatMessageInputValue.value.trim()) {
-    RoomMessageListRef.value?.addMessage({
+    ChatPanelMessageListRef.value?.addMessage({
       type: 'chat',
       sender: testPlayer.value,
       msg: chatMessageInputValue.value

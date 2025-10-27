@@ -3,7 +3,7 @@
     <div class="flex flex-col w-[74.4%]">
       <div class="h-[87.72%] flex flex-wrap relative">
         <div class="z-1 flex flex-wrap">
-          <UiGameMainRoomListItem
+          <UiGameMainLobbyRoomListItem
             v-for="room in Array.from(rooms).slice(0, 6)"
             :key="room.roomNumber"
             :room-info="room"

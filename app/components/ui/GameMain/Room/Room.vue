@@ -32,7 +32,7 @@
 
         <div class="flex flex-col justify-center">
           <div class="w-48 h-20 text-[13px] text-[#c3b4a0]">
-            <UiGameMainRoomMessageList ref="RoomMessageList" />
+            <UiGameMainMessageList ref="RoomMessageList" />
           </div>
         </div>
 
@@ -96,7 +96,7 @@
         </UiLinkButton>
       </div>
 
-      <UiGameMainInvitePanel />
+      <UiGameMainRoomWaitingInvitePanel />
 
       <UiGameMainChatPanel class="grow max-w-[227.89px]" />
     </div>
@@ -112,10 +112,10 @@ const locked = ref(roomList[0]?.locked)
 const password = ref(roomList[0]?.locked ? roomInfo.value?.password || '1145' : '')
 const passwordInputRef = useTemplateRef('passwordInput')
 const showPasswordInput = ref(false)
-const roomMessageListRef = useTemplateRef('RoomMessageList')
+const RoomMessageListRef = useTemplateRef('RoomMessageList')
 
 const start = () => {
-  roomMessageListRef.value?.addMessage({
+  RoomMessageListRef.value?.addMessage({
     type: 'text',
     msg: Date.now().toString() + `离开了房间`
   })
