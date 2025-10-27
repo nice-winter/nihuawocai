@@ -1,10 +1,17 @@
 <template>
-  <div class="relative grow flex flex-col pt-10">
-    <span class="absolute top-2 right-[.785rem] select-none" style="color: var(--game-font-color)">
-      <UIcon name="ph:telegram-logo-fill" class="size-5 align-middle mr-1.5" />
-      <img src="~/assets/icons/chat.png" class="h-4 inline-block" />
-    </span>
-    <ui-game-main-room-message-list ref="RoomMessageList" class="grow px-[0.785rem]" />
+  <div class="flex flex-col">
+    <div class="relative h-10">
+      <span
+        class="absolute top-2 right-[.785rem] select-none"
+        style="color: var(--game-font-color)"
+      >
+        <UIcon name="ph:telegram-logo-fill" class="size-5 align-middle mr-1.5" />
+        <img src="~/assets/icons/chat.png" class="h-4 inline-block" />
+      </span>
+    </div>
+
+    <UiGameMainRoomMessageList ref="RoomMessageList" class="grow basis-0 px-[0.785rem] min-h-0" />
+
     <div class="p-[0.785rem]">
       <UInput
         v-model="chatMessageInputValue"

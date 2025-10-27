@@ -45,7 +45,7 @@
       </div>
     </div>
     <div class="grow flex flex-col bg-[#f1d0ae42] border-l-2 border-white/60">
-      <UiGameMainChatPanel class="max-w-[227.89px] max-h-[638px]" />
+      <UiGameMainChatPanel class="grow max-w-[227.89px]" />
     </div>
   </div>
 </template>

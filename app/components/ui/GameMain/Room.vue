@@ -98,7 +98,7 @@
 
       <UiGameMainInvitePanel />
 
-      <UiGameMainChatPanel class="max-w-[227.89px] min-h-0 max-h-[318px]" />
+      <UiGameMainChatPanel class="grow max-w-[227.89px]" />
     </div>
   </div>
 </template>
