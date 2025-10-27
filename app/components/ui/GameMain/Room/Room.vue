@@ -1,7 +1,8 @@
 <template>
   <div class="flex flex-row h-full">
     <div class="flex flex-col w-[74.4%]">
-      <UiGameMainRoomWaiting :room-info="roomInfo" />
+      <UiGameMainRoomWaiting v-if="stage === 0" :room-info="roomInfo" />
+      <UiGameMainRoomPlaying v-else-if="stage === 1" :room-info="roomInfo" />
     </div>
 
     <div class="grow flex flex-col bg-[#f1d0ae42] border-l-2 border-white/60">
@@ -15,7 +16,11 @@
         </UiLinkButton>
       </div>
 
-      <UiGameMainRoomWaitingInvitePanel />
+      <UiGameMainRoomWaitingInvitePanel v-if="stage === 0" />
+
+      <div v-if="stage === 1" class="h-[165px]">
+        <img src="~/assets/banner.jpg" class="w-full" />
+      </div>
 
       <UiGameMainChatPanel class="grow max-w-[227.89px]" />
     </div>
@@ -25,7 +30,13 @@
 <script setup lang="ts">
 import { roomList, players } from '~/stores/test'
 
-const roomInfo = reactive(roomList[0]!)
+interface RoomProps {
+  stage?: number
+}
+
+const { stage = 0 } = defineProps<RoomProps>()
+
+const roomInfo = reactive(roomList[4]!)
 </script>
 
 <style scoped></style>
