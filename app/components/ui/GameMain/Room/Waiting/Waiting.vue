@@ -15,7 +15,7 @@
         </span>
         <span v-show="showPasswordInput" class="absolute left-[58px] w-16">
           <UInput
-            ref="passwordInput"
+            ref="PasswordInput"
             class="game-input"
             :default-value="password"
             size="xs"
@@ -88,7 +88,7 @@ import type { RoomInfo } from '~/interfaces/room'
 
 const { roomInfo } = defineProps<{ roomInfo: RoomInfo }>()
 
-const passwordInputRef = useTemplateRef('passwordInput')
+const PasswordInputRef = useTemplateRef('PasswordInput')
 const RoomMessageListRef = useTemplateRef('RoomMessageList')
 
 const locked = ref(roomInfo.locked)
@@ -98,20 +98,20 @@ const showPasswordInput = ref(false)
 const passwordText = computed(() => (locked.value ? `密码：${password.value}` : `密码`))
 const changePassword = () => {
   if (locked.value && !showPasswordInput.value) {
-    if (passwordInputRef.value?.inputRef) {
-      passwordInputRef.value.inputRef.value = password.value
+    if (PasswordInputRef.value?.inputRef) {
+      PasswordInputRef.value.inputRef.value = password.value
     }
 
     showPasswordInput.value = true
     nextTick(() => {
-      passwordInputRef.value?.inputRef?.focus()
-      passwordInputRef.value?.inputRef?.select()
+      PasswordInputRef.value?.inputRef?.focus()
+      PasswordInputRef.value?.inputRef?.select()
     })
   }
 }
 
 const passwordInputOnBlur = (event?: FocusEvent) => {
-  const inputValue = passwordInputRef.value?.inputRef?.value
+  const inputValue = PasswordInputRef.value?.inputRef?.value
 
   // 密码输入框为空
   if (!inputValue && (!password.value || password.value === '')) {
@@ -138,8 +138,8 @@ const passwordInputOnEnterKeyDown = () => {
   showPasswordInput.value = false
 }
 const passwordInputOnEscKeyDown = () => {
-  if (passwordInputRef.value?.inputRef) {
-    passwordInputRef.value.inputRef.value = ''
+  if (PasswordInputRef.value?.inputRef) {
+    PasswordInputRef.value.inputRef.value = ''
   }
   showPasswordInput.value = false
 }
@@ -151,8 +151,8 @@ watch(
       if (!password.value || password.value === '') {
         showPasswordInput.value = true
         nextTick(() => {
-          passwordInputRef.value?.inputRef?.focus()
-          passwordInputRef.value?.inputRef?.select()
+          PasswordInputRef.value?.inputRef?.focus()
+          PasswordInputRef.value?.inputRef?.select()
         })
       }
     } else {
