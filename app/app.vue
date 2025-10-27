@@ -23,7 +23,7 @@ console.log(data.value)
           <template #main>
             <UiGameMain>
               <!-- <UiGameMainLobby /> -->
-              <UiGameMainRoom />
+              <UiGameMainRoom :stage="1" />
             </UiGameMain>
           </template>
         </UiGameMainFrame>
