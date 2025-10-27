@@ -125,7 +125,7 @@ const passwordInputOnBlur = (event?: FocusEvent) => {
           // console.log(`[RoomWaiting]`, `[pwdChange]`, password.value)
           password.value = inputValue
         }
-      }, 50)
+      }, 100)
     }
   }
 
@@ -166,6 +166,18 @@ watch(
   () => password.value,
   (newValue) => {
     console.log(`[RoomWaiting]`, `[setPwd]`, newValue)
+
+    if (newValue && newValue.trim() !== '') {
+      RoomMessageListRef.value?.addMessage({
+        type: 'text',
+        msg: `房主将房间密码设置为：${newValue}`
+      })
+    } else {
+      RoomMessageListRef.value?.addMessage({
+        type: 'text',
+        msg: `房主取消了房间密码`
+      })
+    }
   }
 )
 
