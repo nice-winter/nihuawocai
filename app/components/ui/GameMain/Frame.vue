@@ -7,7 +7,7 @@
     </div>
 
     <div>
-      <slot name="panel" />
+      <slot name="main" />
     </div>
 
     <div class="relative flex justify-center items-center h-20">
