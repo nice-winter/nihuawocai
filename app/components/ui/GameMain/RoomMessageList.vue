@@ -10,16 +10,26 @@
     <div class="message-list relative">
       <div
         v-show="autoScroll && showNewMessageIndicator && newMessageCount > 0"
-        class="absolute bottom-0 right-[0.8rem] p-1 text-xs text-center text-(--game-font-color) rounded-sm select-none cursor-pointer"
-        style="background-color: rgba(110, 64, 0, 0.17)"
-        @click="
-          () => {
-            scrollToBottom()
-            newMessageCount = 0
-          }
-        "
+        class="absolute bottom-1 right-[0.8rem] flex flex-col"
       >
-        <span class="text-light">新消息 {{ newMessageCount }}</span>
+        <div
+          class="p-1 h-6 min-w-6 text-xs text-center text-white rounded-md select-none cursor-pointer"
+          style="background-color: rgb(75 54 32 / 57%); border-bottom-right-radius: unset"
+          @click="
+            () => {
+              scrollToBottom()
+              newMessageCount = 0
+            }
+          "
+        >
+          <span>{{ newMessageCount }}</span>
+        </div>
+        <div>
+          <span
+            class="size-0 float-right"
+            style="border-top: 2px solid rgb(75 54 32 / 57%); border-left: 4px solid transparent"
+          />
+        </div>
       </div>
 
       <template v-for="(item, index) in messageList" :key="index + item.type">
