@@ -23,7 +23,7 @@
 </template>
 
 <script setup lang="ts">
-import { roomList } from '~/stores/test'
+import { roomList, players } from '~/stores/test'
 
 const roomInfo = reactive(roomList[0]!)
 </script>
