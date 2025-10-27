@@ -10,7 +10,11 @@
       </span>
     </div>
 
-    <UiGameMainRoomMessageList ref="RoomMessageList" class="grow basis-0 px-[0.785rem] min-h-0" />
+    <UiGameMainRoomMessageList
+      ref="RoomMessageList"
+      class="grow basis-0 px-[0.785rem] min-h-0"
+      :show-new-message-indicator="true"
+    />
 
     <div class="p-[0.785rem]">
       <UInput

@@ -139,6 +139,23 @@ const horizontalContentStyle = { width: 'fit-content' } // 水平滚动时内容
 const yTrackHover = ref(false) // 鼠标是否在垂直滚动条上
 const xTrackHover = ref(false) // 鼠标是否在水平滚动条上
 const emits = defineEmits(['scroll', 'scrollend'])
+const scrollOnButtom = defineModel<boolean>('scrollOnButtom', { default: false })
+const isScrollOnBottom = computed(() => {
+  const { scrollTop, scrollHeight, clientHeight } = getScrollData()
+  // 小于容器高度时，直接返回 true
+  // 留点余量（14px），就当它到底了吧...
+  const is = scrollHeight < clientHeight || scrollTop + clientHeight >= scrollHeight - 14
+  return is
+})
+watch(
+  () => isScrollOnBottom.value,
+  (newValue) => {
+    scrollOnButtom.value = newValue
+  },
+  {
+    immediate: true
+  }
+)
 
 const autoShowTrack = computed(() => trigger === 'hover')
 
