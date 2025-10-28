@@ -35,11 +35,40 @@ const ChatPanelMessageListRef = useTemplateRef('ChatPanelMessageList')
 
 const chatMessageInputValue = ref('')
 const sendChatMessage = () => {
-  if (chatMessageInputValue.value.trim()) {
+  const msg = chatMessageInputValue.value.trim()
+
+  if (msg === 'bingo') {
+    ChatPanelMessageListRef.value?.addMessage({
+      type: 'action',
+      sender: testPlayer.value,
+      msg: '猜对了答案。'
+    })
+    chatMessageInputValue.value = ''
+    return
+  }
+  if (msg === 'start') {
+    ChatPanelMessageListRef.value?.addMessage({
+      type: 'system',
+      msg: '回合开始'
+    })
+    chatMessageInputValue.value = ''
+    return
+  }
+  if (msg === 'broadcast') {
+    ChatPanelMessageListRef.value?.addMessage({
+      type: 'broadcast',
+      sender: testPlayer.value,
+      roomNumber: 0
+    })
+    chatMessageInputValue.value = ''
+    return
+  }
+
+  if (msg) {
     ChatPanelMessageListRef.value?.addMessage({
       type: 'chat',
       sender: testPlayer.value,
-      msg: chatMessageInputValue.value
+      msg
     })
     chatMessageInputValue.value = ''
   }

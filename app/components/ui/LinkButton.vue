@@ -5,14 +5,16 @@
       'text-(--game-font-color)': color === 'normal',
       'hover:text-(--game-primary-color)': color === 'normal',
       'text-[#E20032]': color === 'red',
-      'hover:text-[#FF0038]': color === 'red'
+      'hover:text-[#ff0038]': color === 'red'
     }"
   >
     <ULink
       as="button"
       class="text-light cursor-pointer transition-none"
       :class="{
-        underline: type === 'link'
+        underline: type === 'link',
+        'select-text': type === 'link',
+        'hover:text-[#ff0038]': color === 'red'
       }"
     >
       <slot />
