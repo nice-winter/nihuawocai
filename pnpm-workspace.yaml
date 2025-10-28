@@ -1,9 +1,10 @@
-shamefullyHoist: true
-
 onlyBuiltDependencies:
   - '@parcel/watcher'
   - '@tailwindcss/oxide'
+  - canvas
   - esbuild
   - sharp
   - unrs-resolver
   - vue-demi
+
+shamefullyHoist: true
