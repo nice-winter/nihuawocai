@@ -51,7 +51,7 @@ const { roomInfo } = defineProps<{ roomInfo: RoomInfo }>()
 const _players = computed(() => roomInfo.players.filter((p) => p !== null))
 
 const bingoPlayers = [false, true, true, true, false, false, true]
-const playerScore = [4, 8, 4, 4, 0, 2, 4]
+const playerScore = [4, 8, 4, 4, 10, 0, 4]
 const drawingPlayer = _players.value[4]
 </script>
 
