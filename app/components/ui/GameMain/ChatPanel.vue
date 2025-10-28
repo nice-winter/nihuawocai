@@ -58,7 +58,7 @@ const sendChatMessage = () => {
     ChatPanelMessageListRef.value?.addMessage({
       type: 'broadcast',
       sender: testPlayer.value,
-      roomNumber: 0
+      roomNumber: 4
     })
     chatMessageInputValue.value = ''
     return
