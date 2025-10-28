@@ -47,10 +47,39 @@
         </p>
 
         <p v-else-if="item.type === 'chat'" class="py-[0.3rem] first:pt-0 last:pb-0">
-          <span>
+          <span class="text-[13px]">
             <UiAvatar class="size-6.5 align-top" :player="item.sender" />
-            <span class="ml-2 text-[13px]"> {{ item.sender.nickname }}： </span>
-            <span class="text-[13px] break-normal wrap-break-word">{{ item.msg }}</span>
+            <span class="ml-2"> {{ item.sender.nickname }}： </span>
+            <span class="break-normal wrap-break-word">{{ item.msg }}</span>
+          </span>
+        </p>
+
+        <p v-else-if="item.type === 'action'">
+          <span class="text-[13px]">
+            <span class="text-pink-400">{{ item.sender.nickname }}</span>
+            {{ item.msg }}
+          </span>
+        </p>
+
+        <p v-else-if="item.type === 'system'">
+          <USeparator
+            class="select-none"
+            :label="item.msg"
+            :ui="{
+              border: `border-[#AE9783]`,
+              label: `text-[13px] text-[#AE9783]`
+            }"
+          />
+        </p>
+
+        <p v-else-if="item.type === 'broadcast'" class="py-[0.3rem] first:pt-0 last:pb-0">
+          <span class="text-[13px]">
+            <UiAvatar class="size-6.5 align-top" :player="item.sender" />
+            <span class="ml-2">{{ item.sender.nickname }}</span>
+            <span class="break-normal wrap-break-word">
+              在{{ item.roomNumber }}号房间喊道：赶快<UiLinkButton color="red">加入</UiLinkButton
+              >我们一起游戏吧！
+            </span>
           </span>
         </p>
       </template>
@@ -87,6 +116,11 @@ type IMessage =
   | {
       type: 'action'
       sender: Player
+      msg: string
+      style?: TextStyle
+    }
+  | {
+      type: 'system'
       msg: string
       style?: TextStyle
     }
