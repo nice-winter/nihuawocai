@@ -1,16 +1,16 @@
 <template>
   <div class="flex flex-col h-full">
     <div class="flex flex-row h-16 items-center justify-between px-1">
-      <div class="flex flex-col items-center justify-center px-5">
+      <div class="flex flex-col items-center justify-center w-20">
         <UiAvatar :player="drawingPlayer" class="size-10 rounded-md overflow-hidden" />
       </div>
 
-      <div class="flex flex-col items-center justify-center gap-2 text-[13px] select-none">
+      <div class="flex flex-col items-center justify-center gap-2 text-[13px] p-2 select-none">
         <span>第 1/2 轮</span>
         <span>提示：<span class="text-red-600">3个字，食物</span></span>
       </div>
 
-      <div class="w-20">
+      <div class="flex flex-col items-center justify-center w-20">
         <UiGameMainRoomTimer />
       </div>
     </div>

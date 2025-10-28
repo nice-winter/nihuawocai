@@ -46,7 +46,7 @@
           {{ item.msg }}
         </p>
 
-        <p v-else-if="item.type === 'chat'" class="py-[0.3925rem] first:pt-0 last:pb-0">
+        <p v-else-if="item.type === 'chat'" class="py-[0.3rem] first:pt-0 last:pb-0">
           <span>
             <UiAvatar class="size-6.5 align-top" :player="item.sender" />
             <span class="ml-2 text-[13px]"> {{ item.sender.nickname }}： </span>

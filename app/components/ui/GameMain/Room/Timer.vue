@@ -1,6 +1,6 @@
 <template>
   <div class="size-16 flex items-center justify-center">
-    <div class="size-10 flex items-center justify-center rounded-full bg-[#E31839] timer">
+    <div class="size-11 flex items-center justify-center rounded-full bg-[#e31839] timer">
       <span class="text-2xl text-white font-bold leading-0 select-none">13</span>
     </div>
   </div>
