@@ -1,4 +1,4 @@
-FROM node:24.10-alpine AS base
+FROM node:24.11-alpine AS base
 
 ARG CI
 
