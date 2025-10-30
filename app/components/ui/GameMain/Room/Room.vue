@@ -19,7 +19,8 @@
       <UiGameMainRoomWaitingInvitePanel v-if="stage === 0" />
 
       <div v-if="stage === 1" class="h-[166.6px] w-full border-y border-y-white/50">
-        <img src="~/assets/banner.jpg" class="w-full" />
+        <!-- <img src="~/assets/banner.jpg" class="w-full" /> -->
+        <UiGameMainRoomPlayingSketchpadToolbar class="size-full" />
       </div>
 
       <UiGameMainChatPanel class="grow max-w-[227.89px]" />
