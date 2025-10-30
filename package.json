@@ -26,6 +26,7 @@
     "@vueuse/nuxt": "14.0.0",
     "fabric": "^6.7.1",
     "less": "^4.4.2",
+    "mitt": "^3.0.1",
     "nuxt": "4.2.0",
     "nuxt-auth-utils": "0.5.25",
     "pinia": "^3.0.3",
