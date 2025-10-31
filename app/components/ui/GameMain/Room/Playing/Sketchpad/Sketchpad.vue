@@ -12,9 +12,9 @@
 <script setup lang="ts">
 import type { Canvas } from 'fabric'
 import { useSketchpadStore } from '~/stores/sketchpad/sketchpadStore'
-import { pencil } from './brushes/pencil'
 import { useEventBus } from '~/common/eventBus'
 import { SketchpadCanvas } from './fabric/SketchpadCanvas'
+import { PencilBrush } from './fabric/brushes/PencilBrush'
 
 const SketchpadRef = useTemplateRef('Sketchpad')
 const SketchpadCanvasRef = useTemplateRef('Canvas')
@@ -68,8 +68,8 @@ onMounted(() => {
   }
 
   const brushes = {
-    pencil: pencil(canvas),
-    eraser: pencil(canvas)
+    pencil: new PencilBrush(canvas),
+    eraser: new PencilBrush(canvas)
   }
 
   watch(
