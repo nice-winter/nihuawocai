@@ -28,10 +28,7 @@ export default defineNuxtConfig({
     provider: 'none'
   },
   icon: {
-    provider: 'none',
-    clientBundle: {
-      scan: true
-    },
+    serverBundle: 'local',
     customCollections: [
       {
         prefix: 'custom',
