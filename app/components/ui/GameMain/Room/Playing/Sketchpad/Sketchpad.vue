@@ -5,23 +5,24 @@
       class="absolute z-2 size-full pointer-events-none"
       style="box-shadow: rgb(0 0 0 / 40%) 0px 0px 3px 1px inset"
     />
-    <canvas ref="SketchpadCanvas" class="size-full sketchpad" />
+    <canvas ref="Canvas" class="size-full sketchpad" />
   </div>
 </template>
 
 <script setup lang="ts">
-import { Canvas } from 'fabric'
+import type { Canvas } from 'fabric'
 import { useSketchpadStore } from '~/stores/sketchpad/sketchpadStore'
 import { pencil } from './brushes/pencil'
-import { eventBus } from '~/common/eventBus'
+import { useEventBus } from '~/common/eventBus'
+import { SketchpadCanvas } from './fabric/SketchpadCanvas'
 
 const SketchpadRef = useTemplateRef('Sketchpad')
-const SketchpadCanvasRef = useTemplateRef('SketchpadCanvas')
+const SketchpadCanvasRef = useTemplateRef('Canvas')
 const sketchpadStore = useSketchpadStore()
 
 let canvas: Canvas
 
-const eventsHander = {
+const eventsHandler = {
   onClear: () => {
     canvas.clear()
     console.log(`[Sketchpad-Component]`, 'clear')
@@ -33,17 +34,20 @@ const eventsHander = {
     console.log(`[Sketchpad-Component]`, 'redo')
   }
 }
+useEventBus('sketchpad:undo', eventsHandler.onUndo)
+useEventBus('sketchpad:redo', eventsHandler.onRedo)
+useEventBus('sketchpad:clear', eventsHandler.onClear)
 
 onMounted(() => {
-  canvas = new Canvas(SketchpadCanvasRef.value!, {
+  canvas = new SketchpadCanvas(SketchpadCanvasRef.value!, {
     width: SketchpadRef.value?.clientWidth,
     height: SketchpadRef.value?.clientHeight,
     isDrawingMode: true
   })
 
-  eventBus.on('sketchpad:clear', eventsHander.onClear)
-  eventBus.on('sketchpad:undo', eventsHander.onUndo)
-  eventBus.on('sketchpad:redo', eventsHander.onUndo)
+  canvas.on('cache:flush', (points) => {
+    console.log('[Cache]', points)
+  })
 
   const updateCanvasBrushOptions = (bo: { color: string; width: number }) => {
     if (canvas?.freeDrawingBrush) {
@@ -56,7 +60,7 @@ onMounted(() => {
       }
     }
     console.log(
-      `[sketchpad]`,
+      `[Sketchpad-Component]`,
       `[update]`,
       canvas.freeDrawingBrush?.width,
       canvas.freeDrawingBrush?.color
@@ -92,12 +96,6 @@ onMounted(() => {
     },
     { immediate: true, deep: true }
   )
-})
-
-onUnmounted(() => {
-  eventBus.off('sketchpad:clear', eventsHander.onClear)
-  eventBus.off('sketchpad:undo', eventsHander.onUndo)
-  eventBus.off('sketchpad:redo', eventsHander.onUndo)
 })
 </script>
 
