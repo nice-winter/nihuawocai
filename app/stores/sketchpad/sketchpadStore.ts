@@ -26,7 +26,7 @@ export const useSketchpadStore = defineStore('sketchpad', () => {
     {
       name: 'pencil',
       icon: 'mdi:pencil-outline',
-      widths: [1.3, 4, 8, 16, 24],
+      widths: [1.3, 4, 8, 24, 48],
       defaultOptions: {
         color: '#000000',
         width: 1
