@@ -7,4 +7,7 @@ onlyBuiltDependencies:
   - unrs-resolver
   - vue-demi
 
+patchedDependencies:
+  fabric: patches/fabric.patch
+
 shamefullyHoist: true
