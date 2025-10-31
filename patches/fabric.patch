@@ -1,0 +1,17 @@
+diff --git a/package.json b/package.json
+index 84f137ca76c3f6ab06af088baf9b227a3f4801f3..a83cdcdbe6ecc67ce34da4f29d7c30726ed75364 100644
+--- a/package.json
++++ b/package.json
+@@ -139,6 +139,12 @@
+       "require": null,
+       "default": null
+     },
++    "./util": {
++      "types": "./dist/src/util/index.d.ts",
++      "import": "./dist/src/util/index.min.mjs",
++      "require": null,
++      "default": null
++    },
+     "./node": {
+       "node": "./dist/index.node.cjs",
+       "types": "./dist/index.node.d.ts",
