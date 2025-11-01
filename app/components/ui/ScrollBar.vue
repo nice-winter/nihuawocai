@@ -535,7 +535,7 @@ const render = () => {
       container,
       {
         ...container.props,
-        class: [container.props?.class, 'with-vue-scrollbar'].filter(Boolean).join(' '),
+        class: [container.props?.class, 'with-scrollbar'].filter(Boolean).join(' '),
         style: {
           ...container.props?.style,
           ...Object.fromEntries(
@@ -559,96 +559,127 @@ const render = () => {
   <render />
 </template>
 
-<style lang="less">
-.with-vue-scrollbar {
+<style lang="css">
+.with-scrollbar {
   overflow: hidden;
   position: relative;
   z-index: auto;
   height: 100%;
   width: 100%;
-  .scrollbar-container {
-    width: 100%;
-    height: 100%;
-    min-height: inherit;
-    max-height: inherit;
-    scrollbar-width: none;
-    &::-webkit-scrollbar,
-    &::-webkit-scrollbar-track-piece,
-    &::-webkit-scrollbar-thumb {
-      width: 0;
-      height: 0;
-      display: none;
-    }
-    .scrollbar-content {
-      box-sizing: border-box;
-      min-width: 100%;
-      &::after,
-      &::before {
-        content: '';
-        display: block;
-      }
-    }
-  }
-  .container-scroll {
-    overflow: scroll;
-  }
-  .scrollbar-rail {
-    position: absolute;
-    pointer-events: none;
-    user-select: none;
-    background: var(--scrollbar-rail-color);
-    -webkit-user-select: none;
-    .scrollbar-track {
-      z-index: 9;
-      position: absolute;
-      cursor: pointer;
-      opacity: 0;
-      pointer-events: none;
-      background-color: var(--scrollbar-color);
-      transition:
-        background-color 0.2s cubic-bezier(0.4, 0, 0.2, 1),
-        opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-      &:hover {
-        background-color: var(--scrollbar-color-hover);
-      }
-    }
-    .track-visible {
-      opacity: 1;
-      pointer-events: all;
-    }
-  }
-  .rail-vertical {
-    width: var(--scrollbar-width);
-    .scrollbar-track {
-      width: var(--scrollbar-width);
-      border-radius: var(--scrollbar-border-radius);
-      bottom: 0;
-    }
-  }
-  .rail-vertical-left {
-    inset: var(--scrollbar-rail-vertical-left);
-  }
-  .rail-vertical-right {
-    inset: var(--scrollbar-rail-vertical-right);
-  }
-  .rail-horizontal {
-    height: var(--scrollbar-height);
-    .scrollbar-track {
-      height: var(--scrollbar-height);
-      border-radius: var(--scrollbar-border-radius);
-      right: 0;
-    }
-  }
-  .rail-horizontal-top {
-    inset: var(--scrollbar-rail-horizontal-top);
-  }
-  .rail-horizontal-bottom {
-    inset: var(--scrollbar-rail-horizontal-bottom);
-  }
-  .scrollbar-thumb {
-    position: absolute;
-    background-color: rgba(0, 0, 0, 0.5);
-    transition: background-color 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  }
+}
+
+/* scrollbar container */
+.with-scrollbar .scrollbar-container {
+  width: 100%;
+  height: 100%;
+  min-height: inherit;
+  max-height: inherit;
+  scrollbar-width: none;
+}
+
+/* hide native webkit scrollbars */
+.with-scrollbar .scrollbar-container::-webkit-scrollbar,
+.with-scrollbar .scrollbar-container::-webkit-scrollbar-track-piece,
+.with-scrollbar .scrollbar-container::-webkit-scrollbar-thumb {
+  width: 0;
+  height: 0;
+  display: none;
+}
+
+/* content inside container */
+.with-scrollbar .scrollbar-container .scrollbar-content {
+  box-sizing: border-box;
+  min-width: 100%;
+}
+
+/* pseudo elements for content */
+.with-scrollbar .scrollbar-container .scrollbar-content::after,
+.with-scrollbar .scrollbar-container .scrollbar-content::before {
+  content: '';
+  display: block;
+}
+
+/* optional class to force native scrolling */
+.with-scrollbar .container-scroll {
+  overflow: scroll;
+}
+
+/* scrollbar rail and track */
+.with-scrollbar .scrollbar-rail {
+  position: absolute;
+  pointer-events: none;
+  user-select: none;
+  -webkit-user-select: none;
+  background: var(--scrollbar-rail-color);
+}
+
+.with-scrollbar .scrollbar-rail .scrollbar-track {
+  z-index: 9;
+  position: absolute;
+  cursor: pointer;
+  opacity: 0;
+  pointer-events: none;
+  background-color: var(--scrollbar-color);
+  transition:
+    background-color 0.2s cubic-bezier(0.4, 0, 0.2, 1),
+    opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* hover style for track */
+.with-scrollbar .scrollbar-rail .scrollbar-track:hover {
+  background-color: var(--scrollbar-color-hover);
+}
+
+/* utility class to make track visible / interactive */
+.with-scrollbar .scrollbar-rail .track-visible {
+  opacity: 1;
+  pointer-events: all;
+}
+
+/* vertical rail specifics */
+.with-scrollbar .rail-vertical {
+  width: var(--scrollbar-width);
+}
+
+.with-scrollbar .rail-vertical .scrollbar-track {
+  width: var(--scrollbar-width);
+  border-radius: var(--scrollbar-border-radius);
+  bottom: 0;
+}
+
+/* vertical rail left / right placement */
+.with-scrollbar .rail-vertical-left {
+  inset: var(--scrollbar-rail-vertical-left);
+}
+
+.with-scrollbar .rail-vertical-right {
+  inset: var(--scrollbar-rail-vertical-right);
+}
+
+/* horizontal rail specifics */
+.with-scrollbar .rail-horizontal {
+  height: var(--scrollbar-height);
+}
+
+.with-scrollbar .rail-horizontal .scrollbar-track {
+  height: var(--scrollbar-height);
+  border-radius: var(--scrollbar-border-radius);
+  right: 0;
+}
+
+/* horizontal rail top / bottom placement */
+.with-scrollbar .rail-horizontal-top {
+  inset: var(--scrollbar-rail-horizontal-top);
+}
+
+.with-scrollbar .rail-horizontal-bottom {
+  inset: var(--scrollbar-rail-horizontal-bottom);
+}
+
+/* thumb */
+.with-scrollbar .scrollbar-thumb {
+  position: absolute;
+  background-color: rgba(0, 0, 0, 0.5);
+  transition: background-color 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 </style>
