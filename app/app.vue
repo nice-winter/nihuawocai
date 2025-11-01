@@ -1,4 +1,18 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+const { loggedIn, user, clear } = useUserSession()
+
+watch(
+  loggedIn,
+  () => {
+    if (!loggedIn.value) {
+      navigateTo('/user/login')
+    }
+  },
+  {
+    immediate: true
+  }
+)
+</script>
 
 <template>
   <UApp>
