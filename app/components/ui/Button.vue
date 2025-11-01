@@ -1,46 +1,46 @@
 <template>
   <button
-    class="relative inline-flex items-center justify-center align-middle text-white disabled:text-[#ddd] cursor-pointer disabled:cursor-not-allowed select-none game-button"
+    class="inline-flex items-center justify-center align-middle text-white disabled:text-[#ddd] cursor-pointer disabled:cursor-not-allowed select-none game-button"
     :class="[classNameSize, classNameColor]"
   >
-    <span class="z-2 game-button__text" :class="{ hidden: type.startsWith('arrow') }">
+    <span class="z-1 game-button__text" :class="{ hidden: type.startsWith('arrow') }">
       <slot />
     </span>
 
     <UIcon
       v-if="type === 'normal' && size === 'xl'"
       name="custom:button-xl"
-      class="w-[307px] h-[26px] absolute z-1 game-button__icon"
+      class="w-[307px] h-[26px] absolute game-button__icon"
     />
 
     <UIcon
       v-if="type === 'normal' && size === 'lg'"
       name="custom:button-lg"
-      class="w-[131px] h-[51px] absolute z-1 game-button__icon"
+      class="w-[131px] h-[51px] absolute game-button__icon"
     />
 
     <UIcon
       v-if="type === 'normal' && size === 'base'"
       name="custom:button-base"
-      class="w-[75px] h-[26px] absolute z-1 game-button__icon"
+      class="w-[75px] h-[26px] absolute game-button__icon"
     />
 
     <UIcon
       v-if="type === 'normal' && size === 'sm'"
       name="custom:button-sm"
-      class="w-[51px] h-[26px] absolute z-1 game-button__icon"
+      class="w-[51px] h-[26px] absolute game-button__icon"
     />
 
     <UIcon
       v-if="type === 'arrow-left'"
       name="custom:arrow-left"
-      class="w-4 h-[26px] absolute z-1 game-button__icon"
+      class="w-4 h-[26px] absolute game-button__icon"
     />
 
     <UIcon
       v-if="type === 'arrow-right'"
       name="custom:arrow-right"
-      class="w-4 h-[26px] absolute z-1 game-button__icon"
+      class="w-4 h-[26px] absolute game-button__icon"
     />
   </button>
 </template>
