@@ -9,8 +9,14 @@ const { error } = defineProps<Props>()
 </script>
 
 <template>
-  <div>
-    <h1>{{ error.statusCode }}</h1>
-    <NuxtLink to="/">Go back home</NuxtLink>
-  </div>
+  <UApp>
+    <UError
+      redirect="/"
+      :error="{
+        statusCode: error.statusCode,
+        statusMessage: error.statusMessage,
+        message: error.message
+      }"
+    />
+  </UApp>
 </template>
