@@ -2,17 +2,6 @@
 export default defineNuxtConfig({
   compatibilityDate: '2025-07-15',
   devtools: { enabled: true },
-  vite: {
-    server: {
-      hmr: {
-        path: 'hmr/'
-      }
-    }
-  },
-  ssr: false,
-  experimental: {
-    typescriptPlugin: true
-  },
   modules: [
     '@nuxt/eslint',
     '@nuxt/fonts',
@@ -25,6 +14,17 @@ export default defineNuxtConfig({
     '@pinia/nuxt',
     '@vueuse/nuxt'
   ],
+  ssr: false,
+  vite: {
+    server: {
+      hmr: {
+        path: 'hmr/'
+      }
+    }
+  },
+  experimental: {
+    typescriptPlugin: true
+  },
   css: ['~/assets/css/main.css'],
   ui: {
     experimental: {
@@ -42,5 +42,10 @@ export default defineNuxtConfig({
         dir: './app/assets/icons'
       }
     ]
+  },
+  nitro: {
+    experimental: {
+      websocket: true
+    }
   }
 })
