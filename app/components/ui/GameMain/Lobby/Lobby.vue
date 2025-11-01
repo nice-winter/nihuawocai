@@ -22,9 +22,7 @@
       <div
         class="grow flex items-center gap-4 p-[0.785rem] bg-[#f1d0ae42] border-t-2 border-white/60"
       >
-        <UiButton size="large" color="red" @click="() => console.log('快速开始')">
-          快速开始
-        </UiButton>
+        <UiButton size="lg" color="red" @click="() => console.log('快速开始')"> 快速开始 </UiButton>
         <div class="px-4 flex gap-2 items-center">
           <UInput
             v-model="roomNumberInputValue"
@@ -34,7 +32,7 @@
             class="game-input w-14"
             style="background-color: #fff"
           />
-          <UiButton size="small" :disabled="roomNumberInputValue === ''">加入</UiButton>
+          <UiButton size="sm" :disabled="roomNumberInputValue === ''">加入</UiButton>
         </div>
         <UiButton>等待房间</UiButton>
         <UiButton>创建房间</UiButton>

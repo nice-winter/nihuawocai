@@ -16,7 +16,7 @@
               {{ player.nickname }}
             </span>
 
-            <UiButton size="small" color="red" @click="inviteClick(player)"> 邀请 </UiButton>
+            <UiButton size="sm" color="red" @click="inviteClick(player)"> 邀请 </UiButton>
           </div>
         </div>
 
