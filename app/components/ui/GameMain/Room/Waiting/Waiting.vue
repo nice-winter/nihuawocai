@@ -28,19 +28,23 @@
       </span>
     </div>
 
-    <div class="flex flex-col justify-center">
-      <div class="w-48 h-20 text-[13px] text-[#c3b4a0]">
+    <div class="w-52 flex flex-col justify-center pr-4">
+      <div class="w-full h-20 text-[13px] text-[#c3b4a0]">
         <UiGameMainMessageList ref="RoomMessageList" />
       </div>
     </div>
 
-    <div class="flex flex-col justify-center ml-4">
+    <div class="flex flex-col justify-center">
       <div class="grid grid-cols-2 grid-rows-2 gap-[0.785rem]">
         <UiButton color="green">广播邀请</UiButton>
         <UiButton color="blue">邀请好友</UiButton>
         <UiButton>再等一会</UiButton>
         <UiButton color="red" @click="start">立即开始</UiButton>
       </div>
+    </div>
+
+    <div class="grow flex flex-col items-center justify-center">
+      <UiGameMainRoomTimer />
     </div>
   </div>
 
