@@ -51,19 +51,19 @@
           class="size-8 flex items-center justify-center cursor-pointer"
           @click="sketchpadStore.undo"
         >
-          <UIcon name="mdi:undo-variant" class="size-6" />
+          <UIcon name="material-symbols:undo-rounded" class="size-6" />
         </span>
         <span
           class="size-8 flex items-center justify-center cursor-pointer"
           @click="sketchpadStore.redo"
         >
-          <UIcon name="mdi:redo-variant" class="size-6" />
+          <UIcon name="material-symbols:redo-rounded" class="size-6" />
         </span>
         <span
           class="size-8 flex items-center justify-center cursor-pointer"
           @click="sketchpadStore.clear"
         >
-          <UIcon name="mdi:trash-can-outline" class="size-6" />
+          <UIcon name="material-symbols:delete-outline-rounded" class="size-6" />
         </span>
       </div>
     </div>
