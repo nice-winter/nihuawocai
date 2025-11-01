@@ -1,6 +1,16 @@
 <template>
   <div class="w-5xl min-h-[1151px] flex flex-col custom-bg bg-top bg-size-[1024px]">
-    <div class="w-full h-40"></div>
+    <div class="w-full h-40 flex relative">
+      <div class="absolute right-24 top-24 flex gap-4 text-sm">
+        <ULink as="button" @click="() => (gameStore.isInRoom = false)">大厅页面</ULink>
+        <ULink as="button" @click="() => (gameStore.isInRoom = true) && (gameStore.roomStage = 0)"
+          >房间·等待页面</ULink
+        >
+        <ULink as="button" @click="() => (gameStore.isInRoom = true) && (gameStore.roomStage = 1)"
+          >房间·游戏中页面</ULink
+        >
+      </div>
+    </div>
     <div class="w-full h-10 flex justify-center items-center">
       <div class="w-[900px] flex flex-row justify-center">
         <span class="-ml-7 font-sans text-5xl quotation">“</span>
@@ -25,8 +35,8 @@
 
       <template #main>
         <UiGameMain>
-          <!-- <UiGameMainLobby /> -->
-          <UiGameMainRoom :stage="1" />
+          <UiGameMainLobby v-if="!gameStore.isInRoom" />
+          <UiGameMainRoom :v-if="gameStore.isInRoom" :stage="gameStore.roomStage" />
         </UiGameMain>
       </template>
 
@@ -53,6 +63,8 @@
 definePageMeta({
   layout: 'game'
 })
+
+const gameStore = useGameStore()
 
 const { data } = await useFetch('/api/hello')
 console.log(data.value)
