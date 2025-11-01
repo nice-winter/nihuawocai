@@ -1,6 +1,9 @@
 <template>
-  <button class="game-button" :class="[classNameSize, classNameColor]">
-    <span class="game-button__text">
+  <button
+    class="relative inline-flex items-center justify-center align-middle text-white disabled:text-[#ddd] cursor-pointer disabled:cursor-not-allowed select-none game-button"
+    :class="[classNameSize, classNameColor]"
+  >
+    <span class="z-2 game-button__text" :class="{ hidden: type.startsWith('arrow') }">
       <slot />
     </span>
 
@@ -217,23 +220,9 @@ const classNameSize = computed(() => {
 const classNameColor = computed(() => `game-button-color__${color}`)
 </script>
 
-<style lang="less" scoped>
+<style lang="css" scoped>
 .game-button {
-  position: relative;
-  cursor: pointer;
-  display: inline-flex;
-  vertical-align: middle;
-  justify-content: center;
-  user-select: none;
-  &:disabled {
-    cursor: not-allowed;
-  }
-
-  > span.game-button__text {
-    z-index: 2;
-    color: #fff;
-    text-shadow: 1px 1px 0px rgba(0, 0, 0, 0.5);
-  }
+  text-shadow: 1px 1px 0px rgba(0, 0, 0, 0.5);
 
   > svg.game-button__svg {
     position: absolute;
@@ -245,10 +234,6 @@ const classNameColor = computed(() => `game-button-color__${color}`)
   &.game-button-size__arrow {
     width: 16px;
     height: 26px;
-
-    > span.game-button__text {
-      display: none;
-    }
   }
 
   &.game-button-size__small {
@@ -257,7 +242,6 @@ const classNameColor = computed(() => `game-button-color__${color}`)
 
     > span.game-button__text {
       font-size: 0.8rem;
-      line-height: 1.6rem;
     }
   }
   &.game-button-size__medium {
@@ -266,7 +250,6 @@ const classNameColor = computed(() => `game-button-color__${color}`)
 
     > span.game-button__text {
       font-size: 0.8rem;
-      line-height: 1.6rem;
     }
   }
   &.game-button-size__large {
@@ -275,7 +258,6 @@ const classNameColor = computed(() => `game-button-color__${color}`)
 
     > span.game-button__text {
       font-size: 1.5rem;
-      line-height: 3.1rem;
       font-weight: bolder;
     }
   }
@@ -285,17 +267,10 @@ const classNameColor = computed(() => `game-button-color__${color}`)
 
     > span.game-button__text {
       font-size: 0.8rem;
-      line-height: 1.6rem;
     }
   }
 
-  &:disabled {
-    > span.game-button__text {
-      color: #ddd;
-    }
-  }
-
-  // 'normal'
+  /* 'normal' */
   &.game-button-color__normal {
     > svg.game-button__svg path {
       fill: #7a6955;
@@ -317,7 +292,7 @@ const classNameColor = computed(() => `game-button-color__${color}`)
     }
   }
 
-  //  'red'
+  /* 'red' */
   &.game-button-color__red {
     > svg.game-button__svg path {
       fill: #e20032;
@@ -339,7 +314,7 @@ const classNameColor = computed(() => `game-button-color__${color}`)
     }
   }
 
-  //  'green'
+  /* 'green' */
   &.game-button-color__green {
     > svg.game-button__svg path {
       fill: #5e6e25;
@@ -361,7 +336,7 @@ const classNameColor = computed(() => `game-button-color__${color}`)
     }
   }
 
-  //  'blue'
+  /* 'blue' */
   &.game-button-color__blue {
     > svg.game-button__svg path {
       fill: #3e96ec;
@@ -383,12 +358,10 @@ const classNameColor = computed(() => `game-button-color__${color}`)
     }
   }
 
-  //  'playing'
+  /* 'playing' */
   &.game-button-color__playing {
-    > span.game-button__text {
-      color: #766746;
-      text-shadow: none;
-    }
+    color: #766746;
+    text-shadow: none;
 
     > svg.game-button__svg path {
       fill: #c9bc9c;
