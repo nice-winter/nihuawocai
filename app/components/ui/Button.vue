@@ -300,7 +300,7 @@ const classNameColor = computed(() => `game-button-color__${color}`)
   }
   &.game-button-color__red:hover {
     > svg.game-button__svg path {
-      fill: #ff0038;
+      fill: #ff0030;
     }
   }
   &.game-button-color__red:active {
@@ -317,17 +317,17 @@ const classNameColor = computed(() => `game-button-color__${color}`)
   /* 'green' */
   &.game-button-color__green {
     > svg.game-button__svg path {
-      fill: #5e6e25;
+      fill: #5f6f27;
     }
   }
   &.game-button-color__green:hover {
     > svg.game-button__svg path {
-      fill: #7e9233;
+      fill: #6b7d2b;
     }
   }
   &.game-button-color__green:active {
     > svg.game-button__svg path {
-      fill: #5c6b24;
+      fill: #4f5d1c;
     }
   }
   &.game-button-color__green:disabled {
