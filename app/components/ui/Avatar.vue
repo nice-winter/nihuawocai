@@ -101,7 +101,7 @@ onMounted(() => {
 
 <style scoped>
 .custom-bg {
-  background-image: url(~/assets/icons/texture.jpg);
+  background-image: url(~/assets/icons/texture.webp);
   background-repeat: repeat;
   background-size: 46px;
 }

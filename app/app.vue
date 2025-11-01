@@ -60,7 +60,7 @@ console.log(data.value)
 
 <style scoped>
 .custom-bg {
-  background-image: url(~/assets/bg.jpg);
+  background-image: url(~/assets/bg.webp);
   background-repeat: no-repeat;
 }
 
