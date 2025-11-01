@@ -2,22 +2,28 @@
   <div>
     <UHeader>
       <template #title>
-        <Logo class="h-6 w-auto" />
+        <div class="h-6 w-auto" />
       </template>
 
       <UNavigationMenu :items="items" />
 
       <template #right>
-        <UTooltip text="Open on GitHub" :kbds="['meta', 'G']">
-          <UButton
-            color="neutral"
-            variant="ghost"
-            to="https://github.com/nuxt/ui"
-            target="_blank"
-            icon="i-simple-icons-github"
-            aria-label="GitHub"
+        <UButton
+          color="neutral"
+          variant="ghost"
+          to="/api/auth/github"
+          target="_blank"
+          aria-label="GitHub"
+        >
+          <UUser
+            :name="!user ? `未登录` : user?.login"
+            :avatar="{
+              class: 'bg-[#ddd]',
+              src: `https://github.com/${user?.login}.png`,
+              icon: 'i-lucide-image'
+            }"
           />
-        </UTooltip>
+        </UButton>
       </template>
     </UHeader>
 
@@ -68,6 +74,9 @@
 import type { NavigationMenuItem } from '@nuxt/ui'
 
 const route = useRoute()
+const { loggedIn, user, clear } = useUserSession()
+console.log(user.value)
+
 const items = computed<NavigationMenuItem[]>(() => [])
 
 const footerItems: NavigationMenuItem[] = [

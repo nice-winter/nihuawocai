@@ -5,7 +5,7 @@ watch(
   loggedIn,
   () => {
     if (!loggedIn.value) {
-      navigateTo('/user/login')
+      // navigateTo('/user/login')
     }
   },
   {
