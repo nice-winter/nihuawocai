@@ -42,7 +42,7 @@
         <UiGameMain>
           <div
             v-if="!userSession.loggedIn.value && !userSession.user.value"
-            class="size-full flex flex-col items-center justify-center bg-[#5f32013b]"
+            class="size-full flex flex-col items-center justify-center bg-[#69380417]"
           >
             <UPageCard class="w-sm max-w-md">
               <UAuthForm
