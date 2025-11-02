@@ -46,7 +46,14 @@ export default defineNuxtConfig({
   },
   nitro: {
     experimental: {
-      websocket: true
+      websocket: true,
+      database: true
+    },
+    database: {
+      default: {
+        connector: 'sqlite',
+        options: { name: 'db' }
+      }
     }
   }
 })
