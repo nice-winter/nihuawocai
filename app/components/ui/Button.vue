@@ -139,7 +139,7 @@ const classNameColor = computed(() => `game-button-color__${color}`)
   }
   &.game-button-color__red:hover {
     > .game-button__icon {
-      color: #ff0030;
+      color: #f40032;
     }
   }
   &.game-button-color__red:active {
