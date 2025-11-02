@@ -13,7 +13,7 @@ export default defineOAuthGitHubEventHandler({
       }
     })
 
-    return sendRedirect(event, '/user/profile')
+    return sendRedirect(event, '/')
   },
   async onError(event, error) {}
 })

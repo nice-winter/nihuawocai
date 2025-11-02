@@ -13,7 +13,7 @@ export default defineOAuthXEventHandler({
       }
     })
 
-    return sendRedirect(event, '/user/profile')
+    return sendRedirect(event, '/')
   },
   async onError(event, error) {}
 })
