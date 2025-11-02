@@ -12,11 +12,15 @@
         collisionBoundary: panelDom
       }"
     >
-      <UAvatar v-if="player" class="game-avatar size-full cursor-pointer" :src="player.avatar" />
+      <UAvatar
+        v-if="player"
+        class="game-avatar size-full cursor-pointer"
+        :src="player.avatar_url"
+      />
       <template #content>
         <div class="w-35 h-75 inline-flex flex-col select-none bg-[#EFC189] custom-bg">
           <div class="p-1.5">
-            <UAvatar class="game-avatar size-32" :src="player?.avatar" />
+            <UAvatar class="game-avatar size-32" :src="player?.avatar_url" />
           </div>
 
           <span class="px-1.5 text-[13px] truncate">
@@ -48,7 +52,7 @@
       </template>
     </UPopover>
 
-    <slot v-if="!player || !player.avatar" name="placeholder" />
+    <slot v-if="!player || !player.avatar_url" name="placeholder" />
 
     <template v-if="mode === 'seat' && !player">
       <UIcon v-if="!open" :name="`fe:disabled`" class="text-[#E20032] size-14" />
@@ -58,7 +62,7 @@
 </template>
 
 <script setup lang="ts">
-import type { Player } from '~/interfaces/player'
+import type { Player } from '#shared/interfaces/player'
 
 interface AvatarProps {
   id?: number | string

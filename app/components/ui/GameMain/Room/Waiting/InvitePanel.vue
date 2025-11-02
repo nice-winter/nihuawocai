@@ -43,7 +43,7 @@
 
 <script setup lang="ts">
 import { players } from '@/stores/test'
-import type { Player } from '~/interfaces/player'
+import type { Player } from '#shared/interfaces/player'
 
 const tabItems = [
   {

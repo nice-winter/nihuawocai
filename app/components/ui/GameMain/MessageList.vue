@@ -91,7 +91,7 @@
 </template>
 
 <script setup lang="ts">
-import type { Player } from '~/interfaces/player'
+import type { Player } from '#shared/interfaces/player'
 
 interface MessageListProps {
   autoScroll?: boolean
