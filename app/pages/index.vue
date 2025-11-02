@@ -2,33 +2,22 @@
   <div>
     <UHeader>
       <template #title>
-        <div class="h-6 w-auto" />
+        <img src="~/assets/logo.png" class="h-6 w-auto" />
+        <!-- <span class="text-sm text-gray-400">复刻版</span> -->
       </template>
 
       <UNavigationMenu :items="items" />
 
       <template #right>
-        <UButton
-          color="neutral"
-          variant="ghost"
-          to="https://github.com/nice-winter/nihuawocai"
-          target="_blank"
-          aria-label="GitHub"
-          icon="i-simple-icons-github"
-        />
-
-        <UButton variant="outline" color="neutral" to="/user/login"> 登录 </UButton>
-
-        <UButton color="neutral" to="/user/signup" trailing-icon="i-lucide-arrow-right">
-          注册
+        <UserMenu v-if="user" class="w-50" />
+        <UButton v-else color="neutral" to="/user/login" trailing-icon="i-lucide-arrow-right">
+          登录
         </UButton>
       </template>
     </UHeader>
 
     <UContainer>
-      <UPage>
-        <NuxtPage />
-      </UPage>
+      <NuxtPage />
     </UContainer>
 
     <UFooter>
@@ -59,7 +48,7 @@
           icon="i-simple-icons-github"
           color="neutral"
           variant="ghost"
-          to="https://github.com/nuxt/nuxt"
+          to="https://github.com/nice-winter/nihuawocai"
           target="_blank"
           aria-label="GitHub"
         />
