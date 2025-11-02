@@ -44,7 +44,7 @@
 </template>
 
 <script setup lang="ts">
-import type { RoomInfo } from '~/interfaces/room'
+import type { RoomInfo } from '#shared/interfaces/room'
 
 const { roomInfo } = defineProps<{ roomInfo: RoomInfo }>()
 

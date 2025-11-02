@@ -1,6 +1,6 @@
 interface Player {
   uuid: string
-  avatar: string
+  avatar_url: string
   nickname: string
   gender: number
   exinfo: {
