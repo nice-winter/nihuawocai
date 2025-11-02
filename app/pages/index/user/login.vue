@@ -2,36 +2,56 @@
 import * as z from 'zod'
 import type { FormSubmitEvent, AuthFormField } from '@nuxt/ui'
 
+const { loggedIn, user, session, fetch, clear, openInPopup } = useUserSession()
+
 const toast = useToast()
 
 const fields: AuthFormField[] = [
-  {
-    name: 'email',
-    type: 'email',
-    label: '邮箱',
-    placeholder: '',
-    required: true
-  },
-  {
-    name: 'password',
-    label: '密码',
-    type: 'password',
-    placeholder: '',
-    required: true
-  },
-  {
-    name: 'remember',
-    label: '记住我',
-    type: 'checkbox'
-  }
+  // {
+  //   name: 'email',
+  //   type: 'email',
+  //   label: '邮箱',
+  //   placeholder: '',
+  //   required: true
+  // },
+  // {
+  //   name: 'password',
+  //   label: '密码',
+  //   type: 'password',
+  //   placeholder: '',
+  //   required: true
+  // },
+  // {
+  //   name: 'remember',
+  //   label: '记住我',
+  //   type: 'checkbox'
+  // }
 ]
 
 const providers = [
   {
-    label: '使用 GitHub 账号继续',
+    label: '使用 X 账号登录',
+    icon: 'i-simple-icons-x',
+    onClick: async () => {
+      await navigateTo('/auth/x', {
+        external: true
+      })
+    }
+  },
+  {
+    label: '使用 GitHub 账号登录',
     icon: 'i-simple-icons-github',
     onClick: async () => {
-      await navigateTo('/api/auth/github', {
+      await navigateTo('/auth/github', {
+        external: true
+      })
+    }
+  },
+  {
+    label: '使用 Steam 账号登录',
+    icon: 'i-simple-icons-steam',
+    onClick: async () => {
+      await navigateTo('/auth/steam', {
         external: true
       })
     }
@@ -67,9 +87,7 @@ function onSubmit(payload: FormSubmitEvent<Schema>) {
         }"
         @submit="onSubmit"
       >
-        <template #description>
-          还没有账号？去<ULink to="#" class="text-primary font-medium">注册</ULink>！
-        </template>
+        <template #description> 请选择一种方式登录 </template>
         <template #password-hint>
           <ULink to="#" class="text-primary font-medium" tabindex="-1">忘记密码？</ULink>
         </template>
