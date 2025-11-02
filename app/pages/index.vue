@@ -11,18 +11,16 @@
         <UButton
           color="neutral"
           variant="ghost"
-          to="/api/auth/github"
+          to="https://github.com/nice-winter/nihuawocai"
           target="_blank"
           aria-label="GitHub"
-        >
-          <UUser
-            :name="!user ? `未登录` : user?.login"
-            :avatar="{
-              class: 'bg-[#ddd]',
-              src: `https://github.com/${user?.login}.png`,
-              icon: 'i-lucide-image'
-            }"
-          />
+          icon="i-simple-icons-github"
+        />
+
+        <UButton variant="outline" color="neutral" to="/user/login"> 登录 </UButton>
+
+        <UButton color="neutral" to="/user/signup" trailing-icon="i-lucide-arrow-right">
+          注册
         </UButton>
       </template>
     </UHeader>
