@@ -1,7 +1,19 @@
+import type { UserData } from '#shared/interfaces/userData'
+
 declare module '#auth-utils' {
   interface User {
-    id: number
-    login: string
+    user_type: UserData['user_type']
+    id: string
+    nickname: string
+    avatar_url: string
+  }
+
+  interface UserSession {
+    [key: string]: unknown
+  }
+
+  interface SecureSessionData {
+    [key: string]: unknown
   }
 }
 
