@@ -54,6 +54,10 @@ export default defineNuxtConfig({
         driver: 'fs',
         base: './.data/session'
       },
+      app: {
+        driver: 'fs',
+        base: './.data/app'
+      },
       user_data: {
         driver: 'fs',
         base: './.data/user_data'
