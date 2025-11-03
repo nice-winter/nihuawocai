@@ -11,7 +11,8 @@ export default defineOAuthSteamEventHandler({
         id: steamUser.steamid,
         nickname: steamUser.personaname,
         avatar_url: steamUser.avatarfull
-      }
+      },
+      loggedInAt: Date.now()
     })
 
     if (await hasUserData(steamUser.steamid)) {

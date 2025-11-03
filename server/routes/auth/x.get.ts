@@ -13,7 +13,8 @@ export default defineOAuthXEventHandler({
         id: xUser.id,
         nickname: xUser.name,
         avatar_url
-      }
+      },
+      loggedInAt: Date.now()
     })
 
     if (await hasUserData(xUser.id)) {
