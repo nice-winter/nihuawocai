@@ -83,6 +83,9 @@ importers:
       '@iconify-json/fe':
         specifier: ^1.2.4
         version: 1.2.4
+      '@iconify-json/fluent-color':
+        specifier: ^1.2.20
+        version: 1.2.20
       '@iconify-json/lucide':
         specifier: ^1.2.72
         version: 1.2.72
@@ -98,6 +101,9 @@ importers:
       '@iconify-json/simple-icons':
         specifier: ^1.2.57
         version: 1.2.57
+      '@iconify-json/streamline-plump-color':
+        specifier: ^1.2.2
+        version: 1.2.2
       '@iconify-json/tabler':
         specifier: ^1.2.23
         version: 1.2.23
@@ -612,6 +618,9 @@ packages:
   '@iconify-json/fe@1.2.4':
     resolution: {integrity: sha512-TBfDSJOUKxd6QO+2WWcOC/trnsovRluk1jx05aGqMyoG+G9pkL661VO0ladWiWp+4ewOHDJ3s47W5bwx3EounQ==}
 
+  '@iconify-json/fluent-color@1.2.20':
+    resolution: {integrity: sha512-rg1WWURAjrJo4eSIz9I6Q+/9/nm6NvGKZal6R9zM71sGoPcQpUTSjeJykMuGDDQCkAjp96MjMX2E6HtLkxs7zg==}
+
   '@iconify-json/lucide@1.2.72':
     resolution: {integrity: sha512-kq/ZDUtCdBfjGxIMaUI+Ctt3dC/0sHmrUyTU1i04+8ehlo3/PUGKqrJd4C9J/kQl1jfcHpaUPqGUFvgZ9orhQg==}
 
@@ -626,6 +635,9 @@ packages:
 
   '@iconify-json/simple-icons@1.2.57':
     resolution: {integrity: sha512-/yWbO502M6WfvmcV5OjEgA4uoPN/76nrn7Hri/8g9L4GiNQ6VMgXWE9vFp4tDsmGMAe4ZCov3NbH6vJCgXZ1hA==}
+
+  '@iconify-json/streamline-plump-color@1.2.2':
+    resolution: {integrity: sha512-nMLbsfwKt/IJCUDpndY7sW5aZsFUOhQGS2Jdeap+CAfbQMDIzsyEHqe8m3u65wM23q1jBlWoblE7oUXukcvTvw==}
 
   '@iconify-json/tabler@1.2.23':
     resolution: {integrity: sha512-Knb8ykgMwB5uSoqrDv1xIdJYM03OP06OXjN6QvGXaTNtdHkW9ciKA+aftz6lwM2jwJA+bsUWeDzLBlPt2uJm4w==}
@@ -5838,6 +5850,10 @@ snapshots:
     dependencies:
       '@iconify/types': 2.0.0
 
+  '@iconify-json/fluent-color@1.2.20':
+    dependencies:
+      '@iconify/types': 2.0.0
+
   '@iconify-json/lucide@1.2.72':
     dependencies:
       '@iconify/types': 2.0.0
@@ -5855,6 +5871,10 @@ snapshots:
       '@iconify/types': 2.0.0
 
   '@iconify-json/simple-icons@1.2.57':
+    dependencies:
+      '@iconify/types': 2.0.0
+
+  '@iconify-json/streamline-plump-color@1.2.2':
     dependencies:
       '@iconify/types': 2.0.0
 
