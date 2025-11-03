@@ -49,10 +49,14 @@ export default defineNuxtConfig({
       websocket: true,
       database: true
     },
-    database: {
-      default: {
-        connector: 'sqlite',
-        options: { name: 'db' }
+    storage: {
+      session: {
+        driver: 'fs',
+        base: './.data/session'
+      },
+      user_data: {
+        driver: 'fs',
+        base: './.data/user_data'
       }
     }
   }

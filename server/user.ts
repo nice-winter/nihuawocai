@@ -1,13 +1,15 @@
 import { shortHash } from '#shared/utils/util'
 import type { UserData } from '#shared/interfaces/userData'
+import { defu } from 'defu'
+import { useSQLite3Storage } from './storage'
 
-const userDataStorage = useStorage('userData')
+const userDataStorage = useSQLite3Storage('user_data') // useStorage('user_data')
 
 const createUserData = async (
   id: string,
   userType: UserData['user_type'],
   avatarUrl: string,
-  nickname: string
+  nickname?: string
 ) => {
   if (!nickname || nickname.trim() === '') {
     nickname = `玩家${shortHash()}`
@@ -29,9 +31,11 @@ const createUserData = async (
 
   if (await userDataStorage.hasItem(id)) {
     return false
+  } else {
+    await userDataStorage.setItem(id, userData)
   }
 
-  return await userDataStorage.setItem(id, userData)
+  return true
 }
 
 const hasUserData = (id: string) => {
@@ -42,8 +46,16 @@ const getUserData = (id: string) => {
   return userDataStorage.getItem(id)
 }
 
-const updateUserData = (id: string, userData: UserData) => {
+const setUserData = (id: string, userData: UserData) => {
   return userDataStorage.setItem(id, userData)
 }
 
-export { createUserData, hasUserData, getUserData, updateUserData }
+const updateUserData = async (id: string, userData: Partial<UserData>) => {
+  const _ = await getUserData(id)
+  if (_) {
+    userDataStorage.setItem(id, defu(userData, _))
+  }
+  return Boolean(_)
+}
+
+export { createUserData, hasUserData, getUserData, updateUserData, setUserData }
