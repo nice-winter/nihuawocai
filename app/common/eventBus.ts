@@ -1,6 +1,7 @@
 import mitt from 'mitt'
 
 type Events = {
+  'user:logout': unknown
   'sketchpad:undo': unknown
   'sketchpad:redo': unknown
   'sketchpad:clear': unknown
