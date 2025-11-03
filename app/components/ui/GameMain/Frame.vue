@@ -6,7 +6,7 @@
       </div>
     </div>
 
-    <div>
+    <div class="min-h-[640px]">
       <slot name="main" />
     </div>
 
