@@ -52,8 +52,10 @@
 
           <div class="px-3.5 py-2 flex flex-col gap-1 bg-[#c5630e69]">
             <div class="inline-flex items-end gap-2">
-              <span class="text-base font-bold italic leading-4 min-w-10.5">LV.60</span>
-              <span class="text-xs leading-[15px] grow">空前绝后</span>
+              <span class="text-base font-bold italic leading-4 min-w-10.5"
+                >LV.{{ levelInfo?.level }}</span
+              >
+              <span class="text-xs leading-[15px] grow">{{ levelInfo?.title }}</span>
             </div>
 
             <div class="flex flex-col gap-1">
@@ -109,6 +111,8 @@ const {
   verifiedIcon = undefined
 } = defineProps<AvatarProps>()
 
+const { levelHelper } = useAppConfigStore()
+
 const open = defineModel<boolean>('open', { default: true })
 
 const emit = defineEmits<{
@@ -123,6 +127,8 @@ const onClick = () => {
     }
   }
 }
+
+const levelInfo = computed(() => levelHelper.getUserLevelInfo(player?.exinfo.score || 0))
 
 const panelDom = ref<Element | null>(null)
 onMounted(() => {
