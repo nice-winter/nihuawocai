@@ -20,7 +20,7 @@
     <div class="grow basis-0 flex flex-row px-[.785rem] pb-1.5 select-none">
       <div
         v-for="(player, index) in _players"
-        :key="player.uuid"
+        :key="player.id"
         class="flex flex-col items-center justify-center gap-1 w-[91.7px]"
       >
         <span
@@ -32,7 +32,7 @@
           class="size-18 rounded-lg overflow-hidden"
           :class="{
             bingo: bingoPlayers[index],
-            drawing: player.uuid === drawingPlayer?.uuid
+            drawing: player.id === drawingPlayer?.id
           }"
         />
         <span class="text-[13px] text-[#774A1A]">
