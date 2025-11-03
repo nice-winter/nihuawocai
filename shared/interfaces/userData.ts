@@ -7,9 +7,17 @@ export interface UserData {
   avatar_url: string
   nickname: string
   gender: number
-  exinfo: {
-    score: number
-    flowers: number
-    count: number
-  }
+  exinfo: UserDataExinfo
+  verification: UserDataVerification
+}
+
+export interface UserDataExinfo {
+  score: number
+  flowers: number
+  count: number
+}
+
+export interface UserDataVerification {
+  verified: boolean
+  verified_description: string
 }
