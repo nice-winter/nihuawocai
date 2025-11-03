@@ -2,7 +2,7 @@
   <div class="p-[0.785rem] w-1/2">
     <div class="flex flex-col gap-[0.7rem] select-none">
       <div class="relative h-16">
-        <UiAvatar class="size-16" :player="ownerPlayer" />
+        <UiAvatar class="size-16" :player="ownerPlayer" :verified-icon="{ show: true }" />
 
         <UTooltip text="非公开房间" :delay-duration="500" :content="{ side: 'right' }" arrow>
           <UIcon
@@ -27,6 +27,7 @@
           <UiAvatar
             v-if="playersWithoutOwner[index]"
             class="size-[46px]"
+            :verified-icon="{ show: true }"
             :player="playersWithoutOwner[index]"
           />
           <span v-else class="inline-block size-[46px] bg-[#ddc9a9]" />
