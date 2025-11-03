@@ -29,11 +29,14 @@ export const useAppConfigStore = defineStore('appConfig', () => {
 
   const getAppConfig = () => appConfig.value
 
+  const levelHelper = new LevelHelper(appConfig.value.game.levels)
+
   return {
     appConfig,
     getAppConfig,
     pull,
     reset,
-    update
+    update,
+    levelHelper
   }
 })
