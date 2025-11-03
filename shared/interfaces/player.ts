@@ -1,5 +1,5 @@
 interface Player {
-  uuid: string
+  id: string
   avatar_url: string
   nickname: string
   gender: number

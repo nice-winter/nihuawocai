@@ -5,7 +5,7 @@
         <div class="grow flex flex-col gap-2 p-[.785rem] max-w-[227.89px]">
           <div
             v-for="player in playerList"
-            :key="player.uuid"
+            :key="player.id"
             class="flex flex-row items-center gap-0.5 w-full"
           >
             <UiAvatar :player="player" position="right-start" class="size-6.5" />

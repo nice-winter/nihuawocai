@@ -23,7 +23,7 @@
         class="flex min-h-[46px]"
         :class="[openSeatCount >= 7 ? `justify-between` : `gap-[6.666px]`]"
       >
-        <template v-for="(i, index) in openSeatCount - 1" :key="playersWithoutOwner[index]?.uuid">
+        <template v-for="(i, index) in openSeatCount - 1" :key="playersWithoutOwner[index]?.id">
           <UiAvatar
             v-if="playersWithoutOwner[index]"
             class="size-[46px]"
@@ -66,9 +66,9 @@ type RoomListItemProps = RoomInfo
 const { roomInfo } = defineProps<{ roomInfo: RoomListItemProps }>()
 
 const playersWithoutOwner = computed(() =>
-  roomInfo.players.filter((p) => p !== null && p.uuid !== roomInfo.owner)
+  roomInfo.players.filter((p) => p !== null && p.id !== roomInfo.owner)
 )
-const ownerPlayer = computed(() => roomInfo.players.find((p) => p?.uuid === roomInfo.owner)!)
+const ownerPlayer = computed(() => roomInfo.players.find((p) => p?.id === roomInfo.owner)!)
 const totalPlayerCount = computed(() => roomInfo.players.filter((p) => p).length)
 const openSeatCount = computed(() => roomInfo.seats.filter((s) => s).length)
 
