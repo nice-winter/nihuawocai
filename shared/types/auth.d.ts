@@ -9,7 +9,7 @@ declare module '#auth-utils' {
   }
 
   interface UserSession {
-    [key: string]: unknown
+    loggedInAt: number
   }
 
   interface SecureSessionData {

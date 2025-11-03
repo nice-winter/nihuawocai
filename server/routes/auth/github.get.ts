@@ -13,7 +13,8 @@ export default defineOAuthGitHubEventHandler({
         id,
         nickname: githubUser.name,
         avatar_url: githubUser.avatar_url
-      }
+      },
+      loggedInAt: Date.now()
     })
 
     if (await hasUserData(id)) {
