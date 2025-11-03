@@ -41,7 +41,7 @@
       <template #main>
         <UiGameMain v-if="userSession.loggedIn.value && userSession.user.value">
           <UiGameMainLobby v-if="!gameStore.isInRoom" />
-          <UiGameMainRoom :v-if="gameStore.isInRoom" :stage="gameStore.roomStage" />
+          <UiGameMainRoom v-if="gameStore.isInRoom" :stage="gameStore.roomStage" />
         </UiGameMain>
       </template>
 
