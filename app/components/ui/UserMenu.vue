@@ -8,6 +8,7 @@
 </template>
 
 <script setup lang="ts">
+import { eventBus } from '~/common/eventBus'
 import LazyUserProfileModel from './UserProfileModel.vue'
 
 const { loggedIn, user, clear } = useUserSession()
@@ -25,6 +26,7 @@ const openUserProfileModel = async () => {
 
 const logout = async () => {
   await clear()
+  eventBus.emit('user:logout')
 }
 </script>
 
