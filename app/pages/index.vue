@@ -28,6 +28,7 @@
     <UiGameMainFrame class="">
       <template #header>
         <div
+          v-if="userSession.loggedIn.value && userSession.user.value"
           class="flex justify-between px-[.785rem] text-[13px] text-(--game-font-color) select-none"
         >
           <div class="flex gap-5 pt-5">
@@ -38,35 +39,9 @@
       </template>
 
       <template #main>
-        <UiGameMain>
-          <div
-            v-if="!userSession.loggedIn.value && !userSession.user.value"
-            class="size-full flex flex-col items-center justify-center bg-[#69380417]"
-          >
-            <UPageCard class="w-sm max-w-md">
-              <UAuthForm
-                title="登录以继续"
-                icon="material-symbols:lock-person-outline-rounded"
-                separator="或"
-                :providers="providers"
-              >
-                <template #description> 请选择一种方式登录 </template>
-                <template #password-hint>
-                  <ULink to="#" class="text-primary font-medium" tabindex="-1">忘记密码？</ULink>
-                </template>
-                <template #footer>
-                  登录即表示同意我们的<ULink to="#" class="text-primary font-medium"
-                    >用户服务协议</ULink
-                  >。
-                </template>
-              </UAuthForm>
-            </UPageCard>
-          </div>
-
-          <template v-if="userSession.loggedIn.value && userSession.user.value">
-            <UiGameMainLobby v-if="!gameStore.isInRoom" />
-            <UiGameMainRoom :v-if="gameStore.isInRoom" :stage="gameStore.roomStage" />
-          </template>
+        <UiGameMain v-if="userSession.loggedIn.value && userSession.user.value">
+          <UiGameMainLobby v-if="!gameStore.isInRoom" />
+          <UiGameMainRoom :v-if="gameStore.isInRoom" :stage="gameStore.roomStage" />
         </UiGameMain>
       </template>
 
@@ -86,6 +61,28 @@
         </div>
       </template>
     </UiGameMainFrame>
+
+    <UModal :open="!userSession.loggedIn.value" :dismissible="false" class="w-sm">
+      <template #content>
+        <div class="w-full p-4">
+          <UAuthForm
+            title="登录以继续游玩"
+            icon="streamline-plump-color:gameboy-flat"
+            separator="或"
+            :providers="providers"
+          >
+            <template #description> 请选择一种方式登录 </template>
+            <template #password-hint>
+              <ULink to="#" class="text-primary font-medium" tabindex="-1">忘记密码？</ULink>
+            </template>
+            <template #footer>
+              登录即表示同意我们的<ULink to="#" class="text-primary font-medium">用户服务协议</ULink
+              >。
+            </template>
+          </UAuthForm>
+        </div>
+      </template>
+    </UModal>
   </div>
 </template>
 
@@ -101,10 +98,10 @@ const appConfigStore = useAppConfigStore()
 
 const providers = [
   {
-    label: '使用 X 账号登录',
-    icon: 'i-simple-icons-x',
+    label: '使用 Steam 账号登录',
+    icon: 'i-simple-icons-steam',
     onClick: async () => {
-      await navigateTo('/auth/x', {
+      await navigateTo('/auth/steam', {
         external: true
       })
     }
@@ -119,10 +116,10 @@ const providers = [
     }
   },
   {
-    label: '使用 Steam 账号登录',
-    icon: 'i-simple-icons-steam',
+    label: '使用 X 账号登录',
+    icon: 'i-simple-icons-x',
     onClick: async () => {
-      await navigateTo('/auth/steam', {
+      await navigateTo('/auth/x', {
         external: true
       })
     }
