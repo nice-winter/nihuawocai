@@ -26,7 +26,7 @@
           right: `${verifiedIcon.right}px`,
           bottom: `${verifiedIcon.bottom}px`
         }"
-        src="~/assets/icons/verified-v.png"
+        src="~/assets/icons/verified.png"
       />
 
       <template #content>
@@ -45,7 +45,7 @@
             style="margin: 2px 0 6px 0"
           >
             <template v-if="player?.verification.verified">
-              <img class="size-3.5 inline-block align-middle" src="~/assets/icons/verified-v.png" />
+              <img class="size-3.5 inline-block align-middle" src="~/assets/icons/verified.png" />
               <span class="text-[#804B19]">{{ player.verification.verified_description }}</span>
             </template>
           </span>
