@@ -8,7 +8,12 @@
             :key="player.id"
             class="flex flex-row items-center gap-0.5 w-full"
           >
-            <UiAvatar :player="player" position="right-start" class="size-6.5" />
+            <UiAvatar
+              :player="player"
+              position="right-start"
+              :verified-icon="{ show: true, size: 12, right: -3, bottom: -3 }"
+              class="size-6.5"
+            />
 
             <UiGenderIcon :gender="player.gender" />
 

@@ -69,6 +69,7 @@
         class="size-[114px]"
         :player="roomInfo?.players![i - 1] || undefined"
         mode="seat"
+        :verified-icon="{ show: true, size: 16 }"
         :disabled="false"
         @switch="onSeatSwitch"
       />

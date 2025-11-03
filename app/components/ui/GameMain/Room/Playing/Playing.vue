@@ -2,7 +2,11 @@
   <div class="flex flex-col h-full">
     <div class="flex flex-row h-16 items-center justify-between px-1">
       <div class="flex flex-col items-center justify-center w-20">
-        <UiAvatar :player="drawingPlayer" class="size-10 rounded-md overflow-hidden" />
+        <UiAvatar
+          :player="drawingPlayer"
+          class="size-10 rounded-md overflow-hidden"
+          :verified-icon="{ show: true, size: 12 }"
+        />
       </div>
 
       <div class="flex flex-col items-center justify-center gap-2 text-[13px] p-2 select-none">
@@ -34,6 +38,7 @@
             bingo: bingoPlayers[index],
             drawing: player.id === drawingPlayer?.id
           }"
+          :verified-icon="{ show: true, size: 12 }"
         />
         <span class="text-[13px] text-[#774A1A]">
           {{ playerScore[index] }}

@@ -18,8 +18,14 @@
         :src="player.avatar_url"
       />
       <img
-        v-if="player?.verification.verified"
+        v-if="player?.verification.verified && verifiedIcon?.show"
         class="absolute right-0 bottom-0 size-3"
+        :style="{
+          width: `${verifiedIcon.size}px`,
+          height: `${verifiedIcon.size}px`,
+          right: `${verifiedIcon.right}px`,
+          bottom: `${verifiedIcon.bottom}px`
+        }"
         src="~/assets/icons/verified-v.png"
       />
 
@@ -84,6 +90,12 @@ interface AvatarProps {
   disabled?: boolean
   player?: Player
   position?: `${Side}-${Align}`
+  verifiedIcon?: {
+    show?: boolean
+    size?: number
+    right?: number
+    bottom?: number
+  }
 }
 type Side = 'top' | 'right' | 'bottom' | 'left'
 type Align = 'end' | 'start' | 'center'
@@ -93,7 +105,8 @@ const {
   mode = 'display',
   disabled = true,
   player = undefined,
-  position = 'right-end'
+  position = 'right-end',
+  verifiedIcon = undefined
 } = defineProps<AvatarProps>()
 
 const open = defineModel<boolean>('open', { default: true })
