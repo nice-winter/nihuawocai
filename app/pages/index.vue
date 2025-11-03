@@ -11,7 +11,7 @@
         >
       </div>
 
-      <UiGameMainUserMenu
+      <UiUserMenu
         v-if="userSession.loggedIn.value && userSession.user.value"
         class="absolute right-24 top-24"
       />
