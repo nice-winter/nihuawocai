@@ -10,10 +10,7 @@
 const { loggedIn, user, clear } = useUserSession()
 
 const logout = async () => {
-  const data = await $fetch('/user/logout')
-  if (data.success) {
-    await clear()
-  }
+  await clear()
 }
 </script>
 
