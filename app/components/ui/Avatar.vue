@@ -1,6 +1,6 @@
 <template>
   <span
-    class="inline-flex items-center justify-center size-4 bg-[#ddc9a9]"
+    class="relative inline-flex items-center justify-center size-4 bg-[#ddc9a9]"
     :class="{ 'cursor-pointer': !disabled }"
     @click="onClick"
   >
@@ -17,9 +17,15 @@
         class="game-avatar size-full cursor-pointer"
         :src="player.avatar_url"
       />
+      <img
+        v-if="player?.verification.verified"
+        class="absolute right-0 bottom-0 size-3"
+        src="~/assets/icons/verified-v.png"
+      />
+
       <template #content>
         <div class="w-35 h-75 inline-flex flex-col select-none bg-[#EFC189] custom-bg">
-          <div class="p-1.5">
+          <div class="relative p-1.5">
             <UAvatar class="game-avatar size-32" :src="player?.avatar_url" />
           </div>
 
@@ -28,7 +34,15 @@
             {{ player?.nickname }}
           </span>
 
-          <span class="w-full h-4.5 px-1.5 text-xs truncate" style="margin: 2px 0 6px 0"> </span>
+          <span
+            class="w-full h-4.5 flex items-center gap-1.5 px-1.5 text-xs truncate"
+            style="margin: 2px 0 6px 0"
+          >
+            <template v-if="player?.verification.verified">
+              <img class="size-3.5 inline-block align-middle" src="~/assets/icons/verified-v.png" />
+              <span class="text-[#804B19]">{{ player.verification.verified_description }}</span>
+            </template>
+          </span>
 
           <div class="px-3.5 py-2 flex flex-col gap-1 bg-[#c5630e69]">
             <div class="inline-flex items-end gap-2">

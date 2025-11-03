@@ -10,14 +10,22 @@ const roomList: RoomInfo[] = [
         avatar_url: 'https://free.picui.cn/free/2025/10/23/68fa1e1631516.jpg',
         nickname: '娉娉袅袅十三余',
         gender: 1,
-        exinfo: { count: 2186, score: 164000, flowers: 87200 }
+        exinfo: { count: 2186, score: 164000, flowers: 87200 },
+        verification: {
+          verified: true,
+          verified_description: '官方认证画师'
+        }
       },
       {
         id: '550e8400-e29b-41d4-a716-446655440001',
         avatar_url: 'https://example.com/avatar2.jpg',
         nickname: '豆蔻梢头二月初',
         gender: 0,
-        exinfo: { count: 1240, score: 93000, flowers: 54300 }
+        exinfo: { count: 1240, score: 93000, flowers: 54300 },
+        verification: {
+          verified: false,
+          verified_description: ''
+        }
       },
       null,
       null,
@@ -28,7 +36,11 @@ const roomList: RoomInfo[] = [
         avatar_url: 'https://free.picui.cn/free/2025/10/26/68fd638d6ea7a.png',
         nickname: '佐々木淳平',
         gender: 0,
-        exinfo: { count: 3120, score: 234000, flowers: 156800 }
+        exinfo: { count: 3120, score: 234000, flowers: 156800 },
+        verification: {
+          verified: true,
+          verified_description: '日本知名插画师'
+        }
       }
     ],
     onlookers: [
@@ -37,7 +49,11 @@ const roomList: RoomInfo[] = [
         avatar_url: 'https://example.com/avatar4.jpg',
         nickname: '赵六',
         gender: 1,
-        exinfo: { count: 893, score: 67000, flowers: 32100 }
+        exinfo: { count: 893, score: 67000, flowers: 32100 },
+        verification: {
+          verified: false,
+          verified_description: ''
+        }
       }
     ],
     playing: true,
@@ -54,7 +70,11 @@ const roomList: RoomInfo[] = [
         avatar_url: 'https://example.com/avatar5.jpg',
         nickname: '小红',
         gender: 0,
-        exinfo: { count: 4160, score: 312000, flowers: 208000 }
+        exinfo: { count: 4160, score: 312000, flowers: 208000 },
+        verification: {
+          verified: true,
+          verified_description: '平台签约艺术家'
+        }
       },
       null,
       {
@@ -62,7 +82,11 @@ const roomList: RoomInfo[] = [
         avatar_url: 'https://example.com/avatar6.jpg',
         nickname: '小明',
         gender: 1,
-        exinfo: { count: 2373, score: 178000, flowers: 118700 }
+        exinfo: { count: 2373, score: 178000, flowers: 118700 },
+        verification: {
+          verified: false,
+          verified_description: ''
+        }
       },
       null,
       null,
@@ -74,21 +98,33 @@ const roomList: RoomInfo[] = [
         avatar_url: 'https://example.com/avatar7.jpg',
         nickname: '小刚',
         gender: 1,
-        exinfo: { count: 600, score: 45000, flowers: 30000 }
+        exinfo: { count: 600, score: 45000, flowers: 30000 },
+        verification: {
+          verified: false,
+          verified_description: ''
+        }
       },
       {
         id: '550e8400-e29b-41d4-a716-446655440007',
         avatar_url: 'https://example.com/avatar8.jpg',
         nickname: '小美',
         gender: 0,
-        exinfo: { count: 3560, score: 267000, flowers: 178000 }
+        exinfo: { count: 3560, score: 267000, flowers: 178000 },
+        verification: {
+          verified: true,
+          verified_description: '美术院校讲师'
+        }
       },
       {
         id: '550e8400-e29b-41d4-a716-446655440008',
         avatar_url: 'https://example.com/avatar9.jpg',
         nickname: '匿名用户',
         gender: 2,
-        exinfo: { count: 1640, score: 123000, flowers: 82000 }
+        exinfo: { count: 1640, score: 123000, flowers: 82000 },
+        verification: {
+          verified: false,
+          verified_description: ''
+        }
       }
     ],
     playing: false,
@@ -104,28 +140,44 @@ const roomList: RoomInfo[] = [
         avatar_url: 'https://example.com/avatar10.jpg',
         nickname: '游戏高手',
         gender: 0,
-        exinfo: { count: 7853, score: 589000, flowers: 392700 }
+        exinfo: { count: 7853, score: 589000, flowers: 392700 },
+        verification: {
+          verified: true,
+          verified_description: '职业电竞选手'
+        }
       },
       {
         id: '550e8400-e29b-41d4-a716-446655440010',
         avatar_url: 'https://example.com/avatar11.jpg',
         nickname: '幸运星',
         gender: 0,
-        exinfo: { count: 3680, score: 276000, flowers: 184000 }
+        exinfo: { count: 3680, score: 276000, flowers: 184000 },
+        verification: {
+          verified: false,
+          verified_description: ''
+        }
       },
       {
         id: '550e8400-e29b-41d4-a716-446655440011',
         avatar_url: 'https://example.com/avatar12.jpg',
         nickname: '技术宅',
         gender: 1,
-        exinfo: { count: 5760, score: 432000, flowers: 288000 }
+        exinfo: { count: 5760, score: 432000, flowers: 288000 },
+        verification: {
+          verified: true,
+          verified_description: '游戏开发工程师'
+        }
       },
       {
         id: '550e8400-e29b-41d4-a716-446655440012',
         avatar_url: 'https://example.com/avatar13.jpg',
         nickname: '开心果',
         gender: 0,
-        exinfo: { count: 2640, score: 198000, flowers: 132000 }
+        exinfo: { count: 2640, score: 198000, flowers: 132000 },
+        verification: {
+          verified: false,
+          verified_description: ''
+        }
       },
       null,
       null,
@@ -145,14 +197,22 @@ const roomList: RoomInfo[] = [
         avatar_url: 'https://example.com/avatar14.jpg',
         nickname: '老玩家',
         gender: 1,
-        exinfo: { count: 10200, score: 765000, flowers: 510000 }
+        exinfo: { count: 10200, score: 765000, flowers: 510000 },
+        verification: {
+          verified: true,
+          verified_description: '十年游戏经验'
+        }
       },
       {
         id: '550e8400-e29b-41d4-a716-446655440014',
         avatar_url: 'https://example.com/avatar15.jpg',
         nickname: '新手小白',
         gender: 1,
-        exinfo: { count: 307, score: 23000, flowers: 15300 }
+        exinfo: { count: 307, score: 23000, flowers: 15300 },
+        verification: {
+          verified: false,
+          verified_description: ''
+        }
       },
       null,
       {
@@ -160,21 +220,33 @@ const roomList: RoomInfo[] = [
         avatar_url: 'https://example.com/avatar16.jpg',
         nickname: '游戏达人',
         gender: 1,
-        exinfo: { count: 8720, score: 654000, flowers: 436000 }
+        exinfo: { count: 8720, score: 654000, flowers: 436000 },
+        verification: {
+          verified: true,
+          verified_description: '游戏攻略作者'
+        }
       },
       {
         id: '550e8400-e29b-41d4-a716-446655440016',
         avatar_url: 'https://example.com/avatar17.jpg',
         nickname: '快乐玩家',
         gender: 0,
-        exinfo: { count: 4280, score: 321000, flowers: 214000 }
+        exinfo: { count: 4280, score: 321000, flowers: 214000 },
+        verification: {
+          verified: false,
+          verified_description: ''
+        }
       },
       {
         id: '550e8400-e29b-41d4-a716-446655440017',
         avatar_url: 'https://example.com/avatar18.jpg',
         nickname: '竞技选手',
         gender: 1,
-        exinfo: { count: 11680, score: 876000, flowers: 584000 }
+        exinfo: { count: 11680, score: 876000, flowers: 584000 },
+        verification: {
+          verified: true,
+          verified_description: '职业竞技选手'
+        }
       },
       null
     ],
@@ -184,7 +256,11 @@ const roomList: RoomInfo[] = [
         avatar_url: 'https://example.com/avatar19.jpg',
         nickname: '旁观者1号',
         gender: 2,
-        exinfo: { count: 720, score: 54000, flowers: 36000 }
+        exinfo: { count: 720, score: 54000, flowers: 36000 },
+        verification: {
+          verified: false,
+          verified_description: ''
+        }
       }
     ],
     playing: true,
@@ -200,49 +276,77 @@ const roomList: RoomInfo[] = [
         avatar_url: 'https://example.com/avatar20.jpg',
         nickname: '独行侠',
         gender: 0,
-        exinfo: { count: 5760, score: 432000, flowers: 288000 }
+        exinfo: { count: 5760, score: 432000, flowers: 288000 },
+        verification: {
+          verified: false,
+          verified_description: ''
+        }
       },
       {
         id: '550e8400-e29b-41d4-a716-446655440020',
         avatar_url: 'https://example.com/avatar21.jpg',
         nickname: '团队之星',
         gender: 0,
-        exinfo: { count: 3973, score: 298000, flowers: 198700 }
+        exinfo: { count: 3973, score: 298000, flowers: 198700 },
+        verification: {
+          verified: true,
+          verified_description: '团队合作专家'
+        }
       },
       {
         id: '550e8400-e29b-41d4-a716-446655440021',
         avatar_url: 'https://example.com/avatar22.jpg',
         nickname: '策略大师',
         gender: 1,
-        exinfo: { count: 7560, score: 567000, flowers: 378000 }
+        exinfo: { count: 7560, score: 567000, flowers: 378000 },
+        verification: {
+          verified: true,
+          verified_description: '策略游戏大师'
+        }
       },
       {
         id: '550e8400-e29b-41d4-a716-446655440022',
         avatar_url: 'https://example.com/avatar23.jpg',
         nickname: '速度之王',
         gender: 1,
-        exinfo: { count: 6520, score: 489000, flowers: 326000 }
+        exinfo: { count: 6520, score: 489000, flowers: 326000 },
+        verification: {
+          verified: false,
+          verified_description: ''
+        }
       },
       {
         id: '550e8400-e29b-41d4-a716-446655440023',
         avatar_url: 'https://example.com/avatar24.jpg',
         nickname: '幸运儿',
         gender: 0,
-        exinfo: { count: 4600, score: 345000, flowers: 230000 }
+        exinfo: { count: 4600, score: 345000, flowers: 230000 },
+        verification: {
+          verified: false,
+          verified_description: ''
+        }
       },
       {
         id: '550e8400-e29b-41d4-a716-446655440024',
         avatar_url: 'https://example.com/avatar25.jpg',
         nickname: '挑战者',
         gender: 1,
-        exinfo: { count: 3120, score: 234000, flowers: 156000 }
+        exinfo: { count: 3120, score: 234000, flowers: 156000 },
+        verification: {
+          verified: true,
+          verified_description: '极限挑战爱好者'
+        }
       },
       {
         id: '550e8400-e29b-41d4-a716-446655440025',
         avatar_url: 'https://example.com/avatar26.jpg',
         nickname: '终结者',
         gender: 1,
-        exinfo: { count: 9040, score: 678000, flowers: 452000 }
+        exinfo: { count: 9040, score: 678000, flowers: 452000 },
+        verification: {
+          verified: false,
+          verified_description: ''
+        }
       }
     ],
     onlookers: [
@@ -251,14 +355,22 @@ const roomList: RoomInfo[] = [
         avatar_url: 'https://example.com/avatar27.jpg',
         nickname: '学习委员',
         gender: 0,
-        exinfo: { count: 2080, score: 156000, flowers: 104000 }
+        exinfo: { count: 2080, score: 156000, flowers: 104000 },
+        verification: {
+          verified: true,
+          verified_description: '游戏教学主播'
+        }
       },
       {
         id: '550e8400-e29b-41d4-a716-446655440027',
         avatar_url: 'https://example.com/avatar28.jpg',
         nickname: '观察员',
         gender: 2,
-        exinfo: { count: 1187, score: 89000, flowers: 59300 }
+        exinfo: { count: 1187, score: 89000, flowers: 59300 },
+        verification: {
+          verified: false,
+          verified_description: ''
+        }
       }
     ],
     playing: false,
@@ -276,7 +388,11 @@ const roomList: RoomInfo[] = [
         avatar_url: 'https://example.com/avatar29.jpg',
         nickname: '最后一人',
         gender: 1,
-        exinfo: { count: 1640, score: 123000, flowers: 82000 }
+        exinfo: { count: 1640, score: 123000, flowers: 82000 },
+        verification: {
+          verified: false,
+          verified_description: ''
+        }
       },
       null,
       null,
@@ -289,21 +405,33 @@ const roomList: RoomInfo[] = [
         avatar_url: 'https://example.com/avatar30.jpg',
         nickname: '观众A',
         gender: 0,
-        exinfo: { count: 600, score: 45000, flowers: 30000 }
+        exinfo: { count: 600, score: 45000, flowers: 30000 },
+        verification: {
+          verified: false,
+          verified_description: ''
+        }
       },
       {
         id: '550e8400-e29b-41d4-a716-446655440030',
         avatar_url: 'https://example.com/avatar31.jpg',
         nickname: '观众B',
         gender: 1,
-        exinfo: { count: 893, score: 67000, flowers: 44700 }
+        exinfo: { count: 893, score: 67000, flowers: 44700 },
+        verification: {
+          verified: true,
+          verified_description: '资深游戏评论员'
+        }
       },
       {
         id: '550e8400-e29b-41d4-a716-446655440031',
         avatar_url: 'https://example.com/avatar32.jpg',
         nickname: '观众C',
         gender: 2,
-        exinfo: { count: 1187, score: 89000, flowers: 59300 }
+        exinfo: { count: 1187, score: 89000, flowers: 59300 },
+        verification: {
+          verified: false,
+          verified_description: ''
+        }
       }
     ],
     playing: false,
@@ -319,175 +447,275 @@ const players: Player[] = [
     avatar_url: 'https://example.com/avatar1.jpg',
     nickname: '清风徐来',
     gender: 1,
-    exinfo: { count: 2456, score: 184200, flowers: 92300 }
+    exinfo: { count: 2456, score: 184200, flowers: 92300 },
+    verification: {
+      verified: true,
+      verified_description: '国风插画师'
+    }
   },
   {
     id: '6ba7b811-9dad-11d1-80b4-00c04fd430c2',
     avatar_url: 'https://example.com/avatar2.jpg',
     nickname: '明月几时有',
     gender: 0,
-    exinfo: { count: 3120, score: 234000, flowers: 117000 }
+    exinfo: { count: 3120, score: 234000, flowers: 117000 },
+    verification: {
+      verified: false,
+      verified_description: ''
+    }
   },
   {
     id: '6ba7b812-9dad-11d1-80b4-00c04fd430c3',
     avatar_url: 'https://example.com/avatar3.jpg',
     nickname: '星河滚烫',
     gender: 1,
-    exinfo: { count: 1789, score: 134175, flowers: 67100 }
+    exinfo: { count: 1789, score: 134175, flowers: 67100 },
+    verification: {
+      verified: true,
+      verified_description: '科幻题材专家'
+    }
   },
   {
     id: '6ba7b813-9dad-11d1-80b4-00c04fd430c4',
     avatar_url: 'https://example.com/avatar4.jpg',
     nickname: '人间理想',
     gender: 0,
-    exinfo: { count: 4321, score: 324075, flowers: 162200 }
+    exinfo: { count: 4321, score: 324075, flowers: 162200 },
+    verification: {
+      verified: false,
+      verified_description: ''
+    }
   },
   {
     id: '6ba7b814-9dad-11d1-80b4-00c04fd430c5',
     avatar_url: 'https://example.com/avatar5.jpg',
     nickname: '山河故人',
     gender: 1,
-    exinfo: { count: 2987, score: 224025, flowers: 112100 }
+    exinfo: { count: 2987, score: 224025, flowers: 112100 },
+    verification: {
+      verified: true,
+      verified_description: '风景画大师'
+    }
   },
   {
     id: '6ba7b815-9dad-11d1-80b4-00c04fd430c6',
     avatar_url: 'https://example.com/avatar6.jpg',
     nickname: '云深不知处',
     gender: 2,
-    exinfo: { count: 1567, score: 117525, flowers: 58800 }
+    exinfo: { count: 1567, score: 117525, flowers: 58800 },
+    verification: {
+      verified: false,
+      verified_description: ''
+    }
   },
   {
     id: '6ba7b816-9dad-11d1-80b4-00c04fd430c7',
     avatar_url: 'https://example.com/avatar7.jpg',
     nickname: '花间一壶酒',
     gender: 0,
-    exinfo: { count: 3890, score: 291750, flowers: 146000 }
+    exinfo: { count: 3890, score: 291750, flowers: 146000 },
+    verification: {
+      verified: true,
+      verified_description: '花鸟画传承人'
+    }
   },
   {
     id: '6ba7b817-9dad-11d1-80b4-00c04fd430c8',
     avatar_url: 'https://example.com/avatar8.jpg',
     nickname: '独酌无相亲',
     gender: 1,
-    exinfo: { count: 2234, score: 167550, flowers: 83800 }
+    exinfo: { count: 2234, score: 167550, flowers: 83800 },
+    verification: {
+      verified: false,
+      verified_description: ''
+    }
   },
   {
     id: '6ba7b818-9dad-11d1-80b4-00c04fd430c9',
     avatar_url: 'https://example.com/avatar9.jpg',
     nickname: '举杯邀明月',
     gender: 0,
-    exinfo: { count: 3456, score: 259200, flowers: 129700 }
+    exinfo: { count: 3456, score: 259200, flowers: 129700 },
+    verification: {
+      verified: true,
+      verified_description: '诗画双绝'
+    }
   },
   {
     id: '6ba7b819-9dad-11d1-80b4-00c04fd430ca',
     avatar_url: 'https://example.com/avatar10.jpg',
     nickname: '对影成三人',
     gender: 1,
-    exinfo: { count: 2789, score: 209175, flowers: 104600 }
+    exinfo: { count: 2789, score: 209175, flowers: 104600 },
+    verification: {
+      verified: false,
+      verified_description: ''
+    }
   },
   {
     id: '6ba7b81a-9dad-11d1-80b4-00c04fd430cb',
     avatar_url: 'https://example.com/avatar11.jpg',
     nickname: '月既不解饮',
     gender: 2,
-    exinfo: { count: 1987, score: 149025, flowers: 74500 }
+    exinfo: { count: 1987, score: 149025, flowers: 74500 },
+    verification: {
+      verified: true,
+      verified_description: '抽象艺术先锋'
+    }
   },
   {
     id: '6ba7b81b-9dad-11d1-80b4-00c04fd430cc',
     avatar_url: 'https://example.com/avatar12.jpg',
     nickname: '影徒随我身',
     gender: 0,
-    exinfo: { count: 4123, score: 309225, flowers: 154700 }
+    exinfo: { count: 4123, score: 309225, flowers: 154700 },
+    verification: {
+      verified: false,
+      verified_description: ''
+    }
   },
   {
     id: '6ba7b81c-9dad-11d1-80b4-00c04fd430cd',
     avatar_url: 'https://example.com/avatar13.jpg',
     nickname: '暂伴月将影',
     gender: 1,
-    exinfo: { count: 2678, score: 200850, flowers: 100500 }
+    exinfo: { count: 2678, score: 200850, flowers: 100500 },
+    verification: {
+      verified: true,
+      verified_description: '光影效果专家'
+    }
   },
   {
     id: '6ba7b81d-9dad-11d1-80b4-00c04fd430ce',
     avatar_url: 'https://example.com/avatar14.jpg',
     nickname: '行乐须及春',
     gender: 0,
-    exinfo: { count: 3345, score: 250875, flowers: 125500 }
+    exinfo: { count: 3345, score: 250875, flowers: 125500 },
+    verification: {
+      verified: false,
+      verified_description: ''
+    }
   },
   {
     id: '6ba7b81e-9dad-11d1-80b4-00c04fd430cf',
     avatar_url: 'https://example.com/avatar15.jpg',
     nickname: '我歌月徘徊',
     gender: 1,
-    exinfo: { count: 2890, score: 216750, flowers: 108400 }
+    exinfo: { count: 2890, score: 216750, flowers: 108400 },
+    verification: {
+      verified: true,
+      verified_description: '音乐主题画家'
+    }
   },
   {
     id: '6ba7b81f-9dad-11d1-80b4-00c04fd430d0',
     avatar_url: 'https://example.com/avatar16.jpg',
     nickname: '我舞影零乱',
     gender: 0,
-    exinfo: { count: 3765, score: 282375, flowers: 141200 }
+    exinfo: { count: 3765, score: 282375, flowers: 141200 },
+    verification: {
+      verified: false,
+      verified_description: ''
+    }
   },
   {
     id: '6ba7b820-9dad-11d1-80b4-00c04fd430d1',
     avatar_url: 'https://example.com/avatar17.jpg',
     nickname: '醒时同交欢',
     gender: 1,
-    exinfo: { count: 2134, score: 160050, flowers: 80000 }
+    exinfo: { count: 2134, score: 160050, flowers: 80000 },
+    verification: {
+      verified: true,
+      verified_description: '社交艺术达人'
+    }
   },
   {
     id: '6ba7b821-9dad-11d1-80b4-00c04fd430d2',
     avatar_url: 'https://example.com/avatar18.jpg',
     nickname: '醉后各分散',
     gender: 2,
-    exinfo: { count: 1876, score: 140700, flowers: 70300 }
+    exinfo: { count: 1876, score: 140700, flowers: 70300 },
+    verification: {
+      verified: false,
+      verified_description: ''
+    }
   },
   {
     id: '6ba7b822-9dad-11d1-80b4-00c04fd430d3',
     avatar_url: 'https://example.com/avatar19.jpg',
     nickname: '永结无情游',
     gender: 0,
-    exinfo: { count: 3987, score: 299025, flowers: 149600 }
+    exinfo: { count: 3987, score: 299025, flowers: 149600 },
+    verification: {
+      verified: true,
+      verified_description: '独立游戏开发者'
+    }
   },
   {
     id: '6ba7b823-9dad-11d1-80b4-00c04fd430d4',
     avatar_url: 'https://example.com/avatar20.jpg',
     nickname: '相期邈云汉',
     gender: 1,
-    exinfo: { count: 2567, score: 192525, flowers: 96200 }
+    exinfo: { count: 2567, score: 192525, flowers: 96200 },
+    verification: {
+      verified: false,
+      verified_description: ''
+    }
   },
   {
     id: '6ba7b824-9dad-11d1-80b4-00c04fd430d5',
     avatar_url: 'https://example.com/avatar21.jpg',
     nickname: '青山绿水间',
     gender: 0,
-    exinfo: { count: 3210, score: 240750, flowers: 120400 }
+    exinfo: { count: 3210, score: 240750, flowers: 120400 },
+    verification: {
+      verified: true,
+      verified_description: '环保主题艺术家'
+    }
   },
   {
     id: '6ba7b825-9dad-11d1-80b4-00c04fd430d6',
     avatar_url: 'https://example.com/avatar22.jpg',
     nickname: '白鹭上青天',
     gender: 1,
-    exinfo: { count: 2345, score: 175875, flowers: 87900 }
+    exinfo: { count: 2345, score: 175875, flowers: 87900 },
+    verification: {
+      verified: false,
+      verified_description: ''
+    }
   },
   {
     id: '6ba7b826-9dad-11d1-80b4-00c04fd430d7',
     avatar_url: 'https://example.com/avatar23.jpg',
     nickname: '窗含西岭雪',
     gender: 0,
-    exinfo: { count: 2876, score: 215700, flowers: 107900 }
+    exinfo: { count: 2876, score: 215700, flowers: 107900 },
+    verification: {
+      verified: true,
+      verified_description: '雪景画专家'
+    }
   },
   {
     id: '6ba7b827-9dad-11d1-80b4-00c04fd430d8',
     avatar_url: 'https://example.com/avatar24.jpg',
     nickname: '门泊东吴船',
     gender: 1,
-    exinfo: { count: 3543, score: 265725, flowers: 132900 }
+    exinfo: { count: 3543, score: 265725, flowers: 132900 },
+    verification: {
+      verified: false,
+      verified_description: ''
+    }
   },
   {
     id: '6ba7b828-9dad-11d1-80b4-00c04fd430d9',
     avatar_url: 'https://example.com/avatar25.jpg',
     nickname: '春风又绿江南岸',
     gender: 2,
-    exinfo: { count: 2987, score: 224025, flowers: 112100 }
+    exinfo: { count: 2987, score: 224025, flowers: 112100 },
+    verification: {
+      verified: true,
+      verified_description: '江南水乡画家'
+    }
   }
 ]
 

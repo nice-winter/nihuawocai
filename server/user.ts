@@ -3,7 +3,7 @@ import type { UserData } from '#shared/interfaces/userData'
 import { defu } from 'defu'
 import { useSQLite3Storage } from './storage'
 
-const userDataStorage = useSQLite3Storage('user_data') // useStorage('user_data')
+const userDataStorage = import.meta.dev ? useStorage('user_data') : useSQLite3Storage('user_data')
 
 const createUserData = async (
   id: string,
@@ -26,6 +26,10 @@ const createUserData = async (
       score: 0,
       flowers: 0,
       count: 0
+    },
+    verification: {
+      verified: false,
+      verified_description: ''
     }
   }
 
