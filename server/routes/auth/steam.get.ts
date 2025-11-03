@@ -1,4 +1,5 @@
 import type { SteamUser } from '#shared/interfaces/user'
+import { createUserData, hasUserData, updateUserData } from '~~/server/user'
 
 export default defineOAuthSteamEventHandler({
   async onSuccess(event, { user }) {
@@ -13,7 +14,18 @@ export default defineOAuthSteamEventHandler({
       }
     })
 
+    if (await hasUserData(steamUser.steamid)) {
+      await updateUserData(steamUser.steamid, {
+        nickname: steamUser.personaname,
+        avatar_url: steamUser.avatarfull
+      })
+    } else {
+      await createUserData(steamUser.steamid, 'steam', steamUser.avatarfull, steamUser.personaname)
+    }
+
     return sendRedirect(event, '/')
   },
-  async onError(event, error) {}
+  async onError(event, error) {
+    //
+  }
 })
