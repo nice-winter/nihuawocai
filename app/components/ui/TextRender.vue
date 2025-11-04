@@ -1,4 +1,3 @@
-<!-- ParsedText.vue -->
 <template>
   <span>
     <component
@@ -19,10 +18,10 @@ import { computed } from 'vue'
 
 interface Props {
   text: string
-  emojis: EmojiItem[]
+  emojis?: EmojiItem[]
 }
 
-const props = defineProps<Props>()
+const { text, emojis = [] } = defineProps<Props>()
 
 const emit = defineEmits<{
   linkClick: [url: string]
@@ -31,8 +30,8 @@ const emit = defineEmits<{
 const { parseText } = useTextParser()
 
 const nodes = computed(() =>
-  parseText(props.text, {
-    emojis: props.emojis,
+  parseText(text, {
+    emojis,
     onLinkClick: (url: string) => emit('linkClick', url)
   })
 )
