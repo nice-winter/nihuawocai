@@ -87,8 +87,6 @@
 </template>
 
 <script setup lang="ts">
-import { useAppConfigStore } from '~/stores/appConfig'
-
 definePageMeta({
   layout: 'game'
 })

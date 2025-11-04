@@ -1,5 +1,5 @@
 <template>
-  <UIcon :name="genderComputed.icon" class="size-4" :class="[genderComputed.class]" />
+  <UIcon :name="genderComputed.icon" class="size-4" :style="{ color: genderComputed.color }" />
 </template>
 
 <script setup lang="ts">
@@ -9,34 +9,12 @@ interface GenderProps {
 
 const { gender = 0 } = defineProps<GenderProps>()
 
+const appConfigStore = useAppConfigStore()
+
 const genderComputed = computed(() => {
-  switch (gender) {
-    case 0:
-      return {
-        icon: `ph:gender-male-bold`,
-        class: 'text-[#23a9ce]'
-      }
-    case 1:
-      return {
-        icon: `ph:gender-female-bold`,
-        class: 'text-[#dd243c]'
-      }
-    case 3:
-      return {
-        icon: `tabler:shopping-bag`,
-        class: 'text-[#00ab07]'
-      }
-    case 4:
-      return {
-        icon: `tabler:helicopter`,
-        class: 'text-[#ad1ef4]'
-      }
-    default:
-      return {
-        icon: `ph:gender-male-bold`,
-        class: 'text-[#23a9ce]'
-      }
-  }
+  const genders = appConfigStore.appConfig.genders
+  const defaultGenderIcon = { icon: 'ph:gender-male-bold', color: '#23a9ce' }
+  return genders.find((g) => g.value === gender) || defaultGenderIcon
 })
 </script>
 

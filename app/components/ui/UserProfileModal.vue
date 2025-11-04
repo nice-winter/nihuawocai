@@ -43,7 +43,12 @@
                   <UIcon name="material-symbols:help-rounded" class="text-gray-400 ml-0.5" />
                 </UTooltip>
               </template>
-              <USelect v-model="userData.gender" :items="appConfig.genders" class="w-48" />
+              <USelect
+                v-model="userData.gender"
+                :icon="currentGender?.icon"
+                :items="appConfigStore.appConfig.genders"
+                class="w-48"
+              />
             </UFormField>
           </div>
         </div>
@@ -67,13 +72,15 @@
 </template>
 
 <script setup lang="ts">
-import type { SelectItem } from '@nuxt/ui'
 import type { UserData } from '~~/shared/interfaces/userData'
 
-const open = ref(false)
 const { user } = useUserSession()
 const userData = reactive((await $fetch(`/user/${user.value?.id}`)) as UserData)
-const { appConfig } = useAppConfigStore()
+const appConfigStore = useAppConfigStore()
+
+const currentGender = computed(() =>
+  appConfigStore.appConfig.genders.find((g) => g.value === userData.gender)
+)
 
 const save = async () => {
   await $fetch(`/user/${user.value?.id}`, {
