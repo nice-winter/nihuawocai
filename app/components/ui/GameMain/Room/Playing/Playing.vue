@@ -38,7 +38,7 @@
             bingo: bingoPlayers[index],
             drawing: player.id === drawingPlayer?.id
           }"
-          :verified-icon="{ show: true, size: 12 }"
+          :verified-icon="{ show: true, size: 12, bottom: 2, right: 2 }"
         />
         <span class="text-[13px] text-[#774A1A]">
           {{ playerScore[index] }}
