@@ -1,22 +1,24 @@
 <template>
   <div class="p-[0.785rem] w-1/2">
     <div class="flex flex-col gap-[0.7rem] select-none">
-      <div class="relative h-16">
+      <div class="h-16 flex gap-[0.7rem]">
         <UiAvatar class="size-16" :player="ownerPlayer" :verified-icon="{ show: true }" />
 
-        <UTooltip text="非公开房间" :delay-duration="500" :content="{ side: 'right' }" arrow>
-          <UIcon
-            v-show="roomInfo.locked"
-            name="ph:lock-simple-fill"
-            class="size-4 absolute left-18 top-0 text-[#f4b12d]"
-          />
-        </UTooltip>
+        <div class="relative flex-1">
+          <UTooltip text="非公开房间" :delay-duration="500" :content="{ side: 'right' }" arrow>
+            <UIcon
+              v-show="roomInfo.locked"
+              name="ph:lock-simple-fill"
+              class="size-4 absolute left-0 top-0 text-[#f4b12d]"
+            />
+          </UTooltip>
 
-        <UiGameMainRoomNumber :room-number="roomInfo.roomNumber || 0" class="float-right" />
-        <span class="absolute right-0 bottom-0 text-sm leading-3.5">
-          <UiGenderIcon :gender="ownerPlayer.gender" class="align-text-top" />
-          {{ ownerPlayer.nickname }}
-        </span>
+          <UiGameMainRoomNumber :room-number="roomInfo.roomNumber || 0" class="float-right" />
+          <span class="absolute right-0 bottom-0 max-w-[233px] text-sm leading-3.5 truncate">
+            <UiGenderIcon :gender="ownerPlayer.gender" class="align-text-top" />
+            {{ ownerPlayer.nickname }}
+          </span>
+        </div>
       </div>
 
       <div

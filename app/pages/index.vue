@@ -19,7 +19,7 @@
     <div class="w-full h-10 flex justify-center items-center">
       <div class="w-[900px] flex flex-row justify-center">
         <span class="-ml-7 font-sans text-5xl quotation">“</span>
-        <span class="grow text-light px-2">
+        <span class="grow text-light px-2 truncate">
           <UiTextRender :text="appConfigStore.appConfig.announcements[0] || ''" :emojis="[]" />
         </span>
         <span class="-mr-7 font-sans text-5xl quotation">”</span>
