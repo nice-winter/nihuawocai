@@ -2,24 +2,24 @@
 <template>
   <div class="text-[13px] flex gap-4">
     <UUser :avatar="{ src: user?.avatar_url }" :name="user?.nickname" />
-    <UiLinkButton class="underline" @click="openUserProfileModel">个人资料</UiLinkButton>
+    <UiLinkButton class="underline" @click="openUserProfileModal">个人资料</UiLinkButton>
     <UiLinkButton @click="logout">注销</UiLinkButton>
   </div>
 </template>
 
 <script setup lang="ts">
 import { eventBus } from '~/common/eventBus'
-import LazyUserProfileModel from './UserProfileModel.vue'
+import LazyUserProfileModal from './UserProfileModal.vue'
 
 const { loggedIn, user, clear } = useUserSession()
 
 const overlay = useOverlay()
-const modal = overlay.create(LazyUserProfileModel)
+const modal = overlay.create(LazyUserProfileModal)
 
-const openUserProfileModel = async () => {
+const openUserProfileModal = async () => {
   const instance = modal.open({})
-  const shouldIncrement = await instance.result
-  if (shouldIncrement) {
+  const saveUserProfile = await instance.result
+  if (saveUserProfile) {
     return
   }
 }

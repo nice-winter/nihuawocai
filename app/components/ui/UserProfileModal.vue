@@ -43,7 +43,7 @@
                   <UIcon name="material-symbols:help-rounded" class="text-gray-400 ml-0.5" />
                 </UTooltip>
               </template>
-              <USelect v-model="userData.gender" :items="genderItems" class="w-48" />
+              <USelect v-model="userData.gender" :items="appConfig.genders" class="w-48" />
             </UFormField>
           </div>
         </div>
@@ -73,53 +73,7 @@ import type { UserData } from '~~/shared/interfaces/userData'
 const open = ref(false)
 const { user } = useUserSession()
 const userData = reactive((await $fetch(`/user/${user.value?.id}`)) as UserData)
-
-const genderItems = ref<SelectItem[]>([
-  {
-    label: '男',
-    value: 0
-  },
-  {
-    label: '女',
-    value: 1
-  },
-  {
-    label: '不想说',
-    value: 2
-  },
-  {
-    label: '沃尔玛购物袋',
-    value: 3
-  },
-  {
-    label: '武装直升机',
-    value: 4
-  },
-  {
-    label: '科比',
-    value: 5
-  },
-  {
-    label: '咖啡杯',
-    value: 6
-  },
-  {
-    label: '显示器',
-    value: 7
-  },
-  {
-    label: '艾玛电动车',
-    value: 8
-  },
-  {
-    label: '厕纸',
-    value: 9
-  },
-  {
-    label: '双生一体',
-    value: 10
-  }
-])
+const { appConfig } = useAppConfigStore()
 
 const save = async () => {
   await $fetch(`/user/${user.value?.id}`, {
