@@ -46,7 +46,7 @@
           >
             <template v-if="player?.verification.verified">
               <img class="size-3.5 inline-block align-middle" src="~/assets/icons/verified.png" />
-              <span class="text-[#995d11] text-light">{{
+              <span class="text-[#995d11] text-light truncate">{{
                 player.verification.verified_description
               }}</span>
             </template>
