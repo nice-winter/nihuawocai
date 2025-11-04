@@ -13,7 +13,7 @@ const roomList: RoomInfo[] = [
         exinfo: { count: 2186, score: 164000, flowers: 87200 },
         verification: {
           verified: true,
-          verified_description: '官方认证画师'
+          verified_description: '游戏达人'
         }
       },
       {
@@ -39,7 +39,7 @@ const roomList: RoomInfo[] = [
         exinfo: { count: 3120, score: 234000, flowers: 156800 },
         verification: {
           verified: true,
-          verified_description: '日本知名插画师'
+          verified_description: '日本知名影视演员'
         }
       }
     ],
@@ -72,8 +72,8 @@ const roomList: RoomInfo[] = [
         gender: 0,
         exinfo: { count: 4160, score: 312000, flowers: 208000 },
         verification: {
-          verified: true,
-          verified_description: '平台签约艺术家'
+          verified: false,
+          verified_description: ''
         }
       },
       null,
@@ -111,8 +111,8 @@ const roomList: RoomInfo[] = [
         gender: 0,
         exinfo: { count: 3560, score: 267000, flowers: 178000 },
         verification: {
-          verified: true,
-          verified_description: '美术院校讲师'
+          verified: false,
+          verified_description: ''
         }
       },
       {
@@ -143,7 +143,7 @@ const roomList: RoomInfo[] = [
         exinfo: { count: 7853, score: 589000, flowers: 392700 },
         verification: {
           verified: true,
-          verified_description: '职业电竞选手'
+          verified_description: '游戏达人'
         }
       },
       {
@@ -164,8 +164,8 @@ const roomList: RoomInfo[] = [
         gender: 1,
         exinfo: { count: 5760, score: 432000, flowers: 288000 },
         verification: {
-          verified: true,
-          verified_description: '游戏开发工程师'
+          verified: false,
+          verified_description: ''
         }
       },
       {
@@ -199,8 +199,8 @@ const roomList: RoomInfo[] = [
         gender: 1,
         exinfo: { count: 10200, score: 765000, flowers: 510000 },
         verification: {
-          verified: true,
-          verified_description: '十年游戏经验'
+          verified: false,
+          verified_description: ''
         }
       },
       {
@@ -222,8 +222,8 @@ const roomList: RoomInfo[] = [
         gender: 1,
         exinfo: { count: 8720, score: 654000, flowers: 436000 },
         verification: {
-          verified: true,
-          verified_description: '游戏攻略作者'
+          verified: false,
+          verified_description: ''
         }
       },
       {
@@ -244,8 +244,8 @@ const roomList: RoomInfo[] = [
         gender: 1,
         exinfo: { count: 11680, score: 876000, flowers: 584000 },
         verification: {
-          verified: true,
-          verified_description: '职业竞技选手'
+          verified: false,
+          verified_description: ''
         }
       },
       null
@@ -289,8 +289,8 @@ const roomList: RoomInfo[] = [
         gender: 0,
         exinfo: { count: 3973, score: 298000, flowers: 198700 },
         verification: {
-          verified: true,
-          verified_description: '团队合作专家'
+          verified: false,
+          verified_description: ''
         }
       },
       {
@@ -300,8 +300,8 @@ const roomList: RoomInfo[] = [
         gender: 1,
         exinfo: { count: 7560, score: 567000, flowers: 378000 },
         verification: {
-          verified: true,
-          verified_description: '策略游戏大师'
+          verified: false,
+          verified_description: ''
         }
       },
       {
@@ -333,8 +333,8 @@ const roomList: RoomInfo[] = [
         gender: 1,
         exinfo: { count: 3120, score: 234000, flowers: 156000 },
         verification: {
-          verified: true,
-          verified_description: '极限挑战爱好者'
+          verified: false,
+          verified_description: ''
         }
       },
       {
@@ -357,8 +357,8 @@ const roomList: RoomInfo[] = [
         gender: 0,
         exinfo: { count: 2080, score: 156000, flowers: 104000 },
         verification: {
-          verified: true,
-          verified_description: '游戏教学主播'
+          verified: false,
+          verified_description: ''
         }
       },
       {
@@ -471,8 +471,8 @@ const players: Player[] = [
     gender: 1,
     exinfo: { count: 1789, score: 134175, flowers: 67100 },
     verification: {
-      verified: true,
-      verified_description: '科幻题材专家'
+      verified: false,
+      verified_description: ''
     }
   },
   {
@@ -493,8 +493,8 @@ const players: Player[] = [
     gender: 1,
     exinfo: { count: 2987, score: 224025, flowers: 112100 },
     verification: {
-      verified: true,
-      verified_description: '风景画大师'
+      verified: false,
+      verified_description: ''
     }
   },
   {
@@ -515,8 +515,8 @@ const players: Player[] = [
     gender: 0,
     exinfo: { count: 3890, score: 291750, flowers: 146000 },
     verification: {
-      verified: true,
-      verified_description: '花鸟画传承人'
+      verified: false,
+      verified_description: ''
     }
   },
   {
