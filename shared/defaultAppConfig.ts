@@ -21,7 +21,7 @@ export const defaultAppConfig: AppConfig = {
     {
       label: '不想说',
       value: 2,
-      icon: '',
+      icon: 'ph:question-mark-bold',
       color: ''
     },
     {
@@ -39,38 +39,38 @@ export const defaultAppConfig: AppConfig = {
     {
       label: '科比',
       value: 5,
-      icon: '',
-      color: ''
+      icon: 'material-symbols:sports-basketball',
+      color: '#ad1ef4'
     },
     {
       label: '咖啡杯',
       value: 6,
-      icon: '',
-      color: ''
+      icon: 'streamline-plump:coffee-mug-solid',
+      color: '#ad1ef4'
     },
     {
       label: '显示器',
       value: 7,
-      icon: '',
-      color: ''
+      icon: 'material-symbols:nest-display-outline',
+      color: '#ad1ef4'
     },
     {
       label: '艾玛电动车',
       value: 8,
-      icon: '',
-      color: ''
+      icon: 'material-symbols:motorcycle-rounded',
+      color: '#ad1ef4'
     },
     {
       label: '厕纸',
       value: 9,
-      icon: '',
-      color: ''
+      icon: 'ph:toilet-paper-fill',
+      color: '#ad1ef4'
     },
     {
       label: '双生一体',
       value: 10,
-      icon: '',
-      color: ''
+      icon: 'tabler:gender-bigender',
+      color: '#ad1ef4'
     }
   ],
   game: {
