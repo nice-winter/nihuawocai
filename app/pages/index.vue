@@ -20,7 +20,7 @@
       <div class="w-[900px] flex flex-row justify-center">
         <span class="-ml-7 font-sans text-5xl quotation">“</span>
         <span class="grow text-light px-2 truncate">
-          <UiTextRender :text="appConfigStore.appConfig.announcements[0] || ''" :emojis="[]" />
+          <UiTextRender :text="appConfig.announcements[0] || ''" :emojis="[]" />
         </span>
         <span class="-mr-7 font-sans text-5xl quotation">”</span>
       </div>
@@ -93,6 +93,7 @@ definePageMeta({
 
 const userSession = useUserSession()
 const appConfigStore = useAppConfigStore()
+const { appConfig } = storeToRefs(appConfigStore)
 
 const providers = [
   {
