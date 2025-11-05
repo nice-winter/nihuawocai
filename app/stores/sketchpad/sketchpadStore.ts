@@ -1,4 +1,4 @@
-import { eventBus } from '~/common/eventBus'
+import { eventBus } from '~/composables/eventBus'
 import type { Brush, BrushesNameString } from '~/interfaces/brush'
 
 export const useSketchpadStore = defineStore('sketchpad', () => {
