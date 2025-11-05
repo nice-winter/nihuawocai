@@ -161,7 +161,7 @@ const roomList: RoomInfo[] = [
         id: '550e8400-e29b-41d4-a716-446655440011',
         avatar_url: 'https://example.com/avatar12.jpg',
         nickname: '技术宅',
-        gender: 1,
+        gender: 0,
         exinfo: { count: 5760, score: 432000, flowers: 288000 },
         verification: {
           verified: false,
