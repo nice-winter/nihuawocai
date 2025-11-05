@@ -3,6 +3,9 @@ import type { AppConfig } from '#shared/interfaces/appConfig'
 import defu from 'defu'
 
 export default defineEventHandler(async (event) => {
+  // @todo: 此处鉴权不仅需要登录，还需要验证其是否为管理员
+  await requireUserSession(event)
+
   const appStorage = useStorage('app')
 
   const appConfig = (await appStorage.get('app_config')) as AppConfig
