@@ -42,8 +42,9 @@ export interface AppConfig {
         count: number
         time: {
           roundStartWaitTimeSecond: number
-          roundTimeSecond: number
-          maxRoundTimeSecond: number
+          roundDrawingTimeoutSecond: number
+          roundDrawingTimeSecond: number
+          maxRoundDrawingTimeSecond: number
           roundPromptTimeSecond: number[]
           roundBingoTimeSecond: number
           roundEndWaitTimeSecond: number

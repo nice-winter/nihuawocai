@@ -173,8 +173,9 @@ export const defaultAppConfig: AppConfig = {
         count: 2,
         time: {
           roundStartWaitTimeSecond: 5,
-          roundTimeSecond: 60,
-          maxRoundTimeSecond: 120,
+          roundDrawingTimeoutSecond: 20,
+          roundDrawingTimeSecond: 60,
+          maxRoundDrawingTimeSecond: 120,
           roundPromptTimeSecond: [20, 40],
           roundBingoTimeSecond: 20,
           roundEndWaitTimeSecond: 5,
