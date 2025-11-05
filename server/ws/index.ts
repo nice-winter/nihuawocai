@@ -6,10 +6,10 @@ import type { WebsocketMessage } from '#shared/interfaces/ws'
 import { UserData } from '#shared/interfaces/userData'
 
 type WsEvents = {
-  'ws:connect': unknown
+  'ws:connect': Peer<AdapterInternal>
   'ws:message': WebsocketMessage
-  'ws:error': unknown
-  'ws:disconnect': unknown
+  'ws:error': Peer<AdapterInternal>
+  'ws:disconnect': Peer<AdapterInternal>
 }
 
 const loginUsers = new Map<string, UserData & { peer: Peer<AdapterInternal> }>()
@@ -29,6 +29,7 @@ const _removeUserByPeer = async (peer: Peer<AdapterInternal>) => {
   }
 }
 
+// crossws 钩子
 const hooks = defineHooks({
   async upgrade(request) {
     await requireUserSession(request)
@@ -57,6 +58,8 @@ const hooks = defineHooks({
     }
 
     console.log('open', loginUsers)
+
+    wsEventBus.emit('ws:connect', peer)
   },
 
   message(peer, message) {
@@ -64,19 +67,63 @@ const hooks = defineHooks({
     if (msg.type.toLowerCase() === WS_MESSAGE_PING.type) peer.send(encode(WS_MESSAGE_PONG))
 
     console.log('[ws] message', msg)
+
+    wsEventBus.emit('ws:message', msg)
   },
 
   async close(peer, { code, reason }) {
     _removeUserByPeer(peer)
     console.log('close', loginUsers)
+
+    wsEventBus.emit('ws:disconnect', peer)
   },
 
   async error(peer, error) {
     _removeUserByPeer(peer)
     console.log('error', loginUsers)
+
+    wsEventBus.emit('ws:error', peer)
   }
 })
 
 const wsEventBus = mitt<WsEvents>()
 
-export { type WsEvents, wsEventBus, loginUsers, peers, hooks }
+const sendToAll = (msg: WebsocketMessage) => {
+  const encodedMsg = encode(msg)
+  peers.forEach((peer) => peer.send(encodedMsg))
+}
+
+const sendToChannel = (msg: WebsocketMessage, channel?: string | string[]) => {
+  const encoded = encode(msg)
+  if (!channel) return
+
+  const channels = Array.isArray(channel) ? channel : [channel]
+  const targetPeers = new Set<Peer<AdapterInternal>>()
+
+  for (const peer of peers) {
+    for (const c of channels) {
+      if (peer.topics.has(c)) {
+        targetPeers.add(peer)
+        break
+      }
+    }
+  }
+
+  for (const peer of targetPeers) {
+    peer.send(encoded)
+  }
+}
+
+const sendToUser = (msg: WebsocketMessage, id: string | string[]) => {
+  const ids = Array.isArray(id) ? id : [id]
+  const encodedMsg = encode(msg)
+
+  ids.forEach((i) => {
+    const user = loginUsers.get(i)
+    if (user && user.peer.websocket.readyState === 1) {
+      user.peer.send(encodedMsg)
+    }
+  })
+}
+
+export { type WsEvents, wsEventBus, loginUsers, peers, hooks, sendToAll, sendToChannel, sendToUser }
