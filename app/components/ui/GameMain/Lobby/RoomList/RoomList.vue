@@ -41,7 +41,7 @@
       <UiButton @click="showOnlyWaitingRooms = !showOnlyWaitingRooms">{{
         showOnlyWaitingRooms ? '等待房间' : '全部房间'
       }}</UiButton>
-      <UiButton>创建房间</UiButton>
+      <UiButton @click="createRoom">创建房间</UiButton>
       <div class="px-4 flex gap-8 items-center ml-auto">
         <UiButton type="arrow-left" color="red" @click="prevPage" />
         <UiButton type="arrow-right" color="red" @click="nextPage" />
@@ -54,7 +54,7 @@
 import { roomList } from '~/stores/test'
 
 const gameRoomListStore = useGameRoomListStore()
-const { join, prevPage, nextPage, quickMatch } = gameRoomListStore
+const { join, prevPage, nextPage, createRoom, quickMatch } = gameRoomListStore
 const { showOnlyWaitingRooms } = storeToRefs(gameRoomListStore)
 
 const roomNumberInputValue = ref('')
