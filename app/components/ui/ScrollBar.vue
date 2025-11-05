@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { h, ref, computed, onMounted, useSlots, withModifiers } from 'vue'
 import type { CSSProperties } from 'vue'
-import { debounce, useResizeObserver, useScroll } from '@/common/utils'
+import { debounce, useResizeObserver, useScroll } from '~/composables/utils'
 
 export interface ScrollBarProps {
   /**
