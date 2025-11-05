@@ -1,5 +1,3 @@
-import { getUserData } from '~~/server/user'
-
 export default defineEventHandler(async (event) => {
   const id = getRouterParam(event, 'id')
 

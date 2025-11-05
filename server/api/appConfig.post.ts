@@ -1,5 +1,5 @@
 import { defaultAppConfig } from '#shared/defaultAppConfig'
-import type { AppConfig } from '~~/shared/interfaces/appConfig'
+import type { AppConfig } from '#shared/interfaces/appConfig'
 import defu from 'defu'
 
 export default defineEventHandler(async (event) => {

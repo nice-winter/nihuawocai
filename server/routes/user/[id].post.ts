@@ -1,7 +1,8 @@
-import { getUserData, updateUserData } from '~~/server/user'
-import type { UserData } from '~~/shared/interfaces/userData'
+import type { UserData } from '#shared/interfaces/userData'
 
 export default defineEventHandler(async (event) => {
+  await requireUserSession(event)
+
   const id = getRouterParam(event, 'id')
   const body = (await readBody(event)) as UserData
 

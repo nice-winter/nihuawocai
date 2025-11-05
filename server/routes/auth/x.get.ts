@@ -1,5 +1,4 @@
 import type { XUser } from '#shared/interfaces/user'
-import { hasUserData, updateUserData, createUserData } from '~~/server/user'
 
 export default defineOAuthXEventHandler({
   async onSuccess(event, { user, tokens }) {
