@@ -1,7 +1,7 @@
 <script setup lang="ts">
 const { loggedIn, user, clear } = useUserSession()
 
-const { getAppConfig, pull } = useAppConfigStore()
+const { pull } = useAppConfigStore()
 await pull()
 </script>
 

@@ -10,9 +10,10 @@ interface GenderProps {
 const { gender = 0 } = defineProps<GenderProps>()
 
 const appConfigStore = useAppConfigStore()
+const { appConfig } = storeToRefs(appConfigStore)
 
 const genderComputed = computed(() => {
-  const genders = appConfigStore.appConfig.genders
+  const genders = appConfig.value.genders
   const defaultGenderIcon = { icon: 'ph:gender-male-bold', color: '#23a9ce' }
   return genders.find((g) => g.value === gender) || defaultGenderIcon
 })

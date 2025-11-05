@@ -46,7 +46,7 @@
               <USelect
                 v-model="userData.gender"
                 :icon="currentGender?.icon"
-                :items="appConfigStore.appConfig.genders"
+                :items="appConfig.genders"
                 class="w-48"
               />
             </UFormField>
@@ -77,9 +77,10 @@ import type { UserData } from '~~/shared/interfaces/userData'
 const { user } = useUserSession()
 const userData = reactive((await $fetch(`/user/${user.value?.id}`)) as UserData)
 const appConfigStore = useAppConfigStore()
+const { appConfig } = storeToRefs(appConfigStore)
 
 const currentGender = computed(() =>
-  appConfigStore.appConfig.genders.find((g) => g.value === userData.gender)
+  appConfig.value.genders.find((g) => g.value === userData.gender)
 )
 
 const save = async () => {
