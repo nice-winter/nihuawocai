@@ -29,7 +29,7 @@
 </template>
 
 <script setup lang="ts">
-import { roomList, players } from '~/stores/test'
+import { roomList, players } from '#shared/utils/test'
 
 interface RoomProps {
   stage?: number

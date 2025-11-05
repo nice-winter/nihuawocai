@@ -47,7 +47,7 @@
 </template>
 
 <script setup lang="ts">
-import { players } from '@/stores/test'
+import { players } from '#shared/utils/test'
 import type { Player } from '#shared/interfaces/player'
 
 const tabItems = [
