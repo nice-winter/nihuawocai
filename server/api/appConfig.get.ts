@@ -2,7 +2,7 @@ import { defaultAppConfig } from '#shared/defaultAppConfig'
 import type { AppConfig } from '~~/shared/interfaces/appConfig'
 
 export default defineEventHandler(async (event) => {
-  const appStorage = import.meta.dev ? useStorage('app') : useSQLite3Storage('app')
+  const appStorage = useAppStorage('app')
 
   const appConfig = (await appStorage.get('app_config')) as AppConfig
 

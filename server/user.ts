@@ -2,7 +2,7 @@ import { shortHash } from '#shared/utils'
 import type { UserData } from '#shared/interfaces/userData'
 import { defu } from 'defu'
 
-const userDataStorage = import.meta.dev ? useStorage('user_data') : useSQLite3Storage('user_data')
+const userDataStorage = useAppStorage('user_data')
 
 const createUserData = async (
   id: string,
