@@ -51,7 +51,7 @@
 </template>
 
 <script setup lang="ts">
-import { roomList } from '~/stores/test'
+import { roomList } from '#shared/utils/test'
 
 const gameRoomListStore = useGameRoomListStore()
 const { join, prevPage, nextPage, createRoom, quickMatch } = gameRoomListStore
