@@ -3,7 +3,7 @@ import type { AppConfig } from '~~/shared/interfaces/appConfig'
 import defu from 'defu'
 
 export default defineEventHandler(async (event) => {
-  const appStorage = useAppStorage('app')
+  const appStorage = useStorage('app')
 
   const appConfig = (await appStorage.get('app_config')) as AppConfig
   const _ = (await readBody(event)) as Partial<AppConfig>

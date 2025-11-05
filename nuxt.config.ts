@@ -48,20 +48,6 @@ export default defineNuxtConfig({
     experimental: {
       websocket: true,
       database: true
-    },
-    storage: {
-      session: {
-        driver: 'fs',
-        base: './.data/session'
-      },
-      app: {
-        driver: 'fs',
-        base: './.data/app'
-      },
-      user_data: {
-        driver: 'fs',
-        base: './.data/user_data'
-      }
     }
   }
 })
