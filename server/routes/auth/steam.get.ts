@@ -1,5 +1,4 @@
 import type { SteamUser } from '#shared/interfaces/user'
-import { createUserData, hasUserData, updateUserData } from '~~/server/user'
 
 export default defineOAuthSteamEventHandler({
   async onSuccess(event, { user }) {

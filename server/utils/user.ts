@@ -45,8 +45,8 @@ const hasUserData = (id: string) => {
   return userDataStorage.hasItem(id)
 }
 
-const getUserData = (id: string) => {
-  return userDataStorage.getItem(id)
+const getUserData = async (id: string) => {
+  return (await userDataStorage.getItem(id)) as UserData
 }
 
 const setUserData = (id: string, userData: UserData) => {
