@@ -1,7 +1,6 @@
-import { shortHash } from '#shared/utils/util'
+import { shortHash } from '#shared/utils'
 import type { UserData } from '#shared/interfaces/userData'
 import { defu } from 'defu'
-import { useSQLite3Storage } from './storage'
 
 const userDataStorage = import.meta.dev ? useStorage('user_data') : useSQLite3Storage('user_data')
 

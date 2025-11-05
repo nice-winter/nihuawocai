@@ -1,4 +1,3 @@
-import { useSQLite3Storage } from '../storage'
 import { defaultAppConfig } from '#shared/defaultAppConfig'
 import type { AppConfig } from '~~/shared/interfaces/appConfig'
 import defu from 'defu'
