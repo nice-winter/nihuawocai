@@ -18,4 +18,13 @@ const useSQLite3Storage = (name?: string) => {
   })
 }
 
-export { useSQLite3Storage }
+/**
+ * 使用持久化 KV 储存，可根据是否开发环境选择使用 sqlite 还是 fs 驱动
+ * @param name 储存名称
+ */
+const useAppStorage = (name?: string) => {
+  if (name) name = 'app'
+  return import.meta.dev ? useStorage(name) : useSQLite3Storage(name)
+}
+
+export { useSQLite3Storage, useAppStorage }
