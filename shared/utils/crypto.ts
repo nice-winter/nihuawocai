@@ -1,5 +1,3 @@
-import type { WebsocketMessage } from '#shared/interfaces/ws'
-
 /**
  * 将对象编码为 ArrayBuffer
  * @param data 要编码的数据
