@@ -7,7 +7,7 @@ export const useAppConfigStore = defineStore('appConfig', () => {
   const appConfig = ref(def)
 
   const pull = async () => {
-    const remoteAppConfig = await $fetch('/api/appConfig')
+    const remoteAppConfig = await $fetch('/api/appconfig')
     appConfig.value = remoteAppConfig
 
     console.log('[应用配置]', '拉取远程配置成功', appConfig.value)
@@ -19,7 +19,7 @@ export const useAppConfigStore = defineStore('appConfig', () => {
 
   const update = async (_: Partial<AppConfig>) => {
     appConfig.value = defu(_, unref(appConfig.value))
-    const result = await $fetch('/api/appConfig', {
+    const result = await $fetch('/api/appconfig', {
       method: 'POST',
       body: _
     })
