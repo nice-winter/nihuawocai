@@ -47,7 +47,7 @@
 </template>
 
 <script setup lang="ts">
-import { players } from '#shared/utils/test'
+import { mockdata } from '#shared/utils/mockdata'
 import type { Player } from '#shared/interfaces/player'
 
 const tabItems = [
@@ -64,7 +64,7 @@ const tabItems = [
   }
 ]
 
-const playerList = ref(players.slice(0, 5))
+const playerList = ref(mockdata.players.slice(0, 5))
 
 const inviteClick = (player: Player) => {
   console.log(`[invite]`, 'invite player:', player)

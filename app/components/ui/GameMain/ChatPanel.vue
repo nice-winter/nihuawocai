@@ -29,7 +29,9 @@
 </template>
 
 <script setup lang="ts">
-const testPlayer = ref(players[0]!)
+import { mockdata } from '#shared/utils/mockdata'
+
+const testPlayer = ref(mockdata.players[0]!)
 
 const ChatPanelMessageListRef = useTemplateRef('ChatPanelMessageList')
 
