@@ -29,7 +29,7 @@
 </template>
 
 <script setup lang="ts">
-import { roomList, players } from '#shared/utils/test'
+import { mockdata } from '#shared/utils/mockdata'
 
 interface RoomProps {
   stage?: number
@@ -37,7 +37,7 @@ interface RoomProps {
 
 const { stage = 0 } = defineProps<RoomProps>()
 
-const roomInfo = reactive(roomList[4]!)
+const roomInfo = reactive(mockdata.roomList[4]!)
 </script>
 
 <style scoped></style>

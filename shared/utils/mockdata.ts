@@ -749,4 +749,9 @@ const _players = players.map((p) => {
   }
 })
 
-export { _roomList as roomList, _players as players }
+const mockdata = {
+  roomList: _roomList,
+  players: _players
+}
+
+export { mockdata }

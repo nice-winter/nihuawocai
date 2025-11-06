@@ -51,14 +51,14 @@
 </template>
 
 <script setup lang="ts">
-import { roomList } from '#shared/utils/test'
+import { mockdata } from '#shared/utils/mockdata'
 
 const gameRoomListStore = useGameRoomListStore()
 const { join, prevPage, nextPage, createRoom, quickMatch } = gameRoomListStore
 const { showOnlyWaitingRooms } = storeToRefs(gameRoomListStore)
 
 const roomNumberInputValue = ref('')
-const rooms = ref(roomList)
+const rooms = ref(mockdata.roomList)
 </script>
 
 <style scoped>
