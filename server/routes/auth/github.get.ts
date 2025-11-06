@@ -1,4 +1,5 @@
 import type { GitHubUser } from '#shared/interfaces/user'
+import { createUserData, hasUserData, updateUserData } from '~~/server/services/user'
 
 export default defineOAuthGitHubEventHandler({
   async onSuccess(event, { user, tokens }) {

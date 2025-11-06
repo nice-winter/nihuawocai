@@ -1,13 +1,20 @@
 import { wsEventBus } from '..'
-import { roomList } from '#shared/utils/test'
+import { mockdata } from '#shared/utils/mockdata'
+import { getAppConfig } from '~~/server/services/appconfig'
 
-export default function roomListHandler() {
-  wsEventBus.on('ws:message', ({ peer, msg, user, reply }) => {
+export default async function roomListHandler() {
+  const appConfig = await getAppConfig()
+
+  wsEventBus.on('ws:message', async ({ peer, msg, user, reply }) => {
     if (msg.type === 'room_list:pull') {
       reply({
         type: 'room_list:pull',
-        room_list: roomList
+        room_list: mockdata.roomList
       })
+    }
+
+    if (msg.type === 'room_list:room_create') {
+      //
     }
   })
 }

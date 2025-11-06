@@ -1,10 +1,12 @@
 import mitt from 'mitt'
-import { AdapterInternal, defineHooks, Peer } from 'crossws'
+import type { AdapterInternal, Peer } from 'crossws'
+import { defineHooks } from 'crossws'
 import { encode } from '#shared/utils/crypto'
 import { WS_MESSAGE_PING, WS_MESSAGE_PONG, WS_MESSAGE_DUPLICATE_LOGIN } from '#shared/interfaces/ws'
 import type { WebsocketMessage } from '#shared/interfaces/ws'
-import { UserData } from '#shared/interfaces/userData'
+import type { UserData } from '#shared/interfaces/userData'
 import { handleMessage } from './router'
+import { getUserData } from '~~/server/services/user'
 
 type WsEvents = {
   'ws:connect': Peer<AdapterInternal>
@@ -19,8 +21,11 @@ type WsEvents = {
 }
 
 const wsEventBus = mitt<WsEvents>()
-let peers: Set<Peer<AdapterInternal>>
-const loginUsers = new Map<string, UserData & { peer: Peer<AdapterInternal> }>()
+
+const globalStatus = {
+  peers: new Set<Peer<AdapterInternal>>(),
+  users: new Map<string, UserData & { peer: Peer<AdapterInternal> }>()
+}
 
 const _removeUserByPeer = async (peer: Peer<AdapterInternal>) => {
   const { user } = await getUserSession({
@@ -28,9 +33,9 @@ const _removeUserByPeer = async (peer: Peer<AdapterInternal>) => {
     context: peer.context
   })
 
-  if (user && loginUsers.has(user.id)) {
-    if (peer.id === loginUsers.get(user.id)?.peer.id) {
-      loginUsers.delete(user.id)
+  if (user && globalStatus.users.has(user.id)) {
+    if (peer.id === globalStatus.users.get(user.id)?.peer.id) {
+      globalStatus.users.delete(user.id)
     }
   }
 }
@@ -42,7 +47,7 @@ const hooks = defineHooks({
   },
 
   async open(peer) {
-    if (!peers) peers = peer.peers
+    if (!globalStatus.peers) globalStatus.peers = peer.peers
 
     const { user } = await getUserSession({
       ...peer.request,
@@ -51,25 +56,25 @@ const hooks = defineHooks({
 
     if (user) {
       // 判断重复登录
-      const uwp = loginUsers.get(user.id)
+      const uwp = globalStatus.users.get(user.id)
       if (uwp) {
         uwp.peer.send(encode(WS_MESSAGE_DUPLICATE_LOGIN))
         uwp.peer.close(4001, 'Duplicate login, close.')
       }
 
-      loginUsers.set(user.id, {
+      globalStatus.users.set(user.id, {
         ...(await getUserData(user.id)),
         peer
       })
     }
 
-    console.log('open', loginUsers)
+    console.log('open', globalStatus.users)
 
     wsEventBus.emit('ws:connect', peer)
   },
 
   async message(peer, message) {
-    const msg = message.json() as WebsocketMessage<{}>
+    const msg = message.json() as WebsocketMessage<object>
     if (msg.type.toLowerCase() === WS_MESSAGE_PING.type) peer.send(encode(WS_MESSAGE_PONG))
 
     const { user } = await getUserSession({
@@ -97,14 +102,14 @@ const hooks = defineHooks({
 
   async close(peer, { code, reason }) {
     _removeUserByPeer(peer)
-    console.log('close', loginUsers)
+    console.log('close', globalStatus.users)
 
     wsEventBus.emit('ws:disconnect', peer)
   },
 
   async error(peer, error) {
     _removeUserByPeer(peer)
-    console.log('error', loginUsers)
+    console.log('error', globalStatus.users)
 
     wsEventBus.emit('ws:error', peer)
   }
@@ -112,7 +117,7 @@ const hooks = defineHooks({
 
 const sendToAll = (msg: WebsocketMessage) => {
   const encodedMsg = encode(msg)
-  peers.forEach((peer) => peer.send(encodedMsg))
+  globalStatus.peers.forEach((peer) => peer.send(encodedMsg))
 }
 
 const sendToChannel = (msg: WebsocketMessage, channel?: string | string[]) => {
@@ -122,7 +127,7 @@ const sendToChannel = (msg: WebsocketMessage, channel?: string | string[]) => {
   const channels = Array.isArray(channel) ? channel : [channel]
   const targetPeers = new Set<Peer<AdapterInternal>>()
 
-  for (const peer of peers) {
+  for (const peer of globalStatus.peers) {
     for (const c of channels) {
       if (peer.topics.has(c)) {
         targetPeers.add(peer)
@@ -141,7 +146,7 @@ const sendToUser = (msg: WebsocketMessage, id: string | string[]) => {
   const encodedMsg = encode(msg)
 
   ids.forEach((i) => {
-    const user = loginUsers.get(i)
+    const user = globalStatus.users.get(i)
     if (user && user.peer.websocket.readyState === 1) {
       user.peer.send(encodedMsg)
     }
@@ -150,4 +155,4 @@ const sendToUser = (msg: WebsocketMessage, id: string | string[]) => {
 
 handleMessage()
 
-export { type WsEvents, wsEventBus, loginUsers, peers, hooks, sendToAll, sendToChannel, sendToUser }
+export { type WsEvents, wsEventBus, globalStatus, hooks, sendToAll, sendToChannel, sendToUser }
