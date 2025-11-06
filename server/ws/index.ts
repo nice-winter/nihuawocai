@@ -84,7 +84,9 @@ export const sendToUser = (msg: WebsocketMessage, id: string | string[]) => {
   }
 }
 
-// ---- hooks ----
+/**
+ * ---------------- crossws hooks ----------------
+ */
 const hooks = defineHooks({
   async upgrade(request) {
     await requireUserSession(request)
@@ -115,6 +117,11 @@ const hooks = defineHooks({
     }
   },
 
+  /**
+   * 客户端消息处理
+   * @param peer
+   * @param message 原始未解码消息
+   */
   async message(peer, message) {
     try {
       const msg = message.json() as WebsocketMessage
@@ -141,6 +148,11 @@ const hooks = defineHooks({
     }
   },
 
+  /**
+   * 客户端连接关闭
+   * @param peer
+   * @param e
+   */
   async close(peer, e) {
     try {
       removePeer(peer)
@@ -151,6 +163,11 @@ const hooks = defineHooks({
     }
   },
 
+  /**
+   * 客户端连接错误
+   * @param peer
+   * @param error
+   */
   async error(peer, error) {
     try {
       removePeer(peer)
@@ -162,6 +179,7 @@ const hooks = defineHooks({
   }
 })
 
+// 调用 router 以注册 handlers
 router()
 
 export { hooks }
