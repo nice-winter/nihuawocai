@@ -1,7 +1,5 @@
 import roomListHandler from './handlers/roomList'
 
-const handleMessage = () => {
+export const handleMessage = () => {
   roomListHandler()
 }
-
-export { handleMessage }
