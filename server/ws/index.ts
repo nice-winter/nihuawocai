@@ -5,20 +5,9 @@ import { encode } from '#shared/utils/crypto'
 import { WS_MESSAGE_PING, WS_MESSAGE_PONG, WS_MESSAGE_DUPLICATE_LOGIN } from '#shared/interfaces/ws'
 import type { WebsocketMessage } from '#shared/interfaces/ws'
 import type { UserData } from '#shared/interfaces/userData'
-import { handleMessage } from './router'
+import router from './router'
 import { getUserData } from '~~/server/services/user'
-
-type WsEvents = {
-  'ws:connect': Peer<AdapterInternal>
-  'ws:message': {
-    peer: Peer<AdapterInternal>
-    msg: WebsocketMessage
-    user: UserData
-    reply: <T>(msg: WebsocketMessage<T>) => void
-  }
-  'ws:error': Peer<AdapterInternal>
-  'ws:disconnect': Peer<AdapterInternal>
-}
+import type { WsEvents } from './utils/index'
 
 const wsEventBus = mitt<WsEvents>()
 
@@ -70,7 +59,19 @@ const hooks = defineHooks({
 
     console.log('open', globalStatus.users)
 
-    wsEventBus.emit('ws:connect', peer)
+    wsEventBus.emit('ws:connect', {
+      peer,
+      user: await getUserData(user?.id || ''),
+      reply: (msg: WebsocketMessage) => {
+        peer.send(
+          encode({
+            ...msg,
+            _t: Date.now(),
+            _reply: true
+          })
+        )
+      }
+    })
   },
 
   async message(peer, message) {
@@ -82,7 +83,7 @@ const hooks = defineHooks({
       context: peer.context
     })
 
-    console.log('[ws] message', msg)
+    console.log('[ws] --->>>>', msg)
 
     wsEventBus.emit('ws:message', {
       peer,
@@ -100,18 +101,36 @@ const hooks = defineHooks({
     })
   },
 
-  async close(peer, { code, reason }) {
+  async close(peer, e) {
     _removeUserByPeer(peer)
     console.log('close', globalStatus.users)
 
-    wsEventBus.emit('ws:disconnect', peer)
+    const { user } = await getUserSession({
+      ...peer.request,
+      context: peer.context
+    })
+
+    wsEventBus.emit('ws:disconnect', {
+      peer,
+      user: await getUserData(user?.id || ''),
+      ...e
+    })
   },
 
   async error(peer, error) {
     _removeUserByPeer(peer)
     console.log('error', globalStatus.users)
 
-    wsEventBus.emit('ws:error', peer)
+    const { user } = await getUserSession({
+      ...peer.request,
+      context: peer.context
+    })
+
+    wsEventBus.emit('ws:error', {
+      peer,
+      user: await getUserData(user?.id || ''),
+      error
+    })
   }
 })
 
@@ -153,6 +172,6 @@ const sendToUser = (msg: WebsocketMessage, id: string | string[]) => {
   })
 }
 
-handleMessage()
+router()
 
 export { type WsEvents, wsEventBus, globalStatus, hooks, sendToAll, sendToChannel, sendToUser }

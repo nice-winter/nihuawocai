@@ -126,9 +126,6 @@ const providers = [
 ]
 
 const gameStore = useGameStore()
-
-const { data } = await useFetch('/api/hello')
-console.log(data.value)
 </script>
 
 <style scoped>
