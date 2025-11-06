@@ -1,177 +1,167 @@
 import mitt from 'mitt'
-import type { AdapterInternal, Peer } from 'crossws'
 import { defineHooks } from 'crossws'
 import { encode } from '#shared/utils/crypto'
 import { WS_MESSAGE_PING, WS_MESSAGE_PONG, WS_MESSAGE_DUPLICATE_LOGIN } from '#shared/interfaces/ws'
-import type { WebsocketMessage } from '#shared/interfaces/ws'
-import type { UserData } from '#shared/interfaces/userData'
-import router from './router'
 import { getUserData } from '~~/server/services/user'
-import type { WsEvents } from './utils/index'
+import { isOpen, reply, safeSend } from './utils'
+import router from './router'
+import type { WebsocketMessage } from '#shared/interfaces/ws'
+import type { WsPeer, WsEvents } from './utils'
+import type { UserData } from '#shared/interfaces/userData'
 
-const wsEventBus = mitt<WsEvents>()
+export const wsEventBus = mitt<WsEvents>()
 
-const globalStatus = {
-  peers: new Set<Peer<AdapterInternal>>(),
-  users: new Map<string, UserData & { peer: Peer<AdapterInternal> }>()
+export const globalStatus = {
+  peers: new Set<WsPeer>(),
+  users: new Map<string, UserData & { peer: WsPeer }>(),
+  channels: new Map<string, Set<WsPeer>>()
 }
 
-const _removeUserByPeer = async (peer: Peer<AdapterInternal>) => {
-  const { user } = await getUserSession({
-    ...peer.request,
-    context: peer.context
-  })
-
-  if (user && globalStatus.users.has(user.id)) {
-    if (peer.id === globalStatus.users.get(user.id)?.peer.id) {
-      globalStatus.users.delete(user.id)
-    }
+async function resolveUserFromPeer(peer: WsPeer) {
+  try {
+    const { user: sessionUser } = await getUserSession({ ...peer.request, context: peer.context })
+    if (!sessionUser) return { session: null, userData: null }
+    const userData = await getUserData(sessionUser.id)
+    return { session: sessionUser, userData }
+  } catch {
+    return { session: null, userData: null }
   }
 }
 
-// crossws 钩子
+export function subscribePeerToChannel(peer: WsPeer, topic: string) {
+  peer.topics.add(topic)
+  if (!globalStatus.channels.has(topic)) globalStatus.channels.set(topic, new Set())
+  globalStatus.channels.get(topic)!.add(peer)
+}
+
+export function unsubscribePeerFromChannel(peer: WsPeer, topic: string) {
+  peer.topics.delete(topic)
+  const set = globalStatus.channels.get(topic)
+  set?.delete(peer)
+  if (set && set.size === 0) globalStatus.channels.delete(topic)
+}
+
+export function removePeer(peer: WsPeer) {
+  globalStatus.peers.delete(peer)
+  // 从 users map 中移除（如果匹配）
+  for (const [uid, u] of globalStatus.users) {
+    if (u.peer.id === peer.id) globalStatus.users.delete(uid)
+  }
+  // 从 channels 索引删除
+  for (const [topic, set] of globalStatus.channels) {
+    set.delete(peer)
+    if (set.size === 0) globalStatus.channels.delete(topic)
+  }
+}
+
+export const sendToAll = (msg: WebsocketMessage) => {
+  const encoded = encode(msg)
+
+  for (const peer of globalStatus.peers) safeSend(peer, encoded)
+}
+
+export const sendToChannel = (msg: WebsocketMessage, channel?: string | string[]) => {
+  if (!channel) return
+  const topics = Array.isArray(channel) ? channel : [channel]
+  const encoded = encode(msg)
+  const target = new Set<WsPeer>()
+
+  for (const t of topics) {
+    const set = globalStatus.channels.get(t)
+    if (set) for (const p of set) target.add(p)
+  }
+
+  for (const p of target) safeSend(p, encoded)
+}
+
+export const sendToUser = (msg: WebsocketMessage, id: string | string[]) => {
+  const ids = Array.isArray(id) ? id : [id]
+  const encoded = encode(msg)
+
+  for (const i of ids) {
+    const user = globalStatus.users.get(i)
+    if (user && isOpen(user.peer)) safeSend(user.peer, encoded)
+  }
+}
+
+// ---- hooks ----
 const hooks = defineHooks({
   async upgrade(request) {
     await requireUserSession(request)
   },
 
   async open(peer) {
-    if (!globalStatus.peers) globalStatus.peers = peer.peers
+    try {
+      globalStatus.peers.add(peer)
 
-    const { user } = await getUserSession({
-      ...peer.request,
-      context: peer.context
-    })
-
-    if (user) {
-      // 判断重复登录
-      const uwp = globalStatus.users.get(user.id)
-      if (uwp) {
-        uwp.peer.send(encode(WS_MESSAGE_DUPLICATE_LOGIN))
-        uwp.peer.close(4001, 'Duplicate login, close.')
+      const { session, userData } = await resolveUserFromPeer(peer)
+      if (session) {
+        // 处理重复登录：关闭旧连接并替换
+        const prev = globalStatus.users.get(session.id)
+        if (prev) {
+          safeSend(prev.peer, encode(WS_MESSAGE_DUPLICATE_LOGIN))
+          prev.peer.close(4001, 'Duplicate login')
+        }
+        globalStatus.users.set(session.id, { ...userData, peer })
       }
 
-      globalStatus.users.set(user.id, {
-        ...(await getUserData(user.id)),
-        peer
+      wsEventBus.emit('ws:connect', {
+        peer,
+        user: userData,
+        reply: reply(peer)
       })
+    } catch (e) {
+      console.error('[ws]', 'ws open error', e)
     }
-
-    console.log('open', globalStatus.users)
-
-    wsEventBus.emit('ws:connect', {
-      peer,
-      user: await getUserData(user?.id || ''),
-      reply: (msg: WebsocketMessage) => {
-        peer.send(
-          encode({
-            ...msg,
-            _t: Date.now(),
-            _reply: true
-          })
-        )
-      }
-    })
   },
 
   async message(peer, message) {
-    const msg = message.json() as WebsocketMessage<object>
-    if (msg.type.toLowerCase() === WS_MESSAGE_PING.type) peer.send(encode(WS_MESSAGE_PONG))
-
-    const { user } = await getUserSession({
-      ...peer.request,
-      context: peer.context
-    })
-
-    console.log('[ws] --->>>>', msg)
-
-    wsEventBus.emit('ws:message', {
-      peer,
-      msg,
-      user: await getUserData(user?.id || ''),
-      reply: (msg: WebsocketMessage) => {
-        peer.send(
-          encode({
-            ...msg,
-            _t: Date.now(),
-            _reply: true
-          })
-        )
+    try {
+      const msg = message.json() as WebsocketMessage
+      if (!msg || !msg.type) return
+      if (msg.type === WS_MESSAGE_PING.type) {
+        safeSend(peer, encode(WS_MESSAGE_PONG))
+        return
       }
-    })
+
+      const { userData } = await resolveUserFromPeer(peer)
+      wsEventBus.emit('ws:message', {
+        peer,
+        msg,
+        user: userData,
+        reply: reply(peer)
+      })
+    } catch (e) {
+      console.warn('[ws]', 'ws message parse/handler error', e)
+      try {
+        reply(peer)({ type: 'error' })
+      } catch {
+        //
+      }
+    }
   },
 
   async close(peer, e) {
-    _removeUserByPeer(peer)
-    console.log('close', globalStatus.users)
-
-    const { user } = await getUserSession({
-      ...peer.request,
-      context: peer.context
-    })
-
-    wsEventBus.emit('ws:disconnect', {
-      peer,
-      user: await getUserData(user?.id || ''),
-      ...e
-    })
+    try {
+      removePeer(peer)
+      const { userData } = await resolveUserFromPeer(peer)
+      wsEventBus.emit('ws:disconnect', { peer, user: userData, ...e })
+    } catch (e) {
+      console.warn('[ws]', 'ws close error', e)
+    }
   },
 
   async error(peer, error) {
-    _removeUserByPeer(peer)
-    console.log('error', globalStatus.users)
-
-    const { user } = await getUserSession({
-      ...peer.request,
-      context: peer.context
-    })
-
-    wsEventBus.emit('ws:error', {
-      peer,
-      user: await getUserData(user?.id || ''),
-      error
-    })
+    try {
+      removePeer(peer)
+      const { userData } = await resolveUserFromPeer(peer)
+      wsEventBus.emit('ws:error', { peer, user: userData, error })
+    } catch (e) {
+      console.warn('[ws]', 'ws error handler failed', e)
+    }
   }
 })
 
-const sendToAll = (msg: WebsocketMessage) => {
-  const encodedMsg = encode(msg)
-  globalStatus.peers.forEach((peer) => peer.send(encodedMsg))
-}
-
-const sendToChannel = (msg: WebsocketMessage, channel?: string | string[]) => {
-  const encoded = encode(msg)
-  if (!channel) return
-
-  const channels = Array.isArray(channel) ? channel : [channel]
-  const targetPeers = new Set<Peer<AdapterInternal>>()
-
-  for (const peer of globalStatus.peers) {
-    for (const c of channels) {
-      if (peer.topics.has(c)) {
-        targetPeers.add(peer)
-        break
-      }
-    }
-  }
-
-  for (const peer of targetPeers) {
-    peer.send(encoded)
-  }
-}
-
-const sendToUser = (msg: WebsocketMessage, id: string | string[]) => {
-  const ids = Array.isArray(id) ? id : [id]
-  const encodedMsg = encode(msg)
-
-  ids.forEach((i) => {
-    const user = globalStatus.users.get(i)
-    if (user && user.peer.websocket.readyState === 1) {
-      user.peer.send(encodedMsg)
-    }
-  })
-}
-
 router()
 
-export { type WsEvents, wsEventBus, globalStatus, hooks, sendToAll, sendToChannel, sendToUser }
+export { hooks }
