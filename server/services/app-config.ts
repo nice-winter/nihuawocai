@@ -7,7 +7,7 @@ const keyName = 'app_config'
 
 const getAppConfig = async () => {
   const appConfig = await appStorage.get<AppConfig>(keyName)
-  return appConfig
+  return appConfig || defaultAppConfig
 }
 
 const setAppConfig = async (appConfig: AppConfig) => {
