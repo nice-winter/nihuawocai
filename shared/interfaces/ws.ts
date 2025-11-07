@@ -18,6 +18,6 @@ export const WS_MESSAGE_DUPLICATE_LOGIN: WebsocketMessage = {
   type: 'duplicate_login'
 }
 
-export type WebsocketMessage<T = {}> = BaseWebsocketMessage & T
+export type WebsocketMessage<T = object> = BaseWebsocketMessage & T
 
 export type WebsocketMessageType = 'ping' | 'pong' | string
