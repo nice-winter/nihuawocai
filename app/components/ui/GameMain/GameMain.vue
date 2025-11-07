@@ -16,9 +16,9 @@
 <style scoped>
 .custom-foreground-bg {
   background-image:
-    linear-gradient(#eae0d0 1px, transparent 1px),
-    linear-gradient(90deg, #eae0d0 1px, transparent 1px);
-  background-size: 16px 16px;
+    linear-gradient(#eae0d0ba 1px, transparent 1px),
+    linear-gradient(90deg, #eae0d0ba 1px, transparent 1px);
+  background-size: 11.5px 11.5px;
 }
 
 .custom-background-bg {

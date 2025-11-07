@@ -11,15 +11,11 @@
         />
       </div>
       <div class="flex flex-wrap w-full h-full absolute">
-        <div
-          v-for="i in 6"
-          :key="i + Date.now()"
-          class="w-1/2 border border-white/60 custom-border-item"
-        />
+        <div v-for="i in 6" :key="i + Date.now()" class="w-1/2 custom-border-item" />
       </div>
     </div>
     <div
-      class="grow flex items-center gap-4 p-[0.785rem] bg-[#f1d0ae42] border-t-2 border-white/60"
+      class="grow flex items-center gap-4 p-[0.785rem] bg-[#f1d0ae42] border-t-2 border-t-white/60"
     >
       <UiButton size="lg" color="red" @click="quickMatch"> 快速开始 </UiButton>
       <div class="px-4 flex gap-2 items-center">
@@ -62,25 +58,23 @@ const rooms = ref(mockdata.roomList)
 </script>
 
 <style scoped>
-.custom-border-item:nth-child(1),
-.custom-border-item:nth-child(2) {
-  border-top: none;
+.custom-border-item {
+  border: 1px solid transparent;
 }
 
-.custom-border-item:nth-child(5),
-.custom-border-item:nth-child(6) {
-  border-bottom: none;
+/* 水平边框 */
+.custom-border-item:nth-child(-n + 4) {
+  border-bottom: 1px solid var(--color-gray-200);
+}
+.custom-border-item:nth-child(n + 3) {
+  border-top: 1px solid color-mix(in oklab, var(--color-white) 60%, transparent);
 }
 
-.custom-border-item:nth-child(1),
-.custom-border-item:nth-child(3),
-.custom-border-item:nth-child(5) {
-  border-left: none;
+/* 垂直边框 - 奇数列右边框，偶数列左边框 */
+.custom-border-item:nth-child(odd) {
+  border-right: 1px solid var(--color-gray-200);
 }
-
-.custom-border-item:nth-child(2),
-.custom-border-item:nth-child(4),
-.custom-border-item:nth-child(6) {
-  border-right: none;
+.custom-border-item:nth-child(even) {
+  border-left: 1px solid color-mix(in oklab, var(--color-white) 60%, transparent);
 }
 </style>
