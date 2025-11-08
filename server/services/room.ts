@@ -59,7 +59,7 @@ const createRoom = async (
   const appConfig = await getAppConfig()
   const user = await getUserData(owner)
 
-  if (getPlayer(owner)?.state === 'in_room') throw '当前已在房间内'
+  if (getPlayer(owner)?.state === 'in_room') throw new Error('当前已在房间内')
 
   const defaultRoomOptions: RoomOptions = {
     password: '',
@@ -148,19 +148,19 @@ const destroyRoom = (roomNumber: number) => {
  * @param room
  */
 const updateRoom = (roomNumber: number, room: Room) => {
-  if (room.players.length !== 7) throw '房间信息错误'
+  if (room.players.length !== 7) throw new Error('房间信息错误')
   rooms.set(roomNumber, room)
 }
 
 const joinRoom = async (roomNumber: number, id: string, password?: string) => {
-  if (getPlayer(id)?.state === 'in_room') throw '当前已在房间内'
+  if (getPlayer(id)?.state === 'in_room') throw new Error('当前已在房间内')
 
   const room = rooms.get(roomNumber)
   const user = await getUserData(id)
 
   if (room) {
     if (room.options.password.trim() !== '' && password?.trim() !== room.options.password.trim())
-      throw '密码错误'
+      throw new Error('密码错误')
 
     /**
      * 尝试加入旁观席
@@ -179,7 +179,7 @@ const joinRoom = async (roomNumber: number, id: string, password?: string) => {
           user
         })
       } else {
-        throw '旁观人数已满'
+        throw new Error('旁观人数已满')
       }
     }
 
@@ -205,10 +205,10 @@ const joinRoom = async (roomNumber: number, id: string, password?: string) => {
             user
           })
         } else {
-          throw '房间人数已满'
+          throw new Error('房间人数已满')
         }
       } else {
-        throw '房间人数已满'
+        throw new Error('房间人数已满')
       }
     }
 
@@ -227,7 +227,7 @@ const joinRoom = async (roomNumber: number, id: string, password?: string) => {
       id
     )
   } else {
-    throw '房间不存在'
+    throw new Error('房间不存在')
   }
 }
 
@@ -238,7 +238,7 @@ const joinRoom = async (roomNumber: number, id: string, password?: string) => {
  * @param seat
  */
 const sit = async (roomNumber: number, id: string, seat: number) => {
-  if (getPlayer(id)?.state !== 'in_room') throw '当前不在房间内'
+  if (getPlayer(id)?.state !== 'in_room') throw new Error('当前不在房间内')
 
   const user = await getUserData(id)
   const room = rooms.get(roomNumber)
@@ -254,7 +254,7 @@ const sit = async (roomNumber: number, id: string, seat: number) => {
         user
       })
     } else {
-      throw '该位置已经有人了...'
+      throw new Error('该位置已经有人了...')
     }
   }
 }
@@ -265,7 +265,7 @@ const sit = async (roomNumber: number, id: string, seat: number) => {
  * @param roomNumber 房间号，默认为提供的用户的状态中保存的房间号
  */
 const leaveRoom = (id: string, roomNumber?: number) => {
-  if (getPlayer(id)?.state !== 'in_room') throw '当前不在房间内'
+  if (getPlayer(id)?.state !== 'in_room') throw new Error('当前不在房间内')
 
   const rn = roomNumber || getPlayer(id)?.roomNumber || 0
   const room = rooms.get(rn)
