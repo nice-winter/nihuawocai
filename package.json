@@ -26,6 +26,7 @@
     "@unhead/vue": "^2.0.19",
     "@vueuse/nuxt": "14.0.0",
     "better-sqlite3": "^12.4.1",
+    "consola": "^3.4.2",
     "db0": "^0.3.4",
     "defu": "^6.1.4",
     "fabric": "^7.0.0-beta1",
