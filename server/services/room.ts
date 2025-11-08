@@ -131,7 +131,8 @@ const destroyRoom = (roomNumber: number) => {
     // 广播房间销毁事件
     sendToAllPlayer({
       type: 'room:destroy',
-      from: roomNumber
+      from: roomNumber,
+      roomNumber
     })
 
     logger.debug(
