@@ -11,12 +11,12 @@ export const usePlayerStore = defineStore('playerStore', () => {
   }
 
   wsEventBus.on('ws:message', (msg) => {
-    if (msg.type === 'player:logged_in') {
+    if (msg.type === 'player:event:logged_in') {
       const { player_info } = msg as WebsocketMessage<{ player_info: LoggedInPlayer }>
       player.value = player_info
     }
 
-    if (msg.type === 'player:state_update') {
+    if (msg.type === 'player:event:state_update') {
       const { id, state, roomNumber } = msg as WebsocketMessage<PlayerState>
       if (player.value && id === player.value.id) {
         player.value.state = state
