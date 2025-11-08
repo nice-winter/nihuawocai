@@ -1,6 +1,6 @@
 import mitt from 'mitt'
 import { defineHooks } from 'crossws'
-import { encode } from '#shared/utils/crypto'
+// import { encode } from '#shared/utils/crypto'
 import { WS_MESSAGE_PING, WS_MESSAGE_PONG, WS_MESSAGE_DUPLICATE_LOGIN } from '#shared/interfaces/ws'
 import { getUserData } from '~~/server/services/user'
 import { isOpen, reply, safeSend } from './utils'
@@ -59,15 +59,14 @@ export function removePeer(peer: WsPeer) {
 }
 
 export const sendToAll = <T>(msg: WebsocketMessage<T>) => {
-  const encoded = encode(msg)
-
+  const encoded = msg
   for (const peer of globalStatus.peers) safeSend(peer, encoded)
 }
 
 export const sendToChannel = <T>(msg: WebsocketMessage<T>, channel?: string | string[]) => {
   if (!channel) return
   const topics = Array.isArray(channel) ? channel : [channel]
-  const encoded = encode(msg)
+  const encoded = msg
   const target = new Set<WsPeer>()
 
   for (const t of topics) {
@@ -80,7 +79,7 @@ export const sendToChannel = <T>(msg: WebsocketMessage<T>, channel?: string | st
 
 export const sendToUser = <T>(msg: WebsocketMessage<T>, id: string | string[]) => {
   const ids = Array.isArray(id) ? id : [id]
-  const encoded = encode(msg)
+  const encoded = msg
 
   for (const i of ids) {
     const user = globalStatus.users.get(i)
@@ -102,7 +101,7 @@ const hooks = defineHooks({
         // 处理重复登录：关闭旧连接并替换
         const prev = globalStatus.users.get(session.id)
         if (prev) {
-          safeSend(prev.peer, encode(WS_MESSAGE_DUPLICATE_LOGIN))
+          safeSend(prev.peer, WS_MESSAGE_DUPLICATE_LOGIN)
           prev.peer.close(4001, 'Duplicate login')
         }
         globalStatus.users.set(session.id, { ...userData, peer })
@@ -129,7 +128,7 @@ const hooks = defineHooks({
       const msg = message.json() as WebsocketMessage
       if (!msg || !msg.type) return
       if (msg.type === WS_MESSAGE_PING.type) {
-        safeSend(peer, encode(WS_MESSAGE_PONG))
+        safeSend(peer, WS_MESSAGE_PONG)
         return
       }
 

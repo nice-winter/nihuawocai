@@ -35,7 +35,11 @@ interface WsHandlers {
 
 const isOpen = (peer: WsPeer) => peer.websocket && peer.websocket.readyState === 1
 
-const safeSend = (peer: WsPeer, encoded: ArrayBuffer | string) => {
+const safeSend = <T>(peer: WsPeer, msg: WebsocketMessage<T>) => {
+  const encoded = encode({
+    ...msg,
+    ...(msg.type.toLowerCase() !== 'pong' ? { _t: Date.now() } : {})
+  })
   if (isOpen(peer)) {
     try {
       peer.send(encoded)
@@ -45,9 +49,11 @@ const safeSend = (peer: WsPeer, encoded: ArrayBuffer | string) => {
   }
 }
 
-const reply = (peer: WsPeer) => (msg: WebsocketMessage) => {
-  safeSend(peer, encode({ ...msg, _t: Date.now(), _reply: true }))
-}
+const reply =
+  (peer: WsPeer) =>
+  <T>(msg: WebsocketMessage<T>) => {
+    safeSend(peer, { ...msg, _reply: true })
+  }
 
 const defineWsHandlers = (handlers: WsHandlers) => {
   return handlers
