@@ -27,7 +27,7 @@ const addPlayer = (user: UserData & { peer: WsPeer }) => {
 
   sendToPlayer(
     {
-      type: 'player:logged_in',
+      type: 'player:event:logged_in',
       player_info: {
         ...user,
         peer: undefined // @todo 这里不要把 server runtime 的东西传出去，暂时偷懒这么写。。
@@ -65,9 +65,9 @@ const updatePlayerState = (id: string, roomNumber?: number) => {
 
     players.set(id, player)
 
-    sendToUser(
+    sendToPlayer(
       {
-        type: 'player:state_update',
+        type: 'player:event:state_update',
         id,
         state: player.state,
         roomNumber

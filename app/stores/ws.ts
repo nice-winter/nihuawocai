@@ -25,7 +25,9 @@ export const useWsStore = defineStore('ws', () => {
     },
     onConnected(ws) {
       ws.binaryType = 'arraybuffer'
-      wsEventBus.emit('ws:connected', ws)
+      setTimeout(() => {
+        wsEventBus.emit('ws:connected', ws)
+      }, 100)
     },
     onMessage(_, e) {
       const msg = decode(e.data) as WebsocketMessage
