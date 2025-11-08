@@ -1,14 +1,18 @@
 <
 <template>
   <div>
-    <p>Status: {{ status }}</p>
-    <p>Data: {{ data }}</p>
     <p class="flex gap-4">
       <UButton @click="pullRoomList">拉取房间列表</UButton>
+      <UButton @click="create">创房</UButton>
+      <UButton @click="leave">退房</UButton>
+      <UInput v-model="roomNumber" class="w-16" />
+      <UButton @click="join">进房</UButton>
     </p>
-    <div>
+    <p>Status: {{ status }}</p>
+    <p>Data: {{ data }}</p>
+    <!-- <div>
       <Text :text="text" />
-    </div>
+    </div> -->
   </div>
 </template>
 
@@ -21,14 +25,37 @@ const wsStore = useWsStore()
 const { send, open } = wsStore
 const { status, data } = storeToRefs(wsStore)
 
+const roomNumber = ref('')
+
 onMounted(() => {
   open()
 })
 
 const pullRoomList = () => {
   send({
-    type: 'room_list:pull'
+    type: 'room:list_pull'
   })
+}
+
+const create = () => {
+  send({
+    type: 'room:create'
+  })
+}
+
+const leave = () => {
+  send({
+    type: 'room:leave'
+  })
+}
+
+const join = () => {
+  if (roomNumber.value) {
+    send({
+      type: 'room:join',
+      roomNumber: Number(roomNumber.value)
+    })
+  }
 }
 </script>
 

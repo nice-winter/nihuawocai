@@ -12,30 +12,34 @@ export const useGameRoomListStore = defineStore('gameRoomListStore', () => {
 
   wsEventBus.on('ws:connected', () => {
     send({
-      type: 'room_list:pull'
+      type: 'room:list_pull'
     })
   })
 
   wsEventBus.on('ws:message', (msg) => {
-    if (msg.type === 'room_list:pull') {
+    if (msg.type === 'room:list_pull') {
       roomList.length = 0
       roomList.push(...(msg as WebsocketMessage<{ room_list: RoomInfo[] }>).room_list)
     }
 
-    if (msg.type === 'room_list:room_create') {
+    if (msg.type === 'room:create') {
       roomList.push((msg as WebsocketMessage<{ room: RoomInfo }>).room)
     }
 
-    if (msg.type === 'room_list:room_destroy') {
+    if (msg.type === 'room:destroy') {
+      /* empty */
     }
 
-    if (msg.type === 'room_list:room_stage_change') {
+    if (msg.type === 'room:stage_update') {
+      /* empty */
     }
 
-    if (msg.type === 'room_list:room_player_join') {
+    if (msg.type === 'room:player_join') {
+      /* empty */
     }
 
-    if (msg.type === 'room_list:room_player_leave') {
+    if (msg.type === 'room:player_leave') {
+      /* empty */
     }
   })
 
@@ -48,8 +52,8 @@ export const useGameRoomListStore = defineStore('gameRoomListStore', () => {
 
   const createRoom = () => {
     send({
-      type: 'room_list:room_create',
-      room_custom_options: {
+      type: 'room:create',
+      options: {
         password: null,
         playerNumber: 7,
         look: true
@@ -59,7 +63,7 @@ export const useGameRoomListStore = defineStore('gameRoomListStore', () => {
 
   const quickMatch = () => {
     send({
-      type: 'room_list:quick_match'
+      type: 'room:quick_match'
     })
   }
 
