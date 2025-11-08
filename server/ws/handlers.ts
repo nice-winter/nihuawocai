@@ -1,8 +1,10 @@
+import { consola } from 'consola'
+import { colors } from 'consola/utils'
 import { wsEventBus } from '.'
-import type { WsHandlers } from './utils'
 import roomListHandler from './handlers/room'
+import type { WsHandlers } from './utils'
 
-const log = (...data: unknown[]) => console.log('[ws-router]', ...data)
+const logger = consola.withTag('Handlers')
 
 function registerHandlers(handlers: WsHandlers) {
   wsEventBus.on('ws:message', async (e) => {
@@ -16,7 +18,12 @@ function registerHandlers(handlers: WsHandlers) {
     }
   })
 
-  log(`注册了 ${Object.keys(handlers).length} 个 Handlers:`, Object.keys(handlers).join(', '))
+  logger.debug(
+    `Registered ${colors.cyan(Object.keys(handlers).length)} handlers:`,
+    Object.keys(handlers)
+      .map((k) => colors.cyan(k))
+      .join(', ')
+  )
 }
 
 export default function () {
