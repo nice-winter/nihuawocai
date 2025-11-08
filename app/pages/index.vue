@@ -35,6 +35,18 @@
             <span>天秤座</span>
             <span>房间4</span>
           </div>
+
+          <div class="relative ml-auto w-52">
+            <div
+              v-if="userSession.loggedIn.value && player"
+              class="absolute top-5 left-4 z-2 flex items-center gap-2"
+            >
+              <UiAvatar :player="player" class="size-10" />
+              <span class="max-w-38 text-[13px] text-(--game-primary-color) text-light truncate">{{
+                player.nickname
+              }}</span>
+            </div>
+          </div>
         </div>
       </template>
 
@@ -94,6 +106,7 @@ definePageMeta({
 const userSession = useUserSession()
 const appConfigStore = useAppConfigStore()
 const { appConfig } = storeToRefs(appConfigStore)
+const { player } = storeToRefs(usePlayerStore())
 
 const providers = [
   {
@@ -126,6 +139,11 @@ const providers = [
 ]
 
 const gameStore = useGameStore()
+
+const { open } = useWsStore()
+if (userSession.loggedIn.value) {
+  open()
+}
 </script>
 
 <style scoped>

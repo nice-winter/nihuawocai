@@ -53,7 +53,7 @@ export const useWsStore = defineStore('ws', () => {
 
   const _data = computed(() => (data.value ? decode(data.value) : {}))
 
-  const _send = <T = {}>(msg: WebsocketMessage<T>) => {
+  const _send = <T = object>(msg: WebsocketMessage<T>) => {
     if (status.value !== 'OPEN') {
       console.warn('[ws(未连接)]', '[发送消息] <<<<---', msg)
     } else {
