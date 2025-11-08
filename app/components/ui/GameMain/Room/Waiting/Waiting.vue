@@ -38,8 +38,8 @@
       <div class="grid grid-cols-2 grid-rows-2 gap-[0.785rem]">
         <UiButton color="green">广播邀请</UiButton>
         <UiButton color="blue">邀请好友</UiButton>
-        <UiButton>再等一会</UiButton>
-        <UiButton color="red" @click="start">立即开始</UiButton>
+        <UiButton v-if="isOwner">再等一会</UiButton>
+        <UiButton v-if="isOwner" color="red" @click="start">立即开始</UiButton>
       </div>
     </div>
 
@@ -70,7 +70,7 @@
         :player="roomInfo?.players![i - 1] || undefined"
         mode="seat"
         :verified-icon="{ show: true, size: 16 }"
-        :disabled="false"
+        :disabled="!isOwner"
         @switch="onSeatSwitch"
       />
 
@@ -92,10 +92,13 @@
 import type { RoomInfo } from '#shared/interfaces/room'
 
 const { roomInfo } = defineProps<{ roomInfo: RoomInfo }>()
+const { player } = storeToRefs(usePlayerStore())
+const { switchSeat } = useGameRoomListStore()
 
 const PasswordInputRef = useTemplateRef('PasswordInput')
 const RoomMessageListRef = useTemplateRef('RoomMessageList')
 
+const isOwner = computed(() => roomInfo.owner === player.value?.id)
 const locked = ref(roomInfo.locked)
 const password = ref(roomInfo.locked ? roomInfo.password || '0000' : '')
 const showPasswordInput = ref(false)
@@ -186,8 +189,9 @@ watch(
   }
 )
 
-const onSeatSwitch = (open?: boolean, id?: number | string) => {
-  console.log(id, open)
+const onSeatSwitch = (open?: boolean, seat?: number | string) => {
+  console.log(seat, open)
+  switchSeat(roomInfo.roomNumber, Number(seat) - 1, Boolean(open))
 }
 
 const start = () => {

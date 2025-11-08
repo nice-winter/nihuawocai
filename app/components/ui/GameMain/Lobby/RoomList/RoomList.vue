@@ -1,9 +1,9 @@
 <template>
   <div class="flex flex-col">
     <div class="h-[87.72%] flex flex-wrap relative">
-      <div class="z-1 flex flex-wrap">
+      <div class="z-1 flex flex-wrap w-full h-full">
         <UiGameMainLobbyRoomListItem
-          v-for="room in Array.from(rooms).slice(0, 6)"
+          v-for="room in gameRoomListStore.currentPageRooms"
           :key="room.roomNumber"
           :room-info="room"
           @join-button-click="join"
@@ -51,7 +51,7 @@ import { mockdata } from '#shared/utils/mockdata'
 
 const gameRoomListStore = useGameRoomListStore()
 const { join, prevPage, nextPage, createRoom, quickMatch } = gameRoomListStore
-const { showOnlyWaitingRooms } = storeToRefs(gameRoomListStore)
+const { currentPageRooms, currentPageNumber, showOnlyWaitingRooms } = storeToRefs(gameRoomListStore)
 
 const roomNumberInputValue = ref('')
 const rooms = ref(mockdata.roomList)

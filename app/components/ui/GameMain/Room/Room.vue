@@ -1,8 +1,8 @@
 <template>
-  <div class="flex flex-row h-full">
+  <div v-if="currentRoom" class="flex flex-row h-full">
     <div class="flex flex-col w-[74.4%]">
-      <UiGameMainRoomWaiting v-if="stage === 0" :room-info="roomInfo" />
-      <UiGameMainRoomPlaying v-else-if="stage === 1" :room-info="roomInfo" />
+      <UiGameMainRoomWaiting v-if="stage === 0" :room-info="currentRoom" />
+      <UiGameMainRoomPlaying v-else-if="stage === 1" :room-info="currentRoom" />
     </div>
 
     <div class="grow flex flex-col bg-[#f1d0ae42] border-l-2 border-white/60">
@@ -11,6 +11,7 @@
           type="button"
           :icon="`ph:arrow-u-up-left-bold`"
           class="absolute top-5.5 right-[.785rem] text-[13px]"
+          @click="leave"
         >
           离开房间
         </UiLinkButton>
@@ -36,6 +37,10 @@ interface RoomProps {
 }
 
 const { stage = 0 } = defineProps<RoomProps>()
+
+const roomStore = useGameRoomListStore()
+const { leave, sit } = roomStore
+const { currentRoom } = storeToRefs(roomStore)
 
 const roomInfo = reactive(mockdata.roomList[4]!)
 </script>

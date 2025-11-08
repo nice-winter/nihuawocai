@@ -1,6 +1,6 @@
 <template>
-  <div class="p-[0.785rem] w-1/2">
-    <div class="flex flex-col gap-[0.7rem] select-none">
+  <div class="p-[0.785rem] w-1/2 h-1/3">
+    <div v-if="ownerPlayer" class="flex flex-col gap-[0.7rem] select-none">
       <div class="h-16 flex gap-[0.7rem]">
         <UiAvatar class="size-16" :player="ownerPlayer" :verified-icon="{ show: true }" />
 
@@ -69,9 +69,9 @@ type RoomListItemProps = RoomInfo
 const { roomInfo } = defineProps<{ roomInfo: RoomListItemProps }>()
 
 const playersWithoutOwner = computed(() =>
-  roomInfo.players.filter((p) => p !== null && p.id !== roomInfo.owner)
+  roomInfo.players.filter((p) => p && p.id !== roomInfo.owner)
 )
-const ownerPlayer = computed(() => roomInfo.players.find((p) => p?.id === roomInfo.owner)!)
+const ownerPlayer = computed(() => roomInfo.players.find((p) => p?.id === roomInfo.owner))
 const totalPlayerCount = computed(() => roomInfo.players.filter((p) => p).length)
 const openSeatCount = computed(() => roomInfo.seats.filter((s) => s).length)
 
