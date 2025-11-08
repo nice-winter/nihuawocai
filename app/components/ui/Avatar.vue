@@ -13,9 +13,9 @@
       }"
     >
       <UAvatar
-        v-if="player"
+        v-show="player"
         class="game-avatar size-full cursor-pointer"
-        :src="player.avatar_url"
+        :src="player?.avatar_url"
       />
       <img
         v-if="player?.verification.verified && verifiedIcon?.show"
@@ -118,7 +118,7 @@ const { levelHelper } = useAppConfigStore()
 const open = defineModel<boolean>('open', { default: true })
 
 const emit = defineEmits<{
-  (e: 'switch', open: boolean, id?: number | string): void
+  (e: 'switch', open: boolean, seat?: number | string): void
 }>()
 
 const onClick = () => {
