@@ -1,8 +1,12 @@
+import { consola } from 'consola'
+import { colors } from 'consola/utils'
 import { isOpen, safeSend, type WsPeer } from '~~/server/ws/utils'
-import type { UserData } from '#shared/interfaces/userData'
 import { sendToUser } from '../ws'
 import { removeRoomPlayer } from './room'
 import type { WebsocketMessage } from '#shared/interfaces/ws'
+import type { UserData } from '#shared/interfaces/userData'
+
+const logger = consola.withTag('Player Service')
 
 interface Player extends UserData {
   peer: WsPeer
@@ -30,6 +34,8 @@ const addPlayer = (user: UserData & { peer: WsPeer }) => {
     },
     user.id
   )
+
+  logger.debug('Added new player:', `${colors.cyan(player.nickname)}@${colors.gray(player.id)}`)
 }
 
 const removePlayer = (id: string) => {
@@ -39,6 +45,8 @@ const removePlayer = (id: string) => {
       removeRoomPlayer(player.roomNumber, id)
     }
     players.delete(id)
+
+    logger.debug('Removed player:', `${colors.cyan(player?.nickname)}@${colors.gray(player?.id)}`)
   }
 }
 
@@ -63,6 +71,11 @@ const updatePlayerState = (id: string, roomNumber?: number) => {
         roomNumber
       },
       id
+    )
+
+    logger.debug(
+      'Player state updated:',
+      `${colors.cyan(player?.nickname)}@${colors.gray(player?.id)}`
     )
   }
 }

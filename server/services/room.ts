@@ -1,9 +1,13 @@
+import { consola } from 'consola'
+import { colors } from 'consola/utils'
 import { getAppConfig } from '~~/server/services/app-config'
 import { defu } from 'defu'
 import { getPlayer, updatePlayerState, sendToAllPlayer, sendToPlayer } from './player'
 import { getUserData } from './user'
 import type { AppConfig } from '#shared/interfaces/appConfig'
 import type { RoomInfo } from '#shared/interfaces/room'
+
+const logger = consola.withTag('Room Service')
 
 interface RoomOptions {
   password: string
@@ -100,6 +104,12 @@ const createRoom = async (
       playing: false
     }
   })
+
+  logger.debug(
+    `A new room ${colors.cyan(room.roomNumber)} has been created by`,
+    `${colors.cyan(user.nickname)}@${user.id}`,
+    `at ${colors.gray(new Date().toLocaleString())}`
+  )
 }
 
 /**
@@ -123,6 +133,12 @@ const destroyRoom = (roomNumber: number) => {
       type: 'room:destroy',
       from: roomNumber
     })
+
+    logger.debug(
+      `Room ${colors.cyan(room.roomNumber)} has been destroyed at ${colors.gray(
+        new Date().toLocaleString()
+      )}`
+    )
   }
 }
 

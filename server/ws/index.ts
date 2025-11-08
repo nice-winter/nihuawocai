@@ -4,11 +4,11 @@ import { encode } from '#shared/utils/crypto'
 import { WS_MESSAGE_PING, WS_MESSAGE_PONG, WS_MESSAGE_DUPLICATE_LOGIN } from '#shared/interfaces/ws'
 import { getUserData } from '~~/server/services/user'
 import { isOpen, reply, safeSend } from './utils'
-import router from './router'
+import router from './handlers'
+import { addPlayer, removePlayer } from '../services/player'
 import type { WebsocketMessage } from '#shared/interfaces/ws'
 import type { WsPeer, WsEvents } from './utils'
 import type { UserData } from '#shared/interfaces/userData'
-import { addPlayer, removePlayer } from '../services/player'
 
 export const wsEventBus = mitt<WsEvents>()
 

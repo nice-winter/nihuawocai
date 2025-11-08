@@ -1,9 +1,10 @@
+import { consola } from 'consola'
 import type { WebsocketMessage } from '#shared/interfaces/ws'
 import type { WsProcotolRoomJoin } from '#shared/interfaces/protocol'
 import { defineWsHandlers } from '../utils/index'
 import { createRoom, getRoomList, joinRoom, leaveRoom, sit } from '~~/server/services/room'
 
-const log = (...data: unknown[]) => console.log('[ws-handler]', ...data)
+const logger = consola.withTag('Room Handler')
 
 export default defineWsHandlers({
   'room:list_pull': async ({ peer, msg, user, reply }) => {
@@ -14,7 +15,7 @@ export default defineWsHandlers({
     })
   },
   'room:create': async ({ peer, msg, user, reply }) => {
-    log('创房', msg)
+    logger.debug('Create Room:', msg)
     if (user) {
       await createRoom(user.id)
     }
@@ -23,20 +24,20 @@ export default defineWsHandlers({
     const _msg = msg as WebsocketMessage<WsProcotolRoomJoin>
     if (user) {
       await joinRoom(_msg.roomNumber, user.id, '')
-      log('进房', _msg.roomNumber, user.id, '')
+      logger.debug('Join Room:', _msg.roomNumber, user.id, '')
     }
   },
   'room:leave': async ({ peer, msg, user, reply }) => {
     if (user) {
       leaveRoom(user.id)
-      log('离开', user.id)
+      logger.debug('Leave Room:', user.id)
     }
   },
   'room:sit': async ({ peer, msg, user, reply }) => {
     const _msg = msg as WebsocketMessage<{ roomNumber: number }>
     if (user) {
       sit(_msg.roomNumber, user.id, 1)
-      log('坐下', user.id, 1)
+      logger.debug('Sit Down:', user.id, 1)
     }
   }
 })
