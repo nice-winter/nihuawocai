@@ -8,7 +8,7 @@ const logger = consola.withTag('Handlers')
 
 function registerHandlers(handlers: WsHandlers) {
   wsEventBus.on('ws:message', async (e) => {
-    const handler = handlers[e.msg.type]
+    const handler = handlers[e.msg.type.toLowerCase()]
     if (handler) {
       try {
         await handler(e)
