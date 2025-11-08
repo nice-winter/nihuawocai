@@ -1,12 +1,13 @@
-import type { UserDataExinfo, UserDataVerification } from '#shared/interfaces/userData'
+import type { UserData, UserDataExinfo, UserDataVerification } from '#shared/interfaces/userData'
 
-interface Player {
+type Player = UserData
+
+interface PlayerState {
   id: string
-  avatar_url: string
-  nickname: string
-  gender: number
-  exinfo: UserDataExinfo
-  verification: UserDataVerification
+  state: 'offline' | 'lobby' | 'in_room'
+  roomNumber?: number
 }
 
-export type { Player }
+type LoggedInPlayer = Player & PlayerState
+
+export type { Player, PlayerState, LoggedInPlayer }

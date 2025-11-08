@@ -5,21 +5,20 @@ import { sendToUser } from '../ws'
 import { removeRoomPlayer } from './room'
 import type { WebsocketMessage } from '#shared/interfaces/ws'
 import type { UserData } from '#shared/interfaces/userData'
+import type { LoggedInPlayer } from '#shared/interfaces/player'
+
+interface ServerPlayer extends LoggedInPlayer {
+  peer: WsPeer
+}
 
 const logger = consola.withTag('Player Service')
 
-interface Player extends UserData {
-  peer: WsPeer
-  state: 'offline' | 'lobby' | 'in_room'
-  roomNumber?: number
-}
-
-const players = new Map<string, Player>()
+const players = new Map<string, ServerPlayer>()
 
 const getPlayer = (id: string) => players.get(id)
 
 const addPlayer = (user: UserData & { peer: WsPeer }) => {
-  const player: Player = {
+  const player: ServerPlayer = {
     ...user,
     state: 'lobby'
   }
@@ -28,9 +27,11 @@ const addPlayer = (user: UserData & { peer: WsPeer }) => {
 
   sendToUser(
     {
-      type: 'user:state_update',
-      id: user.id,
-      state: player.state
+      type: 'player:logged_in',
+      player_info: {
+        ...user,
+        peer: undefined // @todo 这里不要把 server runtime 的东西传出去，暂时偷懒这么写。。
+      }
     },
     user.id
   )
@@ -65,7 +66,7 @@ const updatePlayerState = (id: string, roomNumber?: number) => {
 
     sendToUser(
       {
-        type: 'user:state_update',
+        type: 'player:state_update',
         id,
         state: player.state,
         roomNumber
@@ -82,7 +83,10 @@ const updatePlayerState = (id: string, roomNumber?: number) => {
 
 const sendToPlayer = <T>(msg: WebsocketMessage<T>, id: string | string[]) => {
   const ids = Array.isArray(id) ? id : [id]
-  const encoded = encode(msg)
+  const encoded = {
+    ...msg,
+    _scope: 'player'
+  }
 
   for (const i of ids) {
     const p = players.get(i)
@@ -91,12 +95,20 @@ const sendToPlayer = <T>(msg: WebsocketMessage<T>, id: string | string[]) => {
 }
 
 const sendToAllPlayer = <T>(msg: WebsocketMessage<T>) => {
-  const encoded = encode(msg)
+  const encoded = {
+    ...msg,
+    _scope: 'all'
+  }
+
   players.forEach((p) => safeSend(p.peer, encoded))
 }
 
 const sendToRoom = <T>(msg: WebsocketMessage<T>, roomNumber: number) => {
-  const encoded = encode(msg)
+  const encoded = {
+    ...msg,
+    _scope: 'room'
+  }
+
   players.forEach((p) => {
     if (
       p.state === 'in_room' &&
@@ -109,7 +121,11 @@ const sendToRoom = <T>(msg: WebsocketMessage<T>, roomNumber: number) => {
 }
 
 const sendToLobby = <T>(msg: WebsocketMessage<T>) => {
-  const encoded = encode(msg)
+  const encoded = {
+    ...msg,
+    _scope: 'lobby'
+  }
+
   players.forEach((p) => {
     if (p.state === 'lobby') {
       safeSend(p.peer, encoded)
@@ -118,7 +134,7 @@ const sendToLobby = <T>(msg: WebsocketMessage<T>) => {
 }
 
 export {
-  type Player,
+  type ServerPlayer,
   players,
   getPlayer,
   addPlayer,
