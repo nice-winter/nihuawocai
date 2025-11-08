@@ -32,8 +32,10 @@
           class="flex justify-between px-[.785rem] text-[13px] text-(--game-font-color) select-none"
         >
           <div class="flex gap-5 pt-5">
-            <span>天秤座</span>
-            <span>房间4</span>
+            <span>{{ userSession.loggedIn.value ? `天秤座` : '' }}</span>
+            <span v-show="userSession.loggedIn.value && player?.state === 'in_room'">
+              房间{{ player?.roomNumber }}
+            </span>
           </div>
 
           <div class="relative ml-auto w-52">
