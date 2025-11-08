@@ -25,7 +25,7 @@ const addPlayer = (user: UserData & { peer: WsPeer }) => {
 
   players.set(user.id, player)
 
-  sendToUser(
+  sendToPlayer(
     {
       type: 'player:logged_in',
       player_info: {
@@ -35,6 +35,7 @@ const addPlayer = (user: UserData & { peer: WsPeer }) => {
     },
     user.id
   )
+  updatePlayerState(user.id)
 
   logger.debug('Added new player:', `${colors.cyan(player.nickname)}@${colors.gray(player.id)}`)
 }
