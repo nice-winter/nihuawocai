@@ -17,6 +17,10 @@ export const useGameRoomListStore = defineStore('gameRoomListStore', () => {
   const currentPageNumber = ref(0) // 当前页码
   const showOnlyWaitingRooms = ref(false) // 是否只显示等待中的房间
   const currentRoom = ref<Room | null>(null) // 玩家当前所在的房间
+  const clearCurrentRoom = () => (currentRoom.value = null) // 清空当前所在房间信息
+  const updateCurrentRoom = () => {
+    /** @todo 更新当前所在房间信息（未实现） */
+  }
 
   // Computed
   /**
@@ -26,6 +30,17 @@ export const useGameRoomListStore = defineStore('gameRoomListStore', () => {
     const arr = Array.from(rooms.values())
     return arr.length <= 6 ? arr : arr.slice(0, 5)
   })
+
+  // Watch
+  /**
+   * 监听玩家状态，如果玩家状态变更为不再房间内的状态，则清空当前所在房间信息
+   */
+  watch(
+    () => playerStore.player?.state,
+    (newState) => {
+      if (newState !== 'in_room') clearCurrentRoom()
+    }
+  )
 
   // WebSocket 事件监听
   wsEventBus.on('ws:connected', () => {
@@ -123,7 +138,7 @@ export const useGameRoomListStore = defineStore('gameRoomListStore', () => {
     rooms.delete(roomNumber)
     // 如果销毁的是当前房间，清空当前房间状态
     if (roomNumber === currentRoom.value?.roomNumber) {
-      currentRoom.value = null
+      clearCurrentRoom()
     }
   }
 
