@@ -8,6 +8,7 @@ import router from './router'
 import type { WebsocketMessage } from '#shared/interfaces/ws'
 import type { WsPeer, WsEvents } from './utils'
 import type { UserData } from '#shared/interfaces/userData'
+import { addPlayer, removePlayer } from '../services/player'
 
 export const wsEventBus = mitt<WsEvents>()
 
@@ -45,7 +46,10 @@ export function removePeer(peer: WsPeer) {
   globalStatus.peers.delete(peer)
   // 从 users map 中移除（如果匹配）
   for (const [uid, u] of globalStatus.users) {
-    if (u.peer.id === peer.id) globalStatus.users.delete(uid)
+    if (u.peer.id === peer.id) {
+      globalStatus.users.delete(uid)
+      removePlayer(uid)
+    }
   }
   // 从 channels 索引删除
   for (const [topic, set] of globalStatus.channels) {
@@ -54,13 +58,13 @@ export function removePeer(peer: WsPeer) {
   }
 }
 
-export const sendToAll = (msg: WebsocketMessage) => {
+export const sendToAll = <T>(msg: WebsocketMessage<T>) => {
   const encoded = encode(msg)
 
   for (const peer of globalStatus.peers) safeSend(peer, encoded)
 }
 
-export const sendToChannel = (msg: WebsocketMessage, channel?: string | string[]) => {
+export const sendToChannel = <T>(msg: WebsocketMessage<T>, channel?: string | string[]) => {
   if (!channel) return
   const topics = Array.isArray(channel) ? channel : [channel]
   const encoded = encode(msg)
@@ -74,7 +78,7 @@ export const sendToChannel = (msg: WebsocketMessage, channel?: string | string[]
   for (const p of target) safeSend(p, encoded)
 }
 
-export const sendToUser = (msg: WebsocketMessage, id: string | string[]) => {
+export const sendToUser = <T>(msg: WebsocketMessage<T>, id: string | string[]) => {
   const ids = Array.isArray(id) ? id : [id]
   const encoded = encode(msg)
 
@@ -84,9 +88,6 @@ export const sendToUser = (msg: WebsocketMessage, id: string | string[]) => {
   }
 }
 
-/**
- * ---------------- crossws hooks ----------------
- */
 const hooks = defineHooks({
   async upgrade(request) {
     await requireUserSession(request)
@@ -105,6 +106,7 @@ const hooks = defineHooks({
           prev.peer.close(4001, 'Duplicate login')
         }
         globalStatus.users.set(session.id, { ...userData, peer })
+        addPlayer({ ...userData, peer })
       }
 
       wsEventBus.emit('ws:connect', {

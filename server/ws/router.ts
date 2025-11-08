@@ -1,6 +1,6 @@
 import { wsEventBus } from '.'
 import type { WsHandlers } from './utils'
-import roomListHandler from './handlers/room-list'
+import roomListHandler from './handlers/room'
 
 const log = (...data: unknown[]) => console.log('[ws-router]', ...data)
 
