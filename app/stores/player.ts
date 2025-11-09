@@ -3,6 +3,7 @@ import type { WebsocketMessage } from '#shared/interfaces/ws'
 
 export const usePlayerStore = defineStore('playerStore', () => {
   const { wsEventBus, send } = useWsStore()
+  const { pullRoomList } = useRoomStore()
 
   const player = ref<LoggedInPlayer | null>(null)
 
@@ -14,6 +15,8 @@ export const usePlayerStore = defineStore('playerStore', () => {
     if (msg.type === 'player:event:logged_in') {
       const { player_info } = msg as WebsocketMessage<{ player_info: LoggedInPlayer }>
       player.value = player_info
+      // 登录后拉取房间列表
+      pullRoomList()
     }
 
     if (msg.type === 'player:event:state_update') {
