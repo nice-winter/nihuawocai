@@ -5,7 +5,7 @@ import type { Player } from '#shared/interfaces/player'
 
 /**
  * 游戏房间列表 Store
- * 负责管理游戏房间的列表、当前房间状态以及与房间相关的WebSocket通信
+ * 负责管理游戏房间的列表、当前房间状态以及与房间相关的 WebSocket 通信
  */
 export const useRoomStore = defineStore('roomStore', () => {
   // 依赖注入
@@ -250,10 +250,11 @@ export const useRoomStore = defineStore('roomStore', () => {
   /**
    * 加入指定房间
    */
-  const join = (roomNumber: number, look?: boolean) => {
+  const join = (roomNumber: number, password?: string, look?: boolean) => {
     send({
       type: 'room:join',
-      roomNumber
+      roomNumber,
+      password
     })
   }
 

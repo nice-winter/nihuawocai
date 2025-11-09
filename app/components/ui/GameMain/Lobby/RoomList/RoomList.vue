@@ -6,8 +6,8 @@
           v-for="room in roomStore.currentPageRooms"
           :key="room.roomNumber"
           :room-info="room"
-          @join-button-click="join"
-          @look-button-click="() => join(room.roomNumber, true)"
+          @join-button-click="tryJoin(room)"
+          @look-button-click="() => tryJoin(room)"
         />
       </div>
       <div class="flex flex-wrap w-full h-full absolute">
@@ -47,14 +47,24 @@
 </template>
 
 <script setup lang="ts">
-import { mockdata } from '#shared/utils/mockdata'
+import type { RoomInfo } from '#shared/interfaces/room'
+
+// import { mockdata } from '#shared/utils/mockdata'
 
 const roomStore = useRoomStore()
 const { join, prevPage, nextPage, createRoom, quickMatch } = roomStore
 const { currentPageRooms, currentPageNumber, showOnlyWaitingRooms } = storeToRefs(roomStore)
 
+const tryJoin = (room: RoomInfo) => {
+  if (room.locked) {
+    // show pwd input
+  } else {
+    join(room.roomNumber)
+  }
+}
+
 const roomNumberInputValue = ref('')
-const rooms = ref(mockdata.roomList)
+// const rooms = ref(mockdata.roomList)
 </script>
 
 <style scoped>
