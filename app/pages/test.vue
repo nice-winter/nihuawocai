@@ -1,4 +1,3 @@
-<
 <template>
   <div>
     <p class="flex gap-4">
@@ -7,6 +6,7 @@
       <UButton @click="leave">退房</UButton>
       <UInput v-model="roomNumber" class="w-16" />
       <UButton @click="join">进房</UButton>
+      <UButton @click="msgbox">msgbox</UButton>
     </p>
     <p>Status: {{ status }}</p>
     <p>Data: {{ data }}</p>
@@ -56,6 +56,10 @@ const join = () => {
       roomNumber: Number(roomNumber.value)
     })
   }
+}
+
+const msgbox = () => {
+  useMessageBox().show('aaaaa')
 }
 </script>
 
