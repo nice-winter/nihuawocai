@@ -316,7 +316,7 @@ const changePassword = (roomNumber: number, password: string, id: string) => {
       locked: room.locked
     })
 
-    // 广播房间锁定状态变更事件
+    // 向房间内的玩家广播密码变更事件
     sendToRoom(
       {
         type: 'room:event:password_change',
