@@ -20,10 +20,14 @@ services:
       - app-network
     ports:
       - 3000:3000
+    volumes:
+      - 'data:./app/.data'
+      - 'logs:./app/.logs'
 
 networks:
   app-network:
     driver: bridge
 
 volumes:
+  data:
   logs:
