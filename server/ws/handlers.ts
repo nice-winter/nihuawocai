@@ -6,10 +6,21 @@ import type { WsHandlers } from './utils'
 
 const logger = consola.withTag('Handlers')
 
+let INITIALIZED = false
+
 function registerHandlers(handlers: WsHandlers) {
+  if (INITIALIZED) return
+
   wsEventBus.on('ws:message', async (e) => {
     const handler = handlers[e.msg.type.toLowerCase()]
     if (handler) {
+      logger.debug(
+        'Trigger:',
+        colors.cyan(e.msg.type),
+        'From:',
+        `${colors.cyan(e.user?.nickname || '')}@${colors.gray(e.user?.id || '')}`
+      )
+
       try {
         await handler(e)
       } catch (err) {
@@ -17,6 +28,8 @@ function registerHandlers(handlers: WsHandlers) {
       }
     }
   })
+
+  INITIALIZED = true
 
   logger.debug(
     `Registered ${colors.cyan(Object.keys(handlers).length)} handlers:`,

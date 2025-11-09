@@ -22,7 +22,7 @@ export default defineWsHandlers({
     })
   },
   'room:create': async ({ peer, msg, user, reply }) => {
-    logger.debug('Create Room:', msg)
+    // logger.debug('Create Room:', msg)
     const { opens } = msg as WebsocketMessage<{ opens: number }>
     if (user) {
       reply({
@@ -39,14 +39,14 @@ export default defineWsHandlers({
         ...(await joinRoom(_msg.roomNumber, user.id, ''))
       })
 
-      logger.debug('Join Room:', _msg.roomNumber, user.id, '')
+      // logger.debug('Join Room:', _msg.roomNumber, user.id, '')
     }
   },
   'room:leave': async ({ peer, msg, user, reply }) => {
     if (user) {
       reply({ type: 'room:leave', ...leaveRoom(user.id) })
 
-      logger.debug('Leave Room:', user.id)
+      // logger.debug('Leave Room:', user.id)
     }
   },
   'room:sit': async ({ peer, msg, user, reply }) => {
@@ -54,7 +54,7 @@ export default defineWsHandlers({
     if (user) {
       reply({ type: 'room:sit', ...sit(_msg.roomNumber, user.id, 1) })
 
-      logger.debug('Sit Down:', user.id, 1)
+      // logger.debug('Sit Down:', user.id, 1)
     }
   },
   'room:seat_switch': async ({ peer, msg, user, reply }) => {
@@ -66,7 +66,7 @@ export default defineWsHandlers({
     if (user) {
       reply({ type: 'room:seat_swtich', ...seatSwitch(roomNumber, seatIndex, open, user.id) })
 
-      logger.debug('Seat Switch:', roomNumber, seatIndex, open)
+      // logger.debug('Seat Switch:', roomNumber, seatIndex, open)
     }
   }
 })
