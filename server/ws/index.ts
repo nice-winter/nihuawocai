@@ -141,7 +141,9 @@ const hooks = defineHooks({
         peer,
         msg,
         user: userData,
-        reply: reply(peer, msg.rid)
+        // 生成回复函数，可以回复该请求
+        // 回复时，若客户端携带了 rid 参数，则一并携带它进行回复（最长 36，溢出部分截取掉）
+        reply: reply(peer, msg.rid?.substring(0, 36))
       })
     } catch (e) {
       logger.warn('ws message parse/handler error', e)
