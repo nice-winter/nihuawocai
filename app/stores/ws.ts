@@ -33,6 +33,15 @@ export const useWsStore = defineStore('ws', () => {
       const msg = decode(e.data) as WebsocketMessage
       console.log('[ws]', '[收到消息] --->>>>', msg)
 
+      if ((msg as WebsocketMessage<{ _error: boolean; message: string }>)._error) {
+        useMessageBox({
+          duration: 2000,
+          parent: '#game-panel',
+          offsetX: -115,
+          offsetY: -40
+        }).show((msg as WebsocketMessage<{ message: string }>).message)
+      }
+
       wsEventBus.emit('ws:message', msg)
     },
     onError(_, e) {
