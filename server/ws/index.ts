@@ -1,14 +1,18 @@
+import { consola } from 'consola'
+import { colors } from 'consola/utils'
 import mitt from 'mitt'
 import { defineHooks } from 'crossws'
 // import { encode } from '#shared/utils/crypto'
 import { WS_MESSAGE_PING, WS_MESSAGE_PONG, WS_MESSAGE_DUPLICATE_LOGIN } from '#shared/interfaces/ws'
 import { getUserData } from '~~/server/services/user'
 import { isOpen, reply, safeSend } from './utils'
-import router from './handlers'
+import handlers from './handlers'
 import { addPlayer, removePlayer } from '../services/player'
 import type { WebsocketMessage } from '#shared/interfaces/ws'
 import type { WsPeer, WsEvents } from './utils'
 import type { UserData } from '#shared/interfaces/userData'
+
+const logger = consola.withTag('WS')
 
 export const wsEventBus = mitt<WsEvents>()
 
@@ -114,7 +118,7 @@ const hooks = defineHooks({
         reply: reply(peer)
       })
     } catch (e) {
-      console.error('[ws]', 'ws open error', e)
+      logger.error('ws open error', e)
     }
   },
 
@@ -125,7 +129,7 @@ const hooks = defineHooks({
    */
   async message(peer, message) {
     try {
-      const msg = message.json() as WebsocketMessage
+      const msg = message.json() as WebsocketMessage<{ rid?: string }>
       if (!msg || !msg.type) return
       if (msg.type === WS_MESSAGE_PING.type) {
         safeSend(peer, WS_MESSAGE_PONG)
@@ -137,10 +141,10 @@ const hooks = defineHooks({
         peer,
         msg,
         user: userData,
-        reply: reply(peer)
+        reply: reply(peer, msg.rid)
       })
     } catch (e) {
-      console.warn('[ws]', 'ws message parse/handler error', e)
+      logger.warn('ws message parse/handler error', e)
       try {
         reply(peer)({ type: 'error' })
       } catch {
@@ -160,7 +164,7 @@ const hooks = defineHooks({
       const { userData } = await resolveUserFromPeer(peer)
       wsEventBus.emit('ws:disconnect', { peer, user: userData, ...e })
     } catch (e) {
-      console.warn('[ws]', 'ws close error', e)
+      logger.warn('ws close error', e)
     }
   },
 
@@ -175,12 +179,12 @@ const hooks = defineHooks({
       const { userData } = await resolveUserFromPeer(peer)
       wsEventBus.emit('ws:error', { peer, user: userData, error })
     } catch (e) {
-      console.warn('[ws]', 'ws error handler failed', e)
+      logger.warn('ws error handler failed', e)
     }
   }
 })
 
-// 调用 router 以注册 handlers
-router()
+// 注册 handlers
+handlers()
 
 export { hooks }

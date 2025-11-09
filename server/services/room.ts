@@ -94,7 +94,7 @@ const createRoom = async (
     room: roomInfo
   })
 
-  logger.debug(
+  logger.info(
     `A new room ${colors.cyan(room.roomNumber)} has been created by`,
     `${colors.cyan(user.nickname)}@${user.id}`,
     `at ${colors.gray(new Date().toLocaleString())}`
@@ -129,7 +129,7 @@ const destroyRoom = (roomNumber: number) => {
       updatePlayerState(p.id)
     })
 
-    logger.debug(
+    logger.info(
       `Room ${colors.cyan(room.roomNumber)} has been destroyed at ${colors.gray(
         new Date().toLocaleString()
       )}`
