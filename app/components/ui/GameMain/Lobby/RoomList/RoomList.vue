@@ -1,19 +1,20 @@
 <template>
   <div class="flex flex-col">
-    <div class="h-[87.72%] flex flex-wrap relative">
+    <div id="game-rooms" class="h-[87.72%] flex flex-wrap relative">
       <div class="z-1 flex flex-wrap w-full h-full">
         <UiGameMainLobbyRoomListItem
           v-for="room in roomStore.currentPageRooms"
           :key="room.roomNumber"
           :room-info="room"
-          @join-button-click="tryJoin(room)"
-          @look-button-click="() => tryJoin(room)"
+          @join-button-click="tryJoin(room.roomNumber)"
+          @look-button-click="() => tryJoin(room.roomNumber)"
         />
       </div>
       <div class="flex flex-wrap w-full h-full absolute">
         <div v-for="i in 6" :key="i + Date.now()" class="w-1/2 custom-border-item" />
       </div>
     </div>
+
     <div
       class="grow flex items-center gap-4 p-[0.785rem] bg-[#f1d0ae42] border-t-2 border-t-white/60"
     >
@@ -26,11 +27,12 @@
           maxlength="3"
           class="game-input w-14"
           style="background-color: #fff"
+          @keydown.enter.prevent="tryJoin(Number(roomNumberInputValue), true)"
         />
         <UiButton
           size="sm"
           :disabled="roomNumberInputValue === ''"
-          @click="() => join(Number(roomNumberInputValue))"
+          @click="() => tryJoin(Number(roomNumberInputValue), true)"
           >加入</UiButton
         >
       </div>
@@ -47,24 +49,25 @@
 </template>
 
 <script setup lang="ts">
+// import { mockdata } from '#shared/utils/mockdata'
 import type { RoomInfo } from '#shared/interfaces/room'
 
-// import { mockdata } from '#shared/utils/mockdata'
-
 const roomStore = useRoomStore()
-const { join, prevPage, nextPage, createRoom, quickMatch } = roomStore
+const { rooms, join, prevPage, nextPage, createRoom, quickMatch } = roomStore
 const { currentPageRooms, currentPageNumber, showOnlyWaitingRooms } = storeToRefs(roomStore)
-
-const tryJoin = (room: RoomInfo) => {
-  if (room.locked) {
-    // show pwd input
-  } else {
-    join(room.roomNumber)
-  }
-}
 
 const roomNumberInputValue = ref('')
 // const rooms = ref(mockdata.roomList)
+
+const tryJoin = (roomNumber: number, clearRoomNumberInput?: boolean) => {
+  if (clearRoomNumberInput) roomNumberInputValue.value = ''
+  if (rooms.get(roomNumber)?.locked) {
+    const password = ''
+    join(roomNumber, password)
+  } else {
+    join(roomNumber)
+  }
+}
 </script>
 
 <style scoped>
