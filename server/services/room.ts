@@ -2,7 +2,7 @@ import { consola } from 'consola'
 import { colors } from 'consola/utils'
 import { getAppConfig } from '~~/server/services/app-config'
 import { defu } from 'defu'
-import { getPlayer, updatePlayerState, sendToAllPlayer, sendToPlayer } from './player'
+import { getPlayer, updatePlayerState, sendToAllPlayer, sendToPlayer, sendToRoom } from './player'
 import { getUserData } from './user'
 import type { AppConfig } from '#shared/interfaces/appConfig'
 import type { Room, RoomInfo, RoomOptions } from '#shared/interfaces/room'
@@ -292,7 +292,48 @@ const seatSwitch = (roomNumber: number, seat: number, open: boolean, id: string)
   }
 }
 
-const changePassword = (roomNumber: number, password: string, id: string) => {}
+const changePassword = (roomNumber: number, password: string, id: string) => {
+  const room = rooms.get(roomNumber)
+  if (room) {
+    if (room.owner !== id) throw new Error('你不是房主')
+
+    const pwd = password.trim().substring(0, 16)
+
+    if (password !== '') {
+      room.options.password = pwd
+      room.locked = true
+    } else {
+      room.options.password = ''
+      room.locked = false
+    }
+
+    updateRoom(roomNumber, room)
+
+    // 广播房间锁定状态变更事件
+    sendToAllPlayer({
+      type: 'room:event:locked_state_change',
+      from: roomNumber,
+      locked: room.locked
+    })
+
+    // 广播房间锁定状态变更事件
+    sendToRoom(
+      {
+        type: 'room:event:password_change',
+        roomNumber,
+        password,
+        locked: room.locked
+      },
+      roomNumber
+    )
+
+    return {
+      roomNumber,
+      locked: room.locked,
+      password
+    }
+  }
+}
 
 /**
  * 离开房间（玩家和旁观玩家通用），主动调用

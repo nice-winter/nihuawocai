@@ -21,6 +21,7 @@ export const useRoomStore = defineStore('roomStore', () => {
   const updateCurrentRoom = () => {
     /** @todo 更新当前所在房间信息（未实现） */
   }
+  const isCurrentRoomOwner = computed(() => playerStore.player?.id === currentRoom.value?.owner)
 
   // Computed
   /**
@@ -44,10 +45,7 @@ export const useRoomStore = defineStore('roomStore', () => {
 
   // WebSocket 事件监听
   wsEventBus.on('ws:connected', () => {
-    // WebSocket连接建立后拉取房间列表
-    send({
-      type: 'room:list_pull'
-    })
+    // ...
   })
 
   wsEventBus.on('ws:message', (msg) => {
@@ -60,7 +58,7 @@ export const useRoomStore = defineStore('roomStore', () => {
   const handleRoomListMessage = (msg: WebsocketMessage) => {
     switch (msg.type) {
       // 房间列表拉取
-      case 'room:event:list_pull':
+      case 'room:list_pull':
         handleRoomListPull(msg)
         break
 
@@ -117,6 +115,16 @@ export const useRoomStore = defineStore('roomStore', () => {
       // 座位开关状态切换
       case 'room:event:seat_switch':
         handleSeatSwitch(msg)
+        break
+
+      // 房间锁定状态更新
+      case 'room:event:locked_state_change':
+        handleLockedStateChange(msg)
+        break
+
+      // 当前房间密码状态更新
+      case 'room:event:password_change':
+        handlePasswordChange(msg)
         break
     }
   }
@@ -246,7 +254,49 @@ export const useRoomStore = defineStore('roomStore', () => {
     }
   }
 
+  /**
+   * 更新房间锁定状态
+   */
+  function handleLockedStateChange(msg: WebsocketMessage) {
+    const { from, locked } = msg as WebsocketMessage<{
+      from: number
+      locked: boolean
+    }>
+
+    const room = rooms.get(from)
+    if (room) {
+      room.locked = locked
+      rooms.set(from, room)
+    }
+  }
+
+  /**
+   * 更新当前房间锁定状态
+   * @param msg
+   */
+  function handlePasswordChange(msg: WebsocketMessage) {
+    const { roomNumber, password, locked } = msg as WebsocketMessage<{
+      roomNumber: number
+      locked: boolean
+      password: string
+    }>
+
+    if (currentRoom.value && roomNumber === currentRoom.value.roomNumber) {
+      currentRoom.value.options.password = password
+      currentRoom.value.locked = locked
+    }
+  }
+
   // Actions
+  /**
+   * 拉取房间列表
+   */
+  const pullRoomList = () => {
+    send({
+      type: 'room:list_pull'
+    })
+  }
+
   /**
    * 加入指定房间
    */
@@ -283,6 +333,17 @@ export const useRoomStore = defineStore('roomStore', () => {
       roomNumber,
       seat,
       open
+    })
+  }
+
+  /**
+   * 设置房间密码
+   */
+  const changeRoomPassword = (roomNumber: number, password?: string) => {
+    send({
+      type: 'room:password_change',
+      roomNumber,
+      password
     })
   }
 
@@ -329,15 +390,19 @@ export const useRoomStore = defineStore('roomStore', () => {
     currentPageNumber,
     showOnlyWaitingRooms,
     currentRoom,
+    isCurrentRoomOwner,
+    isOwner: isCurrentRoomOwner,
 
     // Computed
     currentPageRooms,
 
     // Actions
+    pullRoomList,
     join,
     leave,
     sit,
     switchSeat,
+    changeRoomPassword,
     prevPage,
     nextPage,
     createRoom,

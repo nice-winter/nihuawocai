@@ -5,24 +5,36 @@
     <div class="flex flex-col justify-center gap-[0.785rem] w-36">
       <UiGameMainRoomNumber :room-number="roomInfo.roomNumber || 0" />
       <span class="relative inline-flex items-center gap-1 pl-1 align-text-bottom">
-        <UCheckbox v-model="locked" size="sm" icon="ph:check-bold" class="game-checkbox" />
+        <UCheckbox
+          v-model="lockedLocal"
+          size="sm"
+          icon="ph:check-bold"
+          class="game-checkbox"
+          :disabled="!isCurrentRoomOwner"
+        />
+
         <span
-          class="cursor-pointer text-sm select-none"
-          :class="{ 'min-w-20': password, 'min-w-inherit': !password }"
-          @click="changePassword"
+          class="text-sm select-none"
+          :class="{
+            'min-w-20': displayHasPassword,
+            'min-w-inherit': !displayHasPassword,
+            'cursor-pointer': isCurrentRoomOwner
+          }"
+          @click="startEdit"
         >
-          {{ passwordText }}
+          {{ displayText }}
         </span>
-        <span v-show="showPasswordInput" class="absolute left-[58px] w-16">
+
+        <span v-if="editing" class="absolute left-[58px] w-16">
           <UInput
-            ref="PasswordInput"
+            ref="passwordUInputRef"
+            v-model="pendingPassword"
             class="game-input"
-            :default-value="password"
             size="xs"
             maxlength="4"
-            @blur="passwordInputOnBlur"
-            @keydown.enter="passwordInputOnEnterKeyDown"
-            @keydown.esc="passwordInputOnEscKeyDown"
+            @blur="onCommit"
+            @keydown.enter.prevent="onCommit"
+            @keydown.esc.prevent="onCancel"
           />
         </span>
       </span>
@@ -38,8 +50,8 @@
       <div class="grid grid-cols-2 grid-rows-2 gap-[0.785rem]">
         <UiButton color="green">广播邀请</UiButton>
         <UiButton color="blue">邀请好友</UiButton>
-        <UiButton v-if="isOwner">再等一会</UiButton>
-        <UiButton v-if="isOwner" color="red" @click="start">立即开始</UiButton>
+        <UiButton v-if="isCurrentRoomOwner">再等一会</UiButton>
+        <UiButton v-if="isCurrentRoomOwner" color="red" @click="start">立即开始</UiButton>
       </div>
     </div>
 
@@ -70,7 +82,7 @@
         :player="roomInfo?.players![i - 1] || undefined"
         mode="seat"
         :verified-icon="{ show: true, size: 16 }"
-        :disabled="!isOwner"
+        :disabled="!isCurrentRoomOwner"
         @switch="onSeatSwitch"
       />
 
@@ -89,116 +101,161 @@
 </template>
 
 <script setup lang="ts">
-import type { RoomInfo } from '#shared/interfaces/room'
+import type { Room } from '#shared/interfaces/room'
 
-const { roomInfo } = defineProps<{ roomInfo: RoomInfo }>()
+const { roomInfo } = defineProps<{ roomInfo: Room }>()
 const { player } = storeToRefs(usePlayerStore())
-const { switchSeat } = useRoomStore()
+const roomStore = useRoomStore()
+const { switchSeat, changeRoomPassword } = roomStore
+const { isCurrentRoomOwner } = storeToRefs(roomStore)
 
-const PasswordInputRef = useTemplateRef('PasswordInput')
+const passwordUInputRef = useTemplateRef('passwordUInputRef')
 const RoomMessageListRef = useTemplateRef('RoomMessageList')
 
-const isOwner = computed(() => roomInfo.owner === player.value?.id)
-const locked = ref(roomInfo.locked)
-const password = ref(roomInfo.locked ? roomInfo.password || '0000' : '')
-const showPasswordInput = ref(false)
+// 本地状态：由 prop 同步（房主可以修改）
+const lockedLocal = ref(roomInfo.locked)
+const editing = ref(false)
 
-const passwordText = computed(() => (locked.value ? `密码：${password.value}` : `密码`))
-const changePassword = () => {
-  if (locked.value && !showPasswordInput.value) {
-    if (PasswordInputRef.value?.inputRef) {
-      PasswordInputRef.value.inputRef.value = password.value
-    }
+// pendingPassword：编辑时的临时值；originalPassword：来自 roomInfo 的当前密码（只读）
+const pendingPassword = ref(roomInfo.locked ? roomInfo.options.password || '' : '')
+const originalPassword = computed(() => (roomInfo.locked ? roomInfo.options.password || '' : ''))
 
-    showPasswordInput.value = true
-    nextTick(() => {
-      PasswordInputRef.value?.inputRef?.focus()
-      PasswordInputRef.value?.inputRef?.select()
-    })
+const displayHasPassword = computed(
+  () =>
+    lockedLocal.value &&
+    (isCurrentRoomOwner.value
+      ? pendingPassword.value !== '' || originalPassword.value !== ''
+      : originalPassword.value !== '')
+)
+
+const displayText = computed(() => {
+  if (!lockedLocal.value) return '密码'
+  // 房主看到自己设置的 pending（编辑中）或真实密码；别人只看到真实密码
+  if (isCurrentRoomOwner.value) {
+    const pwd = editing.value
+      ? pendingPassword.value
+      : originalPassword.value || pendingPassword.value
+    return `密码：${pwd || ''}`
+  } else {
+    return `密码：${originalPassword.value || ''}`
   }
-}
+})
 
-const passwordInputOnBlur = (event?: FocusEvent) => {
-  const inputValue = PasswordInputRef.value?.inputRef?.value
-
-  // 密码输入框为空
-  if (!inputValue && (!password.value || password.value === '')) {
-    locked.value = false
-  }
-
-  if (inputValue) {
-    if (password.value !== inputValue) {
-      setTimeout(() => {
-        if (locked.value) {
-          // console.log(`[RoomWaiting]`, `[pwdChange]`, password.value)
-          password.value = inputValue
-        }
-      }, 100)
-    }
-  }
-
-  showPasswordInput.value = false
-}
-const passwordInputOnEnterKeyDown = () => {
-  // 这里不能直接调用失焦 handler，会导致重复触发失焦事件
-  // 所以改用直接隐藏输入框来间接触发 input 的 blur 事件
-  // passwordInputOnBlur()
-  showPasswordInput.value = false
-}
-const passwordInputOnEscKeyDown = () => {
-  if (PasswordInputRef.value?.inputRef) {
-    PasswordInputRef.value.inputRef.value = ''
-  }
-  showPasswordInput.value = false
-}
-
+// 同步外部变更（当 roomInfo 改变时，非房主应跟随）
 watch(
-  () => locked.value,
-  (newValue) => {
-    if (newValue) {
-      if (!password.value || password.value === '') {
-        showPasswordInput.value = true
-        nextTick(() => {
-          PasswordInputRef.value?.inputRef?.focus()
-          PasswordInputRef.value?.inputRef?.select()
-        })
-      }
-    } else {
-      password.value = ''
-      showPasswordInput.value = false
+  () => roomInfo.locked,
+  (val) => {
+    if (!isCurrentRoomOwner.value) {
+      lockedLocal.value = val
+      pendingPassword.value = originalPassword.value
+    }
+  }
+)
+watch(
+  () => roomInfo.options?.password,
+  (val) => {
+    if (!isCurrentRoomOwner.value) {
+      pendingPassword.value = originalPassword.value
     }
   }
 )
 
+// 当锁状态由房主改变时的副作用：若开锁且没有密码，生成随机并进入编辑；若取消则提交空密码
 watch(
-  () => password.value,
-  (newValue) => {
-    console.log(`[RoomWaiting]`, `[setPwd]`, newValue)
+  () => lockedLocal.value,
+  (checked) => {
+    if (!isCurrentRoomOwner.value) return
 
-    if (newValue && newValue.trim() !== '') {
-      RoomMessageListRef.value?.addMessage({
-        type: 'text',
-        msg: `房主将房间密码设置为：${newValue}`
+    // 用户点勾选：进入编辑并生成随机（如果没有现有密码）
+    if (checked) {
+      if (!pendingPassword.value) {
+        pendingPassword.value = shortHash().substring(0, 4)
+      }
+      // 自动进入编辑状态以便用户确认/修改
+      editing.value = true
+      nextTick(() => {
+        passwordUInputRef.value?.inputRef?.focus()
+        passwordUInputRef.value?.inputRef?.select()
       })
     } else {
+      // 取消上锁 -> 直接提交空密码
+      pendingPassword.value = ''
+      // 立即通知后端/状态
+      changeRoomPassword(roomInfo.roomNumber, '')
       RoomMessageListRef.value?.addMessage({
         type: 'text',
         msg: `房主取消了房间密码`
       })
+      editing.value = false
     }
   }
 )
 
+// 开始编辑（点击密码文字）
+function startEdit() {
+  if (!isCurrentRoomOwner.value) return
+  if (!lockedLocal.value) {
+    // 如果之前没锁，先置为锁定并生成随机密码
+    lockedLocal.value = true
+    pendingPassword.value = shortHash().substring(0, 4)
+  }
+  editing.value = true
+  nextTick(() => {
+    passwordUInputRef.value?.inputRef?.focus()
+    passwordUInputRef.value?.inputRef?.select()
+  })
+}
+
+// 确认（blur 或 Enter）
+function onCommit() {
+  // 隐藏编辑态
+  editing.value = false
+
+  // 如果输入为空 => 视为取消上锁
+  const val = (pendingPassword.value || '').trim()
+  if (!val) {
+    lockedLocal.value = false
+    pendingPassword.value = ''
+    changeRoomPassword(roomInfo.roomNumber, '')
+    RoomMessageListRef.value?.addMessage({
+      type: 'text',
+      msg: `房主取消了房间密码`
+    })
+    return
+  } else if (val === roomInfo.options.password) {
+    return
+  }
+
+  // 有值：提交密码
+  changeRoomPassword(roomInfo.roomNumber, val)
+  // 同步 original（服务端回来的 roomInfo 应该最终覆盖，但我们先乐观更新 pending）
+  RoomMessageListRef.value?.addMessage({
+    type: 'text',
+    msg: `房主将房间密码设置为：${val}`
+  })
+  // 保持 lockedLocal true
+  lockedLocal.value = true
+}
+
+// 取消编辑
+function onCancel() {
+  editing.value = false
+  // 恢复为外部密码（如果存在）或清空（如果原来无密码）
+  pendingPassword.value = originalPassword.value || ''
+  if (!originalPassword.value) {
+    lockedLocal.value = false
+  }
+}
+
 const onSeatSwitch = (open?: boolean, seat?: number | string) => {
-  // console.log(seat, open)
   switchSeat(roomInfo.roomNumber, Number(seat) - 1, Boolean(open))
 }
 
 const start = () => {
-  RoomMessageListRef.value?.addMessage({
-    type: 'text',
-    msg: Date.now().toString() + `离开了房间`
-  })
+  // RoomMessageListRef.value?.addMessage({
+  //   type: 'text',
+  //   msg: Date.now().toString() + `离开了房间`
+  // })
 }
 </script>
 

@@ -3,6 +3,7 @@ import type { WebsocketMessage } from '#shared/interfaces/ws'
 import type { WsProcotolRoomJoin } from '#shared/interfaces/protocol'
 import { defineWsHandlers } from '../utils/index'
 import {
+  changePassword,
   createRoom,
   getRoomList,
   joinRoom,
@@ -49,5 +50,13 @@ export default defineWsHandlers({
     if (seat < 0 || seat > 6) throw new Error('非法参数')
 
     return seatSwitch(roomNumber, seat, open, user.id)
+  },
+  'room:password_change': async ({ msg, user }) => {
+    const { roomNumber, password } = msg as WebsocketMessage<{
+      roomNumber: number
+      password: string
+    }>
+
+    return changePassword(roomNumber, password, user.id)
   }
 })
