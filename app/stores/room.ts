@@ -183,12 +183,12 @@ export const useRoomStore = defineStore('roomStore', () => {
   }
 
   const handlePlayerLeave = (msg: WebsocketMessage) => {
-    const { from, seatIndex, player } = msg as WebsocketMessage<{
+    const { from, seat, player } = msg as WebsocketMessage<{
       from: number
-      seatIndex: number
+      seat: number
       player: Player
     }>
-    updateRoomPlayer(from, seatIndex, null)
+    updateRoomPlayer(from, seat, null)
   }
 
   const handleOnlookerLeave = (msg: WebsocketMessage) => {
@@ -213,36 +213,36 @@ export const useRoomStore = defineStore('roomStore', () => {
   }
 
   const handleSeatSwitch = (msg: WebsocketMessage) => {
-    const { from, seatIndex, open } = msg as WebsocketMessage<{
+    const { from, seat, open } = msg as WebsocketMessage<{
       from: number
-      seatIndex: number
+      seat: number
       open: boolean
     }>
     const room = rooms.get(from)
     if (room) {
-      room.seats[seatIndex] = open
+      room.seats[seat] = open
       rooms.set(from, room)
     }
 
     // 同步更新当前房间的座位状态
     if (from === currentRoom.value?.roomNumber) {
-      currentRoom.value.seats[seatIndex] = open
+      currentRoom.value.seats[seat] = open
     }
   }
 
   /**
    * 更新房间玩家座位信息
    */
-  const updateRoomPlayer = (roomNumber: number, seatIndex: number, player: Player | null) => {
+  const updateRoomPlayer = (roomNumber: number, seat: number, player: Player | null) => {
     const room = rooms.get(roomNumber)
     if (room) {
-      room.players[seatIndex] = player
+      room.players[seat] = player
       rooms.set(roomNumber, room)
     }
 
     // 同步更新当前房间
     if (roomNumber === currentRoom.value?.roomNumber) {
-      currentRoom.value.players[seatIndex] = player
+      currentRoom.value.players[seat] = player
     }
   }
 
@@ -277,11 +277,11 @@ export const useRoomStore = defineStore('roomStore', () => {
   /**
    * 切换座位开关状态
    */
-  const switchSeat = (roomNumber: number, seatIndex: number, open: boolean) => {
+  const switchSeat = (roomNumber: number, seat: number, open: boolean) => {
     send({
       type: 'room:seat_switch',
       roomNumber,
-      seatIndex,
+      seat,
       open
     })
   }

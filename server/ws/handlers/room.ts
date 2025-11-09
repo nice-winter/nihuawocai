@@ -58,15 +58,15 @@ export default defineWsHandlers({
     }
   },
   'room:seat_switch': async ({ peer, msg, user, reply }) => {
-    const { roomNumber, seatIndex, open } = msg as WebsocketMessage<{
+    const { roomNumber, seat, open } = msg as WebsocketMessage<{
       roomNumber: number
-      seatIndex: number
+      seat: number
       open: boolean
     }>
     if (user) {
-      reply({ type: 'room:seat_swtich', ...seatSwitch(roomNumber, seatIndex, open, user.id) })
+      reply({ type: 'room:seat_swtich', ...seatSwitch(roomNumber, seat, open, user.id) })
 
-      // logger.debug('Seat Switch:', roomNumber, seatIndex, open)
+      // logger.debug('Seat Switch:', roomNumber, seat, open)
     }
   }
 })

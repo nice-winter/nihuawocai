@@ -190,7 +190,7 @@ watch(
 )
 
 const onSeatSwitch = (open?: boolean, seat?: number | string) => {
-  console.log(seat, open)
+  // console.log(seat, open)
   switchSeat(roomInfo.roomNumber, Number(seat) - 1, Boolean(open))
 }
 
