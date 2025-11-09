@@ -13,7 +13,7 @@ type WsEvents = {
   'ws:message': {
     peer: Peer<AdapterInternal>
     msg: WebsocketMessage
-    user: UserData | null
+    user: UserData
     reply: <T>(msg: WebsocketMessage<T>) => void
   }
   'ws:error': {
@@ -30,7 +30,8 @@ type WsEvents = {
 }
 
 interface WsHandlers {
-  [key: string]: (e: WsEvents['ws:message']) => void | Promise<void>
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  [key: string]: (e: WsEvents['ws:message']) => any | Promise<any>
 }
 
 const isOpen = (peer: WsPeer) => peer.websocket && peer.websocket.readyState === 1

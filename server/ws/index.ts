@@ -137,6 +137,8 @@ const hooks = defineHooks({
       }
 
       const { userData } = await resolveUserFromPeer(peer)
+      if (!userData) return // 没有用户信息，不处理该消息
+
       wsEventBus.emit('ws:message', {
         peer,
         msg,
