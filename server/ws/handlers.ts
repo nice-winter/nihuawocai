@@ -12,20 +12,36 @@ function registerHandlers(handlers: WsHandlers) {
   if (INITIALIZED) return
 
   wsEventBus.on('ws:message', async (e) => {
-    const handler = handlers[e.msg.type.toLowerCase()]
-    if (handler) {
-      logger.debug(
-        'Trigger:',
-        colors.cyan(e.msg.type),
-        'From:',
-        `${colors.cyan(e.user?.nickname || '')}@${e.user?.id}`
-      )
+    const type = e.msg.type?.toLowerCase?.()
+    const handler = handlers[type]
+    if (!type || !handler) return // 没有 handler，不处理
 
-      try {
-        await handler(e)
-      } catch (err) {
-        e.reply({ type: e.msg.type, message: String(err), _error: true })
+    logger.debug(
+      'Trigger:',
+      colors.cyan(type),
+      'From:',
+      `${colors.cyan(e.user?.nickname || '')}@${e.user?.id}`
+    )
+
+    const replyBase = { type }
+
+    try {
+      const result = await handler(e)
+
+      if (result === undefined) {
+        e.reply({ ...replyBase, successful: true }) // handler 没有返回任何内容
+      } else if (typeof result === 'string') {
+        e.reply({ ...replyBase, message: result, successful: true })
+      } else if (typeof result === 'object') {
+        e.reply({ ...replyBase, ...result, successful: true })
+      } else {
+        e.reply({ ...replyBase, successful: true })
       }
+    } catch (err: unknown) {
+      const errorMsg = (err as Error)?.message || String(err)
+      e.reply({ ...replyBase, _error: true, message: errorMsg })
+
+      logger.error(colors.red(`[${type}] Error:`), errorMsg)
     }
   })
 

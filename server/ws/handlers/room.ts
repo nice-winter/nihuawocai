@@ -14,59 +14,40 @@ import {
 const logger = consola.withTag('Room Handler')
 
 export default defineWsHandlers({
-  'room:list_pull': async ({ peer, msg, user, reply }) => {
+  'room:list_pull': async () => {
     const roomList = getRoomList()
-    reply({
-      type: 'room:list_pull',
-      room_list: roomList
-    })
+    return { room_list: roomList }
   },
-  'room:create': async ({ peer, msg, user, reply }) => {
-    // logger.debug('Create Room:', msg)
+  'room:create': async ({ msg, user }) => {
     const { opens } = msg as WebsocketMessage<{ opens: number }>
-    if (user) {
-      reply({
-        type: 'room:create',
-        ...(await createRoom(user.id, opens))
-      })
-    }
-  },
-  'room:join': async ({ peer, msg, user, reply }) => {
-    const _msg = msg as WebsocketMessage<WsProcotolRoomJoin>
-    if (user) {
-      reply({
-        type: 'room:join',
-        ...(await joinRoom(_msg.roomNumber, user.id, ''))
-      })
 
-      // logger.debug('Join Room:', _msg.roomNumber, user.id, '')
-    }
+    return await createRoom(user.id, opens)
   },
-  'room:leave': async ({ peer, msg, user, reply }) => {
-    if (user) {
-      reply({ type: 'room:leave', ...leaveRoom(user.id) })
+  'room:join': async ({ msg, user }) => {
+    const { roomNumber, password, look } = msg as WebsocketMessage<WsProcotolRoomJoin>
 
-      // logger.debug('Leave Room:', user.id)
-    }
-  },
-  'room:sit': async ({ peer, msg, user, reply }) => {
-    const _msg = msg as WebsocketMessage<{ roomNumber: number }>
-    if (user) {
-      reply({ type: 'room:sit', ...sit(_msg.roomNumber, user.id, 1) })
+    if ((typeof roomNumber !== 'number' && Number(roomNumber < 0)) || Number(roomNumber) > 999)
+      throw new Error('非法参数')
 
-      // logger.debug('Sit Down:', user.id, 1)
-    }
+    return await joinRoom(Number(roomNumber), user.id, password?.trim().substring(0, 16) || '')
   },
-  'room:seat_switch': async ({ peer, msg, user, reply }) => {
+  'room:leave': async ({ msg, user }) => {
+    return leaveRoom(user.id)
+  },
+  'room:sit': async ({ msg, user }) => {
+    const { roomNumber, seat } = msg as WebsocketMessage<{ roomNumber: number; seat: number }>
+
+    return await sit(roomNumber, user.id, seat)
+  },
+  'room:seat_switch': async ({ msg, user }) => {
     const { roomNumber, seat, open } = msg as WebsocketMessage<{
       roomNumber: number
       seat: number
       open: boolean
     }>
-    if (user) {
-      reply({ type: 'room:seat_swtich', ...seatSwitch(roomNumber, seat, open, user.id) })
 
-      // logger.debug('Seat Switch:', roomNumber, seat, open)
-    }
+    if (seat < 0 || seat > 6) throw new Error('非法参数')
+
+    return seatSwitch(roomNumber, seat, open, user.id)
   }
 })

@@ -258,11 +258,17 @@ const sit = async (roomNumber: number, id: string, seat: number) => {
   }
 }
 
+/**
+ * 座位开启/关闭
+ * @param roomNumber 房间号
+ * @param seat 座位号
+ * @param open 开关状态
+ * @param id 房主玩家 ID
+ */
 const seatSwitch = (roomNumber: number, seat: number, open: boolean, id: string) => {
   const room = rooms.get(roomNumber)
   if (room) {
     if (room.owner !== id) throw new Error('你不是房主')
-    if (seat < 0 || seat > 6) throw new Error('非法参数')
     if (room.players[seat] !== null) throw new Error('此坑位存在玩家，无法调整')
 
     room.seats[seat] = open
@@ -286,7 +292,7 @@ const seatSwitch = (roomNumber: number, seat: number, open: boolean, id: string)
   }
 }
 
-const changePassword = (roomNumber: number, password: string) => {}
+const changePassword = (roomNumber: number, password: string, id: string) => {}
 
 /**
  * 离开房间（玩家和旁观玩家通用），主动调用
@@ -303,8 +309,7 @@ const leaveRoom = (id: string, roomNumber?: number) => {
   }
 
   return {
-    roomNumber: rn,
-    successful: true
+    roomNumber: rn
   }
 }
 
