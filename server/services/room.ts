@@ -258,27 +258,27 @@ const sit = async (roomNumber: number, id: string, seat: number) => {
   }
 }
 
-const seatSwitch = (roomNumber: number, seatIndex: number, open: boolean, id: string) => {
+const seatSwitch = (roomNumber: number, seat: number, open: boolean, id: string) => {
   const room = rooms.get(roomNumber)
   if (room) {
     if (room.owner !== id) throw new Error('你不是房主')
-    if (seatIndex < 0 || seatIndex > 6) throw new Error('非法参数')
-    if (room.players[seatIndex] !== null) throw new Error('此坑位存在玩家，无法调整')
+    if (seat < 0 || seat > 6) throw new Error('非法参数')
+    if (room.players[seat] !== null) throw new Error('此坑位存在玩家，无法调整')
 
-    room.seats[seatIndex] = open
+    room.seats[seat] = open
     updateRoom(roomNumber, room)
 
     // 广播坑位切换事件
     sendToAllPlayer({
       type: 'room:event:seat_switch',
       from: roomNumber,
-      seatIndex,
+      seat,
       open
     })
 
     return {
       roomNumber,
-      seatIndex,
+      seat,
       open
     }
   } else {
@@ -316,16 +316,16 @@ const leaveRoom = (id: string, roomNumber?: number) => {
 const removeRoomPlayer = (roomNumber: number, id: string) => {
   const room = rooms.get(roomNumber)
   if (room) {
-    const seatIndex = room.players.findIndex((p) => p?.id === id)
+    const seat = room.players.findIndex((p) => p?.id === id)
     const onlookersIndex = room.onlookers.findIndex((p) => p?.id === id)
 
-    if (seatIndex < 0 && onlookersIndex < 0) {
+    if (seat < 0 && onlookersIndex < 0) {
       throw new Error('当前玩家不在房间内')
     }
 
     // 先移除玩家（再计算剩余玩家数量，避免状态不一致）
-    if (seatIndex > -1) {
-      room.players[seatIndex] = null
+    if (seat > -1) {
+      room.players[seat] = null
     } else if (onlookersIndex > -1) {
       room.onlookers.splice(onlookersIndex, 1)
     }
@@ -333,12 +333,12 @@ const removeRoomPlayer = (roomNumber: number, id: string) => {
     const realPlayers = room.players.filter((p) => p !== null)
 
     // 判断玩家在坑里，还是在树上
-    if (seatIndex > -1) {
+    if (seat > -1) {
       // 广播玩家（从坑位）离开房间事件
       sendToAllPlayer({
         type: 'room:event:player_leave',
         from: roomNumber,
-        seatIndex,
+        seat,
         id
       })
     } else if (onlookersIndex > -1) {
@@ -359,11 +359,11 @@ const removeRoomPlayer = (roomNumber: number, id: string) => {
     }
 
     // 如果玩家是房主且仍有其他玩家，则更改房主为相邻玩家
-    if (room.owner === id && seatIndex > -1 && realPlayers.length > 0) {
+    if (room.owner === id && seat > -1 && realPlayers.length > 0) {
       let newOwnerIndex = -1
 
       // 向后找最近的非空座位
-      for (let i = seatIndex + 1; i < room.players.length; i++) {
+      for (let i = seat + 1; i < room.players.length; i++) {
         if (room.players[i]) {
           newOwnerIndex = i
           break
@@ -372,7 +372,7 @@ const removeRoomPlayer = (roomNumber: number, id: string) => {
 
       // 如果后面没有，则向前找
       if (newOwnerIndex === -1) {
-        for (let i = seatIndex - 1; i >= 0; i--) {
+        for (let i = seat - 1; i >= 0; i--) {
           if (room.players[i]) {
             newOwnerIndex = i
             break
@@ -397,7 +397,7 @@ const removeRoomPlayer = (roomNumber: number, id: string) => {
 
     // 如果玩家在房间内，则更新玩家状态至“不在房间内”
     // 这里同上面的销毁逻辑一样，有个时序先后问题，所以处理离场事件，再更新玩家状态
-    if (seatIndex > -1 || onlookersIndex > -1) {
+    if (seat > -1 || onlookersIndex > -1) {
       updatePlayerState(id)
     }
 
