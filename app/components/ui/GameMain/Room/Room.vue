@@ -38,7 +38,7 @@ interface RoomProps {
 
 const { stage = 0 } = defineProps<RoomProps>()
 
-const roomStore = useGameRoomListStore()
+const roomStore = useRoomStore()
 const { leave, sit } = roomStore
 const { currentRoom } = storeToRefs(roomStore)
 

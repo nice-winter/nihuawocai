@@ -93,7 +93,7 @@ import type { RoomInfo } from '#shared/interfaces/room'
 
 const { roomInfo } = defineProps<{ roomInfo: RoomInfo }>()
 const { player } = storeToRefs(usePlayerStore())
-const { switchSeat } = useGameRoomListStore()
+const { switchSeat } = useRoomStore()
 
 const PasswordInputRef = useTemplateRef('PasswordInput')
 const RoomMessageListRef = useTemplateRef('RoomMessageList')

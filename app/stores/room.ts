@@ -1,13 +1,13 @@
 import { defineStore } from 'pinia'
 import type { Room, RoomInfo } from '#shared/interfaces/room'
 import type { WebsocketMessage } from '#shared/interfaces/ws'
-import type { Player } from '~~/shared/interfaces/player'
+import type { Player } from '#shared/interfaces/player'
 
 /**
  * 游戏房间列表 Store
  * 负责管理游戏房间的列表、当前房间状态以及与房间相关的WebSocket通信
  */
-export const useGameRoomListStore = defineStore('gameRoomListStore', () => {
+export const useRoomStore = defineStore('roomStore', () => {
   // 依赖注入
   const { wsEventBus, send } = useWsStore()
   const playerStore = usePlayerStore()

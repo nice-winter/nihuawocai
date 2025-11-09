@@ -3,7 +3,7 @@
     <div class="h-[87.72%] flex flex-wrap relative">
       <div class="z-1 flex flex-wrap w-full h-full">
         <UiGameMainLobbyRoomListItem
-          v-for="room in gameRoomListStore.currentPageRooms"
+          v-for="room in roomStore.currentPageRooms"
           :key="room.roomNumber"
           :room-info="room"
           @join-button-click="join"
@@ -49,9 +49,9 @@
 <script setup lang="ts">
 import { mockdata } from '#shared/utils/mockdata'
 
-const gameRoomListStore = useGameRoomListStore()
-const { join, prevPage, nextPage, createRoom, quickMatch } = gameRoomListStore
-const { currentPageRooms, currentPageNumber, showOnlyWaitingRooms } = storeToRefs(gameRoomListStore)
+const roomStore = useRoomStore()
+const { join, prevPage, nextPage, createRoom, quickMatch } = roomStore
+const { currentPageRooms, currentPageNumber, showOnlyWaitingRooms } = storeToRefs(roomStore)
 
 const roomNumberInputValue = ref('')
 const rooms = ref(mockdata.roomList)
