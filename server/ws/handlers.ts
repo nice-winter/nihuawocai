@@ -18,7 +18,7 @@ function registerHandlers(handlers: WsHandlers) {
         'Trigger:',
         colors.cyan(e.msg.type),
         'From:',
-        `${colors.cyan(e.user?.nickname || '')}@${colors.gray(e.user?.id || '')}`
+        `${colors.cyan(e.user?.nickname || '')}@${e.user?.id}`
       )
 
       try {

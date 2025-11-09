@@ -37,7 +37,7 @@ const addPlayer = (user: UserData & { peer: WsPeer }) => {
   )
   updatePlayerState(user.id)
 
-  logger.debug('Added new player:', `${colors.cyan(player.nickname)}@${colors.gray(player.id)}`)
+  logger.debug('Added new player:', `${colors.cyan(player.nickname)}@${player.id}`)
 }
 
 const removePlayer = (id: string) => {
@@ -48,7 +48,7 @@ const removePlayer = (id: string) => {
     }
     players.delete(id)
 
-    logger.debug('Removed player:', `${colors.cyan(player?.nickname)}@${colors.gray(player?.id)}`)
+    logger.debug('Removed player:', `${colors.cyan(player?.nickname)}@${player.id}`)
   }
 }
 
@@ -75,10 +75,7 @@ const updatePlayerState = (id: string, roomNumber?: number) => {
       id
     )
 
-    logger.debug(
-      'Player state updated:',
-      `${colors.cyan(player?.nickname)}@${colors.gray(player?.id)}`
-    )
+    logger.debug('Player state updated:', `${colors.cyan(player?.nickname)}@${player.id}`)
   }
 }
 
