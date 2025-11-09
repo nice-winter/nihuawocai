@@ -11,11 +11,10 @@ interface RoomInfo {
   seats: boolean[]
   playing: boolean
   locked: boolean
-  password?: string
 }
 
 interface RoomOptions {
-  password: string
+  password: string | ''
   maxOnlookers: number
 }
 

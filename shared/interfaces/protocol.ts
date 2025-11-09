@@ -5,4 +5,6 @@ export interface WsProcotolRoomCreate {
 export interface WsProcotolRoomJoin {
   type: 'room:join'
   roomNumber: number
+  password: string
+  look?: boolean
 }
