@@ -1,8 +1,8 @@
 import { consola } from 'consola'
 import { colors } from 'consola/utils'
-import { wsEventBus } from '.'
-import roomListHandler from './handlers/room'
-import type { WsHandlers } from './utils'
+import { wsEventBus } from '~~/server/ws/core/events'
+import roomHandler from './room'
+import type { WsHandlers } from '~~/server/ws/utils'
 
 const logger = consola.withTag('Handlers')
 
@@ -57,6 +57,6 @@ function registerHandlers(handlers: WsHandlers) {
 
 export default function () {
   registerHandlers({
-    ...roomListHandler
+    ...roomHandler
   })
 }
