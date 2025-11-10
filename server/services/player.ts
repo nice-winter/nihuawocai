@@ -193,6 +193,7 @@ export {
   type ServerPlayer,
   playerEventBus,
   players,
+  getPlayer,
   updatePlayerState,
   sendToPlayer,
   sendToAllPlayer,
