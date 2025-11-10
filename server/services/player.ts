@@ -42,6 +42,7 @@ wsEventBus.on('ws:error', ({ user }) => {
 wsEventBus.on('ws:disconnect', ({ user, code }) => {
   // 这里判断 code 不为 4001 时才移除实例是因为 checkDuplicateLogin 函数里已经移除过一次了
   // 而检测到重复登录时候，事件触发顺序为：(旧连接调用)peer.close -> (新连接触发)open -> (新连接调用)addPlayer -> (旧连接触发)ws:disconnect
+  // 旧玩家的的连接触发 'ws:disconnect' 时机会晚于新玩家连接的 'ws:connect'
   // 在此处再移除一次，则会把新连接刚刚添加进来的（新连接的） ServerPlayer 实例移除，导致 bug，真他喵绕
   if (user && code !== 4001) {
     removePlayer(user.id)
@@ -192,9 +193,6 @@ export {
   type ServerPlayer,
   playerEventBus,
   players,
-  getPlayer,
-  addPlayer,
-  removePlayer,
   updatePlayerState,
   sendToPlayer,
   sendToAllPlayer,
