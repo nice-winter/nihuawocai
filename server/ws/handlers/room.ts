@@ -1,7 +1,5 @@
 import { consola } from 'consola'
-import type { WebsocketMessage } from '#shared/interfaces/ws'
-import type { WsProcotolRoomJoin } from '#shared/interfaces/protocol'
-import { defineWsHandlers } from '../utils/index'
+import { defineWsHandlers } from '~~/server/ws/utils'
 import {
   changePassword,
   createRoom,
@@ -11,6 +9,8 @@ import {
   seatSwitch,
   sit
 } from '~~/server/services/room'
+import type { WebsocketMessage } from '#shared/interfaces/ws'
+import type { WsProcotolRoomJoin } from '#shared/interfaces/protocol'
 
 const logger = consola.withTag('Room Handler')
 
