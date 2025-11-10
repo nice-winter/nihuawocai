@@ -1,6 +1,6 @@
 import { shortHash } from '#shared/utils'
-import type { UserData } from '#shared/interfaces/userData'
 import { defu } from 'defu'
+import type { UserData } from '#shared/interfaces/userData'
 
 const userDataStorage = useStorage('user_data')
 
