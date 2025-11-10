@@ -2,7 +2,14 @@ import { consola } from 'consola'
 import { colors } from 'consola/utils'
 import { getAppConfig } from '~~/server/services/app-config'
 import { defu } from 'defu'
-import { getPlayer, updatePlayerState, sendToAllPlayer, sendToPlayer, sendToRoom } from './player'
+import {
+  playerEventBus,
+  getPlayer,
+  updatePlayerState,
+  sendToAllPlayer,
+  sendToPlayer,
+  sendToRoom
+} from './player'
 import { getUserData } from './user'
 import type { AppConfig } from '#shared/interfaces/appConfig'
 import type { Room, RoomInfo, RoomOptions } from '#shared/interfaces/room'
@@ -10,6 +17,14 @@ import type { Room, RoomInfo, RoomOptions } from '#shared/interfaces/room'
 const logger = consola.withTag('Room Service')
 
 const rooms = new Map<number, Room>()
+
+// playerEventBus.on('player:connect', ({ player }) => {})
+// 玩家离线时，从他的房间中移除他
+playerEventBus.on('player:disconnect', ({ player }) => {
+  if (player.state === 'in_room' && typeof player.roomNumber !== 'undefined') {
+    removeRoomPlayer(player.roomNumber, player.id)
+  }
+})
 
 /**
  * 获取房间信息
