@@ -50,13 +50,13 @@
       <div class="grid grid-cols-2 grid-rows-2 gap-[0.785rem]">
         <UiButton color="green">广播邀请</UiButton>
         <UiButton color="blue">邀请好友</UiButton>
-        <UiButton v-if="isCurrentRoomOwner">再等一会</UiButton>
-        <UiButton v-if="isCurrentRoomOwner" color="red" @click="start">立即开始</UiButton>
+        <UiButton v-if="isCurrentRoomOwner && !roomInfo.locked">再等一会</UiButton>
+        <UiButton v-if="isCurrentRoomOwner" color="red" @click="start">开始游戏</UiButton>
       </div>
     </div>
 
     <div class="grow flex flex-col items-center justify-center">
-      <UiGameMainRoomTimer />
+      <UiGameMainRoomTimer v-if="!roomInfo.locked" />
     </div>
   </div>
 
