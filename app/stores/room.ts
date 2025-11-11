@@ -17,11 +17,6 @@ export const useRoomStore = defineStore('roomStore', () => {
   const currentPageNumber = ref(0) // 当前页码
   const showOnlyWaitingRooms = ref(false) // 是否只显示等待中的房间
   const currentRoom = ref<Room | null>(null) // 玩家当前所在的房间
-  const clearCurrentRoom = () => (currentRoom.value = null) // 清空当前所在房间信息
-  const updateCurrentRoom = () => {
-    /** @todo 更新当前所在房间信息（未实现） */
-  }
-  const isCurrentRoomOwner = computed(() => playerStore.player?.id === currentRoom.value?.owner)
 
   // Computed
   /**
@@ -32,9 +27,80 @@ export const useRoomStore = defineStore('roomStore', () => {
     return arr.length <= 6 ? arr : arr.slice(0, 5)
   })
 
+  /**
+   * 是否为当前房间的房主
+   */
+  const isCurrentRoomOwner = computed(() => playerStore.player?.id === currentRoom.value?.owner)
+
+  // 工具函数
+  /**
+   * 清空当前所在房间信息
+   */
+  const clearCurrentRoom = () => {
+    currentRoom.value = null
+  }
+
+  /**
+   * 更新房间玩家座位信息
+   */
+  const updateRoomPlayer = (
+    roomNumber: number,
+    seat: number,
+    player: Player,
+    action: 'join' | 'sit' | 'leave'
+  ) => {
+    // 更新房间列表中的房间
+    const room = rooms.get(roomNumber)
+    if (room) {
+      room.players[seat] = action === 'leave' ? null : player
+      rooms.set(roomNumber, room)
+    }
+
+    // 同步更新当前房间
+    if (roomNumber === currentRoom.value?.roomNumber) {
+      currentRoom.value.players[seat] = action === 'leave' ? null : player
+
+      if (action === 'join') {
+        eventBus.emit('current:room:event:player_join', { player, seat })
+      } else if (action === 'sit') {
+        eventBus.emit('current:room:event:onlooker_sit', { player, seat })
+      } else if (action === 'leave') {
+        eventBus.emit('current:room:event:player_leave', { player, seat })
+      }
+    }
+  }
+
+  /**
+   * 更新房间旁观者列表
+   */
+  const updateRoomOnlookers = (
+    roomNumber: number,
+    updater: (onlookers: Player[]) => void,
+    player: Player,
+    action: 'join' | 'sit' | 'leave'
+  ) => {
+    // 更新房间列表中的房间
+    const room = rooms.get(roomNumber)
+    if (room) {
+      updater(room.onlookers)
+      rooms.set(roomNumber, room)
+    }
+
+    // 同步更新当前房间
+    if (roomNumber === playerStore.player?.roomNumber && currentRoom.value) {
+      updater(currentRoom.value.onlookers)
+
+      if (action === 'join') {
+        eventBus.emit('current:room:event:onlooker_join', { player })
+      } else if (action === 'leave') {
+        eventBus.emit('current:room:event:onlooker_leave', { player })
+      }
+    }
+  }
+
   // Watch
   /**
-   * 监听玩家状态，如果玩家状态变更为不再房间内的状态，则清空当前所在房间信息
+   * 监听玩家状态，如果玩家状态变更为不在房间内的状态，则清空当前所在房间信息
    */
   watch(
     () => playerStore.player?.state,
@@ -45,91 +111,72 @@ export const useRoomStore = defineStore('roomStore', () => {
 
   // WebSocket 事件监听
   wsEventBus.on('ws:connected', () => {
-    // ...
+    // WebSocket 连接建立后拉取房间列表
+    pullRoomList()
   })
 
   wsEventBus.on('ws:message', (msg) => {
-    handleRoomListMessage(msg)
+    handleRoomMessage(msg)
   })
 
   /**
-   * 处理房间相关的WebSocket消息
+   * 处理房间相关的 WebSocket 消息
    */
-  const handleRoomListMessage = (msg: WebsocketMessage) => {
+  const handleRoomMessage = (msg: WebsocketMessage) => {
     switch (msg.type) {
-      // 房间列表拉取
+      // 房间列表相关
       case 'room:list_pull':
         handleRoomListPull(msg)
         break
-
-      // 房间创建事件
       case 'room:event:create':
         handleRoomCreate(msg)
         break
-
-      // 房间销毁
       case 'room:event:destroy':
         handleRoomDestroy(msg)
         break
 
-      // 房间信息更新
+      // 房间信息相关
       case 'room:event:info':
         handleRoomInfo(msg)
         break
-
-      // 房主变更
       case 'room:event:owner_change':
         handleRoomOwnerChange(msg)
         break
-
-      // 房间阶段更新
       case 'room:event:stage_update':
         // 暂不处理
         break
 
-      // 玩家加入房间
-      case 'room:event:player_join':
-        handlePlayerJoin(msg)
-        break
-
-      // 旁观者加入
-      case 'room:event:onlooker_join':
-        handleOnlookerJoin(msg)
-        break
-
-      // 玩家离开房间
-      case 'room:event:player_leave':
-        handlePlayerLeave(msg)
-        break
-
-      // 旁观者离开
-      case 'room:event:onlooker_leave':
-        handleOnlookerLeave(msg)
-        break
-
-      // 旁观者坐下
-      case 'room:event:onlooker_sit':
-        handleOnlookerSit(msg)
-        break
-
-      // 座位开关状态切换
+      // 房间设置相关
       case 'room:event:seat_switch':
         handleSeatSwitch(msg)
         break
-
-      // 房间锁定状态更新
       case 'room:event:locked_state_change':
         handleLockedStateChange(msg)
         break
-
-      // 当前房间密码状态更新
       case 'room:event:password_change':
         handlePasswordChange(msg)
+        break
+
+      // 玩家进出相关
+      case 'room:event:player_join':
+        handlePlayerJoin(msg)
+        break
+      case 'room:event:player_leave':
+        handlePlayerLeave(msg)
+        break
+      case 'room:event:onlooker_join':
+        handleOnlookerJoin(msg)
+        break
+      case 'room:event:onlooker_leave':
+        handleOnlookerLeave(msg)
+        break
+      case 'room:event:onlooker_sit':
+        handleOnlookerSit(msg)
         break
     }
   }
 
-  // WebSocket 消息处理函数
+  // 房间列表管理
   const handleRoomListPull = (msg: WebsocketMessage) => {
     const { room_list } = msg as WebsocketMessage<{ room_list: RoomInfo[] }>
     rooms.clear()
@@ -150,8 +197,9 @@ export const useRoomStore = defineStore('roomStore', () => {
     }
   }
 
+  // 房间信息更新
   const handleRoomInfo = (msg: WebsocketMessage) => {
-    const { room, id } = msg as WebsocketMessage<{ room: Room; id: string }>
+    const { room } = msg as WebsocketMessage<{ room: Room }>
     // 如果更新的是玩家当前所在房间，更新当前房间状态
     if (room.roomNumber === playerStore.player?.roomNumber) {
       currentRoom.value = room
@@ -172,54 +220,7 @@ export const useRoomStore = defineStore('roomStore', () => {
     }
   }
 
-  const handlePlayerJoin = (msg: WebsocketMessage) => {
-    const { from, seat, player } = msg as WebsocketMessage<{
-      from: number
-      seat: number
-      player: Player
-    }>
-    updateRoomPlayer(from, seat, player)
-  }
-
-  const handleOnlookerJoin = (msg: WebsocketMessage) => {
-    const { from, player } = msg as WebsocketMessage<{ from: number; player: Player }>
-    const room = rooms.get(from)
-    if (room) {
-      room.onlookers.push(player)
-      rooms.set(from, room)
-    }
-  }
-
-  const handlePlayerLeave = (msg: WebsocketMessage) => {
-    const { from, seat, player } = msg as WebsocketMessage<{
-      from: number
-      seat: number
-      player: Player
-    }>
-    updateRoomPlayer(from, seat, null)
-  }
-
-  const handleOnlookerLeave = (msg: WebsocketMessage) => {
-    const { from, player } = msg as WebsocketMessage<{ from: number; player: Player }>
-    const room = rooms.get(from)
-    if (room) {
-      const index = room.onlookers.findIndex((p) => p.id === player.id)
-      if (index > -1) {
-        room.onlookers.splice(index, 1)
-        rooms.set(from, room)
-      }
-    }
-  }
-
-  const handleOnlookerSit = (msg: WebsocketMessage) => {
-    const { from, seat, player } = msg as WebsocketMessage<{
-      from: number
-      seat: number
-      player: Player
-    }>
-    updateRoomPlayer(from, seat, player)
-  }
-
+  // 房间设置更新
   const handleSeatSwitch = (msg: WebsocketMessage) => {
     const { from, seat, open } = msg as WebsocketMessage<{
       from: number
@@ -238,31 +239,8 @@ export const useRoomStore = defineStore('roomStore', () => {
     }
   }
 
-  /**
-   * 更新房间玩家座位信息
-   */
-  const updateRoomPlayer = (roomNumber: number, seat: number, player: Player | null) => {
-    const room = rooms.get(roomNumber)
-    if (room) {
-      room.players[seat] = player
-      rooms.set(roomNumber, room)
-    }
-
-    // 同步更新当前房间
-    if (roomNumber === currentRoom.value?.roomNumber) {
-      currentRoom.value.players[seat] = player
-    }
-  }
-
-  /**
-   * 更新房间锁定状态
-   */
-  function handleLockedStateChange(msg: WebsocketMessage) {
-    const { from, locked } = msg as WebsocketMessage<{
-      from: number
-      locked: boolean
-    }>
-
+  const handleLockedStateChange = (msg: WebsocketMessage) => {
+    const { from, locked } = msg as WebsocketMessage<{ from: number; locked: boolean }>
     const room = rooms.get(from)
     if (room) {
       room.locked = locked
@@ -270,11 +248,7 @@ export const useRoomStore = defineStore('roomStore', () => {
     }
   }
 
-  /**
-   * 更新当前房间锁定状态
-   * @param msg
-   */
-  function handlePasswordChange(msg: WebsocketMessage) {
+  const handlePasswordChange = (msg: WebsocketMessage) => {
     const { roomNumber, password, locked } = msg as WebsocketMessage<{
       roomNumber: number
       locked: boolean
@@ -284,7 +258,77 @@ export const useRoomStore = defineStore('roomStore', () => {
     if (currentRoom.value && roomNumber === currentRoom.value.roomNumber) {
       currentRoom.value.options.password = password
       currentRoom.value.locked = locked
+
+      eventBus.emit('current:room:event:password_change', { locked, password })
     }
+  }
+
+  // 玩家进出管理
+  const handlePlayerJoin = (msg: WebsocketMessage) => {
+    const { from, seat, player } = msg as WebsocketMessage<{
+      from: number
+      seat: number
+      player: Player
+    }>
+    updateRoomPlayer(from, seat, player, 'join')
+  }
+
+  const handlePlayerLeave = (msg: WebsocketMessage) => {
+    const { from, seat, player } = msg as WebsocketMessage<{
+      from: number
+      seat: number
+      player: Player
+    }>
+    updateRoomPlayer(from, seat, player, 'leave')
+  }
+
+  const handleOnlookerJoin = (msg: WebsocketMessage) => {
+    const { from, player } = msg as WebsocketMessage<{ from: number; id: string; player: Player }>
+    updateRoomOnlookers(
+      from,
+      (onlookers) => {
+        onlookers.push(player)
+      },
+      player,
+      'join'
+    )
+  }
+
+  const handleOnlookerLeave = (msg: WebsocketMessage) => {
+    const { from, player } = msg as WebsocketMessage<{ from: number; id: string; player: Player }>
+    updateRoomOnlookers(
+      from,
+      (onlookers) => {
+        const index = onlookers.findIndex((p) => p.id === player.id)
+        if (index > -1) {
+          onlookers.splice(index, 1)
+        }
+      },
+      player,
+      'leave'
+    )
+  }
+
+  const handleOnlookerSit = (msg: WebsocketMessage) => {
+    const { from, seat, player } = msg as WebsocketMessage<{
+      from: number
+      seat: number
+      player: Player
+    }>
+    updateRoomPlayer(from, seat, player, 'sit')
+
+    // 旁观者坐下后需要从旁观者列表中移除
+    updateRoomOnlookers(
+      from,
+      (onlookers) => {
+        const index = onlookers.findIndex((p) => p.id === player.id)
+        if (index > -1) {
+          onlookers.splice(index, 1)
+        }
+      },
+      player,
+      'sit'
+    )
   }
 
   // Actions
@@ -300,7 +344,7 @@ export const useRoomStore = defineStore('roomStore', () => {
   /**
    * 加入指定房间
    */
-  const join = (roomNumber: number, password?: string, look?: boolean) => {
+  const join = (roomNumber: number, password?: string) => {
     send({
       type: 'room:join',
       roomNumber,
@@ -311,17 +355,10 @@ export const useRoomStore = defineStore('roomStore', () => {
   /**
    * 离开当前房间
    */
-  const leave = (roomNumber?: number) => {
+  const leave = () => {
     send({
       type: 'room:leave'
     })
-  }
-
-  /**
-   * 坐下（暂未实现）
-   */
-  const sit = (seat: number) => {
-    // TODO: 实现坐下逻辑
   }
 
   /**
@@ -348,20 +385,6 @@ export const useRoomStore = defineStore('roomStore', () => {
   }
 
   /**
-   * 上一页（暂未实现）
-   */
-  const prevPage = () => {
-    // TODO: 实现上一页逻辑
-  }
-
-  /**
-   * 下一页（暂未实现）
-   */
-  const nextPage = () => {
-    // TODO: 实现下一页逻辑
-  }
-
-  /**
    * 创建新房间
    */
   const createRoom = () => {
@@ -382,6 +405,19 @@ export const useRoomStore = defineStore('roomStore', () => {
     send({
       type: 'room:quick_match'
     })
+  }
+
+  // 未实现的功能
+  const sit = (seat: number) => {
+    // TODO: 实现坐下逻辑
+  }
+
+  const prevPage = () => {
+    // TODO: 实现上一页逻辑
+  }
+
+  const nextPage = () => {
+    // TODO: 实现下一页逻辑
   }
 
   return {

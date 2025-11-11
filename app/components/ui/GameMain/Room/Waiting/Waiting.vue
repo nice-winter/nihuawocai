@@ -42,7 +42,7 @@
 
     <div class="w-52 flex flex-col justify-center pr-4">
       <div class="w-full h-20 text-[13px] text-[#c3b4a0]">
-        <UiGameMainMessageList ref="RoomMessageList" />
+        <UiGameMainMessageList ref="RoomEvents" />
       </div>
     </div>
 
@@ -110,7 +110,7 @@ const { switchSeat, changeRoomPassword } = roomStore
 const { isCurrentRoomOwner } = storeToRefs(roomStore)
 
 const passwordUInputRef = useTemplateRef('passwordUInputRef')
-const RoomMessageListRef = useTemplateRef('RoomMessageList')
+const RoomEventsRef = useTemplateRef('RoomEvents')
 
 // 本地状态：由 prop 同步（房主可以修改）
 const lockedLocal = ref(roomInfo.locked)
@@ -182,17 +182,13 @@ watch(
       pendingPassword.value = ''
       // 立即通知后端/状态
       changeRoomPassword(roomInfo.roomNumber, '')
-      RoomMessageListRef.value?.addMessage({
-        type: 'text',
-        msg: `房主取消了房间密码`
-      })
       editing.value = false
     }
   }
 )
 
 // 开始编辑（点击密码文字）
-function startEdit() {
+const startEdit = () => {
   if (!isCurrentRoomOwner.value) return
   if (!lockedLocal.value) {
     // 如果之前没锁，先置为锁定并生成随机密码
@@ -207,7 +203,8 @@ function startEdit() {
 }
 
 // 确认（blur 或 Enter）
-function onCommit() {
+const onCommit = () => {
+  if (!editing.value) return
   // 隐藏编辑态
   editing.value = false
 
@@ -215,30 +212,20 @@ function onCommit() {
   const val = (pendingPassword.value || '').trim()
   if (!val) {
     lockedLocal.value = false
-    pendingPassword.value = ''
-    changeRoomPassword(roomInfo.roomNumber, '')
-    RoomMessageListRef.value?.addMessage({
-      type: 'text',
-      msg: `房主取消了房间密码`
-    })
     return
   } else if (val === roomInfo.options.password) {
     return
+  } else {
+    // 有值：提交密码
+    changeRoomPassword(roomInfo.roomNumber, val)
+    // 同步 original（服务端回来的 roomInfo 应该最终覆盖，但我们先乐观更新 pending）
+    // 保持 lockedLocal true
+    lockedLocal.value = true
   }
-
-  // 有值：提交密码
-  changeRoomPassword(roomInfo.roomNumber, val)
-  // 同步 original（服务端回来的 roomInfo 应该最终覆盖，但我们先乐观更新 pending）
-  RoomMessageListRef.value?.addMessage({
-    type: 'text',
-    msg: `房主将房间密码设置为：${val}`
-  })
-  // 保持 lockedLocal true
-  lockedLocal.value = true
 }
 
 // 取消编辑
-function onCancel() {
+const onCancel = () => {
   editing.value = false
   // 恢复为外部密码（如果存在）或清空（如果原来无密码）
   pendingPassword.value = originalPassword.value || ''
@@ -251,12 +238,61 @@ const onSeatSwitch = (open?: boolean, seat?: number | string) => {
   switchSeat(roomInfo.roomNumber, Number(seat) - 1, Boolean(open))
 }
 
-const start = () => {
-  // RoomMessageListRef.value?.addMessage({
-  //   type: 'text',
-  //   msg: Date.now().toString() + `离开了房间`
-  // })
-}
+useEventBus('current:room:event:password_change', ({ locked, password }) => {
+  if (locked) {
+    RoomEventsRef.value?.addMessage({
+      type: 'text',
+      msg: `房主将房间密码设置为：${password}`
+    })
+  } else {
+    RoomEventsRef.value?.addMessage({
+      type: 'text',
+      msg: `房主取消了房间密码`
+    })
+  }
+})
+
+useEventBus('current:room:event:player_join', ({ player }) => {
+  RoomEventsRef.value?.addMessage({
+    type: 'action',
+    sender: player,
+    msg: `进入了房间`
+  })
+})
+
+useEventBus('current:room:event:player_leave', ({ player }) => {
+  RoomEventsRef.value?.addMessage({
+    type: 'action',
+    sender: player,
+    msg: `离开了房间`
+  })
+})
+
+useEventBus('current:room:event:onlooker_join', ({ player }) => {
+  RoomEventsRef.value?.addMessage({
+    type: 'action',
+    sender: player,
+    msg: `爬到了树上`
+  })
+})
+
+useEventBus('current:room:event:onlooker_leave', ({ player }) => {
+  RoomEventsRef.value?.addMessage({
+    type: 'action',
+    sender: player,
+    msg: `从树上离开了`
+  })
+})
+
+useEventBus('current:room:event:onlooker_sit', ({ player }) => {
+  RoomEventsRef.value?.addMessage({
+    type: 'action',
+    sender: player,
+    msg: `从树上下来了`
+  })
+})
+
+const start = () => {}
 </script>
 
 <style scoped></style>
