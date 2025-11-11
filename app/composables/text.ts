@@ -14,7 +14,7 @@ export interface ParseOptions {
 
 export type TextNode = string | VNode
 
-export function useTextParser() {
+export const useTextParser = () => {
   const parseText = (text: string, options: ParseOptions): TextNode[] => {
     const elements: TextNode[] = []
     let lastIndex = 0
