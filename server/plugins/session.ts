@@ -1,5 +1,5 @@
 /**
- * @todo session kv storage
+ * @TODO session kv storage
  */
 export default defineNitroPlugin(() => {
   const sessionStorage = useStorage('session')

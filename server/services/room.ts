@@ -94,7 +94,7 @@ const createRoom = async (
   // 把房主加入房间
   await joinRoom(roomNumber, owner, roomOptions.password)
 
-  // @todo 房间信息，需要过滤不需要的字段
+  // @TODO 房间信息，需要过滤不需要的字段
   const roomInfo = {
     ...getRoom(roomNumber),
     options: {
@@ -260,7 +260,7 @@ const sit = async (roomNumber: number, id: string, seat: number) => {
     if (!room.playing && room.players[seat] === null && room.seats[seat] === true) {
       room.players[seat] = user
       updateRoom(roomNumber, room)
-      // @todo 广播旁观者坐下事件
+      // @TODO 广播旁观者坐下事件
       sendToAllPlayer({
         type: 'room:event:onlooker_sit',
         from: roomNumber,

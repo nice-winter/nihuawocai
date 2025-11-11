@@ -84,7 +84,7 @@ const addPlayer = (user: UserData & { peer: WsPeer }) => {
       type: 'player:event:logged_in',
       player_info: {
         ...user,
-        peer: undefined // @todo 这里不要把 server runtime 的东西传出去，暂时偷懒这么写。。
+        peer: undefined // @TODO 这里不要把 server runtime 的东西传出去，暂时偷懒这么写。。
       }
     },
     user.id
@@ -124,8 +124,8 @@ const removePlayer = (id: string) => {
   if (player) {
     players.delete(id)
 
-    // @todo 这里玩家的连接已经 close，为了安全起见，应该不要在后续处理过程中还存在这个东西，防止错误访问
-    // @todo 但是这里暂时先用 Omit<ServerPlayer, 'peer'> 把 ServerPlayer 类型的 peer 属性移除（并未在真实对象中移除掉）
+    // @TODO 这里玩家的连接已经 close，为了安全起见，应该不要在后续处理过程中还存在这个东西，防止错误访问
+    // @TODO 但是这里暂时先用 Omit<ServerPlayer, 'peer'> 把 ServerPlayer 类型的 peer 属性移除（并未在真实对象中移除掉）
     // delete player.peer
 
     playerEventBus.emit('player:disconnect', {
