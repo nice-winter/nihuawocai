@@ -39,7 +39,7 @@
       <UiButton @click="showOnlyWaitingRooms = !showOnlyWaitingRooms">{{
         showOnlyWaitingRooms ? '等待房间' : '全部房间'
       }}</UiButton>
-      <UiButton @click="createRoom">创建房间</UiButton>
+      <UiButton @click="tryCreateRoom">创建房间</UiButton>
       <div class="px-4 flex gap-8 items-center ml-auto">
         <UiButton type="arrow-left" color="red" @click="prevPage" />
         <UiButton type="arrow-right" color="red" @click="nextPage" />
@@ -51,21 +51,49 @@
 <script setup lang="ts">
 // import { mockdata } from '#shared/utils/mockdata'
 import type { RoomInfo } from '#shared/interfaces/room'
+import PasswordModal from '@/components/ui/PasswordModal.vue'
+import CreateRoomModal from '@/components/ui/CreateRoomModal.vue'
 
 const roomStore = useRoomStore()
 const { rooms, join, prevPage, nextPage, createRoom, quickMatch } = roomStore
 const { currentPageRooms, currentPageNumber, showOnlyWaitingRooms } = storeToRefs(roomStore)
+const passwordModal = useModal<string>(
+  PasswordModal,
+  { parent: '#game-rooms' },
+  { parent: '#game-rooms' }
+)
+const createRoomModal = useModal<{ opens: number; password: string; maxOnlookers: number }>(
+  CreateRoomModal,
+  { parent: '#game-rooms' },
+  { parent: '#game-rooms' }
+)
 
 const roomNumberInputValue = ref('')
 // const rooms = ref(mockdata.roomList)
 
-const tryJoin = (roomNumber: number, clearRoomNumberInput?: boolean) => {
+const tryJoin = async (roomNumber: number, clearRoomNumberInput?: boolean) => {
   if (clearRoomNumberInput) roomNumberInputValue.value = ''
   if (rooms.get(roomNumber)?.locked) {
-    const password = ''
-    join(roomNumber, password)
+    try {
+      const password = await passwordModal.open()
+      join(roomNumber, password)
+    } catch (err) {
+      console.log('cancel', err)
+    }
   } else {
     join(roomNumber)
+  }
+}
+
+const tryCreateRoom = async () => {
+  try {
+    const { opens, password, maxOnlookers } = await createRoomModal.open()
+    createRoom(opens, {
+      password,
+      maxOnlookers
+    })
+  } catch {
+    //
   }
 }
 </script>
