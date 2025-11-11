@@ -39,3 +39,10 @@ export const useMessageBox = (options?: MessageBoxOptions) => {
 
   return { show }
 }
+
+export const gameMessageBox = useMessageBox({
+  duration: 2000,
+  parent: '#game-panel',
+  offsetX: -115,
+  offsetY: -40
+})
