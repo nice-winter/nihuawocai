@@ -1,62 +1,95 @@
-import { h, render, nextTick, getCurrentInstance, type AppContext } from 'vue'
+import {
+  h,
+  render,
+  nextTick,
+  getCurrentInstance,
+  type AppContext,
+  type Component,
+  type VNode
+} from 'vue'
 
-let vnode: ReturnType<typeof h> | null = null
-let container: HTMLElement | null = null
-
-export const useModal = <T>(component: Component, options: { parent?: string | Element } = {}) => {
+export const useModal = <T>(
+  component: Component,
+  props: Record<string, unknown> = {},
+  options: { parent?: string | Element } = {}
+) => {
   const current = getCurrentInstance()
-  if (!current) throw new Error('useModal 必须在 setup 中调用')
+  if (!current) {
+    throw new Error('useModal: useModal() 必须在 setup() 中调用')
+  }
   const appContext: AppContext = current.appContext
 
-  const mount = (parentEl: Element) => {
+  let vnode: VNode | null = null
+  let container: HTMLElement | null = null
+
+  /**
+   * 卸载组件并移除 DOM
+   */
+  const unmount = () => {
     if (container) {
-      render(null, container)
-      container.remove()
-      container = null
-      vnode = null
+      render(null, container) // 触发 Vue 的卸载
+      container.remove() // 从 DOM 中移除
     }
+    vnode = null
+    container = null
+  }
+
+  /**
+   * 挂载组件并返回其 open 方法
+   */
+  const mount = (parentEl: Element): (() => Promise<T>) => {
+    unmount()
 
     container = document.createElement('div')
     parentEl.appendChild(container)
 
-    vnode = h(component, { parent: parentEl })
+    vnode = h(component, props)
     vnode.appContext = appContext
+
     render(vnode, container)
 
     const exposed = vnode.component?.exposed
     if (!exposed || typeof exposed.open !== 'function') {
-      throw new Error('该组件未暴露 open 方法')
+      unmount()
+      throw new Error('useModal: 传入的组件没有暴露 open 方法')
     }
 
-    return {
-      open: exposed.open as () => Promise<T>
-    }
+    return exposed.open as () => Promise<T>
   }
 
+  /**
+   * 解析父元素
+   */
   const resolveParent = (): Element | null => {
     if (typeof options.parent === 'string') {
       return document.querySelector(options.parent)
     }
+
     return options.parent ?? document.body
   }
 
-  const parentEl = resolveParent()
-  if (parentEl) {
-    return mount(parentEl)
+  const open = async (): Promise<T> => {
+    await nextTick()
+
+    const parentEl = resolveParent()
+    if (!parentEl) {
+      throw new Error('useModal: 未找到父元素 (parent)')
+    }
+
+    const internalOpen = mount(parentEl)
+
+    try {
+      const result = await internalOpen()
+      return result
+      // eslint-disable-next-line no-useless-catch
+    } catch (e) {
+      throw e
+    } finally {
+      unmount()
+    }
   }
 
-  let modalInstance: { open: () => Promise<T> } | null = null
-  nextTick(() => {
-    const lateParent = resolveParent()
-    if (!lateParent) throw new Error('parent 未找到')
-    modalInstance = mount(lateParent)
-  })
-
   return {
-    open: async () => {
-      await nextTick()
-      if (!modalInstance) throw new Error('Modal 尚未初始化完成')
-      return modalInstance.open()
-    }
+    open
   }
 }
