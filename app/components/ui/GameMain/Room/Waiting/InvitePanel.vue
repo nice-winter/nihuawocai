@@ -28,12 +28,12 @@
         <USeparator orientation="horizontal" class="w-full" />
 
         <div
-          class="flex flex-row justify-center items-center gap-9.5 h-8 border-t-2 border-t-white"
+          class="flex flex-row justify-center items-center gap-9.5 h-8 border-t border-t-white/90"
         >
           <UiLinkButton class="text-[13px]" type="button" @click="previousPageClick"
             >上一页</UiLinkButton
           >
-          <USeparator orientation="vertical" class="h-4" />
+          <div class="w-0.5 h-4 border-l border-l-gray-200 bg-white/90" />
           <UiLinkButton class="text-[13px]" type="button" @click="nextPageClick"
             >下一页</UiLinkButton
           >
