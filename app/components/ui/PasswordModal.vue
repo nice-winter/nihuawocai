@@ -23,7 +23,7 @@
           placeholder="房间密码"
           @keydown.enter.prevent="onConfirm"
         />
-        <div class="flex justify-center gap-4 mt-2">
+        <div class="flex justify-center gap-8 mt-2">
           <UiButton size="sm" color="red" @click="onConfirm">加入</UiButton>
           <UiButton size="sm" @click="onCancel">取消</UiButton>
         </div>

@@ -50,6 +50,10 @@ div[data-reka-popper-content-wrapper] {
       color: #c3b4a0;
     }
   }
+
+  .iconify {
+    color: #432410;
+  }
 }
 
 .game-checkbox {
