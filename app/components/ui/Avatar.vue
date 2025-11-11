@@ -30,7 +30,7 @@
       />
 
       <template #content>
-        <div class="w-35 h-75 inline-flex flex-col select-none bg-[#EFC189] custom-bg">
+        <div class="w-35 h-75 inline-flex flex-col select-none bg-[#EFC189] bg-texture">
           <div class="relative p-1.5">
             <UAvatar class="game-avatar size-32" :src="player?.avatar_url" />
           </div>
@@ -138,10 +138,4 @@ onMounted(() => {
 })
 </script>
 
-<style scoped>
-.custom-bg {
-  background-image: url(~/assets/texture.webp);
-  background-repeat: repeat;
-  background-size: 46px;
-}
-</style>
+<style scoped></style>
