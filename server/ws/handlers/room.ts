@@ -20,9 +20,12 @@ export default defineWsHandlers({
     return { room_list: roomList }
   },
   'room:create': async ({ msg, user }) => {
-    const { opens } = msg as WebsocketMessage<{ opens: number }>
+    const { opens, options } = msg as WebsocketMessage<{
+      opens: number
+      options: { password: string; maxOnlookers: number }
+    }>
 
-    return await createRoom(user.id, opens)
+    return await createRoom(user.id, opens, options)
   },
   'room:join': async ({ msg, user }) => {
     const { roomNumber, password, look } = msg as WebsocketMessage<WsProcotolRoomJoin>

@@ -387,14 +387,11 @@ export const useRoomStore = defineStore('roomStore', () => {
   /**
    * 创建新房间
    */
-  const createRoom = () => {
+  const createRoom = (opens: number, options: { password: string; maxOnlookers: number }) => {
     send({
       type: 'room:create',
-      opens: 7, // 默认开启7个座位
-      options: {
-        password: null, // 无密码
-        look: true // 允许旁观
-      }
+      opens,
+      options
     })
   }
 
