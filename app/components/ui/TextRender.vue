@@ -1,9 +1,9 @@
 <template>
   <span>
     <component
+      :is="getComponent(node)"
       v-for="(node, index) in nodes"
       :key="index"
-      :is="getComponent(node)"
       v-bind="getProps(node)"
       @click="handleNodeClick(node)"
     >
@@ -13,9 +13,6 @@
 </template>
 
 <script setup lang="ts">
-import { useTextParser, type TextNode, type EmojiItem } from '@/components/ui/Text'
-import { computed } from 'vue'
-
 interface Props {
   text: string
   emojis?: EmojiItem[]
