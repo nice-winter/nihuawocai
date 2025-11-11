@@ -21,6 +21,7 @@
           maxlength="8"
           class="game-input w-full"
           placeholder="房间密码"
+          @keydown.enter.prevent="onConfirm"
         />
         <div class="flex justify-center gap-4 mt-2">
           <UiButton size="sm" color="red" @click="onConfirm">加入</UiButton>
