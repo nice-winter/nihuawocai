@@ -186,7 +186,7 @@ const joinRoom = async (roomNumber: number, id: string, password?: string) => {
         sendToAllPlayer({
           type: 'room:event:onlooker_join',
           from: roomNumber,
-          user
+          player: user
         })
       } else {
         throw new Error('旁观人数已满')
@@ -265,7 +265,7 @@ const sit = async (roomNumber: number, id: string, seat: number) => {
         type: 'room:event:onlooker_sit',
         from: roomNumber,
         seat,
-        user
+        player: user
       })
     } else {
       throw new Error('该位置已经有人了...')
@@ -374,8 +374,9 @@ const leaveRoom = (id: string, roomNumber?: number) => {
  * @param roomNumber 房间号
  * @param id 用户 ID
  */
-const removeRoomPlayer = (roomNumber: number, id: string) => {
+const removeRoomPlayer = async (roomNumber: number, id: string) => {
   const room = rooms.get(roomNumber)
+  const player = await getUserData(id)
   if (room) {
     const seat = room.players.findIndex((p) => p?.id === id)
     const onlookersIndex = room.onlookers.findIndex((p) => p?.id === id)
@@ -400,7 +401,7 @@ const removeRoomPlayer = (roomNumber: number, id: string) => {
         type: 'room:event:player_leave',
         from: roomNumber,
         seat,
-        id
+        player
       })
     } else if (onlookersIndex > -1) {
       // 广播玩家（从树上）离开房间事件
@@ -408,7 +409,7 @@ const removeRoomPlayer = (roomNumber: number, id: string) => {
         type: 'room:event:onlooker_leave',
         from: roomNumber,
         onlookersIndex,
-        id
+        player
       })
     }
 
