@@ -1,10 +1,9 @@
 import { h, render, nextTick, getCurrentInstance, type AppContext } from 'vue'
-import PasswordModal from '@/components/ui/GameMain/PasswordModal.vue'
 
 let vnode: ReturnType<typeof h> | null = null
 let container: HTMLElement | null = null
 
-export const useModal = (options: { parent?: string | Element } = {}) => {
+export const useModal = <T>(component: Component, options: { parent?: string | Element } = {}) => {
   const current = getCurrentInstance()
   if (!current) throw new Error('useModal 必须在 setup 中调用')
   const appContext: AppContext = current.appContext
@@ -20,17 +19,17 @@ export const useModal = (options: { parent?: string | Element } = {}) => {
     container = document.createElement('div')
     parentEl.appendChild(container)
 
-    vnode = h(PasswordModal, { parent: parentEl })
+    vnode = h(component, { parent: parentEl })
     vnode.appContext = appContext
     render(vnode, container)
 
     const exposed = vnode.component?.exposed
     if (!exposed || typeof exposed.open !== 'function') {
-      throw new Error('未暴露 open 方法')
+      throw new Error('该组件未暴露 open 方法')
     }
 
     return {
-      open: exposed.open as () => Promise<string>
+      open: exposed.open as () => Promise<T>
     }
   }
 
@@ -46,7 +45,7 @@ export const useModal = (options: { parent?: string | Element } = {}) => {
     return mount(parentEl)
   }
 
-  let modalInstance: { open: () => Promise<string> } | null = null
+  let modalInstance: { open: () => Promise<T> } | null = null
   nextTick(() => {
     const lateParent = resolveParent()
     if (!lateParent) throw new Error('parent 未找到')
