@@ -70,7 +70,7 @@ div[data-reka-popper-content-wrapper] {
   background: #f6ede6;
   border-radius: 8px;
   overflow: hidden;
-  box-shadow: 1px 1px 1px 1px #ebdbc6;
+  box-shadow: 1px 0px 1px 1px #ebdbc6;
 
   > div {
     background-color: unset;
