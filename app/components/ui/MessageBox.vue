@@ -3,7 +3,7 @@
     <div
       v-if="visible"
       ref="box"
-      class="bg-black/80 text-white px-4 py-2 rounded-sm shadow-lg top-1/2 left-1/2 -translate-1/2 z-114514 select-none"
+      class="bg-black/80 text-[13px] text-white px-4 py-2 rounded-sm shadow-lg top-1/2 left-1/2 -translate-1/2 z-114514 select-none"
       :class="[!parent ? 'fixed' : 'absolute']"
       :style="style"
     >
