@@ -31,7 +31,6 @@ const box = ref<HTMLElement | null>(null)
 let timer: number | null = null
 
 const style = computed(() => {
-  console.log(offsetX, offsetY)
   return {
     top: `calc(50% + ${offsetY}px)`,
     left: `calc(50% + ${offsetX}px)`
