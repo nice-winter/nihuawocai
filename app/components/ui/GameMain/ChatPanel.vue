@@ -1,7 +1,7 @@
 <template>
   <div class="flex flex-col">
     <div class="relative h-10">
-      <span class="absolute top-2 right-[.785rem] text-[#714429] select-none">
+      <span class="absolute top-2 right-[.785rem] text-(--game-font-color) select-none">
         <UIcon name="ph:telegram-logo-fill" class="size-5 align-middle mr-1.5" />
         <span class="text-sm font-cuyuan">聊天信息</span>
       </span>
