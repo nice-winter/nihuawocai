@@ -38,6 +38,7 @@ div[data-reka-popper-content-wrapper] {
 
 .game-input {
   > input {
+    padding: 4px;
     background-color: #f4e9d6;
     border-radius: 0;
     box-shadow: 0 0 0 1px #ae9783;
@@ -49,6 +50,10 @@ div[data-reka-popper-content-wrapper] {
     &::placeholder {
       color: #c3b4a0;
     }
+  }
+
+  span.inset-y-0 {
+    padding-inline-end: 2px;
   }
 
   .iconify {
