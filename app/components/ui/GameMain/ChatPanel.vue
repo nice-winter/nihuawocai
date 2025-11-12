@@ -16,26 +16,83 @@
       :show-new-message-indicator="true"
     />
 
-    <div class="p-[0.785rem]">
+    <div class="flex items-center p-[0.785rem]">
       <UInput
+        ref="ChatMessageInputRef"
         v-model="chatMessageInputValue"
         placeholder="说点儿什么吧..."
-        class="game-input w-full"
+        class="game-input flex-1"
         size="sm"
         @keydown.enter="sendChatMessage"
-      />
+      >
+        <template #trailing>
+          <UPopover
+            :content="{
+              side: 'top',
+              align: 'end',
+              sideOffset: 12,
+              alignOffset: -36
+            }"
+          >
+            <img class="size-5 cursor-pointer" :src="'_nuxt/assets/faces/qq/14/png/14.png'" />
+
+            <template #content>
+              <UiScrollBar
+                :auto-hide="false"
+                :delay="1"
+                :style="{ '--scrollbar-color': '#bc966f', '--scrollbar-color-hover': '#cea57c' }"
+                :size="4"
+              >
+                <div class="max-h-30 select-none bg-texture scroll-auto">
+                  <div class="w-50 grid grid-cols-6 gap-2 p-2">
+                    <img
+                      v-for="emoji in emojis"
+                      :key="emoji.name"
+                      :src="emoji.img"
+                      class="size-5 cursor-pointer"
+                      @click="selectEmoji(emoji.name)"
+                    />
+                  </div>
+                </div>
+              </UiScrollBar>
+            </template>
+          </UPopover>
+        </template>
+      </UInput>
+
+      <UiLinkButton class="text-[13px] ml-2" @click="sendChatMessage">发 送</UiLinkButton>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
+import { defaultEmojis } from '#shared/defaultEmojis'
 import { mockdata } from '#shared/utils/mockdata'
 
 const testPlayer = ref(mockdata.players[0]!)
 
 const ChatPanelMessageListRef = useTemplateRef('ChatPanelMessageList')
+const ChatMessageInputRef = useTemplateRef('ChatMessageInputRef')
 
 const chatMessageInputValue = ref('')
+
+const emojis = defaultEmojis.sort((a, b) =>
+  isFinite(+a.name) && isFinite(+b.name)
+    ? +a.name - +b.name
+    : isFinite(+a.name)
+      ? -1
+      : isFinite(+b.name)
+        ? 1
+        : 0
+)
+
+const selectEmoji = (emoji: string) => {
+  chatMessageInputValue.value += `{:${emoji}:}`
+  nextTick(() => {
+    ChatMessageInputRef.value?.inputRef?.focus()
+  })
+}
+
 const sendChatMessage = () => {
   const msg = chatMessageInputValue.value.trim()
 
@@ -77,4 +134,8 @@ const sendChatMessage = () => {
 }
 </script>
 
-<style scoped></style>
+<style scoped>
+.game-input >>> input {
+  padding-inline-end: 1.5rem;
+}
+</style>
