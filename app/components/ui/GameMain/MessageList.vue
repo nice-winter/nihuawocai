@@ -54,8 +54,12 @@
                 :player="item.sender"
                 :verified-icon="{ show: true, size: 12, right: -2, bottom: -2 }"
               />
-              <span class="ml-2"> {{ item.sender.nickname }}： </span>
-              <span class="break-normal wrap-break-word">{{ item.msg }}</span>
+              <span class="ml-2"> {{ item.sender.nickname }}：</span
+              ><UiTextRender
+                class="break-normal wrap-break-word"
+                :text="item.msg"
+                style="--emoji-size: 18px"
+              />
             </span>
           </p>
 
