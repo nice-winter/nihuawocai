@@ -2,6 +2,7 @@ import mitt from 'mitt'
 import type { Player } from '#shared/interfaces/player'
 
 type Events = {
+  // ui
   'user:logout': unknown
   'sketchpad:undo': unknown
   'sketchpad:redo': unknown
@@ -29,6 +30,13 @@ type Events = {
   'current:room:event:password_change': {
     locked: boolean
     password: string
+  }
+
+  // chat
+  'chat:event:say': {
+    chatmsg: string
+    sender: Player
+    timestamp: number
   }
 }
 

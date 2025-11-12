@@ -2,6 +2,7 @@ import { consola } from 'consola'
 import { colors } from 'consola/utils'
 import { wsEventBus } from '~~/server/ws/core/events'
 import roomHandler from './room'
+import chatHandler from './chat'
 import type { WsHandlers } from '~~/server/ws/utils'
 
 const logger = consola.withTag('Handlers')
@@ -57,6 +58,7 @@ function registerHandlers(handlers: WsHandlers) {
 
 export default function () {
   registerHandlers({
-    ...roomHandler
+    ...roomHandler,
+    ...chatHandler
   })
 }
