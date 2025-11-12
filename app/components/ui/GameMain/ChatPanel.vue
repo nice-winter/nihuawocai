@@ -60,16 +60,19 @@
         </template>
       </UInput>
 
-      <UiLinkButton class="text-[13px] ml-2" @click="sendChatMessage">发 送</UiLinkButton>
+      <UiLinkButton type="button" class="text-[13px] ml-2" @click="sendChatMessage"
+        >发 送</UiLinkButton
+      >
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import { defaultEmojis } from '#shared/defaultEmojis'
-import { mockdata } from '#shared/utils/mockdata'
+// import { mockdata } from '#shared/utils/mockdata'
 
-const testPlayer = ref(mockdata.players[0]!)
+// const testPlayer = ref(mockdata.players[0]!)
+const { say } = useChatStore()
 
 const ChatPanelMessageListRef = useTemplateRef('ChatPanelMessageList')
 const ChatMessageInputRef = useTemplateRef('ChatMessageInputRef')
@@ -94,48 +97,62 @@ const selectEmoji = (emoji: string) => {
 }
 
 const sendChatMessage = () => {
-  const msg = chatMessageInputValue.value.trim()
-
-  if (msg === 'bingo') {
-    ChatPanelMessageListRef.value?.addMessage({
-      type: 'action',
-      sender: testPlayer.value,
-      msg: '猜对了答案。'
-    })
+  const chatmsg = chatMessageInputValue.value.trim()
+  if (chatmsg !== '') {
+    say(chatmsg)
     chatMessageInputValue.value = ''
-    return
-  }
-  if (msg === 'start') {
-    ChatPanelMessageListRef.value?.addMessage({
-      type: 'system',
-      msg: '回合开始'
-    })
-    chatMessageInputValue.value = ''
-    return
-  }
-  if (msg === 'broadcast') {
-    ChatPanelMessageListRef.value?.addMessage({
-      type: 'broadcast',
-      sender: testPlayer.value,
-      roomNumber: 4
-    })
-    chatMessageInputValue.value = ''
-    return
+  } else {
+    ChatMessageInputRef.value?.inputRef?.focus()
   }
 
-  if (msg) {
-    ChatPanelMessageListRef.value?.addMessage({
-      type: 'chat',
-      sender: testPlayer.value,
-      msg
-    })
-    chatMessageInputValue.value = ''
-  }
+  // if (msg === 'bingo') {
+  //   ChatPanelMessageListRef.value?.addMessage({
+  //     type: 'action',
+  //     sender: testPlayer.value,
+  //     msg: '猜对了答案。'
+  //   })
+  //   chatMessageInputValue.value = ''
+  //   return
+  // }
+  // if (msg === 'start') {
+  //   ChatPanelMessageListRef.value?.addMessage({
+  //     type: 'system',
+  //     msg: '回合开始'
+  //   })
+  //   chatMessageInputValue.value = ''
+  //   return
+  // }
+  // if (msg === 'broadcast') {
+  //   ChatPanelMessageListRef.value?.addMessage({
+  //     type: 'broadcast',
+  //     sender: testPlayer.value,
+  //     roomNumber: 4
+  //   })
+  //   chatMessageInputValue.value = ''
+  //   return
+  // }
+
+  // if (msg) {
+  //   ChatPanelMessageListRef.value?.addMessage({
+  //     type: 'chat',
+  //     sender: testPlayer.value,
+  //     msg
+  //   })
+  //   chatMessageInputValue.value = ''
+  // }
 }
+
+useEventBus('chat:event:say', ({ chatmsg, sender, timestamp }) => {
+  ChatPanelMessageListRef.value?.addMessage({
+    type: 'chat',
+    sender,
+    msg: chatmsg
+  })
+})
 </script>
 
 <style scoped>
-.game-input >>> input {
+.game-input:deep(input) {
   padding-inline-end: 1.5rem;
 }
 </style>
