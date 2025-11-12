@@ -13,12 +13,14 @@
 </template>
 
 <script setup lang="ts">
+import { defaultEmojis } from '#shared/defaultEmojis'
+
 interface Props {
   text: string
   emojis?: EmojiItem[]
 }
 
-const { text, emojis = [] } = defineProps<Props>()
+const { text, emojis = defaultEmojis } = defineProps<Props>()
 
 const emit = defineEmits<{
   linkClick: [url: string]
@@ -52,3 +54,10 @@ const handleNodeClick = (node: TextNode) => {
   }
 }
 </script>
+
+<style>
+img.emoji {
+  width: var(--emoji-size);
+  height: var(--emoji-size);
+}
+</style>
