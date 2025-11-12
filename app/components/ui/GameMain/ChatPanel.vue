@@ -1,12 +1,9 @@
 <template>
   <div class="flex flex-col">
     <div class="relative h-10">
-      <span
-        class="absolute top-2 right-[.785rem] select-none"
-        style="color: var(--game-font-color)"
-      >
+      <span class="absolute top-2 right-[.785rem] text-[#714429] select-none">
         <UIcon name="ph:telegram-logo-fill" class="size-5 align-middle mr-1.5" />
-        <img src="~/assets/icons/chat.png" class="h-4 inline-block" />
+        <span class="text-sm font-cuyuan">聊天信息</span>
       </span>
     </div>
 

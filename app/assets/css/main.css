@@ -2,10 +2,17 @@
 @import '@nuxt/ui';
 
 :root {
+  --game-red: #e20032;
+  --game-blue: #3e96ec;
+  --game-green: #5f6f27;
+  --game-normal: #7a6955;
   --game-font-color: #9f7c59;
   --game-primary-color: #1d2020;
   --game-border-color: #ae9783;
-  --ui-text: #1d2020;
+}
+
+:root {
+  --ui-text: var(--game-primary-color);
 }
 
 img {
@@ -15,6 +22,10 @@ img {
 
 div[data-reka-popper-content-wrapper] {
   z-index: 114514 !important;
+}
+
+.font-cuyuan {
+  font-family: 'JianShouMengWaCuYuan-2';
 }
 
 .text-light {

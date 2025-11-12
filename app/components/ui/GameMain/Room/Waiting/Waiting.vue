@@ -72,7 +72,7 @@
         class="absolute top-0 left-10 flex"
       >
         <UIcon name="ph:arrow-bend-left-down-bold" />
-        <img src="~/assets/icons/owner.png" class="h-5 mt-[-0.4rem]" />
+        <span class="mt-[-13px] font-cuyuan text-lg text-(--game-red)">房主</span>
       </span>
 
       <UiAvatar

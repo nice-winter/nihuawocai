@@ -33,7 +33,7 @@ export default defineNuxtConfig({
     }
   },
   fonts: {
-    provider: 'none'
+    provider: 'local'
   },
   icon: {
     serverBundle: 'local',
