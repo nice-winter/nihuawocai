@@ -6,9 +6,15 @@ import { getPlayer, sendToLobby, sendToRoom } from './player'
 
 const logger = consola.withTag('Chat Service')
 
-// 记录每个用户下次允许发言的时间戳
+// 记录每个玩家下次允许发言的时间戳
 const chatIntervalRecord = new Map<string, number>()
 
+/**
+ * 玩家发言
+ * @TODO 需要完善屏蔽词过滤、联动游戏回答逻辑
+ * @param user 用户信息
+ * @param chatmsg 发言消息
+ */
 const say = async (user: UserData, chatmsg: string) => {
   const player = getPlayer(user.id)
   if (!player) throw new Error('玩家不存在')
