@@ -10,20 +10,23 @@
     </p>
     <p>Status: {{ status }}</p>
     <p>Data: {{ data }}</p>
-    <!-- <div>
-      <Text :text="text" />
-    </div> -->
+    <div>
+      <Text :text="text" :emojis="emojis" style="--emoji-size: 20px" />
+    </div>
   </div>
 </template>
 
 <script setup>
 import Text from '~/components/ui/TextRender.vue'
+import { faces } from '#shared/defaultFaces'
 
-const text = `wkmsadkw<a href="111">222</a>啊啊啊？`
+const text = `wkmsadkw<a href="111">222</a>啊啊啊{:30:}啊啊啊啊啊啊啊啊啊啊{:💩:}{:19:}？`
 
 const wsStore = useWsStore()
 const { send, open } = wsStore
 const { status, data } = storeToRefs(wsStore)
+
+const emojis = faces
 
 const roomNumber = ref('')
 
