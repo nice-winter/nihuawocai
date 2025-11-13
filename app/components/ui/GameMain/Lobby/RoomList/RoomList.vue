@@ -55,7 +55,7 @@ import PasswordModal from '@/components/ui/PasswordModal.vue'
 import CreateRoomModal from '@/components/ui/CreateRoomModal.vue'
 
 const roomStore = useRoomStore()
-const { rooms, join, prevPage, nextPage, createRoom, quickMatch } = roomStore
+const { rooms, pullRoomList, join, prevPage, nextPage, createRoom, quickMatch } = roomStore
 const { currentPageRooms, currentPageNumber, showOnlyWaitingRooms } = storeToRefs(roomStore)
 const passwordModal = useModal<string>(
   PasswordModal,
@@ -70,6 +70,8 @@ const createRoomModal = useModal<{ opens: number; password: string; maxOnlookers
 
 const roomNumberInputValue = ref('')
 // const rooms = ref(mockdata.roomList)
+
+pullRoomList()
 
 const tryJoin = async (roomNumber: number, clearRoomNumberInput?: boolean) => {
   if (clearRoomNumberInput) roomNumberInputValue.value = ''

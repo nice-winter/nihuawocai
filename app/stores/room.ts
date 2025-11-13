@@ -112,7 +112,7 @@ export const useRoomStore = defineStore('roomStore', () => {
   // WebSocket 事件监听
   wsEventBus.on('ws:connected', () => {
     // WebSocket 连接建立后拉取房间列表
-    pullRoomList()
+    // pullRoomList()
   })
 
   wsEventBus.on('ws:message', (msg) => {
