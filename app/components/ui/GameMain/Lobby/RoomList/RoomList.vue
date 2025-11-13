@@ -50,7 +50,7 @@
 
 <script setup lang="ts">
 // import { mockdata } from '#shared/utils/mockdata'
-import type { RoomInfo } from '#shared/interfaces/room'
+// import type { RoomInfo } from '#shared/interfaces/room'
 import PasswordModal from '@/components/ui/PasswordModal.vue'
 import CreateRoomModal from '@/components/ui/CreateRoomModal.vue'
 

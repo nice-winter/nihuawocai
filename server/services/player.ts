@@ -23,7 +23,15 @@ type PlayerEventBus = {
 
 const logger = consola.withTag('Player Service')
 
+// ------------------------- Records -------------------------
+/**
+ * 所有玩家
+ */
 const players = new Map<string, ServerPlayer>()
+
+/**
+ * 事件总线
+ */
 const playerEventBus = mitt<PlayerEventBus>()
 
 // ------------------------ WS Events ------------------------
@@ -50,20 +58,48 @@ wsEventBus.on('ws:disconnect', ({ user, code }) => {
 })
 
 // ------------------------ Actions ------------------------
+const getPlayer = (id: string) => players.get(id)
 
 /**
  * 检查是否重复登录，并关掉先前的连接
  * @param id
  */
 const checkDuplicateLogin = (id: string) => {
-  const isLoginedPlayer = players.get(id)
+  const isLoginedPlayer = getPlayer(id)
   if (isLoginedPlayer) {
     removePlayer(isLoginedPlayer.id) // 重复登录时移除旧玩家状态
     isLoginedPlayer.peer.close(4001, 'Duplicate login')
   }
 }
 
-const getPlayer = (id: string) => players.get(id)
+/**
+ * 检查玩家是否在房间内
+ * @param id
+ */
+const checkPlayerIsInRoom = (id: string) => {
+  return getPlayer(id)?.state === 'in_room' && typeof getPlayer(id)?.roomNumber !== 'undefined'
+}
+
+/**
+ * 检查玩家是否在大厅内
+ * @param id
+ */
+const checkPlayerIsInLobby = (id: string) => {
+  return getPlayer(id)?.state === 'lobby'
+}
+
+/**
+ * 获取所有在大厅的玩家
+ */
+const getLobbyPlayers = () => {
+  return Array.from(players.values(), (p) => {
+    return {
+      ...p,
+      state: undefined, // @TODO 这里不要把 server runtime 的东西传出去，暂时偷懒这么写。。
+      peer: undefined // @TODO 这里不要把 server runtime 的东西传出去，暂时偷懒这么写。。
+    }
+  }).filter((p) => checkPlayerIsInLobby(p.id))
+}
 
 const addPlayer = (user: UserData & { peer: WsPeer }) => {
   const player: ServerPlayer = {
@@ -92,15 +128,38 @@ const addPlayer = (user: UserData & { peer: WsPeer }) => {
   updatePlayerState(user.id)
 }
 
+/**
+ * 更新玩家状态
+ * @param id 用户 ID
+ * @param roomNumber 所在房间号，未提供则为在大厅
+ */
 const updatePlayerState = (id: string, roomNumber?: number) => {
   const player = players.get(id)
   if (player) {
     if (typeof roomNumber === 'undefined' || roomNumber < 0) {
       player.state = 'lobby'
       delete player.roomNumber
+      // 广播：添加此玩家到大厅列表
+      sendToAllPlayer({
+        type: 'player:lobby_players_add',
+        player: {
+          ...player,
+          state: undefined, // @TODO 这里不要把 server runtime 的东西传出去，暂时偷懒这么写。。
+          peer: undefined // @TODO 这里不要把 server runtime 的东西传出去，暂时偷懒这么写。。
+        }
+      })
     } else {
       player.state = 'in_room'
       player.roomNumber = roomNumber
+      // 广播：从大厅玩家列表移除此玩家
+      sendToAllPlayer({
+        type: 'player:lobby_players_remove',
+        player: {
+          ...player,
+          state: undefined, // @TODO 这里不要把 server runtime 的东西传出去，暂时偷懒这么写。。
+          peer: undefined // @TODO 这里不要把 server runtime 的东西传出去，暂时偷懒这么写。。
+        }
+      })
     }
 
     players.set(id, player)
@@ -120,7 +179,7 @@ const updatePlayerState = (id: string, roomNumber?: number) => {
 }
 
 const removePlayer = (id: string) => {
-  const player = players.get(id)
+  const player = getPlayer(id)
   if (player) {
     players.delete(id)
 
@@ -194,6 +253,9 @@ export {
   playerEventBus,
   players,
   getPlayer,
+  getLobbyPlayers,
+  checkPlayerIsInRoom,
+  checkPlayerIsInLobby,
   updatePlayerState,
   sendToPlayer,
   sendToAllPlayer,
