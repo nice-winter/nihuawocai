@@ -18,8 +18,11 @@ const logger = consola.withTag('Room Service')
 
 const rooms = new Map<number, Room>()
 
-// playerEventBus.on('player:connect', ({ player }) => {})
-// 玩家离线时，从他的房间中移除他
+// playerEventBus.on('player:connect', ({ player }) => {
+//   // @TODO 暂时没用上
+// })
+
+// 玩家离线时，从他所在的房间中移除他
 playerEventBus.on('player:disconnect', ({ player }) => {
   if (player.state === 'in_room' && typeof player.roomNumber !== 'undefined') {
     removeRoomPlayer(player.roomNumber, player.id)
