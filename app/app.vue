@@ -6,7 +6,7 @@ await pull()
 </script>
 
 <template>
-  <UApp>
+  <UApp :toaster="{ expand: false }">
     <NuxtLayout>
       <NuxtPage />
     </NuxtLayout>

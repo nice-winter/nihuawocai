@@ -50,6 +50,8 @@
 import { mockdata } from '#shared/utils/mockdata'
 import type { Player } from '#shared/interfaces/player'
 
+const toast = useToast()
+
 const tabItems = [
   {
     label: '空闲玩家',
@@ -68,6 +70,14 @@ const playerList = ref(mockdata.players.slice(0, 5))
 
 const inviteClick = (player: Player) => {
   console.log(`[invite]`, 'invite player:', player)
+  toast.add({
+    title: `${player.nickname}邀请你`,
+    description: `TA在000号房间等你一起游戏！`,
+    avatar: {
+      src: player.avatar_url
+    },
+    duration: 15 * 1000
+  })
 }
 
 const previousPageClick = () => {
