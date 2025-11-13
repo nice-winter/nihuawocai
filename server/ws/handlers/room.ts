@@ -4,6 +4,7 @@ import {
   changePassword,
   createRoom,
   getRoomList,
+  invite,
   joinRoom,
   leaveRoom,
   seatSwitch,
@@ -61,5 +62,12 @@ export default defineWsHandlers({
     }>
 
     return changePassword(roomNumber, password, user.id)
+  },
+  'room:invite': async ({ msg, user }) => {
+    const { toId } = msg as WebsocketMessage<{
+      toId: string
+    }>
+
+    return await invite(user.id, toId)
   }
 })

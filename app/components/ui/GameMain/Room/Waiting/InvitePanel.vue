@@ -4,7 +4,7 @@
       <div class="h-56 flex flex-col">
         <div class="grow flex flex-col gap-2 p-[.785rem] max-w-[227.89px]">
           <div
-            v-for="player in playerList"
+            v-for="player in currentPageItems"
             :key="player.id"
             class="flex flex-row items-center gap-0.5 w-full"
           >
@@ -21,7 +21,14 @@
               {{ player.nickname }}
             </span>
 
-            <UiButton size="sm" color="red" @click="inviteClick(player)"> 邀请 </UiButton>
+            <UiButton
+              size="sm"
+              color="red"
+              :disabled="roomStore.inviteRecord.get(player.id)"
+              @click="() => invite(player.id)"
+            >
+              {{ !roomStore.inviteRecord.get(player.id) ? '邀请' : '已邀请' }}
+            </UiButton>
           </div>
         </div>
 
@@ -30,13 +37,9 @@
         <div
           class="flex flex-row justify-center items-center gap-9.5 h-8 border-t border-t-white/90"
         >
-          <UiLinkButton class="text-[13px]" type="button" @click="previousPageClick"
-            >上一页</UiLinkButton
-          >
+          <UiLinkButton class="text-[13px]" type="button" @click="prevPage">上一页</UiLinkButton>
           <div class="w-0.5 h-4 border-l border-l-gray-200 bg-white/90" />
-          <UiLinkButton class="text-[13px]" type="button" @click="nextPageClick"
-            >下一页</UiLinkButton
-          >
+          <UiLinkButton class="text-[13px]" type="button" @click="nextPage">下一页</UiLinkButton>
         </div>
       </div>
     </template>
@@ -47,10 +50,19 @@
 </template>
 
 <script setup lang="ts">
-import { mockdata } from '#shared/utils/mockdata'
-import type { Player } from '#shared/interfaces/player'
+// import { mockdata } from '#shared/utils/mockdata'
+// import type { Player } from '#shared/interfaces/player'
 
-const toast = useToast()
+const playerStore = usePlayerStore()
+const { getLobbyPlayers } = playerStore
+const { lobbyPlayers } = storeToRefs(playerStore)
+const roomStore = useRoomStore()
+const { invite } = roomStore
+const { currentPageItems, prevPage, nextPage } = usePaginatedMap(lobbyPlayers.value, 5)
+
+onMounted(() => {
+  getLobbyPlayers()
+})
 
 const tabItems = [
   {
@@ -65,27 +77,6 @@ const tabItems = [
     slot: 'user2'
   }
 ]
-
-const playerList = ref(mockdata.players.slice(0, 5))
-
-const inviteClick = (player: Player) => {
-  console.log(`[invite]`, 'invite player:', player)
-  toast.add({
-    title: `${player.nickname}邀请你`,
-    description: `TA在000号房间等你一起游戏！`,
-    avatar: {
-      src: player.avatar_url
-    },
-    duration: 15 * 1000
-  })
-}
-
-const previousPageClick = () => {
-  console.log(`[invite]`, '<<<- previous page')
-}
-const nextPageClick = () => {
-  console.log(`[invite]`, 'next page ->>>')
-}
 </script>
 
 <style scoped></style>

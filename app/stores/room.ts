@@ -8,23 +8,28 @@ import type { Player } from '#shared/interfaces/player'
  * 负责管理游戏房间的列表、当前房间状态以及与房间相关的 WebSocket 通信
  */
 export const useRoomStore = defineStore('roomStore', () => {
-  // 依赖注入
+  const appConfigStore = useAppConfigStore()
+  const { appConfig } = storeToRefs(appConfigStore)
   const { wsEventBus, send } = useWsStore()
   const playerStore = usePlayerStore()
+  const toast = useToast()
 
   // State
   const rooms = reactive(new Map<number, RoomInfo>()) // 所有房间的映射表
   const currentPageNumber = ref(0) // 当前页码
   const showOnlyWaitingRooms = ref(false) // 是否只显示等待中的房间
   const currentRoom = ref<Room | null>(null) // 玩家当前所在的房间
+  const inviteRecord = reactive<Map<string, number>>(new Map())
 
   // Computed
   /**
    * 当前页显示的房间列表（最多显示6个）
    */
+  const { currentPage, currentPageItems, prevPage, nextPage } = usePaginatedMap(rooms, 6)
   const currentPageRooms = computed(() => {
-    const arr = Array.from(rooms.values())
-    return arr.length <= 6 ? arr : arr.slice(0, 5)
+    return currentPageItems.value.filter((room) => {
+      return showOnlyWaitingRooms.value ? !room.playing : true
+    })
   })
 
   /**
@@ -172,6 +177,14 @@ export const useRoomStore = defineStore('roomStore', () => {
         break
       case 'room:event:onlooker_sit':
         handleOnlookerSit(msg)
+        break
+
+      // 房间邀请相关
+      case 'room:event:invite':
+        handleInvite(msg)
+        break
+      case 'room:invite':
+        handleInviteRecord(msg)
         break
     }
   }
@@ -331,7 +344,60 @@ export const useRoomStore = defineStore('roomStore', () => {
     )
   }
 
-  // Actions
+  const handleInvite = (msg: WebsocketMessage) => {
+    const { from, to, roomNumber, password, duration, expAt } = msg as WebsocketMessage<{
+      from: Player
+      to: Player
+      roomNumber: number
+      password: string
+      duration: number
+      expAt: number
+    }>
+
+    toast.add({
+      title: `${from.nickname} 向你发来邀请`,
+      description: `TA在${roomNumber}号房间等你与TA一起游戏！`,
+      avatar: {
+        src: from.avatar_url
+      },
+      duration: duration * 1000,
+      orientation: 'horizontal',
+      actions: [
+        {
+          // icon: 'i-lucide-refresh-cw',
+          label: '同意',
+          color: 'neutral',
+          variant: 'outline',
+          onClick: (e) => {
+            join(roomNumber, password)
+            e?.stopPropagation()
+          }
+        }
+      ]
+    })
+  }
+
+  const handleInviteRecord = (msg: WebsocketMessage) => {
+    if (typeof (msg as WebsocketMessage<{ successful: boolean }>).successful === 'undefined') return
+    const { from, to, roomNumber, password, duration, expAt } = msg as unknown as WebsocketMessage<{
+      from: Player
+      to: Player
+      roomNumber: number
+      password: string
+      duration: number
+      expAt: number
+    }>
+
+    inviteRecord.set(to.id, expAt)
+
+    // 清除过期的邀请信息
+    setTimeout(() => {
+      inviteRecord.delete(to.id)
+    }, expAt - Date.now())
+    console.log(expAt - Date.now())
+  }
+
+  // ------------------------ Actions ------------------------
   /**
    * 拉取房间列表
    */
@@ -385,6 +451,16 @@ export const useRoomStore = defineStore('roomStore', () => {
   }
 
   /**
+   * 邀请玩家
+   */
+  const invite = (toId: string) => {
+    send({
+      type: 'room:invite',
+      toId
+    })
+  }
+
+  /**
    * 创建新房间
    */
   const createRoom = (opens: number, options: { password: string; maxOnlookers: number }) => {
@@ -409,14 +485,6 @@ export const useRoomStore = defineStore('roomStore', () => {
     // TODO: 实现坐下逻辑
   }
 
-  const prevPage = () => {
-    // TODO: 实现上一页逻辑
-  }
-
-  const nextPage = () => {
-    // TODO: 实现下一页逻辑
-  }
-
   return {
     // State
     rooms,
@@ -425,6 +493,7 @@ export const useRoomStore = defineStore('roomStore', () => {
     currentRoom,
     isCurrentRoomOwner,
     isOwner: isCurrentRoomOwner,
+    inviteRecord,
 
     // Computed
     currentPageRooms,
@@ -436,6 +505,7 @@ export const useRoomStore = defineStore('roomStore', () => {
     sit,
     switchSeat,
     changeRoomPassword,
+    invite,
     prevPage,
     nextPage,
     createRoom,

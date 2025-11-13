@@ -1,7 +1,7 @@
 import { consola } from 'consola'
 import { defineWsHandlers } from '~~/server/ws/utils'
-import type { WebsocketMessage } from '#shared/interfaces/ws'
 import { say } from '~~/server/services/chat'
+import type { WebsocketMessage } from '#shared/interfaces/ws'
 
 const logger = consola.withTag('Chat Handler')
 

@@ -8,7 +8,9 @@ import {
   updatePlayerState,
   sendToAllPlayer,
   sendToPlayer,
-  sendToRoom
+  sendToRoom,
+  checkPlayerIsInRoom,
+  checkPlayerIsInLobby
 } from './player'
 import { getUserData } from './user'
 import type { AppConfig } from '#shared/interfaces/appConfig'
@@ -16,8 +18,18 @@ import type { Room, RoomInfo, RoomOptions } from '#shared/interfaces/room'
 
 const logger = consola.withTag('Room Service')
 
+// ------------------------- Records -------------------------
+/**
+ * 所有房间
+ */
 const rooms = new Map<number, Room>()
 
+/**
+ * 玩家邀请记录
+ */
+const inviteMap = new Map<string, { expAt: number }>()
+
+// ---------------------- Player Events ----------------------
 // playerEventBus.on('player:connect', ({ player }) => {
 //   // @TODO 暂时没用上
 // })
@@ -29,6 +41,7 @@ playerEventBus.on('player:disconnect', ({ player }) => {
   }
 })
 
+// ------------------------ Actions ------------------------
 /**
  * 获取房间信息
  * @param roomNumber 房间号
@@ -354,6 +367,64 @@ const changePassword = (roomNumber: number, password: string, id: string) => {
 }
 
 /**
+ * 邀请玩家
+ * @TODO 完善邀请的接收、拒绝状态功能
+ * @param id 发起用户 ID
+ * @param toId 被邀请用户 Id
+ */
+const invite = async (id: string, toId: string) => {
+  const player = getPlayer(id)
+  if (!player) throw new Error('用户不存在')
+
+  if (!checkPlayerIsInRoom(id)) throw new Error('你必须在房间中才能邀请其他玩家')
+
+  const roomNumber = player.roomNumber!
+  const room = getRoom(roomNumber)
+  if (!room) throw new Error('房间不存在')
+
+  const appConfig = await getAppConfig()
+  const expSeconds = appConfig.game.room.time.invitationValidTimeSecond
+  const now = Math.floor(Date.now() / 1000)
+  const expAt = now + expSeconds
+
+  // 检查目标玩家
+  if (!checkPlayerIsInLobby(toId)) {
+    throw new Error('目标玩家不在大厅，可能已在其他房间中')
+  }
+
+  // 防止重复邀请
+  const key = `${id}:${toId}`
+  const existing = inviteMap.get(key)
+  if (existing && existing.expAt > now) {
+    const remain = existing.expAt - now
+    throw new Error(`已邀请该玩家，请等待 ${remain}s 后再试`)
+  }
+
+  // 记录邀请状态
+  inviteMap.set(key, { expAt })
+  // 清理过期记录
+  setTimeout(() => {
+    inviteMap.delete(key)
+  }, expSeconds * 1000)
+
+  const msg = {
+    from: await getUserData(id),
+    to: await getUserData(toId),
+    roomNumber,
+    password: room.options.password,
+    duration: 20, // toast 显示时间（秒）
+    expAt: expAt * 1000 // 过期时间（Unix 时间戳毫秒）
+  }
+
+  // 广播邀请
+  sendToPlayer({ type: 'room:event:invite', ...msg }, toId)
+
+  logger.debug(`玩家 ${id} 邀请了 ${toId} 加入房间 ${roomNumber}，有效期 ${expSeconds} 秒`)
+
+  return msg
+}
+
+/**
  * 离开房间（玩家和旁观玩家通用），主动调用
  * @param id 用户 ID
  * @param roomNumber 房间号，默认为提供的用户的状态中保存的房间号
@@ -479,6 +550,7 @@ export {
   sit,
   seatSwitch,
   changePassword,
+  invite,
   leaveRoom,
   removeRoomPlayer
 }

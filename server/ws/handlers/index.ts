@@ -1,6 +1,7 @@
 import { consola } from 'consola'
 import { colors } from 'consola/utils'
 import { wsEventBus } from '~~/server/ws/core/events'
+import playerHandler from './player'
 import roomHandler from './room'
 import chatHandler from './chat'
 import type { WsHandlers } from '~~/server/ws/utils'
@@ -58,6 +59,7 @@ function registerHandlers(handlers: WsHandlers) {
 
 export default function () {
   registerHandlers({
+    ...playerHandler,
     ...roomHandler,
     ...chatHandler
   })
