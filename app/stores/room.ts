@@ -19,7 +19,8 @@ export const useRoomStore = defineStore('roomStore', () => {
   const currentPageNumber = ref(0) // 当前页码
   const showOnlyWaitingRooms = ref(false) // 是否只显示等待中的房间
   const currentRoom = ref<Room | null>(null) // 玩家当前所在的房间
-  const inviteRecord = reactive<Map<string, number>>(new Map())
+  const inviteRecord = reactive<Map<string, number>>(new Map()) // 邀请记录
+  const broadcastRecord = reactive<Map<number, number>>(new Map()) // 广播记录
 
   // Computed
   /**
@@ -186,6 +187,14 @@ export const useRoomStore = defineStore('roomStore', () => {
       case 'room:invite':
         handleInviteRecord(msg)
         break
+
+      // 房间广播相关
+      case 'room:event:broadcast':
+        handleBroadcast(msg)
+        break
+      // case 'room:broadcast':
+      //   handleBroadcastRecord(msg)
+      //   break
     }
   }
 
@@ -344,6 +353,7 @@ export const useRoomStore = defineStore('roomStore', () => {
     )
   }
 
+  // 玩家邀请
   const handleInvite = (msg: WebsocketMessage) => {
     const { from, to, roomNumber, password, duration, expAt } = msg as WebsocketMessage<{
       from: Player
@@ -394,8 +404,39 @@ export const useRoomStore = defineStore('roomStore', () => {
     setTimeout(() => {
       inviteRecord.delete(to.id)
     }, expAt - Date.now())
-    console.log(expAt - Date.now())
   }
+
+  // 广播
+  const handleBroadcast = (msg: WebsocketMessage) => {
+    const { from, roomNumber, password, sender, expAt, timestamp } = msg as WebsocketMessage<{
+      from: number
+      roomNumber: number
+      password: string
+      sender: Player
+      expAt: number
+      timestamp: number
+    }>
+
+    eventBus.emit('room:event:broadcast', { from, roomNumber, password, sender, expAt, timestamp })
+
+    // 记录该房间广播过期时间，广播按钮根据此记录判断是否冷却，防止频繁广播
+    broadcastRecord.set(roomNumber, expAt)
+    // 清除过期的房间广播记录
+    setTimeout(() => {
+      broadcastRecord.delete(roomNumber)
+    }, expAt - Date.now())
+  }
+
+  // const handleBroadcastRecord = (msg: WebsocketMessage) => {
+  //   const { roomNumber, expAt } = msg as WebsocketMessage<{
+  //     from: number
+  //     roomNumber: number
+  //     password: string
+  //     sender: Player
+  //     expAt: number
+  //     timestamp: number
+  //   }>
+  // }
 
   // ------------------------ Actions ------------------------
   /**
@@ -451,6 +492,15 @@ export const useRoomStore = defineStore('roomStore', () => {
   }
 
   /**
+   * 发送广播
+   */
+  const broadcast = () => {
+    send({
+      type: 'room:broadcast'
+    })
+  }
+
+  /**
    * 邀请玩家
    */
   const invite = (toId: string) => {
@@ -494,6 +544,7 @@ export const useRoomStore = defineStore('roomStore', () => {
     isCurrentRoomOwner,
     isOwner: isCurrentRoomOwner,
     inviteRecord,
+    broadcastRecord,
 
     // Computed
     currentPageRooms,
@@ -505,6 +556,7 @@ export const useRoomStore = defineStore('roomStore', () => {
     sit,
     switchSeat,
     changeRoomPassword,
+    broadcast,
     invite,
     prevPage,
     nextPage,

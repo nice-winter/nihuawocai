@@ -48,7 +48,12 @@
 
     <div class="flex flex-col justify-center">
       <div class="grid grid-cols-2 grid-rows-2 gap-[0.785rem]">
-        <UiButton color="green">广播邀请</UiButton>
+        <UiButton
+          color="green"
+          :disabled="broadcastRecord.get(roomInfo.roomNumber)"
+          @click="broadcast"
+          >广播邀请</UiButton
+        >
         <UiButton color="blue">邀请好友</UiButton>
         <div>
           <UiButton v-if="isCurrentRoomOwner && !roomInfo.locked">再等一会</UiButton>
@@ -110,8 +115,8 @@ import type { Room } from '#shared/interfaces/room'
 const { roomInfo } = defineProps<{ roomInfo: Room }>()
 const { player } = storeToRefs(usePlayerStore())
 const roomStore = useRoomStore()
-const { switchSeat, changeRoomPassword } = roomStore
-const { isCurrentRoomOwner } = storeToRefs(roomStore)
+const { switchSeat, changeRoomPassword, broadcast } = roomStore
+const { isCurrentRoomOwner, broadcastRecord } = storeToRefs(roomStore)
 
 const passwordUInputRef = useTemplateRef('passwordUInputRef')
 const RoomEventsRef = useTemplateRef('RoomEvents')

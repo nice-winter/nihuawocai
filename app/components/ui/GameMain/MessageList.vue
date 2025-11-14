@@ -88,7 +88,7 @@
               <span class="break-normal wrap-break-word">
                 在{{ item.roomNumber }}号房间喊道：赶快<UiLinkButton
                   color="red"
-                  @click="joinFromBroadcast(item.roomNumber)"
+                  @click="() => joinFromBroadcast(item.roomNumber, item.password)"
                   >加入</UiLinkButton
                 >我们一起游戏吧！
               </span>
@@ -142,10 +142,15 @@ type IMessage =
       type: 'broadcast'
       sender: Player
       roomNumber: number
+      password: string
       style?: TextStyle
     }
 
 const { autoScroll = true, showNewMessageIndicator = false } = defineProps<MessageListProps>()
+
+const roomStore = useRoomStore()
+const { join, leave } = roomStore
+const { currentRoom } = storeToRefs(roomStore)
 
 const messageList = reactive<IMessage[]>([])
 const newMessageCount = ref(0)
@@ -196,8 +201,20 @@ watch(
   { immediate: true }
 )
 
-const joinFromBroadcast = (roomNumber: number) => {
+const joinFromBroadcast = (roomNumber: number, password: string) => {
   console.log(`[MessageList]`, `[JoinFromBroadcast]`, roomNumber)
+
+  // 如果玩家在房间中，则先退出房间再通过广播进入房间
+  if (currentRoom.value !== null) {
+    if (currentRoom.value.roomNumber === roomNumber) {
+      gameMessageBox.show('你已经在这个房间里了')
+    } else {
+      leave()
+      nextTick(() => {
+        setTimeout(() => join(roomNumber, password), 500)
+      })
+    }
+  }
 }
 
 const clear = () => messageList.splice(0, messageList.length)

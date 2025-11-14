@@ -146,6 +146,15 @@ useEventBus('chat:event:say', ({ chatmsg, sender, timestamp }) => {
     msg: chatmsg
   })
 })
+
+useEventBus('room:event:broadcast', ({ from, roomNumber, password, sender, timestamp }) => {
+  ChatPanelMessageListRef.value?.addMessage({
+    type: 'broadcast',
+    sender,
+    roomNumber,
+    password
+  })
+})
 </script>
 
 <style scoped>
