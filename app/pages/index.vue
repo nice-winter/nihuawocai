@@ -161,7 +161,7 @@ if (userSession.loggedIn.value) {
     2px 2px 0 #ffffff,
     -1px 1px 0 #ffffff,
     2px 1px 0 #ffffff;
-  color: #db0030;
+  color: var(--game-red);
   padding-top: 20px;
   user-select: none;
 }
