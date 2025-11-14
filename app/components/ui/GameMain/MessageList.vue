@@ -48,20 +48,23 @@
               {{ item.msg }}
             </li>
 
-            <li v-else-if="item.type === 'chat'" class="py-[0.3rem] first:pt-0 last:pb-0">
-              <span class="text-[13px]">
+            <li
+              v-else-if="item.type === 'chat'"
+              class="py-[0.3rem] first:pt-0 last:pb-0 text-[13px]"
+            >
+              <div class="inline-flex float-left">
                 <UiAvatar
                   class="size-6.5 align-top"
                   :player="item.sender"
                   :verified-icon="{ show: true, size: 12, right: -2, bottom: -2 }"
                 />
-                <span class="ml-2 inline-block"> {{ item.sender.nickname }}：</span>
-                <UiTextRender
-                  class="break-normal wrap-break-word"
-                  :text="item.msg"
-                  style="--emoji-size: 18px"
-                />
-              </span>
+                <span class="ml-2 inline-block leading-6.5"> {{ item.sender.nickname }}：</span>
+              </div>
+              <UiTextRender
+                class="break-normal wrap-break-word leading-6.5"
+                :text="item.msg"
+                style="--emoji-size: 18px"
+              />
             </li>
 
             <li v-else-if="item.type === 'action'">
