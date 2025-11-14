@@ -36,7 +36,9 @@ export const useRoomStore = defineStore('roomStore', () => {
   /**
    * 是否为当前房间的房主
    */
-  const isCurrentRoomOwner = computed(() => playerStore.player?.id === currentRoom.value?.owner)
+  const isCurrentRoomOwner = computed(
+    () => playerStore.loggedInPlayer?.id === currentRoom.value?.owner
+  )
 
   // 工具函数
   /**
@@ -93,7 +95,7 @@ export const useRoomStore = defineStore('roomStore', () => {
     }
 
     // 同步更新当前房间
-    if (roomNumber === playerStore.player?.roomNumber && currentRoom.value) {
+    if (roomNumber === playerStore.loggedInPlayer?.roomNumber && currentRoom.value) {
       updater(currentRoom.value.onlookers)
 
       if (action === 'join') {
@@ -109,7 +111,7 @@ export const useRoomStore = defineStore('roomStore', () => {
    * 监听玩家状态，如果玩家状态变更为不在房间内的状态，则清空当前所在房间信息
    */
   watch(
-    () => playerStore.player?.state,
+    () => playerStore.loggedInPlayer?.state,
     (newState) => {
       if (newState !== 'in_room') clearCurrentRoom()
     }
@@ -208,7 +210,7 @@ export const useRoomStore = defineStore('roomStore', () => {
   const handleRoomInfo = (msg: WebsocketMessage) => {
     const { room } = msg as WebsocketMessage<{ room: Room }>
     // 如果更新的是玩家当前所在房间，更新当前房间状态
-    if (room.roomNumber === playerStore.player?.roomNumber) {
+    if (room.roomNumber === playerStore.loggedInPlayer?.roomNumber) {
       currentRoom.value = room
     }
   }
@@ -222,7 +224,7 @@ export const useRoomStore = defineStore('roomStore', () => {
     }
 
     // 如果房主变更的是当前房间，同步更新
-    if (from === playerStore.player?.roomNumber && currentRoom.value) {
+    if (from === playerStore.loggedInPlayer?.roomNumber && currentRoom.value) {
       currentRoom.value.owner = id
     }
   }

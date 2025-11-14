@@ -113,7 +113,7 @@
 import type { Room } from '#shared/interfaces/room'
 
 const { roomInfo } = defineProps<{ roomInfo: Room }>()
-const { player } = storeToRefs(usePlayerStore())
+const { loggedInPlayer } = storeToRefs(usePlayerStore())
 const roomStore = useRoomStore()
 const { switchSeat, changeRoomPassword, broadcast } = roomStore
 const { isCurrentRoomOwner, broadcastRecord } = storeToRefs(roomStore)

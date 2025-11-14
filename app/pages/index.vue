@@ -33,19 +33,19 @@
         >
           <div class="flex gap-5 pt-5">
             <span>{{ userSession.loggedIn.value ? `天秤座` : '' }}</span>
-            <span v-show="userSession.loggedIn.value && player?.state === 'in_room'">
-              房间{{ player?.roomNumber }}
+            <span v-show="userSession.loggedIn.value && loggedInPlayer?.state === 'in_room'">
+              房间{{ loggedInPlayer?.roomNumber }}
             </span>
           </div>
 
           <div class="relative ml-auto w-52">
             <div
-              v-if="userSession.loggedIn.value && player"
+              v-if="userSession.loggedIn.value && loggedInPlayer"
               class="absolute top-5 left-4 z-2 flex items-center gap-2"
             >
-              <UiAvatar :player="player" class="size-10" />
+              <UiAvatar :player="loggedInPlayer" class="size-10" />
               <span class="max-w-38 text-[13px] text-(--game-primary-color) text-light truncate">{{
-                player.nickname
+                loggedInPlayer.nickname
               }}</span>
             </div>
           </div>
@@ -54,8 +54,11 @@
 
       <template #main>
         <UiGameMain v-if="userSession.loggedIn.value && userSession.user.value">
-          <UiGameMainLobby v-if="player?.state === 'lobby'" />
-          <UiGameMainRoom v-else-if="player?.state === 'in_room'" :stage="gameStore.roomStage" />
+          <UiGameMainLobby v-if="loggedInPlayer?.state === 'lobby'" />
+          <UiGameMainRoom
+            v-else-if="loggedInPlayer?.state === 'in_room'"
+            :stage="gameStore.roomStage"
+          />
         </UiGameMain>
       </template>
 
@@ -108,7 +111,7 @@ definePageMeta({
 const userSession = useUserSession()
 const appConfigStore = useAppConfigStore()
 const { appConfig } = storeToRefs(appConfigStore)
-const { player } = storeToRefs(usePlayerStore())
+const { loggedInPlayer } = storeToRefs(usePlayerStore())
 
 const providers = [
   {
