@@ -1,5 +1,6 @@
 import type { LoggedInPlayer, Player, PlayerState } from '#shared/interfaces/player'
 import type { WebsocketMessage } from '#shared/interfaces/ws'
+import consola from 'consola'
 
 export const usePlayerStore = defineStore('playerStore', () => {
   const { wsEventBus, send } = useWsStore()
@@ -29,18 +30,12 @@ export const usePlayerStore = defineStore('playerStore', () => {
     }
 
     // 大厅空闲玩家相关
-    if (msg.type === 'player:lobby_players_pull') {
-      const { lobby_players } = msg as WebsocketMessage<{ lobby_players: Player[] }>
-      lobbyPlayers.clear()
-      lobby_players.forEach((p) => lobbyPlayers.set(p.id, p))
-    }
-
-    if (msg.type === 'player:lobby_players_add') {
+    if (msg.type === 'player:event:lobby_players_add') {
       const { player } = msg as WebsocketMessage<{ player: Player }>
       lobbyPlayers.set(player.id, player)
     }
 
-    if (msg.type === 'player:lobby_players_remove') {
+    if (msg.type === 'player:event:lobby_players_remove') {
       const { player } = msg as WebsocketMessage<{ player: Player }>
       lobbyPlayers.delete(player.id)
     }
@@ -50,10 +45,13 @@ export const usePlayerStore = defineStore('playerStore', () => {
 
   wsEventBus.on('ws:error', clear)
 
-  const getLobbyPlayers = () => {
-    send({
+  const getLobbyPlayers = async () => {
+    const { lobby_players } = (await send({
       type: 'player:lobby_players_pull'
-    })
+    })) as WebsocketMessage<{ lobby_players: Player[] }>
+
+    lobbyPlayers.clear()
+    lobby_players.forEach((p) => lobbyPlayers.set(p.id, p))
   }
 
   return {
