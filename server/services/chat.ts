@@ -59,7 +59,7 @@ const say = async (user: UserData, chatmsg: string) => {
     )
   }
 
-  logger.success(`Player ${colors.cyan(user.nickname)} say: ${colors.green(chatmsg)}`)
+  logger.info(`Player ${colors.cyan(user.nickname)} say: ${colors.green(chatmsg)}`)
 }
 
 export { say }
