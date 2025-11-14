@@ -202,19 +202,21 @@ watch(
 )
 
 const joinFromBroadcast = (roomNumber: number, password: string) => {
-  console.log(`[MessageList]`, `[JoinFromBroadcast]`, roomNumber)
+  console.log(`[MessageList]`, `[JoinFromBroadcast]`, roomNumber, 'pwd:', password)
 
   // 如果玩家在房间中，则先退出房间再通过广播进入房间
   if (currentRoom.value !== null) {
     if (currentRoom.value.roomNumber === roomNumber) {
       gameMessageBox.show('你已经在这个房间里了')
+      return
     } else {
       leave()
-      nextTick(() => {
-        setTimeout(() => join(roomNumber, password), 500)
-      })
     }
   }
+
+  nextTick(() => {
+    setTimeout(() => join(roomNumber, password), 500)
+  })
 }
 
 const clear = () => messageList.splice(0, messageList.length)
