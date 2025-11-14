@@ -141,7 +141,7 @@ const updatePlayerState = (id: string, roomNumber?: number) => {
       delete player.roomNumber
       // 广播：添加此玩家到大厅列表
       sendToAllPlayer({
-        type: 'player:lobby_players_add',
+        type: 'player:event:lobby_players_add',
         player: {
           ...player,
           state: undefined, // @TODO 这里不要把 server runtime 的东西传出去，暂时偷懒这么写。。
@@ -153,7 +153,7 @@ const updatePlayerState = (id: string, roomNumber?: number) => {
       player.roomNumber = roomNumber
       // 广播：从大厅玩家列表移除此玩家
       sendToAllPlayer({
-        type: 'player:lobby_players_remove',
+        type: 'player:event:lobby_players_remove',
         player: {
           ...player,
           state: undefined, // @TODO 这里不要把 server runtime 的东西传出去，暂时偷懒这么写。。
