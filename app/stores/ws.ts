@@ -3,7 +3,6 @@ import mitt from 'mitt'
 import { encode, decode } from '#shared/utils/crypto'
 import { WS_MESSAGE_PING, WS_MESSAGE_PONG, WS_MESSAGE_DUPLICATE_LOGIN } from '#shared/interfaces/ws'
 import { consola } from 'consola/browser'
-import { colors } from 'consola/utils'
 import type { WebsocketMessage, WS_RECV } from '#shared/interfaces/ws'
 
 type WsEvents = {
@@ -51,7 +50,7 @@ export const useWsStore = defineStore('ws', () => {
       wsEventBus.emit('ws:message', msg)
 
       // 日志（除 pong 外）
-      if (msg.type !== 'pong') logger.log(colors.blue('[收到消息] --->>>>'), msg)
+      if (msg.type !== 'pong') logger.withTag('⬇').log(msg)
 
       // 如果这是对前端请求的回复（_reply: true 并带有 _rid），路由到 pending
       if ((msg as WS_RECV)._reply && (msg as WS_RECV)._rid) {
@@ -132,7 +131,7 @@ export const useWsStore = defineStore('ws', () => {
 
       try {
         rawSend(encode(_msg))
-        logger.log(colors.green('[发送消息] <<<<---'), _msg)
+        logger.withTag('⬆').log(_msg)
       } catch (err) {
         // 发送失败：清理并 reject
         clearTimeout(timer)
@@ -145,7 +144,7 @@ export const useWsStore = defineStore('ws', () => {
   // 无等待发送
   const sendFireAndForget = (msg: WebsocketMessage) => {
     rawSend(encode(msg))
-    logger.log(colors.green('[发送消息-不等待] <<<<---'), msg)
+    logger.withTag('⬆').log(msg)
   }
 
   return {

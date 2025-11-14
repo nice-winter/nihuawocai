@@ -207,8 +207,6 @@ watch(
 )
 
 const joinFromBroadcast = (roomNumber: number, password: string) => {
-  console.log(`[MessageList]`, `[JoinFromBroadcast]`, roomNumber, 'pwd:', password)
-
   // 如果玩家在房间中，则先退出房间再通过广播进入房间
   if (currentRoom.value !== null) {
     if (currentRoom.value.roomNumber === roomNumber) {

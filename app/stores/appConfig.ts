@@ -1,6 +1,9 @@
 import { defaultAppConfig } from '#shared/defaultAppConfig'
-import type { AppConfig } from '#shared/interfaces/appConfig'
 import defu from 'defu'
+import { consola } from 'consola/browser'
+import type { AppConfig } from '#shared/interfaces/appConfig'
+
+const logger = consola.withTag('应用配置')
 
 export const useAppConfigStore = defineStore('appConfig', () => {
   const def = defaultAppConfig
@@ -10,7 +13,7 @@ export const useAppConfigStore = defineStore('appConfig', () => {
     const remoteAppConfig = await $fetch('/api/app-config')
     appConfig.value = remoteAppConfig
 
-    console.log('[应用配置]', '拉取远程配置成功', appConfig.value)
+    logger.success('拉取远程配置成功', appConfig.value)
   }
 
   const reset = async () => {
@@ -24,7 +27,7 @@ export const useAppConfigStore = defineStore('appConfig', () => {
       body: _
     })
 
-    console.log('[应用配置]', '更新远程配置成功', appConfig.value)
+    logger.success('✅', '更新远程配置成功', appConfig.value)
   }
 
   const getAppConfig = () => appConfig.value
