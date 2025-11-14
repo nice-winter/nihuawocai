@@ -25,7 +25,7 @@
               size="sm"
               color="red"
               :disabled="roomStore.inviteRecord.get(player.id)"
-              @click="() => invite(player.id)"
+              @click="async () => await invite(player.id)"
             >
               {{ !roomStore.inviteRecord.get(player.id) ? '邀请' : '已邀请' }}
             </UiButton>

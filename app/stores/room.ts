@@ -118,7 +118,7 @@ export const useRoomStore = defineStore('roomStore', () => {
   // WebSocket 事件监听
   wsEventBus.on('ws:connected', () => {
     // WebSocket 连接建立后拉取房间列表
-    // pullRoomList()
+    // await pullRoomList()
   })
 
   wsEventBus.on('ws:message', (msg) => {
@@ -130,10 +130,7 @@ export const useRoomStore = defineStore('roomStore', () => {
    */
   const handleRoomMessage = (msg: WebsocketMessage) => {
     switch (msg.type) {
-      // 房间列表相关
-      case 'room:list_pull':
-        handleRoomListPull(msg)
-        break
+      // 房间列表相关事件
       case 'room:event:create':
         handleRoomCreate(msg)
         break
@@ -152,7 +149,7 @@ export const useRoomStore = defineStore('roomStore', () => {
         // 暂不处理
         break
 
-      // 房间设置相关
+      // 房间设置、状态相关事件
       case 'room:event:seat_switch':
         handleSeatSwitch(msg)
         break
@@ -163,7 +160,7 @@ export const useRoomStore = defineStore('roomStore', () => {
         handlePasswordChange(msg)
         break
 
-      // 玩家进出相关
+      // 房间玩家进出相关事件
       case 'room:event:player_join':
         handlePlayerJoin(msg)
         break
@@ -180,31 +177,19 @@ export const useRoomStore = defineStore('roomStore', () => {
         handleOnlookerSit(msg)
         break
 
-      // 房间邀请相关
+      // 房间邀请相关事件
       case 'room:event:invite':
         handleInvite(msg)
         break
-      case 'room:invite':
-        handleInviteRecord(msg)
-        break
 
-      // 房间广播相关
+      // 房间广播相关事件
       case 'room:event:broadcast':
         handleBroadcast(msg)
         break
-      // case 'room:broadcast':
-      //   handleBroadcastRecord(msg)
-      //   break
     }
   }
 
   // 房间列表管理
-  const handleRoomListPull = (msg: WebsocketMessage) => {
-    const { room_list } = msg as WebsocketMessage<{ room_list: RoomInfo[] }>
-    rooms.clear()
-    room_list.forEach((room) => rooms.set(room.roomNumber, room))
-  }
-
   const handleRoomCreate = (msg: WebsocketMessage) => {
     const { room, from } = msg as WebsocketMessage<{ room: RoomInfo; from: number }>
     rooms.set(from, room)
@@ -387,26 +372,7 @@ export const useRoomStore = defineStore('roomStore', () => {
     })
   }
 
-  const handleInviteRecord = (msg: WebsocketMessage) => {
-    if (typeof (msg as WebsocketMessage<{ successful: boolean }>).successful === 'undefined') return
-    const { from, to, roomNumber, password, duration, expAt } = msg as unknown as WebsocketMessage<{
-      from: Player
-      to: Player
-      roomNumber: number
-      password: string
-      duration: number
-      expAt: number
-    }>
-
-    inviteRecord.set(to.id, expAt)
-
-    // 清除过期的邀请信息
-    setTimeout(() => {
-      inviteRecord.delete(to.id)
-    }, expAt - Date.now())
-  }
-
-  // 广播
+  // 处理房间广播事件
   const handleBroadcast = (msg: WebsocketMessage) => {
     const { from, roomNumber, password, sender, expAt, timestamp } = msg as WebsocketMessage<{
       from: number
@@ -427,25 +393,17 @@ export const useRoomStore = defineStore('roomStore', () => {
     }, expAt - Date.now())
   }
 
-  // const handleBroadcastRecord = (msg: WebsocketMessage) => {
-  //   const { roomNumber, expAt } = msg as WebsocketMessage<{
-  //     from: number
-  //     roomNumber: number
-  //     password: string
-  //     sender: Player
-  //     expAt: number
-  //     timestamp: number
-  //   }>
-  // }
-
   // ------------------------ Actions ------------------------
   /**
    * 拉取房间列表
    */
-  const pullRoomList = () => {
-    send({
+  const pullRoomList = async () => {
+    const { room_list } = (await send({
       type: 'room:list_pull'
-    })
+    })) as WebsocketMessage<{ room_list: RoomInfo[] }>
+
+    rooms.clear()
+    room_list.forEach((room) => rooms.set(room.roomNumber, room))
   }
 
   /**
@@ -494,8 +452,8 @@ export const useRoomStore = defineStore('roomStore', () => {
   /**
    * 发送广播
    */
-  const broadcast = () => {
-    send({
+  const broadcast = async () => {
+    await send({
       type: 'room:broadcast'
     })
   }
@@ -503,11 +461,28 @@ export const useRoomStore = defineStore('roomStore', () => {
   /**
    * 邀请玩家
    */
-  const invite = (toId: string) => {
-    send({
+  const invite = async (toId: string) => {
+    const msg = await send({
       type: 'room:invite',
       toId
     })
+
+    if (typeof (msg as WebsocketMessage<{ successful: boolean }>).successful === 'undefined') return
+    const { to, expAt } = msg as unknown as WebsocketMessage<{
+      from: Player
+      to: Player
+      roomNumber: number
+      password: string
+      duration: number
+      expAt: number
+    }>
+
+    inviteRecord.set(to.id, expAt)
+
+    // 清除过期的邀请信息
+    setTimeout(() => {
+      inviteRecord.delete(to.id)
+    }, expAt - Date.now())
   }
 
   /**

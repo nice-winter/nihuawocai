@@ -71,7 +71,7 @@ const createRoomModal = useModal<{ opens: number; password: string; maxOnlookers
 const roomNumberInputValue = ref('')
 // const rooms = ref(mockdata.roomList)
 
-pullRoomList()
+await pullRoomList() // 拉取房间列表
 
 const tryJoin = async (roomNumber: number, clearRoomNumberInput?: boolean) => {
   if (clearRoomNumberInput) roomNumberInputValue.value = ''
