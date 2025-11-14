@@ -6,26 +6,26 @@ export const usePlayerStore = defineStore('playerStore', () => {
   const { wsEventBus, send } = useWsStore()
   // const { pullRoomList } = useRoomStore()
 
-  const player = ref<LoggedInPlayer | null>(null)
+  const loggedInPlayer = ref<LoggedInPlayer | null>(null)
   const lobbyPlayers = reactive<Map<string, Player>>(new Map())
 
   const clear = () => {
-    player.value = null
+    loggedInPlayer.value = null
   }
 
   wsEventBus.on('ws:message', (msg) => {
     if (msg.type === 'player:event:logged_in') {
       const { player_info } = msg as WebsocketMessage<{ player_info: LoggedInPlayer }>
-      player.value = player_info
+      loggedInPlayer.value = player_info
       // 登录后拉取房间列表
       // await pullRoomList()
     }
 
     if (msg.type === 'player:event:state_update') {
       const { id, state, roomNumber } = msg as WebsocketMessage<PlayerState>
-      if (player.value && id === player.value.id) {
-        player.value.state = state
-        player.value.roomNumber = roomNumber
+      if (loggedInPlayer.value && id === loggedInPlayer.value.id) {
+        loggedInPlayer.value.state = state
+        loggedInPlayer.value.roomNumber = roomNumber
       }
     }
 
@@ -55,7 +55,7 @@ export const usePlayerStore = defineStore('playerStore', () => {
   }
 
   return {
-    player,
+    loggedInPlayer,
     clear,
     lobbyPlayers,
     getLobbyPlayers
