@@ -27,7 +27,12 @@ const rooms = new Map<number, Room>()
 /**
  * 玩家邀请记录
  */
-const inviteMap = new Map<string, { expAt: number }>()
+const inviteRecord = new Map<string, { expAt: number }>()
+
+/**
+ * 房间广播记录
+ */
+const broadcastRecord = new Map<number, { expAt: number }>()
 
 // ---------------------- Player Events ----------------------
 // playerEventBus.on('player:connect', ({ player }) => {
@@ -367,6 +372,54 @@ const changePassword = (roomNumber: number, password: string, id: string) => {
 }
 
 /**
+ * 发送广播
+ * @param id 发起用户 ID
+ */
+const broadcast = async (id: string) => {
+  const player = getPlayer(id)
+  if (!player) throw new Error('用户不存在')
+  if (!checkPlayerIsInRoom(id)) throw new Error('你必须在房间中才能发送房间广播')
+
+  const roomNumber = player.roomNumber!
+  const room = getRoom(roomNumber)
+  if (!room) throw new Error('房间不存在')
+
+  const appConfig = await getAppConfig()
+  const intervalTime = appConfig.game.room.time.broadcastIntervalTimeSecond
+
+  const now = Math.floor(Date.now() / 1000)
+  const expAt = now + intervalTime
+
+  // 防止重复广播（按房间冷却）
+  const existing = broadcastRecord.get(roomNumber)
+  if (existing && existing.expAt > now) {
+    const remain = existing.expAt - now
+    throw new Error(`广播过于频繁，请 ${remain} 秒后再试`)
+  }
+
+  // 记录冷却
+  broadcastRecord.set(roomNumber, { expAt })
+  setTimeout(() => {
+    broadcastRecord.delete(roomNumber)
+  }, intervalTime * 1000)
+
+  // 构造消息（expAt 毫秒时间戳）
+  const msg = {
+    from: roomNumber,
+    roomNumber,
+    password: room.options.password,
+    sender: await getUserData(id),
+    expAt: expAt * 1000, // 前端一般用到毫秒
+    timestamp: Date.now()
+  }
+
+  // 广播
+  sendToAllPlayer({ type: 'room:event:broadcast', ...msg })
+
+  return msg
+}
+
+/**
  * 邀请玩家
  * @TODO 完善邀请的接收、拒绝状态功能
  * @param id 发起用户 ID
@@ -394,17 +447,17 @@ const invite = async (id: string, toId: string) => {
 
   // 防止重复邀请
   const key = `${id}:${toId}`
-  const existing = inviteMap.get(key)
+  const existing = inviteRecord.get(key)
   if (existing && existing.expAt > now) {
     const remain = existing.expAt - now
     throw new Error(`已邀请该玩家，请等待 ${remain}s 后再试`)
   }
 
   // 记录邀请状态
-  inviteMap.set(key, { expAt })
+  inviteRecord.set(key, { expAt })
   // 清理过期记录
   setTimeout(() => {
-    inviteMap.delete(key)
+    inviteRecord.delete(key)
   }, expSeconds * 1000)
 
   const msg = {
@@ -550,6 +603,7 @@ export {
   sit,
   seatSwitch,
   changePassword,
+  broadcast,
   invite,
   leaveRoom,
   removeRoomPlayer

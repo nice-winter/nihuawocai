@@ -32,6 +32,16 @@ type Events = {
     password: string
   }
 
+  // room broadcast
+  'room:event:broadcast': {
+    from: number
+    roomNumber: number
+    password: string
+    sender: Player
+    expAt: number
+    timestamp: number
+  }
+
   // chat
   'chat:event:say': {
     chatmsg: string

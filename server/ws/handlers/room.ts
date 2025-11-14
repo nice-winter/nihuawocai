@@ -1,6 +1,7 @@
 import { consola } from 'consola'
 import { defineWsHandlers } from '~~/server/ws/utils'
 import {
+  broadcast,
   changePassword,
   createRoom,
   getRoomList,
@@ -62,6 +63,9 @@ export default defineWsHandlers({
     }>
 
     return changePassword(roomNumber, password, user.id)
+  },
+  'room:broadcast': async ({ user }) => {
+    return await broadcast(user.id)
   },
   'room:invite': async ({ msg, user }) => {
     const { toId } = msg as WebsocketMessage<{
