@@ -8,7 +8,7 @@
       :style="{ '--scrollbar-color': '#bc966f', '--scrollbar-color-hover': '#cea57c' }"
       :size="7"
     >
-      <div class="message-list relative">
+      <div class="relative">
         <div
           v-show="autoScroll && showNewMessageIndicator && newMessageCount > 0"
           class="absolute bottom-1 right-[0.8rem] flex flex-col"
@@ -33,68 +33,70 @@
           </div>
         </div>
 
-        <template v-for="(item, index) in messageList" :key="index + item.type">
-          <p
-            v-if="item.type === 'text'"
-            class="message-item"
-            :class="[`message-item-${item.type}`]"
-            :style="{
-              color: item.style?.color || 'inherit',
-              fontSize: item.style?.fontSize || `13px`,
-              fontWeight: item.style?.fontWeight || 'normal'
-            }"
-          >
-            {{ item.msg }}
-          </p>
-
-          <p v-else-if="item.type === 'chat'" class="py-[0.3rem] first:pt-0 last:pb-0">
-            <span class="text-[13px]">
-              <UiAvatar
-                class="size-6.5 align-top"
-                :player="item.sender"
-                :verified-icon="{ show: true, size: 12, right: -2, bottom: -2 }"
-              />
-              <span class="ml-2"> {{ item.sender.nickname }}：</span
-              ><UiTextRender
-                class="break-normal wrap-break-word"
-                :text="item.msg"
-                style="--emoji-size: 18px"
-              />
-            </span>
-          </p>
-
-          <p v-else-if="item.type === 'action'">
-            <span class="text-[13px]">
-              <span class="text-pink-400">{{ item.sender.nickname }}</span>
-              {{ item.msg }}
-            </span>
-          </p>
-
-          <p v-else-if="item.type === 'system'">
-            <USeparator
-              class="select-none"
-              :label="item.msg"
-              :ui="{
-                border: `border-[#AE9783]`,
-                label: `text-[13px] text-[#AE9783]`
+        <ul class="message-list">
+          <template v-for="(item, index) in messageList" :key="index + item.type">
+            <li
+              v-if="item.type === 'text'"
+              class="message-item"
+              :class="[`message-item-${item.type}`]"
+              :style="{
+                color: item.style?.color || 'inherit',
+                fontSize: item.style?.fontSize || `13px`,
+                fontWeight: item.style?.fontWeight || 'normal'
               }"
-            />
-          </p>
+            >
+              {{ item.msg }}
+            </li>
 
-          <p v-else-if="item.type === 'broadcast'" class="py-[0.3rem] first:pt-0 last:pb-0">
-            <span class="text-[13px]">
-              <UiAvatar class="size-6.5 align-top" :player="item.sender" />
-              <span class="ml-2">{{ item.sender.nickname }}</span>
-              <span class="break-normal wrap-break-word">
-                在{{ item.roomNumber }}号房间喊道：赶快<UiLinkButton
-                  color="red"
-                  @click="() => joinFromBroadcast(item.roomNumber, item.password)"
-                  >加入</UiLinkButton
-                >我们一起游戏吧！
+            <li v-else-if="item.type === 'chat'" class="py-[0.3rem] first:pt-0 last:pb-0">
+              <span class="text-[13px]">
+                <UiAvatar
+                  class="size-6.5 align-top"
+                  :player="item.sender"
+                  :verified-icon="{ show: true, size: 12, right: -2, bottom: -2 }"
+                />
+                <span class="ml-2 inline-block"> {{ item.sender.nickname }}：</span>
+                <UiTextRender
+                  class="break-normal wrap-break-word"
+                  :text="item.msg"
+                  style="--emoji-size: 18px"
+                />
               </span>
-            </span>
-          </p>
-        </template>
+            </li>
+
+            <li v-else-if="item.type === 'action'">
+              <span class="text-[13px]">
+                <span class="text-pink-400">{{ item.sender.nickname }}</span>
+                {{ item.msg }}
+              </span>
+            </li>
+
+            <li v-else-if="item.type === 'system'">
+              <USeparator
+                class="select-none"
+                :label="item.msg"
+                :ui="{
+                  border: `border-[#AE9783]`,
+                  label: `text-[13px] text-[#AE9783]`
+                }"
+              />
+            </li>
+
+            <li v-else-if="item.type === 'broadcast'" class="py-[0.3rem] first:pt-0 last:pb-0">
+              <span class="text-[13px]">
+                <UiAvatar class="size-6.5 align-top" :player="item.sender" />
+                <span class="ml-2">{{ item.sender.nickname }}</span>
+                <span class="break-normal wrap-break-word">
+                  在{{ item.roomNumber }}号房间喊道：赶快<UiLinkButton
+                    color="red"
+                    @click="() => joinFromBroadcast(item.roomNumber, item.password)"
+                    >加入</UiLinkButton
+                  >我们一起游戏吧！
+                </span>
+              </span>
+            </li>
+          </template>
+        </ul>
       </div>
     </UiScrollBar>
   </UContextMenu>
