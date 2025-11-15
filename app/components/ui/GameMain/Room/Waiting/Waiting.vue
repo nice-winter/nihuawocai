@@ -52,7 +52,7 @@
           color="green"
           :disabled="broadcastRecord.get(roomInfo.roomNumber)"
           @click="broadcast"
-          >广播邀请</UiButton
+          >{{ !broadcastRecord.get(roomInfo.roomNumber) ? '广播邀请' : '已广播' }}</UiButton
         >
         <UiButton color="blue">邀请好友</UiButton>
         <div>
