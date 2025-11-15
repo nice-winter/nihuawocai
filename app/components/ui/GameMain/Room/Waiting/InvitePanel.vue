@@ -32,13 +32,13 @@
           </div>
         </div>
 
-        <USeparator orientation="horizontal" class="w-full" />
+        <div class="w-full h-px bg-[#e6e3e1]" />
 
         <div
-          class="flex flex-row justify-center items-center gap-9.5 h-8 border-t border-t-white/90"
+          class="flex flex-row justify-center items-center gap-9.5 h-8 border-t border-t-white/60"
         >
           <UiLinkButton class="text-[13px]" type="button" @click="prevPage">上一页</UiLinkButton>
-          <div class="w-0.5 h-4 border-l border-l-gray-200 bg-white/90" />
+          <div class="w-0.5 h-4 border-l border-l-[#e6e3e1] bg-white/60" />
           <UiLinkButton class="text-[13px]" type="button" @click="nextPage">下一页</UiLinkButton>
         </div>
       </div>
@@ -67,13 +67,13 @@ onMounted(() => {
 const tabItems = [
   {
     label: '空闲玩家',
-    icon: 'ph:user-check-fill',
+    // icon: 'ph:user-check-fill',
     slot: 'user1'
   },
   {
     disabled: true,
     label: '同城玩家',
-    icon: 'ph:users-fill',
+    // icon: 'ph:users-fill',
     slot: 'user2'
   }
 ]
