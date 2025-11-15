@@ -442,7 +442,7 @@ const invite = async (id: string, toId: string) => {
 
   // 检查目标玩家
   if (!checkPlayerIsInLobby(toId)) {
-    throw new Error('目标玩家不在大厅，可能已在其他房间中')
+    throw new Error('该玩家不在大厅')
   }
 
   // 防止重复邀请
@@ -450,7 +450,7 @@ const invite = async (id: string, toId: string) => {
   const existing = inviteRecord.get(key)
   if (existing && existing.expAt > now) {
     const remain = existing.expAt - now
-    throw new Error(`已邀请该玩家，请等待 ${remain}s 后再试`)
+    throw new Error(`已邀请该玩家，请 ${remain} 秒后再试`)
   }
 
   // 记录邀请状态
