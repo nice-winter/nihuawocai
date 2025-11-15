@@ -33,13 +33,16 @@
         >
           <div class="flex gap-5 pt-5">
             <span>{{ userSession.loggedIn.value ? `天秤座` : '' }}</span>
-            <span v-show="userSession.loggedIn.value && loggedInPlayer?.state === 'in_room'">
-              房间{{ loggedInPlayer?.roomNumber }}
+            <span v-if="userSession.loggedIn.value">
+              {{ stateText }}
             </span>
           </div>
 
           <div class="flex-1 flex ml-auto relative">
-            <UiNavigation class="absolute z-1 right-4 -bottom-1" />
+            <UiNavigation
+              v-if="userSession.loggedIn.value && loggedInPlayer"
+              class="absolute z-1 right-6 -bottom-1"
+            />
           </div>
 
           <div class="relative ml-auto w-52">
@@ -114,10 +117,23 @@ definePageMeta({
   layout: 'game'
 })
 
-const userSession = useUserSession()
 const appConfigStore = useAppConfigStore()
 const { appConfig } = storeToRefs(appConfigStore)
+const userSession = useUserSession()
+const { open } = useWsStore()
+const gameStore = useGameStore()
 const { loggedInPlayer } = storeToRefs(usePlayerStore())
+
+const stateText = computed(() => {
+  if (userSession.loggedIn.value) {
+    if (loggedInPlayer.value?.state === 'in_room') {
+      return `房间${loggedInPlayer.value.roomNumber}`
+    } else if (loggedInPlayer.value?.state === 'lobby') {
+      return '大厅'
+    }
+  }
+  return ''
+})
 
 const providers = [
   {
@@ -149,9 +165,6 @@ const providers = [
   }
 ]
 
-const gameStore = useGameStore()
-
-const { open } = useWsStore()
 if (userSession.loggedIn.value) {
   open()
 }

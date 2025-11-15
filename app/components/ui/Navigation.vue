@@ -26,7 +26,7 @@ const sound = ref(true)
 .nav-icon {
   filter: drop-shadow(0px 0px 2px rgb(161, 87, 17));
   cursor: pointer;
-  background-image: url('~/assets/icons/navicon-sprites.png');
+  background-image: url('~/assets/icons/navicon-sprites.webp');
   background-size: 100% auto;
   background-repeat: no-repeat;
   background-color: transparent;
