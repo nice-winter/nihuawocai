@@ -80,7 +80,16 @@
 
           <div class="flex flex-col justify-center max-w-[20rem] text-right">
             <span>Copyright © 2025 WINTER</span>
-            <span>我画你猜的源代码基于 <a href="#" class="underline">MIT 许可证</a> 发布 </span>
+            <span
+              >我画你猜的源代码基于
+              <a
+                href="https://github.com/nice-winter/nihuawocai/blob/main/LICENSE"
+                target="_blank"
+                class="underline"
+                >MIT 许可证</a
+              >
+              发布
+            </span>
           </div>
         </div>
       </template>
