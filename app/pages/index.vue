@@ -38,10 +38,14 @@
             </span>
           </div>
 
+          <div class="flex-1 flex ml-auto relative">
+            <UiNavigation class="absolute z-1 right-4 -bottom-1" />
+          </div>
+
           <div class="relative ml-auto w-52">
             <div
               v-if="userSession.loggedIn.value && loggedInPlayer"
-              class="absolute top-5 left-4 z-2 flex items-center gap-2"
+              class="absolute top-4 left-4 z-2 flex items-center gap-2"
             >
               <UiAvatar :player="loggedInPlayer" class="size-10" />
               <span class="max-w-38 text-[13px] text-(--game-primary-color) text-light truncate">{{
@@ -73,7 +77,9 @@
 
           <div class="flex flex-col justify-center max-w-[20rem] text-right">
             <span>Copyright © 2025 WINTER</span>
-            <span>《我画你猜》的源代码使用 MIT 开源软件协议授权</span>
+            <span
+              >《我画你猜》的源代码使用<span class="underline">《MIT 许可证》</span>开放授权</span
+            >
           </div>
         </div>
       </template>
