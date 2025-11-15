@@ -1,8 +1,9 @@
 {
   "name": "nihuawocai",
+  "description": "A remake of the Weibo.com mini-game 'NIHUAWOCAI'.",
   "type": "module",
-  "private": true,
   "author": "nice-winter",
+  "license": "MIT",
   "repository": {
     "url": "git+https://github.com/nice-winter/nihuawocai.git"
   },
