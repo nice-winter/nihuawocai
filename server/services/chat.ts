@@ -33,7 +33,7 @@ const say = async (user: UserData, chatmsg: string) => {
   const nextAllowed = chatIntervalRecord.get(user.id) ?? 0
   if (now < nextAllowed) {
     const remaining = Math.ceil((nextAllowed - now) / 1000)
-    throw new Error(`你太能说了吧，请 ${remaining}s 后再试...`)
+    throw new Error(`你太能说了吧，请 ${remaining} 秒后再试...`)
   }
 
   // 更新下一次可发言时间
