@@ -67,13 +67,13 @@
           class="flex justify-between px-[.785rem] pt-4.5 text-[12px] text-[#aa7b4c91] select-none"
         >
           <div class="flex flex-col justify-center">
-            <span>免责声明：本项目为非盈利社区性项目。</span>
-            <span>无意侵犯其版权，所有权利均归其各自所有者所有。</span>
+            <span>免责声明：本项目为非盈利社区性项目</span>
+            <span>无意侵犯其版权，所有权利均归其各自所有者所有</span>
           </div>
 
           <div class="flex flex-col justify-center max-w-[20rem] text-right">
-            <span>© 上海优哉游哉网络科技有限公司 版权所有</span>
-            <span>《你画我猜》是其开发并持有软件著作权的软件产品</span>
+            <span>Copyright © 2025 WINTER</span>
+            <span>《我画你猜》的源代码使用 MIT 开源软件协议授权</span>
           </div>
         </div>
       </template>
