@@ -87,7 +87,7 @@ div[data-reka-popper-content-wrapper] {
 
 .game-tabs {
   gap: 0;
-  background: #f6ede6;
+  background: #f3eee9;
   border-radius: 8px;
   overflow: hidden;
   box-shadow: 1px 0px 1px 1px #ebdbc6;
@@ -98,10 +98,12 @@ div[data-reka-popper-content-wrapper] {
 
   [data-state='active'] > span {
     color: var(--game-font-color);
+    font-size: 13px;
   }
 
   [data-state='inactive'] > span {
-    color: var(--game-font-color);
+    color: #b3b2b2;
+    font-size: 13px;
   }
 
   div.bg-primary {
