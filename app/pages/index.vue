@@ -80,9 +80,7 @@
 
           <div class="flex flex-col justify-center max-w-[20rem] text-right">
             <span>Copyright © 2025 WINTER</span>
-            <span
-              >《我画你猜》的源代码使用<span class="underline">《MIT 许可证》</span>开放授权</span
-            >
+            <span>我画你猜的源代码基于 <a href="#" class="underline">MIT 许可证</a> 发布 </span>
           </div>
         </div>
       </template>
