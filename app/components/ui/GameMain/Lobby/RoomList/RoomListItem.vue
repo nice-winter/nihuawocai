@@ -5,7 +5,7 @@
         <UiAvatar class="size-16" :player="ownerPlayer" :verified-icon="{ show: true }" />
 
         <div class="relative flex-1">
-          <UTooltip text="非公开房间" :delay-duration="500" :content="{ side: 'right' }" arrow>
+          <UTooltip text="非公开房间" :delay-duration="500" :content="{ side: 'right' }">
             <UIcon
               v-show="roomInfo.locked"
               name="ph:lock-simple-fill"
