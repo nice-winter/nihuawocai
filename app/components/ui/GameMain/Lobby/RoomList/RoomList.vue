@@ -71,7 +71,10 @@ const createRoomModal = useModal<{ opens: number; password: string; maxOnlookers
 const roomNumberInputValue = ref('')
 // const rooms = ref(mockdata.roomList)
 
-await pullRoomList() // 拉取房间列表
+// 不要阻塞组件创建，所以放到即将挂载时处理，否则这个组件会比别的组件慢半拍加载导致错位
+onBeforeMount(async () => {
+  await pullRoomList() // 拉取房间列表
+})
 
 const tryJoin = async (roomNumber: number, clearRoomNumberInput?: boolean) => {
   if (clearRoomNumberInput) roomNumberInputValue.value = ''
