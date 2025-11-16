@@ -36,7 +36,10 @@
       </template>
 
       <template #content>
-        <div class="w-35 h-75 inline-flex flex-col select-none bg-[#EFC189] bg-texture">
+        <div
+          v-if="player"
+          class="w-35 h-75 inline-flex flex-col select-none bg-[#EFC189] bg-texture"
+        >
           <div class="relative p-1.5">
             <UAvatar class="game-avatar size-32" :src="player?.avatar_url" />
           </div>
@@ -163,6 +166,16 @@ const onProfilePopoverClose = () => {
 
 const levelInfo = computed(() =>
   levelHelper.getUserLevelInfo(playerProfile.value?.exinfo.score || 0)
+)
+
+watch(
+  () => player,
+  (newValue) => {
+    if (!newValue) {
+      showProfilePopover.value = false
+      playerProfile.value = null
+    }
+  }
 )
 
 const panelDom = ref<Element | null>(null)
