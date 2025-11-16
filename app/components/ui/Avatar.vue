@@ -78,6 +78,13 @@
               </div>
             </div>
           </div>
+
+          <div class="h-12 px-3.5 py-2.5 flex items-center justify-between">
+            <template v-if="player?.id !== loggedInPlayer?.id">
+              <div class="size-7 sprites-icon profile-icon hi"></div>
+              <div class="size-7 sprites-icon profile-icon friend"></div>
+            </template>
+          </div>
         </div>
       </template>
     </UPopover>
@@ -119,8 +126,10 @@ const {
   verifiedIcon = undefined
 } = defineProps<AvatarProps>()
 
+const playerStore = usePlayerStore()
+const { getPlayerProfile } = playerStore
+const { loggedInPlayer } = storeToRefs(playerStore)
 const { levelHelper } = useAppConfigStore()
-const { getPlayerProfile } = usePlayerStore()
 
 const open = defineModel<boolean>('open', { default: true })
 
@@ -162,4 +171,22 @@ onMounted(() => {
 })
 </script>
 
-<style scoped></style>
+<style scoped>
+.profile-icon {
+  background-position: 0 calc(var(--sprites-index) * -28px);
+  filter: drop-shadow(0px 0px 2px rgb(161, 87, 17));
+  cursor: pointer;
+}
+.profile-icon.hi {
+  --sprites-index: 2;
+}
+.profile-icon.hi:hover {
+  --sprites-index: 3;
+}
+.profile-icon.friend {
+  --sprites-index: 0;
+}
+.profile-icon.friend:hover {
+  --sprites-index: 1;
+}
+</style>

@@ -130,3 +130,11 @@ div[data-reka-popper-content-wrapper] {
   background-repeat: repeat;
   background-size: 46px;
 }
+
+.sprites-icon {
+  background-image: url('~/assets/icons/navicon-sprites.webp');
+  background-size: 100% auto;
+  background-repeat: no-repeat;
+  background-color: transparent;
+  --sprites-index: 0;
+}
