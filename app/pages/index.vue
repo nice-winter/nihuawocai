@@ -1,5 +1,5 @@
 <template>
-  <div class="w-5xl min-h-[1151px] flex flex-col custom-bg bg-top bg-size-[1024px]">
+  <div ref="GameApp" class="w-5xl min-h-[1151px] flex flex-col custom-bg bg-top bg-size-[1024px]">
     <div class="w-full h-40 flex relative">
       <div class="absolute right-24 top-4 flex gap-4 text-sm">
         <ULink as="button" @click="() => (gameStore.isInRoom = false)">大厅页面</ULink>
@@ -25,7 +25,7 @@
         <span class="-mr-7 font-sans text-5xl quotation">”</span>
       </div>
     </div>
-    <UiGameMainFrame class="">
+    <UiGameMainFrame ref="GameMain">
       <template #header>
         <div
           v-if="userSession.loggedIn.value && userSession.user.value"
@@ -120,6 +120,8 @@
 </template>
 
 <script setup lang="ts">
+import { snapdom } from '@zumer/snapdom'
+
 definePageMeta({
   layout: 'game'
 })
@@ -130,6 +132,12 @@ const userSession = useUserSession()
 const { open } = useWsStore()
 const gameStore = useGameStore()
 const { loggedInPlayer } = storeToRefs(usePlayerStore())
+
+const GameAppRef = useTemplateRef('GameApp')
+
+useHead({
+  title: appConfig.value.name
+})
 
 const stateText = computed(() => {
   if (userSession.loggedIn.value) {
@@ -175,6 +183,17 @@ const providers = [
 if (userSession.loggedIn.value) {
   open()
 }
+
+useEventBus('ui:screenshot', async () => {
+  if (GameAppRef.value) {
+    const result = await snapdom(GameAppRef.value, {
+      embedFonts: true,
+      cache: 'full',
+      width: 1024
+    })
+    crop(await result.toJpg(), { x: 40, y: 210, width: 946, height: 700 })
+  }
+})
 </script>
 
 <style scoped>
