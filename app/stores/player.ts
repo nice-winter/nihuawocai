@@ -54,10 +54,20 @@ export const usePlayerStore = defineStore('playerStore', () => {
     lobby_players.forEach((p) => lobbyPlayers.set(p.id, p))
   }
 
+  const getPlayerProfile = async (playerId: string) => {
+    const { id, profile } = (await send({
+      type: 'player:get_profile',
+      id: playerId
+    })) as WebsocketMessage<{ id: string; profile: Player }>
+
+    return { id, profile }
+  }
+
   return {
     loggedInPlayer,
     clear,
     lobbyPlayers,
-    getLobbyPlayers
+    getLobbyPlayers,
+    getPlayerProfile
   }
 })

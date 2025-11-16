@@ -5,6 +5,7 @@
     @click="onClick"
   >
     <UPopover
+      v-model:open="showProfilePopover"
       :content="{
         side: (position.split('-')[0] as Side) || 'right',
         align: (position.split('-')[1] as Align) || 'end',
@@ -12,22 +13,26 @@
         collisionBoundary: panelDom
       }"
     >
-      <UAvatar
-        v-show="player"
-        class="game-avatar size-full cursor-pointer"
-        :src="player?.avatar_url"
-      />
-      <img
-        v-if="player?.verification.verified && verifiedIcon?.show"
-        class="absolute right-0 bottom-0 size-3"
-        :style="{
-          width: `${verifiedIcon.size}px`,
-          height: `${verifiedIcon.size}px`,
-          right: `${verifiedIcon.right}px`,
-          bottom: `${verifiedIcon.bottom}px`
-        }"
-        src="~/assets/icons/verified.png"
-      />
+      <template #anchor>
+        <UAvatar
+          v-show="player"
+          class="game-avatar size-full cursor-pointer"
+          :src="player?.avatar_url"
+          @click="onAvatarClick"
+          @close="onProfilePopoverClose"
+        />
+        <img
+          v-if="player?.verification.verified && verifiedIcon?.show"
+          class="absolute right-0 bottom-0 size-3"
+          :style="{
+            width: `${verifiedIcon.size}px`,
+            height: `${verifiedIcon.size}px`,
+            right: `${verifiedIcon.right}px`,
+            bottom: `${verifiedIcon.bottom}px`
+          }"
+          src="~/assets/icons/verified.png"
+        />
+      </template>
 
       <template #content>
         <div class="w-35 h-75 inline-flex flex-col select-none bg-[#EFC189] bg-texture">
@@ -35,7 +40,7 @@
             <UAvatar class="game-avatar size-32" :src="player?.avatar_url" />
           </div>
 
-          <span class="px-1.5 text-[13px] truncate">
+          <span class="h-[19.5px] px-1.5 text-[13px] truncate">
             <UiGenderIcon :gender="player?.gender" class="align-text-bottom" />
             {{ player?.nickname }}
           </span>
@@ -63,12 +68,12 @@
             <div class="flex flex-col gap-1">
               <div class="h-3.5 text-xs leading-3.5 inline-flex items-end gap-0.5">
                 <span class="text-[#804B19] min-w-[42px]"> 鲜ㅤ花： </span>
-                <span class="grow leading-[13px]">{{ player?.exinfo.flowers }}</span>
+                <span class="grow leading-[13px]">{{ playerProfile?.exinfo.flowers }}</span>
               </div>
 
               <div class="h-3.5 text-xs leading-3.5 inline-flex items-end gap-0.5">
                 <span class="text-[#804B19] min-w-[42px]"> 盘ㅤ数： </span>
-                <span class="grow leading-[13px]">{{ player?.exinfo.count }}</span>
+                <span class="grow leading-[13px]">{{ playerProfile?.exinfo.count }}</span>
               </div>
             </div>
           </div>
@@ -114,12 +119,16 @@ const {
 } = defineProps<AvatarProps>()
 
 const { levelHelper } = useAppConfigStore()
+const { getPlayerProfile } = usePlayerStore()
 
 const open = defineModel<boolean>('open', { default: true })
 
 const emit = defineEmits<{
   (e: 'switch', open: boolean, seat?: number | string): void
 }>()
+
+const playerProfile = ref<Player | null>(null)
+const showProfilePopover = ref(false)
 
 const onClick = () => {
   if (mode === 'seat' && !disabled) {
@@ -129,8 +138,22 @@ const onClick = () => {
     }
   }
 }
+const onAvatarClick = async () => {
+  if (player && player.id) {
+    const { id, profile } = await getPlayerProfile(player.id)
+    if (profile) {
+      playerProfile.value = profile
+      showProfilePopover.value = true
+    }
+  }
+}
+const onProfilePopoverClose = () => {
+  playerProfile.value = null
+}
 
-const levelInfo = computed(() => levelHelper.getUserLevelInfo(player?.exinfo.score || 0))
+const levelInfo = computed(() =>
+  levelHelper.getUserLevelInfo(playerProfile.value?.exinfo.score || 0)
+)
 
 const panelDom = ref<Element | null>(null)
 onMounted(() => {
