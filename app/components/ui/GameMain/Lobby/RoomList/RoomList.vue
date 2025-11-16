@@ -78,6 +78,7 @@ onBeforeMount(async () => {
 
 const tryJoin = async (roomNumber: number, clearRoomNumberInput?: boolean) => {
   if (clearRoomNumberInput) roomNumberInputValue.value = ''
+  if (isNaN(roomNumber)) return gameMessageBox.show('房间号格式错误')
   if (rooms.get(roomNumber)?.locked) {
     try {
       const password = await passwordModal.open()
