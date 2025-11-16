@@ -1,20 +1,36 @@
 <template>
   <ul class="h-6 flex gap-3 items-center">
-    <li class="size-6 nav-icon hi"></li>
+    <UTooltip :delay-duration="0" text="消息" :disable-closing-trigger="true">
+      <li class="size-6 nav-icon hi"></li>
+    </UTooltip>
 
-    <li class="size-6 nav-icon package"></li>
+    <UTooltip :delay-duration="0" text="背包" :disable-closing-trigger="true">
+      <li class="size-6 nav-icon package"></li>
+    </UTooltip>
 
-    <li class="size-6 nav-icon camera"></li>
+    <UTooltip :delay-duration="0" text="截屏" :disable-closing-trigger="false">
+      <li class="size-6 nav-icon camera"></li>
+    </UTooltip>
 
-    <li
-      class="size-6 nav-icon"
-      :class="sound ? 'sound-enabled' : 'sound-disabled'"
-      @click="sound = !sound"
-    ></li>
+    <UTooltip
+      :delay-duration="0"
+      :text="`音效：${sound ? '开启' : '关闭'}`"
+      :disable-closing-trigger="true"
+    >
+      <li
+        class="size-6 nav-icon"
+        :class="sound ? 'sound-enabled' : 'sound-disabled'"
+        @click="sound = !sound"
+      ></li>
+    </UTooltip>
 
-    <li class="size-6 nav-icon help"></li>
+    <UTooltip :delay-duration="0" text="帮助" :disable-closing-trigger="true">
+      <li class="size-6 nav-icon help"></li>
+    </UTooltip>
 
-    <li class="size-6 nav-icon github"></li>
+    <UTooltip :delay-duration="0" text="GitHub" :disable-closing-trigger="true">
+      <li class="size-6 nav-icon github"></li>
+    </UTooltip>
   </ul>
 </template>
 
