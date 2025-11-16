@@ -10,7 +10,8 @@
         side: (position.split('-')[0] as Side) || 'right',
         align: (position.split('-')[1] as Align) || 'end',
         sideOffset: 8,
-        collisionBoundary: panelDom
+        collisionBoundary: panelDom,
+        prioritizePosition: true
       }"
     >
       <template #anchor>
