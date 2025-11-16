@@ -8,6 +8,11 @@ export default defineAppConfig({
       slots: {
         content: 'game-popover'
       }
+    },
+    tooltip: {
+      slots: {
+        content: 'game-tooltip'
+      }
     }
   }
 })
