@@ -50,7 +50,7 @@
               v-if="userSession.loggedIn.value && loggedInPlayer"
               class="absolute top-4 left-4 z-2 flex items-center gap-2"
             >
-              <UiAvatar :player="loggedInPlayer" class="size-10" />
+              <UiAvatar :player="loggedInPlayer" position="bottom-start" class="size-10" />
               <span class="max-w-38 text-[13px] text-(--game-primary-color) text-light truncate">{{
                 loggedInPlayer.nickname
               }}</span>
