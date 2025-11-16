@@ -56,16 +56,18 @@
         >
         <UiButton color="blue">邀请好友</UiButton>
         <div>
-          <UiButton v-if="isCurrentRoomOwner && !roomInfo.locked">再等一会</UiButton>
+          <UiButton v-if="isCurrentRoomOwner && !roomInfo.locked && canStart">再等一会</UiButton>
         </div>
         <div>
-          <UiButton v-if="isCurrentRoomOwner" color="red" @click="start">立即开始</UiButton>
+          <UiButton v-if="isCurrentRoomOwner" color="red" :disabled="!canStart" @click="start"
+            >立即开始</UiButton
+          >
         </div>
       </div>
     </div>
 
     <div class="grow flex flex-col items-center justify-center">
-      <UiGameMainRoomTimer v-if="!roomInfo.locked" />
+      <UiGameMainRoomTimer v-if="!roomInfo.locked && canStart" />
     </div>
   </div>
 
@@ -120,6 +122,9 @@ const { isCurrentRoomOwner, broadcastRecord } = storeToRefs(roomStore)
 
 const passwordUInputRef = useTemplateRef('passwordUInputRef')
 const RoomEventsRef = useTemplateRef('RoomEvents')
+
+// 是否可开始
+const canStart = computed(() => roomInfo.players.filter((p) => p).length > 1)
 
 // 本地状态：由 prop 同步（房主可以修改）
 const lockedLocal = ref(roomInfo.locked)
