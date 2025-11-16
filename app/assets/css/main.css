@@ -79,7 +79,7 @@ div[data-reka-popper-content-wrapper] {
     box-shadow: 0 0 0 1px #ae9783;
 
     span[data-state='checked'] {
-      color: #ae9783;
+      color: var(--game-primary-color);
       background-color: unset;
     }
   }
