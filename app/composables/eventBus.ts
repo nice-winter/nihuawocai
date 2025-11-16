@@ -4,6 +4,7 @@ import type { Player } from '#shared/interfaces/player'
 type Events = {
   // ui
   'user:logout': unknown
+  'ui:screenshot': unknown
   'sketchpad:undo': unknown
   'sketchpad:redo': unknown
   'sketchpad:clear': unknown

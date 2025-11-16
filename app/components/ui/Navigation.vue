@@ -9,7 +9,7 @@
     </UTooltip>
 
     <UTooltip :delay-duration="0" text="截屏" :disable-closing-trigger="false">
-      <li class="size-6 nav-icon camera"></li>
+      <li class="size-6 nav-icon camera" @click="screenshot"></li>
     </UTooltip>
 
     <UTooltip
@@ -36,6 +36,10 @@
 
 <script setup lang="ts">
 const sound = ref(true)
+
+const screenshot = () => {
+  setTimeout(() => eventBus.emit('ui:screenshot'), 114) // 延迟等 Tooltip 消失再触发
+}
 </script>
 
 <style scoped>
