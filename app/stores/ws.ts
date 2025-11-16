@@ -42,15 +42,26 @@ export const useWsStore = defineStore('ws', () => {
       const msg = decode(e.data) as WebsocketMessage & { _rid?: string; _reply?: boolean }
 
       // 如果是后端对前端请求的回复，先走 pending 路由（下面会处理）
-      if ((msg as WebsocketMessage<{ _error: boolean; message: string }>)._error) {
-        gameMessageBox.show((msg as WebsocketMessage<{ message: string }>).message)
+      // 如果有 successful 字段，且为 false，则认定为响应请求并且执行失败，弹出信息框提示
+      const { successful, message } = msg as WebsocketMessage<{
+        successful?: boolean
+        message?: string
+      }>
+      if (
+        typeof successful !== 'undefined' &&
+        successful === false &&
+        typeof message === 'string'
+      ) {
+        gameMessageBox.show(message)
       }
 
       // 广播原始消息（仍然需要给外部订阅）
       wsEventBus.emit('ws:message', msg)
 
       // 日志（除 pong 外）
-      if (msg.type !== 'pong') logger.withTag('⬇').log(msg)
+      if (msg.type !== 'pong') {
+        logger.withTag('⬇').log.raw(msg)
+      }
 
       // 如果这是对前端请求的回复（_reply: true 并带有 _rid），路由到 pending
       if ((msg as WS_RECV)._reply && (msg as WS_RECV)._rid) {

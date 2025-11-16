@@ -41,7 +41,7 @@ function registerHandlers(handlers: WsHandlers) {
       }
     } catch (err: unknown) {
       const errorMsg = (err as Error)?.message || String(err)
-      e.reply({ ...replyBase, _error: true, message: errorMsg })
+      e.reply({ ...replyBase, successful: false, message: errorMsg })
 
       logger.error(colors.red(`[${type}] Error:`), errorMsg)
     }
