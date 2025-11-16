@@ -115,7 +115,7 @@ export const useWsStore = defineStore('ws', () => {
   /**
    * _send：发送并等待后端带有 _rid 和 _reply: true 的回应
    * - msg: 要发送的消息体（会自动追加 rid 字段）
-   * - opts.timeout: 毫秒（默认 10000 ms）
+   * - opts.timeout: 毫秒（默认 5000 ms）
    *
    * 返回值 Promise<WebsocketMessage>，在超时 / 断线 / 发送失败时 reject
    */
@@ -125,13 +125,15 @@ export const useWsStore = defineStore('ws', () => {
   ): Promise<R> => {
     const rid = shortHash()
     const _msg = { ...(msg as object), rid } as WebsocketMessage & { rid: string }
-    const timeout = opts?.timeout ?? 10000
+    const timeout = opts?.timeout ?? 5000
 
     return new Promise<R>((resolve, reject) => {
       // 先注册 pending，避免超快的后端先返回导致丢失
       const timer = window.setTimeout(() => {
         pendingRequests.delete(rid)
         reject(new Error('WS request timeout'))
+
+        logger.error.raw('请求超时未响应', msg)
       }, timeout) as unknown as number
 
       pendingRequests.set(rid, {
