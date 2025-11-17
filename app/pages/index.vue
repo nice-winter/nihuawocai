@@ -1,5 +1,8 @@
 <template>
-  <div ref="GameApp" class="w-5xl min-h-[1151px] flex flex-col custom-bg bg-top bg-size-[1024px]">
+  <div
+    ref="GameApp"
+    class="w-5xl min-w-5xl min-h-[1151px] flex flex-col custom-bg bg-top bg-size-[1024px]"
+  >
     <div class="w-full h-40 flex relative">
       <div class="absolute right-24 top-4 flex gap-4 text-sm">
         <ULink as="button" @click="() => (gameStore.isInRoom = false)">大厅页面</ULink>
