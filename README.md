@@ -1,3 +1,7 @@
-# WOHUANICAI
+# NIHUAWOCAI
 
-《我画你猜》—— 新浪微博你画我猜经典版复刻项目
+新浪微博小游戏“你画我猜”复刻版
+
+## License
+
+[MIT License](LICENSE)
