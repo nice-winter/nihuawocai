@@ -90,7 +90,7 @@ class BubbleRegistry {
 
     record.hideTimer = window.setTimeout(() => {
       comp.exposed?.startFadeOut()
-    }, 2000)
+    }, 3000)
   }
 
   /**
