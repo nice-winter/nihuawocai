@@ -71,6 +71,10 @@ const b = () => {
   show('76561198413318292', '你好啊啊{:30:}')
   show('28332824', Date.now().toString())
 }
+
+useEventBus('chat:event:say', ({ chatmsg, sender }) => {
+  show(sender.id, chatmsg)
+})
 </script>
 
 <style scoped>
