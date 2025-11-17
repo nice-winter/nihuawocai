@@ -275,6 +275,7 @@ useEventBus('current:room:event:player_join', ({ player }) => {
 })
 
 useEventBus('current:room:event:player_leave', ({ player }) => {
+  if (player.id === loggedInPlayer.value?.id) return // 如果是自己，则不显要显示事件，因为自己离开之后会闪一下
   RoomEventsRef.value?.addMessage({
     type: 'action',
     sender: player,
