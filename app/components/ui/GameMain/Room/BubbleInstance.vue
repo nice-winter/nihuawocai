@@ -1,10 +1,10 @@
 <template>
   <div
-    class="absolute z-999 p-1 bg-white rounded-xl border-black/80 border-[1.5px] text-sm bubble"
+    class="absolute z-999 min-w-16 max-w-38 px-2 py-1 bg-white rounded-xl border-black/80 border-[1.5px] text-sm text-center truncate bubble"
     :class="{ fadeOut }"
     :style="style"
   >
-    <UiTextRender :text="message" :style="'--emoji-size: 20px'" />
+    <UiTextRender class="" :text="message" :style="'--emoji-size: 20px'" />
   </div>
 </template>
 
@@ -30,7 +30,7 @@ const style = computed(() => {
 
   return {
     left: `${relativeLeft + r.width / 2}px`,
-    top: `${relativeTop - 10}px`,
+    top: `${relativeTop - -5}px`,
     transform: `translateX(-50%) translateY(-100%)`
   }
 })
@@ -55,9 +55,9 @@ defineExpose({ forceShow, startFadeOut, cancelFade })
   white-space: nowrap;
   pointer-events: none;
   opacity: 1;
-  transition: opacity 0.3s;
 }
 .bubble.fadeOut {
+  transition: opacity 0.3s;
   opacity: 0;
 }
 </style>
