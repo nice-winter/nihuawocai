@@ -1,7 +1,13 @@
 <template>
   <ul class="h-6 flex gap-3 items-center">
     <UTooltip :delay-duration="0" text="消息" :disable-closing-trigger="true">
-      <li class="size-6 sprites-icon nav-icon hi"></li>
+      <li class="relative size-6 sprites-icon nav-icon hi">
+        <span
+          v-if="hi > 0"
+          class="absolute -right-1 -bottom-0.5 min-w-4 px-0.5 text-[10px] text-white text-center bg-[#00a2ff] rounded-xs"
+          >{{ hiCountText }}</span
+        >
+      </li>
     </UTooltip>
 
     <UTooltip :delay-duration="0" text="背包" :disable-closing-trigger="true">
@@ -35,7 +41,10 @@
 </template>
 
 <script setup lang="ts">
+const hi = ref(0)
 const sound = ref(true)
+
+const hiCountText = computed(() => (hi.value > 99 ? '99+' : hi.value.toString()))
 
 const screenshot = () => {
   setTimeout(() => eventBus.emit('ui:screenshot'), 114) // 延迟等 Tooltip 消失再触发
