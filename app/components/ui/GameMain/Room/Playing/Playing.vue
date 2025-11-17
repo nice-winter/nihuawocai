@@ -28,26 +28,28 @@
     <UiGameMainRoomPlayingSketchpad class="h-[70%]" />
 
     <div class="grow basis-0 flex flex-row px-[.785rem] pb-1.5 select-none">
-      <UiGameMainRoomBubble v-for="(player, index) in _players" :id="player.id" :key="player.id">
-        <div class="flex flex-col items-center justify-center gap-1 w-[91.7px]">
-          <span
-            class="w-full h-7 text-[13px] text-center leading-[13px] flex items-end justify-center"
-            >{{ player.nickname }}</span
-          >
-          <UiAvatar
-            :player="player"
-            class="size-18 rounded-lg overflow-hidden"
-            :class="{
-              bingo: bingoPlayers[index],
-              drawing: player.id === drawingPlayer?.id
-            }"
-            :verified-icon="{ show: true, size: 12, bottom: 2, right: 2 }"
-          />
-          <span class="text-[13px] text-[#774A1A]">
-            {{ playerScore[index] }}
-          </span>
-        </div>
-      </UiGameMainRoomBubble>
+      <template v-for="(player, index) in _players" :key="player.id">
+        <UiGameMainRoomBubble :id="player.id">
+          <div class="flex flex-col items-center justify-center gap-1 w-[91.7px]">
+            <span
+              class="w-full h-7 text-[13px] text-center leading-[13px] flex items-end justify-center"
+              >{{ player.nickname }}</span
+            >
+            <UiAvatar
+              :player="player"
+              class="size-18 rounded-lg overflow-hidden"
+              :class="{
+                bingo: bingoPlayers[index],
+                drawing: player.id === drawingPlayer?.id
+              }"
+              :verified-icon="{ show: true, size: 12, bottom: 2, right: 2 }"
+            />
+            <span class="text-[13px] text-[#774A1A]">
+              {{ playerScore[index] }}
+            </span>
+          </div>
+        </UiGameMainRoomBubble>
+      </template>
     </div>
   </div>
 </template>
