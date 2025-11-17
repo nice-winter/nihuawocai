@@ -116,11 +116,16 @@
         </div>
       </template>
     </UModal>
+
+    <UTooltip :open="isScrolling" text="">
+      <div class="absolute -z-999 -top-999 -left-999 size-px" />
+    </UTooltip>
   </div>
 </template>
 
 <script setup lang="ts">
 import { snapdom } from '@zumer/snapdom'
+import { useScroll } from '@vueuse/core'
 
 definePageMeta({
   layout: 'game'
@@ -132,6 +137,7 @@ const userSession = useUserSession()
 const { open } = useWsStore()
 const gameStore = useGameStore()
 const { loggedInPlayer } = storeToRefs(usePlayerStore())
+const { isScrolling } = useScroll(window)
 
 const GameAppRef = useTemplateRef('GameApp')
 
