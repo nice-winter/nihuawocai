@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-col h-full">
+  <div class="relative flex flex-col h-full">
     <div class="flex flex-row h-16 items-center justify-between px-1">
       <div class="flex flex-col items-center justify-center w-20">
         <UiAvatar
