@@ -10,12 +10,15 @@ export const usePlayerStore = defineStore('playerStore', () => {
 
   const isInRoom = computed(
     () =>
-      loggedInPlayer.value?.state.type === 'in_room' &&
-      loggedInPlayer.value?.state.roomNumber !== null
+      loggedInPlayer.value !== null &&
+      loggedInPlayer.value.state.type === 'in_room' &&
+      loggedInPlayer.value.state.roomNumber !== null
   )
   const isInLobby = computed(
     () =>
-      loggedInPlayer.value?.state.type === 'lobby' && loggedInPlayer.value?.state.roomNumber == null
+      loggedInPlayer.value !== null &&
+      loggedInPlayer.value.state.type === 'lobby' &&
+      loggedInPlayer.value.state.roomNumber == null
   )
   const currentRoomNumber = computed(() => loggedInPlayer.value?.state.roomNumber)
   const isOnlooker = computed(() => loggedInPlayer.value?.state.onlooker)
