@@ -115,7 +115,9 @@
 import type { Room } from '#shared/interfaces/room'
 
 const { roomInfo } = defineProps<{ roomInfo: Room }>()
-const { loggedInPlayer } = storeToRefs(usePlayerStore())
+const playerStore = usePlayerStore()
+const { isSelf } = playerStore
+const { loggedInPlayer } = storeToRefs(playerStore)
 const roomStore = useRoomStore()
 const { switchSeat, changeRoomPassword, broadcast, start } = roomStore
 const { isCurrentRoomOwner, broadcastRecord } = storeToRefs(roomStore)
@@ -275,7 +277,7 @@ useEventBus('current:room:event:player_join', ({ player }) => {
 })
 
 useEventBus('current:room:event:player_leave', ({ player }) => {
-  if (player.id === loggedInPlayer.value?.id) return // 如果是自己，则不显要显示事件，因为自己离开之后会闪一下
+  if (isSelf(player.id)) return // 如果是自己，则不显要显示事件，因为自己离开之后会闪一下
   RoomEventsRef.value?.addMessage({
     type: 'action',
     sender: player,

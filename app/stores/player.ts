@@ -4,10 +4,23 @@ import consola from 'consola'
 
 export const usePlayerStore = defineStore('playerStore', () => {
   const { wsEventBus, send } = useWsStore()
-  // const { pullRoomList } = useRoomStore()
 
   const loggedInPlayer = ref<LoggedInPlayer | null>(null)
   const lobbyPlayers = reactive<Map<string, Player>>(new Map())
+
+  const isInRoom = computed(
+    () =>
+      loggedInPlayer.value?.state.type === 'in_room' &&
+      loggedInPlayer.value?.state.roomNumber !== null
+  )
+  const isInLobby = computed(
+    () =>
+      loggedInPlayer.value?.state.type === 'lobby' && loggedInPlayer.value?.state.roomNumber == null
+  )
+  const currentRoomNumber = computed(() => loggedInPlayer.value?.state.roomNumber)
+  const isOnlooker = computed(() => loggedInPlayer.value?.state.onlooker)
+
+  const isSelf = (id: string) => id === loggedInPlayer.value?.id
 
   const clear = () => {
     loggedInPlayer.value = null
@@ -17,15 +30,12 @@ export const usePlayerStore = defineStore('playerStore', () => {
     if (msg.type === 'player:event:logged_in') {
       const { player_info } = msg as WebsocketMessage<{ player_info: LoggedInPlayer }>
       loggedInPlayer.value = player_info
-      // 登录后拉取房间列表
-      // await pullRoomList()
     }
 
     if (msg.type === 'player:event:state_update') {
-      const { id, state, roomNumber } = msg as WebsocketMessage<PlayerState>
+      const { id, state } = msg as WebsocketMessage<PlayerState>
       if (loggedInPlayer.value && id === loggedInPlayer.value.id) {
         loggedInPlayer.value.state = state
-        loggedInPlayer.value.roomNumber = roomNumber
       }
     }
 
@@ -65,8 +75,15 @@ export const usePlayerStore = defineStore('playerStore', () => {
 
   return {
     loggedInPlayer,
-    clear,
     lobbyPlayers,
+
+    isInRoom,
+    isInLobby,
+    currentRoomNumber,
+    isOnlooker,
+
+    isSelf,
+    clear,
     getLobbyPlayers,
     getPlayerProfile
   }

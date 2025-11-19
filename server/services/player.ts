@@ -77,7 +77,7 @@ const checkDuplicateLogin = (id: string) => {
  * @param id
  */
 const checkPlayerIsInRoom = (id: string) => {
-  return getPlayer(id)?.state === 'in_room' && typeof getPlayer(id)?.roomNumber !== 'undefined'
+  return getPlayer(id)?.state.type === 'in_room' && getPlayer(id)?.state.roomNumber !== null
 }
 
 /**
@@ -85,7 +85,7 @@ const checkPlayerIsInRoom = (id: string) => {
  * @param id
  */
 const checkPlayerIsInLobby = (id: string) => {
-  return getPlayer(id)?.state === 'lobby'
+  return getPlayer(id)?.state.type === 'lobby'
 }
 
 /**
@@ -104,7 +104,11 @@ const getLobbyPlayers = () => {
 const addPlayer = (user: UserData & { peer: WsPeer }) => {
   const player: ServerPlayer = {
     ...user,
-    state: 'lobby'
+    state: {
+      type: 'lobby',
+      roomNumber: null,
+      onlooker: false
+    }
   }
   players.set(user.id, player)
 
@@ -133,12 +137,13 @@ const addPlayer = (user: UserData & { peer: WsPeer }) => {
  * @param id 用户 ID
  * @param roomNumber 所在房间号，未提供则为在大厅
  */
-const updatePlayerState = (id: string, roomNumber?: number) => {
+const updatePlayerState = (id: string, roomNumber?: number, onlooker?: boolean) => {
   const player = players.get(id)
   if (player) {
     if (typeof roomNumber === 'undefined' || roomNumber < 0) {
-      player.state = 'lobby'
-      delete player.roomNumber
+      player.state.type = 'lobby'
+      player.state.roomNumber = null
+      player.state.onlooker = false
       // 广播：添加此玩家到大厅列表
       sendToAllPlayer({
         type: 'player:event:lobby_players_add',
@@ -149,8 +154,9 @@ const updatePlayerState = (id: string, roomNumber?: number) => {
         }
       })
     } else {
-      player.state = 'in_room'
-      player.roomNumber = roomNumber
+      player.state.type = 'in_room'
+      player.state.roomNumber = roomNumber
+      player.state.onlooker = onlooker ?? false
       // 广播：从大厅玩家列表移除此玩家
       sendToAllPlayer({
         type: 'player:event:lobby_players_remove',
@@ -225,11 +231,7 @@ const sendToRoom = <T>(msg: WebsocketMessage<T>, roomNumber: number) => {
   }
 
   players.forEach((p) => {
-    if (
-      p.state === 'in_room' &&
-      typeof p.roomNumber !== 'undefined' &&
-      p.roomNumber === roomNumber
-    ) {
+    if (p.state.type === 'in_room' && p.state.roomNumber === roomNumber) {
       safeSend(p.peer, encoded)
     }
   })
@@ -242,7 +244,7 @@ const sendToLobby = <T>(msg: WebsocketMessage<T>) => {
   }
 
   players.forEach((p) => {
-    if (p.state === 'lobby') {
+    if (p.state.type === 'lobby') {
       safeSend(p.peer, encoded)
     }
   })

@@ -95,7 +95,7 @@ export const useRoomStore = defineStore('roomStore', () => {
     }
 
     // 同步更新当前房间
-    if (roomNumber === playerStore.loggedInPlayer?.roomNumber && currentRoom.value) {
+    if (roomNumber === playerStore.currentRoomNumber && currentRoom.value) {
       updater(currentRoom.value.onlookers)
 
       if (action === 'join') {
@@ -113,7 +113,7 @@ export const useRoomStore = defineStore('roomStore', () => {
   watch(
     () => playerStore.loggedInPlayer?.state,
     (newState) => {
-      if (newState !== 'in_room') clearCurrentRoom()
+      if (newState?.type !== 'in_room') clearCurrentRoom()
     }
   )
 
@@ -210,7 +210,7 @@ export const useRoomStore = defineStore('roomStore', () => {
   const handleRoomInfo = (msg: WebsocketMessage) => {
     const { room } = msg as WebsocketMessage<{ room: Room }>
     // 如果更新的是玩家当前所在房间，更新当前房间状态
-    if (room.roomNumber === playerStore.loggedInPlayer?.roomNumber) {
+    if (room.roomNumber === playerStore.currentRoomNumber) {
       currentRoom.value = room
     }
   }
@@ -224,7 +224,7 @@ export const useRoomStore = defineStore('roomStore', () => {
     }
 
     // 如果房主变更的是当前房间，同步更新
-    if (from === playerStore.loggedInPlayer?.roomNumber && currentRoom.value) {
+    if (from === playerStore.currentRoomNumber && currentRoom.value) {
       currentRoom.value.owner = id
     }
   }
@@ -238,7 +238,7 @@ export const useRoomStore = defineStore('roomStore', () => {
     }
 
     // 如果房主变更的是当前房间，同步更新
-    if (from === playerStore.loggedInPlayer?.roomNumber && currentRoom.value) {
+    if (from === playerStore.currentRoomNumber && currentRoom.value) {
       currentRoom.value.playing = playing
     }
   }

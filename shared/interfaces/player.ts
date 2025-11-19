@@ -4,8 +4,11 @@ type Player = UserData
 
 interface PlayerState {
   id: string
-  state: 'offline' | 'lobby' | 'in_room'
-  roomNumber?: number
+  state: {
+    type: 'offline' | 'lobby' | 'in_room'
+    roomNumber: number | null
+    onlooker: boolean
+  }
 }
 
 type LoggedInPlayer = Player & PlayerState
