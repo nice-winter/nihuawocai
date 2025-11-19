@@ -98,8 +98,8 @@ const getLobbyPlayers = () => {
   return Array.from(players.values(), (p) => {
     return {
       ...p,
-      state: undefined, // @TODO 这里不要把 server runtime 的东西传出去，暂时偷懒这么写。。
-      peer: undefined // @TODO 这里不要把 server runtime 的东西传出去，暂时偷懒这么写。。
+      state: undefined, // @TODO: 这里不要把 server runtime 的东西传出去，暂时偷懒这么写。。
+      peer: undefined // @TODO: 这里不要把 server runtime 的东西传出去，暂时偷懒这么写。。
     }
   }).filter((p) => checkPlayerIsInLobby(p.id))
 }
@@ -127,7 +127,7 @@ const addPlayer = (user: UserData & { peer: WsPeer }) => {
       type: 'player:event:logged_in',
       player_info: {
         ...player,
-        peer: undefined // @TODO 这里不要把 server runtime 的东西传出去，暂时偷懒这么写。。
+        peer: undefined // @TODO: 这里不要把 server runtime 的东西传出去，暂时偷懒这么写。。
       }
     },
     user.id
@@ -152,8 +152,8 @@ const updatePlayerState = (id: string, roomNumber?: number, onlooker?: boolean) 
         type: 'player:event:lobby_players_add',
         player: {
           ...player,
-          state: undefined, // @TODO 这里不要把 server runtime 的东西传出去，暂时偷懒这么写。。
-          peer: undefined // @TODO 这里不要把 server runtime 的东西传出去，暂时偷懒这么写。。
+          state: undefined, // @TODO: 这里不要把 server runtime 的东西传出去，暂时偷懒这么写。。
+          peer: undefined // @TODO: 这里不要把 server runtime 的东西传出去，暂时偷懒这么写。。
         }
       })
     } else {
@@ -165,8 +165,8 @@ const updatePlayerState = (id: string, roomNumber?: number, onlooker?: boolean) 
         type: 'player:event:lobby_players_remove',
         player: {
           ...player,
-          state: undefined, // @TODO 这里不要把 server runtime 的东西传出去，暂时偷懒这么写。。
-          peer: undefined // @TODO 这里不要把 server runtime 的东西传出去，暂时偷懒这么写。。
+          state: undefined, // @TODO: 这里不要把 server runtime 的东西传出去，暂时偷懒这么写。。
+          peer: undefined // @TODO: 这里不要把 server runtime 的东西传出去，暂时偷懒这么写。。
         }
       })
     }
@@ -190,8 +190,8 @@ const updatePlayerState = (id: string, roomNumber?: number, onlooker?: boolean) 
 const removePlayer = (id: string) => {
   const player = getPlayer(id)
   if (player) {
-    // @TODO 这里玩家的连接已经 close，为了安全起见，应该不要在后续处理过程中还存在这个东西，防止错误访问
-    // @TODO 但是这里暂时先用 Omit<ServerPlayer, 'peer'> 把 ServerPlayer 类型的 peer 属性移除（并未在真实对象中移除掉）
+    // @TODO: 这里玩家的连接已经 close，为了安全起见，应该不要在后续处理过程中还存在这个东西，防止错误访问
+    // @TODO: 但是这里暂时先用 Omit<ServerPlayer, 'peer'> 把 ServerPlayer 类型的 peer 属性移除（并未在真实对象中移除掉）
     // delete player.peer
     playerEventBus.emit('player:beforeDisconnect', {
       player
