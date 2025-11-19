@@ -36,7 +36,7 @@ const broadcastRecord = new Map<number, { expAt: number }>()
 
 // ---------------------- Player Events ----------------------
 // playerEventBus.on('player:connect', ({ player }) => {
-//   // @TODO 暂时没用上
+//   // @TODO: 暂时没用上
 // })
 
 // 玩家离线时，从他所在的房间中移除他
@@ -115,7 +115,7 @@ const createRoom = async (
   // 把房主加入房间
   await joinRoom(roomNumber, owner, roomOptions.password)
 
-  // @TODO 房间信息，需要过滤不需要的字段
+  // @TODO: 房间信息，需要过滤不需要的字段
   const roomInfo = {
     ...getRoom(roomNumber),
     options: {
@@ -281,7 +281,7 @@ const sit = async (roomNumber: number, id: string, seat: number) => {
     if (!room.playing && room.players[seat] === null && room.seats[seat] === true) {
       room.players[seat] = user
       updateRoom(roomNumber, room)
-      // @TODO 广播旁观者坐下事件
+      // @TODO: 广播旁观者坐下事件
       sendToAllPlayer({
         type: 'room:event:onlooker_sit',
         from: roomNumber,
@@ -414,6 +414,7 @@ const broadcast = async (id: string) => {
   }
 
   // 广播
+  // @TODO: 这里可以只发送给大厅与房间内（排除游戏中的房间）
   sendToAllPlayer({ type: 'room:event:broadcast', ...msg })
 
   return msg
