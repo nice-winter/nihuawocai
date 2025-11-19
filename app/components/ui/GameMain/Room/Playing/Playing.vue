@@ -17,7 +17,7 @@
       </div>
 
       <div class="w-12">
-        <UiButton size="sm" @click="b">送花</UiButton>
+        <UiButton size="sm" @click="b">结束</UiButton>
       </div>
 
       <div class="flex flex-col items-center justify-center w-20">
@@ -25,7 +25,7 @@
       </div>
     </div>
 
-    <div ref="sketchpadContainerRef" class="relative h-[70%]">
+    <div id="sketchpad-container" ref="sketchpadContainerRef" class="relative h-[70%]">
       <UiGameMainRoomPlayingSketchpad />
       <UiThrower ref="throwerRef" :container="sketchpadContainerRef" />
     </div>
@@ -59,13 +59,18 @@
 
 <script setup lang="ts">
 import type { RoomInfo } from '#shared/interfaces/room'
+import ThrowerModal from '~/components/ui/ThrowerModal.vue'
+import RankModal from '~/components/ui/RankModal.vue'
+import { mockdata } from '#shared/utils/mockdata'
 
 const { roomInfo } = defineProps<{ roomInfo: RoomInfo }>()
 
-const { show, destroy, destroyAll } = useBubble('#game-panel')
-
 const sketchpadContainerRef = useTemplateRef('sketchpadContainerRef')
 const throwerRef = useTemplateRef('throwerRef')
+
+const { show, destroy, destroyAll } = useBubble('#game-panel')
+const { open } = useModal(ThrowerModal, { answer: '爆浆蟑螂' }, { parent: '#sketchpad-container' })
+const rankModal = useModal(RankModal, { ranks: mockdata.ranks }, { parent: '#sketchpad-container' })
 
 const _players = computed(() => roomInfo.players.filter((p) => p !== null))
 
@@ -73,8 +78,13 @@ const bingoPlayers = [false, true, true, true, false, false, true]
 const playerScore = [4, 8, 4, 4, 10, 0, 4]
 const drawingPlayer = _players.value[4]
 
-const b = () => {
-  throwerRef.value?.throwFlower(1, -400, -60)
+const b = async () => {
+  // throwerRef.value?.throwFlower(1, -400, -60)
+  // await open()
+
+  // const ranks = mockdata.ranks
+
+  await rankModal.open()
 }
 
 useEventBus('chat:event:say', ({ chatmsg, sender }) => {
