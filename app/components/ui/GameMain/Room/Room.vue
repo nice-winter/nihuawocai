@@ -24,7 +24,10 @@
         <UiGameMainRoomPlayingToolbar class="size-full" />
       </div>
 
-      <UiGameMainChatPanel class="grow max-w-[227.89px]" />
+      <UiGameMainChatPanel
+        class="grow max-w-[227.89px]"
+        :style="{ '--action-text-color': '#7f7f7f', '--system-text-color': '#7f7f7f' }"
+      />
     </div>
   </div>
 </template>

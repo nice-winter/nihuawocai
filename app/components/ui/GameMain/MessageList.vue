@@ -68,7 +68,7 @@
             </li>
 
             <li v-else-if="item.type === 'action'">
-              <span class="text-[13px] text-[#7f7f7f]">
+              <span class="text-[13px] text-(--action-text-color)">
                 <span class="text-pink-400">{{ item.sender.nickname }}</span>
                 {{ item.msg }}
               </span>
@@ -79,8 +79,8 @@
                 class="select-none"
                 :label="item.msg"
                 :ui="{
-                  border: `border-[#7f7f7f]`,
-                  label: `text-[13px] text-[#7f7f7f]`
+                  border: `border-(--system-text-color)`,
+                  label: `text-[13px] text-(--system-text-color)`
                 }"
               />
             </li>
