@@ -43,7 +43,7 @@ export const useModal = <T>(
     container = document.createElement('div')
     parentEl.appendChild(container)
 
-    vnode = h(component, props)
+    vnode = h(component, { ...props, parent: options.parent })
     vnode.appContext = appContext
 
     render(vnode, container)
