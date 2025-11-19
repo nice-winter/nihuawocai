@@ -14,7 +14,9 @@ const roomList: RoomInfo[] = [
         verification: {
           verified: true,
           verified_description: '游戏达人'
-        }
+        },
+        user_type: 'github',
+        email: ''
       },
       {
         id: '550e8400-e29b-41d4-a716-446655440001',
@@ -25,7 +27,9 @@ const roomList: RoomInfo[] = [
         verification: {
           verified: false,
           verified_description: ''
-        }
+        },
+        user_type: 'github',
+        email: ''
       },
       null,
       null,
@@ -40,7 +44,9 @@ const roomList: RoomInfo[] = [
         verification: {
           verified: true,
           verified_description: '日本知名影视演员'
-        }
+        },
+        user_type: 'github',
+        email: ''
       }
     ],
     onlookers: [
@@ -53,7 +59,9 @@ const roomList: RoomInfo[] = [
         verification: {
           verified: false,
           verified_description: ''
-        }
+        },
+        user_type: 'github',
+        email: ''
       }
     ],
     playing: true,
@@ -74,7 +82,9 @@ const roomList: RoomInfo[] = [
         verification: {
           verified: false,
           verified_description: ''
-        }
+        },
+        user_type: 'github',
+        email: ''
       },
       null,
       {
@@ -86,7 +96,9 @@ const roomList: RoomInfo[] = [
         verification: {
           verified: false,
           verified_description: ''
-        }
+        },
+        user_type: 'github',
+        email: ''
       },
       null,
       null,
@@ -102,7 +114,9 @@ const roomList: RoomInfo[] = [
         verification: {
           verified: false,
           verified_description: ''
-        }
+        },
+        user_type: 'github',
+        email: ''
       },
       {
         id: '550e8400-e29b-41d4-a716-446655440007',
@@ -113,7 +127,9 @@ const roomList: RoomInfo[] = [
         verification: {
           verified: false,
           verified_description: ''
-        }
+        },
+        user_type: 'github',
+        email: ''
       },
       {
         id: '550e8400-e29b-41d4-a716-446655440008',
@@ -124,7 +140,9 @@ const roomList: RoomInfo[] = [
         verification: {
           verified: false,
           verified_description: ''
-        }
+        },
+        user_type: 'github',
+        email: ''
       }
     ],
     playing: false,
@@ -144,7 +162,9 @@ const roomList: RoomInfo[] = [
         verification: {
           verified: true,
           verified_description: '游戏达人'
-        }
+        },
+        user_type: 'github',
+        email: ''
       },
       {
         id: '550e8400-e29b-41d4-a716-446655440010',
@@ -155,7 +175,9 @@ const roomList: RoomInfo[] = [
         verification: {
           verified: false,
           verified_description: ''
-        }
+        },
+        user_type: 'github',
+        email: ''
       },
       {
         id: '550e8400-e29b-41d4-a716-446655440011',
@@ -166,7 +188,9 @@ const roomList: RoomInfo[] = [
         verification: {
           verified: false,
           verified_description: ''
-        }
+        },
+        user_type: 'github',
+        email: ''
       },
       {
         id: '550e8400-e29b-41d4-a716-446655440012',
@@ -177,7 +201,9 @@ const roomList: RoomInfo[] = [
         verification: {
           verified: false,
           verified_description: ''
-        }
+        },
+        user_type: 'github',
+        email: ''
       },
       null,
       null,
@@ -201,7 +227,9 @@ const roomList: RoomInfo[] = [
         verification: {
           verified: false,
           verified_description: ''
-        }
+        },
+        user_type: 'github',
+        email: ''
       },
       {
         id: '550e8400-e29b-41d4-a716-446655440014',
@@ -212,7 +240,9 @@ const roomList: RoomInfo[] = [
         verification: {
           verified: false,
           verified_description: ''
-        }
+        },
+        user_type: 'github',
+        email: ''
       },
       null,
       {
@@ -224,7 +254,9 @@ const roomList: RoomInfo[] = [
         verification: {
           verified: false,
           verified_description: ''
-        }
+        },
+        user_type: 'github',
+        email: ''
       },
       {
         id: '550e8400-e29b-41d4-a716-446655440016',
@@ -235,7 +267,9 @@ const roomList: RoomInfo[] = [
         verification: {
           verified: false,
           verified_description: ''
-        }
+        },
+        user_type: 'github',
+        email: ''
       },
       {
         id: '550e8400-e29b-41d4-a716-446655440017',
@@ -246,7 +280,9 @@ const roomList: RoomInfo[] = [
         verification: {
           verified: false,
           verified_description: ''
-        }
+        },
+        user_type: 'github',
+        email: ''
       },
       null
     ],
@@ -260,7 +296,9 @@ const roomList: RoomInfo[] = [
         verification: {
           verified: false,
           verified_description: ''
-        }
+        },
+        user_type: 'github',
+        email: ''
       }
     ],
     playing: true,
@@ -280,7 +318,9 @@ const roomList: RoomInfo[] = [
         verification: {
           verified: false,
           verified_description: ''
-        }
+        },
+        user_type: 'github',
+        email: ''
       },
       {
         id: '550e8400-e29b-41d4-a716-446655440020',
@@ -291,7 +331,9 @@ const roomList: RoomInfo[] = [
         verification: {
           verified: false,
           verified_description: ''
-        }
+        },
+        user_type: 'github',
+        email: ''
       },
       {
         id: '550e8400-e29b-41d4-a716-446655440021',
@@ -302,7 +344,9 @@ const roomList: RoomInfo[] = [
         verification: {
           verified: false,
           verified_description: ''
-        }
+        },
+        user_type: 'github',
+        email: ''
       },
       {
         id: '550e8400-e29b-41d4-a716-446655440022',
@@ -313,7 +357,9 @@ const roomList: RoomInfo[] = [
         verification: {
           verified: false,
           verified_description: ''
-        }
+        },
+        user_type: 'github',
+        email: ''
       },
       {
         id: '550e8400-e29b-41d4-a716-446655440023',
@@ -324,7 +370,9 @@ const roomList: RoomInfo[] = [
         verification: {
           verified: false,
           verified_description: ''
-        }
+        },
+        user_type: 'github',
+        email: ''
       },
       {
         id: '550e8400-e29b-41d4-a716-446655440024',
@@ -335,7 +383,9 @@ const roomList: RoomInfo[] = [
         verification: {
           verified: false,
           verified_description: ''
-        }
+        },
+        user_type: 'github',
+        email: ''
       },
       {
         id: '550e8400-e29b-41d4-a716-446655440025',
@@ -346,7 +396,9 @@ const roomList: RoomInfo[] = [
         verification: {
           verified: false,
           verified_description: ''
-        }
+        },
+        user_type: 'github',
+        email: ''
       }
     ],
     onlookers: [
@@ -359,7 +411,9 @@ const roomList: RoomInfo[] = [
         verification: {
           verified: false,
           verified_description: ''
-        }
+        },
+        user_type: 'github',
+        email: ''
       },
       {
         id: '550e8400-e29b-41d4-a716-446655440027',
@@ -370,7 +424,9 @@ const roomList: RoomInfo[] = [
         verification: {
           verified: false,
           verified_description: ''
-        }
+        },
+        user_type: 'github',
+        email: ''
       }
     ],
     playing: false,
@@ -392,7 +448,9 @@ const roomList: RoomInfo[] = [
         verification: {
           verified: false,
           verified_description: ''
-        }
+        },
+        user_type: 'github',
+        email: ''
       },
       null,
       null,
@@ -409,7 +467,9 @@ const roomList: RoomInfo[] = [
         verification: {
           verified: false,
           verified_description: ''
-        }
+        },
+        user_type: 'github',
+        email: ''
       },
       {
         id: '550e8400-e29b-41d4-a716-446655440030',
@@ -420,7 +480,9 @@ const roomList: RoomInfo[] = [
         verification: {
           verified: true,
           verified_description: '资深游戏评论员'
-        }
+        },
+        user_type: 'github',
+        email: ''
       },
       {
         id: '550e8400-e29b-41d4-a716-446655440031',
@@ -431,7 +493,9 @@ const roomList: RoomInfo[] = [
         verification: {
           verified: false,
           verified_description: ''
-        }
+        },
+        user_type: 'github',
+        email: ''
       }
     ],
     playing: false,
@@ -451,7 +515,9 @@ const players: Player[] = [
     verification: {
       verified: true,
       verified_description: '国风插画师'
-    }
+    },
+    user_type: 'github',
+    email: ''
   },
   {
     id: '6ba7b811-9dad-11d1-80b4-00c04fd430c2',
@@ -462,7 +528,9 @@ const players: Player[] = [
     verification: {
       verified: false,
       verified_description: ''
-    }
+    },
+    user_type: 'github',
+    email: ''
   },
   {
     id: '6ba7b812-9dad-11d1-80b4-00c04fd430c3',
@@ -473,7 +541,9 @@ const players: Player[] = [
     verification: {
       verified: false,
       verified_description: ''
-    }
+    },
+    user_type: 'github',
+    email: ''
   },
   {
     id: '6ba7b813-9dad-11d1-80b4-00c04fd430c4',
@@ -484,7 +554,9 @@ const players: Player[] = [
     verification: {
       verified: false,
       verified_description: ''
-    }
+    },
+    user_type: 'github',
+    email: ''
   },
   {
     id: '6ba7b814-9dad-11d1-80b4-00c04fd430c5',
@@ -495,7 +567,9 @@ const players: Player[] = [
     verification: {
       verified: false,
       verified_description: ''
-    }
+    },
+    user_type: 'github',
+    email: ''
   },
   {
     id: '6ba7b815-9dad-11d1-80b4-00c04fd430c6',
@@ -506,7 +580,9 @@ const players: Player[] = [
     verification: {
       verified: false,
       verified_description: ''
-    }
+    },
+    user_type: 'github',
+    email: ''
   },
   {
     id: '6ba7b816-9dad-11d1-80b4-00c04fd430c7',
@@ -517,7 +593,9 @@ const players: Player[] = [
     verification: {
       verified: false,
       verified_description: ''
-    }
+    },
+    user_type: 'github',
+    email: ''
   },
   {
     id: '6ba7b817-9dad-11d1-80b4-00c04fd430c8',
@@ -528,7 +606,9 @@ const players: Player[] = [
     verification: {
       verified: false,
       verified_description: ''
-    }
+    },
+    user_type: 'github',
+    email: ''
   },
   {
     id: '6ba7b818-9dad-11d1-80b4-00c04fd430c9',
@@ -539,7 +619,9 @@ const players: Player[] = [
     verification: {
       verified: true,
       verified_description: '诗画双绝'
-    }
+    },
+    user_type: 'github',
+    email: ''
   },
   {
     id: '6ba7b819-9dad-11d1-80b4-00c04fd430ca',
@@ -550,7 +632,9 @@ const players: Player[] = [
     verification: {
       verified: false,
       verified_description: ''
-    }
+    },
+    user_type: 'github',
+    email: ''
   },
   {
     id: '6ba7b81a-9dad-11d1-80b4-00c04fd430cb',
@@ -561,7 +645,9 @@ const players: Player[] = [
     verification: {
       verified: true,
       verified_description: '抽象艺术先锋'
-    }
+    },
+    user_type: 'github',
+    email: ''
   },
   {
     id: '6ba7b81b-9dad-11d1-80b4-00c04fd430cc',
@@ -572,7 +658,9 @@ const players: Player[] = [
     verification: {
       verified: false,
       verified_description: ''
-    }
+    },
+    user_type: 'github',
+    email: ''
   },
   {
     id: '6ba7b81c-9dad-11d1-80b4-00c04fd430cd',
@@ -583,7 +671,9 @@ const players: Player[] = [
     verification: {
       verified: true,
       verified_description: '光影效果专家'
-    }
+    },
+    user_type: 'github',
+    email: ''
   },
   {
     id: '6ba7b81d-9dad-11d1-80b4-00c04fd430ce',
@@ -594,7 +684,9 @@ const players: Player[] = [
     verification: {
       verified: false,
       verified_description: ''
-    }
+    },
+    user_type: 'github',
+    email: ''
   },
   {
     id: '6ba7b81e-9dad-11d1-80b4-00c04fd430cf',
@@ -605,7 +697,9 @@ const players: Player[] = [
     verification: {
       verified: true,
       verified_description: '音乐主题画家'
-    }
+    },
+    user_type: 'github',
+    email: ''
   },
   {
     id: '6ba7b81f-9dad-11d1-80b4-00c04fd430d0',
@@ -616,7 +710,9 @@ const players: Player[] = [
     verification: {
       verified: false,
       verified_description: ''
-    }
+    },
+    user_type: 'github',
+    email: ''
   },
   {
     id: '6ba7b820-9dad-11d1-80b4-00c04fd430d1',
@@ -627,7 +723,9 @@ const players: Player[] = [
     verification: {
       verified: true,
       verified_description: '社交艺术达人'
-    }
+    },
+    user_type: 'github',
+    email: ''
   },
   {
     id: '6ba7b821-9dad-11d1-80b4-00c04fd430d2',
@@ -638,7 +736,9 @@ const players: Player[] = [
     verification: {
       verified: false,
       verified_description: ''
-    }
+    },
+    user_type: 'github',
+    email: ''
   },
   {
     id: '6ba7b822-9dad-11d1-80b4-00c04fd430d3',
@@ -649,7 +749,9 @@ const players: Player[] = [
     verification: {
       verified: true,
       verified_description: '独立游戏开发者'
-    }
+    },
+    user_type: 'github',
+    email: ''
   },
   {
     id: '6ba7b823-9dad-11d1-80b4-00c04fd430d4',
@@ -660,7 +762,9 @@ const players: Player[] = [
     verification: {
       verified: false,
       verified_description: ''
-    }
+    },
+    user_type: 'github',
+    email: ''
   },
   {
     id: '6ba7b824-9dad-11d1-80b4-00c04fd430d5',
@@ -671,7 +775,9 @@ const players: Player[] = [
     verification: {
       verified: true,
       verified_description: '环保主题艺术家'
-    }
+    },
+    user_type: 'github',
+    email: ''
   },
   {
     id: '6ba7b825-9dad-11d1-80b4-00c04fd430d6',
@@ -682,7 +788,9 @@ const players: Player[] = [
     verification: {
       verified: false,
       verified_description: ''
-    }
+    },
+    user_type: 'github',
+    email: ''
   },
   {
     id: '6ba7b826-9dad-11d1-80b4-00c04fd430d7',
@@ -693,7 +801,9 @@ const players: Player[] = [
     verification: {
       verified: true,
       verified_description: '雪景画专家'
-    }
+    },
+    user_type: 'github',
+    email: ''
   },
   {
     id: '6ba7b827-9dad-11d1-80b4-00c04fd430d8',
@@ -704,7 +814,9 @@ const players: Player[] = [
     verification: {
       verified: false,
       verified_description: ''
-    }
+    },
+    user_type: 'github',
+    email: ''
   },
   {
     id: '6ba7b828-9dad-11d1-80b4-00c04fd430d9',
@@ -715,7 +827,9 @@ const players: Player[] = [
     verification: {
       verified: true,
       verified_description: '江南水乡画家'
-    }
+    },
+    user_type: 'github',
+    email: ''
   }
 ]
 
@@ -749,9 +863,146 @@ const _players = players.map((p) => {
   }
 })
 
+const ranks = [
+  {
+    score: 32,
+    flower: 28,
+    egg: 15,
+    slipper: 8,
+    player: {
+      id: '6ba7b822-9dad-11d1-80b4-00c04fd430d3',
+      avatar_url: 'https://api.bducds.com/api/pic/?pic=girl',
+      nickname: '永结无情游',
+      gender: 0,
+      exinfo: { count: 3987, score: 299025, flowers: 149600 },
+      verification: {
+        verified: true,
+        verified_description: '独立游戏开发者'
+      },
+      user_type: 'github',
+      email: ''
+    }
+  },
+  {
+    score: 18,
+    flower: 22,
+    egg: 9,
+    slipper: 12,
+    player: {
+      id: '6ba7b823-9dad-11d1-80b4-00c04fd430d4',
+      avatar_url: 'https://api.bducds.com/api/pic/?pic=girl',
+      nickname: '相期邈云汉',
+      gender: 1,
+      exinfo: { count: 2567, score: 192525, flowers: 96200 },
+      verification: {
+        verified: false,
+        verified_description: ''
+      },
+      user_type: 'github',
+      email: ''
+    }
+  },
+  {
+    score: 27,
+    flower: 19,
+    egg: 14,
+    slipper: 6,
+    player: {
+      id: '6ba7b824-9dad-11d1-80b4-00c04fd430d5',
+      avatar_url: 'https://api.bducds.com/api/pic/?pic=girl',
+      nickname: '青山绿水间',
+      gender: 0,
+      exinfo: { count: 3210, score: 240750, flowers: 120400 },
+      verification: {
+        verified: true,
+        verified_description: '环保主题艺术家'
+      },
+      user_type: 'github',
+      email: ''
+    }
+  },
+  {
+    score: 12,
+    flower: 8,
+    egg: 21,
+    slipper: 17,
+    player: {
+      id: '6ba7b825-9dad-11d1-80b4-00c04fd430d6',
+      avatar_url: 'https://api.bducds.com/api/pic/?pic=girl',
+      nickname: '白鹭上青天',
+      gender: 1,
+      exinfo: { count: 2345, score: 175875, flowers: 87900 },
+      verification: {
+        verified: false,
+        verified_description: ''
+      },
+      user_type: 'github',
+      email: ''
+    }
+  },
+  {
+    score: 38,
+    flower: 35,
+    egg: 7,
+    slipper: 4,
+    player: {
+      id: '6ba7b826-9dad-11d1-80b4-00c04fd430d7',
+      avatar_url: 'https://api.bducds.com/api/pic/?pic=girl',
+      nickname: '窗含西岭雪',
+      gender: 0,
+      exinfo: { count: 2876, score: 215700, flowers: 107900 },
+      verification: {
+        verified: true,
+        verified_description: '雪景画专家'
+      },
+      user_type: 'github',
+      email: ''
+    }
+  },
+  {
+    score: 5,
+    flower: 11,
+    egg: 18,
+    slipper: 23,
+    player: {
+      id: '6ba7b827-9dad-11d1-80b4-00c04fd430d8',
+      avatar_url: 'https://api.bducds.com/api/pic/?pic=girl',
+      nickname: '门泊东吴船',
+      gender: 1,
+      exinfo: { count: 3543, score: 265725, flowers: 132900 },
+      verification: {
+        verified: false,
+        verified_description: ''
+      },
+      user_type: 'github',
+      email: ''
+    }
+  },
+  {
+    score: 25,
+    flower: 30,
+    egg: 12,
+    slipper: 9,
+    player: {
+      id: '6ba7b828-9dad-11d1-80b4-00c04fd430d9',
+      avatar_url: 'https://api.bducds.com/api/pic/?pic=girl',
+      nickname: '春风又绿江南岸',
+      gender: 2,
+      exinfo: { count: 2987, score: 224025, flowers: 112100 },
+      verification: {
+        verified: true,
+        verified_description: '江南水乡画家'
+      },
+      user_type: 'github',
+      email: ''
+    }
+  }
+]
+
 const mockdata = {
   roomList: _roomList,
-  players: _players
+  players: _players,
+  ranks
 }
 
 export { mockdata }
