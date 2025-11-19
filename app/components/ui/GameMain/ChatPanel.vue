@@ -69,6 +69,7 @@ import { defaultEmojis } from '#shared/defaultEmojis'
 // import { mockdata } from '#shared/utils/mockdata'
 
 // const testPlayer = ref(mockdata.players[0]!)
+const { isSelf } = usePlayerStore()
 const { loggedInPlayer } = storeToRefs(usePlayerStore())
 const { currentRoom } = storeToRefs(useRoomStore())
 const { say } = useChatStore()
@@ -164,7 +165,7 @@ useEventBus('room:event:broadcast', ({ from, roomNumber, password, sender, times
 
 useEventBus('current:room:event:player_leave', ({ player }) => {
   if (!currentRoom.value?.playing) return // 非游戏状态下不显示
-  if (player.id === loggedInPlayer.value?.id) return // 如果是自己，则不显要显示事件，因为自己离开之后会闪一下
+  if (isSelf(player.id)) return // 如果是自己，则不显要显示事件，因为自己离开之后会闪一下
   ChatPanelMessageListRef.value?.addMessage({
     type: 'action',
     sender: player,

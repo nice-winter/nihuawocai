@@ -64,8 +64,8 @@
 
       <template #main>
         <UiGameMain v-if="userSession.loggedIn.value && userSession.user.value">
-          <UiGameMainLobby v-if="loggedInPlayer?.state === 'lobby'" />
-          <UiGameMainRoom v-else-if="loggedInPlayer?.state === 'in_room'" />
+          <UiGameMainLobby v-if="isInLobby" />
+          <UiGameMainRoom v-else-if="isInRoom" />
         </UiGameMain>
       </template>
 
@@ -136,7 +136,8 @@ const { appConfig } = storeToRefs(appConfigStore)
 const userSession = useUserSession()
 const { open } = useWsStore()
 const gameStore = useGameStore()
-const { loggedInPlayer } = storeToRefs(usePlayerStore())
+const { loggedInPlayer, isInLobby, isInRoom, currentRoomNumber, isOnlooker } =
+  storeToRefs(usePlayerStore())
 const { isScrolling } = useScroll(window)
 
 const GameAppRef = useTemplateRef('GameApp')
@@ -147,9 +148,9 @@ useHead({
 
 const stateText = computed(() => {
   if (userSession.loggedIn.value) {
-    if (loggedInPlayer.value?.state === 'in_room') {
-      return `房间${loggedInPlayer.value.roomNumber}`
-    } else if (loggedInPlayer.value?.state === 'lobby') {
+    if (isInRoom.value) {
+      return `房间${currentRoomNumber.value}`
+    } else if (isInLobby.value) {
       return '大厅'
     }
   }

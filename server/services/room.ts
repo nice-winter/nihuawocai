@@ -41,8 +41,8 @@ const broadcastRecord = new Map<number, { expAt: number }>()
 
 // 玩家离线时，从他所在的房间中移除他
 playerEventBus.on('player:disconnect', ({ player }) => {
-  if (player.state === 'in_room' && typeof player.roomNumber !== 'undefined') {
-    removeRoomPlayer(player.roomNumber, player.id)
+  if (checkPlayerIsInRoom(player.id)) {
+    removeRoomPlayer(player.state.roomNumber!, player.id)
   }
 })
 
@@ -85,7 +85,7 @@ const createRoom = async (
   const appConfig = await getAppConfig()
   const user = await getUserData(owner)
 
-  if (getPlayer(owner)?.state === 'in_room') throw new Error('当前已在房间内')
+  if (checkPlayerIsInRoom(owner)) throw new Error('当前已在房间内')
 
   const defaultRoomOptions: RoomOptions = {
     password: '',
@@ -184,7 +184,7 @@ const updateRoom = (roomNumber: number, room: Room) => {
 }
 
 const joinRoom = async (roomNumber: number, id: string, password?: string) => {
-  if (getPlayer(id)?.state === 'in_room') throw new Error('当前已在房间内')
+  if (checkPlayerIsInRoom(id)) throw new Error('当前已在房间内')
 
   const room = rooms.get(roomNumber)
   const user = await getUserData(id)
@@ -273,7 +273,7 @@ const joinRoom = async (roomNumber: number, id: string, password?: string) => {
  * @param seat
  */
 const sit = async (roomNumber: number, id: string, seat: number) => {
-  if (getPlayer(id)?.state !== 'in_room') throw new Error('当前不在房间内')
+  if (!checkPlayerIsInRoom(id)) throw new Error('当前不在房间内')
 
   const user = await getUserData(id)
   const room = rooms.get(roomNumber)
@@ -380,7 +380,7 @@ const broadcast = async (id: string) => {
   if (!player) throw new Error('用户不存在')
   if (!checkPlayerIsInRoom(id)) throw new Error('你必须在房间中才能发送房间广播')
 
-  const roomNumber = player.roomNumber!
+  const roomNumber = player.state.roomNumber!
   const room = getRoom(roomNumber)
   if (!room) throw new Error('房间不存在')
 
@@ -431,7 +431,7 @@ const invite = async (id: string, toId: string) => {
 
   if (!checkPlayerIsInRoom(id)) throw new Error('你必须在房间中才能邀请其他玩家')
 
-  const roomNumber = player.roomNumber!
+  const roomNumber = player.state.roomNumber!
   const room = getRoom(roomNumber)
   if (!room) throw new Error('房间不存在')
 
@@ -485,7 +485,7 @@ const invite = async (id: string, toId: string) => {
 const start = (id: string, roomNumber?: number) => {
   const player = getPlayer(id)
   if (player) {
-    const rn = player.roomNumber ?? roomNumber
+    const rn = player.state.roomNumber ?? roomNumber
     if (typeof rn !== 'undefined' && checkPlayerIsInRoom(player.id)) {
       const room = getRoom(rn)!
       if (!room.playing) {
@@ -510,9 +510,9 @@ const start = (id: string, roomNumber?: number) => {
  * @param roomNumber 房间号，默认为提供的用户的状态中保存的房间号
  */
 const leaveRoom = (id: string, roomNumber?: number) => {
-  if (getPlayer(id)?.state !== 'in_room') throw new Error('当前不在房间内')
+  if (!checkPlayerIsInRoom(id)) throw new Error('当前不在房间内')
 
-  const rn = roomNumber || getPlayer(id)?.roomNumber || 0
+  const rn = roomNumber || getPlayer(id)?.state.roomNumber || 0
   const room = rooms.get(rn)
   if (room) {
     removeRoomPlayer(rn, id)
