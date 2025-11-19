@@ -11,22 +11,37 @@
     <p>Status: {{ status }}</p>
     <p>Data: {{ data }}</p>
     <div>
-      <Text :text="text" :emojis="emojis" style="--emoji-size: 20px" />
+      <Text :text="text" style="--emoji-size: 20px" />
+    </div>
+
+    <div id="test" ref="testRef" class="relative w-3xl h-156 border border-black">
+      <UiThrower ref="throwerRef" :container="testRef" />
+    </div>
+
+    <div class="flex gap-4">
+      <UButton @click="() => flower()">送花</UButton>
+      <UButton @click="() => flower(100)">送花100朵</UButton>
+      <UButton @click="() => flower(1000)">送花1000朵</UButton>
+      <UButton @click="() => flower(114514)">送花114514朵</UButton>
     </div>
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import Text from '~/components/ui/TextRender.vue'
-import { faces } from '#shared/defaultFaces'
+
+const testRef = ref<HTMLElement | null>(null)
+const throwerRef = useTemplateRef('throwerRef')
+
+const flower = (count?: number) => {
+  throwerRef.value?.throwFlower(count)
+}
 
 const text = `wkmsadkw<a href="111">222</a>啊啊啊{:30:}啊啊啊啊啊啊啊啊啊啊{:💩:}{:19:}？`
 
 const wsStore = useWsStore()
 const { send, open } = wsStore
 const { status, data } = storeToRefs(wsStore)
-
-const emojis = faces
 
 const roomNumber = ref('')
 
