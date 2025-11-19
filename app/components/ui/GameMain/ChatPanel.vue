@@ -69,6 +69,8 @@ import { defaultEmojis } from '#shared/defaultEmojis'
 // import { mockdata } from '#shared/utils/mockdata'
 
 // const testPlayer = ref(mockdata.players[0]!)
+const { loggedInPlayer } = storeToRefs(usePlayerStore())
+const { currentRoom } = storeToRefs(useRoomStore())
 const { say } = useChatStore()
 
 const ChatPanelMessageListRef = useTemplateRef('ChatPanelMessageList')
@@ -148,11 +150,43 @@ useEventBus('chat:event:say', ({ chatmsg, sender, timestamp }) => {
 })
 
 useEventBus('room:event:broadcast', ({ from, roomNumber, password, sender, timestamp }) => {
+  // 非游戏状态下，才显示广播信息
+  // 当然这里在服务端不要推送就好了，前端也顺手过滤下呗
+  if (!currentRoom.value?.playing) {
+    ChatPanelMessageListRef.value?.addMessage({
+      type: 'broadcast',
+      sender,
+      roomNumber,
+      password
+    })
+  }
+})
+
+useEventBus('current:room:event:player_leave', ({ player }) => {
+  if (!currentRoom.value?.playing) return // 非游戏状态下不显示
+  if (player.id === loggedInPlayer.value?.id) return // 如果是自己，则不显要显示事件，因为自己离开之后会闪一下
   ChatPanelMessageListRef.value?.addMessage({
-    type: 'broadcast',
-    sender,
-    roomNumber,
-    password
+    type: 'action',
+    sender: player,
+    msg: `离开了房间`
+  })
+})
+
+useEventBus('current:room:event:onlooker_join', ({ player }) => {
+  if (!currentRoom.value?.playing) return // 非游戏状态下不显示
+  ChatPanelMessageListRef.value?.addMessage({
+    type: 'action',
+    sender: player,
+    msg: `爬到了树上观看`
+  })
+})
+
+useEventBus('current:room:event:onlooker_leave', ({ player }) => {
+  if (!currentRoom.value?.playing) return // 非游戏状态下不显示
+  ChatPanelMessageListRef.value?.addMessage({
+    type: 'action',
+    sender: player,
+    msg: `从树上离开了`
   })
 })
 </script>

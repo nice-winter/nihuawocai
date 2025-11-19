@@ -117,7 +117,7 @@ import type { Room } from '#shared/interfaces/room'
 const { roomInfo } = defineProps<{ roomInfo: Room }>()
 const { loggedInPlayer } = storeToRefs(usePlayerStore())
 const roomStore = useRoomStore()
-const { switchSeat, changeRoomPassword, broadcast } = roomStore
+const { switchSeat, changeRoomPassword, broadcast, start } = roomStore
 const { isCurrentRoomOwner, broadcastRecord } = storeToRefs(roomStore)
 
 const passwordUInputRef = useTemplateRef('passwordUInputRef')
@@ -306,8 +306,6 @@ useEventBus('current:room:event:onlooker_sit', ({ player }) => {
     msg: `从树上下来了`
   })
 })
-
-const start = () => {}
 </script>
 
 <style scoped></style>

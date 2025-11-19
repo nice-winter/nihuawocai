@@ -148,7 +148,7 @@ export const useRoomStore = defineStore('roomStore', () => {
         handleRoomOwnerChange(msg)
         break
       case 'room:event:stage_update':
-        // 暂不处理
+        handleRoomStageUpdate(msg)
         break
 
       // 房间设置、状态相关事件
@@ -226,6 +226,20 @@ export const useRoomStore = defineStore('roomStore', () => {
     // 如果房主变更的是当前房间，同步更新
     if (from === playerStore.loggedInPlayer?.roomNumber && currentRoom.value) {
       currentRoom.value.owner = id
+    }
+  }
+
+  const handleRoomStageUpdate = (msg: WebsocketMessage) => {
+    const { from, playing } = msg as WebsocketMessage<{ from: number; playing: boolean }>
+    const room = rooms.get(from)
+    if (room) {
+      room.playing = playing
+      rooms.set(from, room)
+    }
+
+    // 如果房主变更的是当前房间，同步更新
+    if (from === playerStore.loggedInPlayer?.roomNumber && currentRoom.value) {
+      currentRoom.value.playing = playing
     }
   }
 
@@ -488,6 +502,15 @@ export const useRoomStore = defineStore('roomStore', () => {
   }
 
   /**
+   * 开始游戏
+   */
+  const start = () => {
+    send({
+      type: 'room:game_start'
+    })
+  }
+
+  /**
    * 创建新房间
    */
   const createRoom = (opens: number, options: { password: string; maxOnlookers: number }) => {
@@ -535,6 +558,7 @@ export const useRoomStore = defineStore('roomStore', () => {
     changeRoomPassword,
     broadcast,
     invite,
+    start,
     prevPage,
     nextPage,
     createRoom,

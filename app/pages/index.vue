@@ -65,10 +65,7 @@
       <template #main>
         <UiGameMain v-if="userSession.loggedIn.value && userSession.user.value">
           <UiGameMainLobby v-if="loggedInPlayer?.state === 'lobby'" />
-          <UiGameMainRoom
-            v-else-if="loggedInPlayer?.state === 'in_room'"
-            :stage="gameStore.roomStage"
-          />
+          <UiGameMainRoom v-else-if="loggedInPlayer?.state === 'in_room'" />
         </UiGameMain>
       </template>
 

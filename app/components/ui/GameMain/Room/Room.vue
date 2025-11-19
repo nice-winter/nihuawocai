@@ -1,8 +1,8 @@
 <template>
   <div v-if="currentRoom" class="flex flex-row h-full">
     <div class="flex flex-col w-[74.4%]">
-      <UiGameMainRoomWaiting v-if="stage === 0" :room-info="currentRoom" />
-      <UiGameMainRoomPlaying v-else-if="stage === 1" :room-info="currentRoom" />
+      <UiGameMainRoomWaiting v-if="!currentRoom.playing" :room-info="currentRoom" />
+      <UiGameMainRoomPlaying v-else-if="currentRoom.playing" :room-info="currentRoom" />
     </div>
 
     <div class="grow flex flex-col bg-[#f1d0ae42] border-l-2 border-white/60">
@@ -17,9 +17,9 @@
         </UiLinkButton>
       </div>
 
-      <UiGameMainRoomWaitingInvitePanel v-if="stage === 0" />
+      <UiGameMainRoomWaitingInvitePanel v-if="!currentRoom.playing" />
 
-      <div v-if="stage === 1" class="h-[166.6px] w-full border-y border-y-white/50">
+      <div v-if="currentRoom.playing" class="h-[166.6px] w-full border-y border-y-white/50">
         <!-- <img src="~/assets/banner.webp" class="w-full" /> -->
         <UiGameMainRoomPlayingToolbar class="size-full" />
       </div>
@@ -32,11 +32,11 @@
 <script setup lang="ts">
 import { mockdata } from '#shared/utils/mockdata'
 
-interface RoomProps {
-  stage?: number
-}
+// interface RoomProps {
+//   stage?: number
+// }
 
-const { stage = 0 } = defineProps<RoomProps>()
+// const { stage = 0 } = defineProps<RoomProps>()
 
 const roomStore = useRoomStore()
 const { leave, sit } = roomStore
