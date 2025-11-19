@@ -17,7 +17,7 @@
       </div>
 
       <div class="w-12">
-        <UiButton size="sm" @click="b">气泡</UiButton>
+        <UiButton size="sm" @click="b">送花</UiButton>
       </div>
 
       <div class="flex flex-col items-center justify-center w-20">
@@ -25,7 +25,10 @@
       </div>
     </div>
 
-    <UiGameMainRoomPlayingSketchpad class="h-[70%]" />
+    <div ref="sketchpadContainerRef" class="relative h-[70%]">
+      <UiGameMainRoomPlayingSketchpad />
+      <UiThrower ref="throwerRef" :container="sketchpadContainerRef" />
+    </div>
 
     <div class="grow basis-0 flex flex-row px-[.785rem] pb-1.5 select-none">
       <template v-for="(player, index) in _players" :key="player.id">
@@ -61,6 +64,9 @@ const { roomInfo } = defineProps<{ roomInfo: RoomInfo }>()
 
 const { show, destroy, destroyAll } = useBubble('#game-panel')
 
+const sketchpadContainerRef = useTemplateRef('sketchpadContainerRef')
+const throwerRef = useTemplateRef('throwerRef')
+
 const _players = computed(() => roomInfo.players.filter((p) => p !== null))
 
 const bingoPlayers = [false, true, true, true, false, false, true]
@@ -68,8 +74,7 @@ const playerScore = [4, 8, 4, 4, 10, 0, 4]
 const drawingPlayer = _players.value[4]
 
 const b = () => {
-  show('76561198413318292', '你好啊啊{:30:}')
-  show('28332824', Date.now().toString())
+  throwerRef.value?.throwFlower(1, -400, -60)
 }
 
 useEventBus('chat:event:say', ({ chatmsg, sender }) => {

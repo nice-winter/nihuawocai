@@ -1,6 +1,6 @@
 <
 <template>
-  <div ref="Sketchpad" class="relative bg-white" style="">
+  <div ref="Sketchpad" class="relative size-full bg-white" style="">
     <div
       class="absolute z-2 size-full pointer-events-none"
       style="box-shadow: rgb(0 0 0 / 40%) 0px 0px 3px 1px inset"
