@@ -478,6 +478,33 @@ const invite = async (id: string, toId: string) => {
 }
 
 /**
+ * 开始游戏
+ * @param id
+ * @param roomNumber
+ */
+const start = (id: string, roomNumber?: number) => {
+  const player = getPlayer(id)
+  if (player) {
+    const rn = player.roomNumber ?? roomNumber
+    if (typeof rn !== 'undefined' && checkPlayerIsInRoom(player.id)) {
+      const room = getRoom(rn)!
+      if (!room.playing) {
+        room.playing = true
+        updateRoom(rn, room)
+
+        const msg = {
+          type: 'room:event:stage_update',
+          from: rn,
+          playing: true
+        }
+
+        sendToAllPlayer(msg)
+      }
+    }
+  }
+}
+
+/**
  * 离开房间（玩家和旁观玩家通用），主动调用
  * @param id 用户 ID
  * @param roomNumber 房间号，默认为提供的用户的状态中保存的房间号
@@ -605,6 +632,7 @@ export {
   changePassword,
   broadcast,
   invite,
+  start,
   leaveRoom,
   removeRoomPlayer
 }

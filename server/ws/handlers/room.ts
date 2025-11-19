@@ -6,6 +6,7 @@ import {
   createRoom,
   getRoomList,
   invite,
+  start,
   joinRoom,
   leaveRoom,
   seatSwitch,
@@ -73,5 +74,8 @@ export default defineWsHandlers({
     }>
 
     return await invite(user.id, toId)
+  },
+  'room:game_start': async ({ msg, user }) => {
+    return await start(user.id)
   }
 })
