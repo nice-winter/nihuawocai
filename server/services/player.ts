@@ -126,7 +126,7 @@ const addPlayer = (user: UserData & { peer: WsPeer }) => {
     {
       type: 'player:event:logged_in',
       player_info: {
-        ...user,
+        ...player,
         peer: undefined // @TODO 这里不要把 server runtime 的东西传出去，暂时偷懒这么写。。
       }
     },
