@@ -16,7 +16,10 @@ type PlayerEventBus = {
     player: ServerPlayer
     reply: <T>(msg: WebsocketMessage<T>) => void
   }
-  'player:disconnect': {
+  'player:beforeDisconnect': {
+    player: Omit<ServerPlayer, 'peer'>
+  }
+  'player:disconnected': {
     player: Omit<ServerPlayer, 'peer'>
   }
 }
@@ -187,13 +190,17 @@ const updatePlayerState = (id: string, roomNumber?: number, onlooker?: boolean) 
 const removePlayer = (id: string) => {
   const player = getPlayer(id)
   if (player) {
-    players.delete(id)
-
     // @TODO 这里玩家的连接已经 close，为了安全起见，应该不要在后续处理过程中还存在这个东西，防止错误访问
     // @TODO 但是这里暂时先用 Omit<ServerPlayer, 'peer'> 把 ServerPlayer 类型的 peer 属性移除（并未在真实对象中移除掉）
     // delete player.peer
+    playerEventBus.emit('player:beforeDisconnect', {
+      player
+    })
 
-    playerEventBus.emit('player:disconnect', {
+    players.delete(id)
+
+    // 这里需要一前一后两个钩子，因为有些时候需要用到旧状态
+    playerEventBus.emit('player:disconnected', {
       player
     })
 

@@ -40,7 +40,7 @@ const broadcastRecord = new Map<number, { expAt: number }>()
 // })
 
 // 玩家离线时，从他所在的房间中移除他
-playerEventBus.on('player:disconnect', ({ player }) => {
+playerEventBus.on('player:beforeDisconnect', ({ player }) => {
   if (checkPlayerIsInRoom(player.id)) {
     removeRoomPlayer(player.state.roomNumber!, player.id)
   }
