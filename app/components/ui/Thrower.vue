@@ -19,12 +19,12 @@ interface Item {
 const items = ref<Item[]>([])
 let autoId = 0
 
-const throwFlower = (count = 1, startHeight = 100) => {
+const throwFlower = (count = 1, startHeight = 100, endHeight = 400) => {
   const el = container
   if (!el) return
 
   const width = el.clientWidth
-  const endY = el.clientHeight - 64
+  // const endY = el.clientHeight - 64
 
   for (let i = 0; i < count; i++) {
     const randomX = Math.random() * (width - 128)
@@ -32,7 +32,7 @@ const throwFlower = (count = 1, startHeight = 100) => {
     items.value.push({
       id: autoId++,
       x: randomX,
-      keyframes: createFlowerAnimation(randomX, startHeight, endY),
+      keyframes: createFlowerAnimation(randomX, startHeight, endHeight),
       svg: flowerSvg
     })
   }
@@ -55,8 +55,8 @@ defineExpose({
     :svg="item.svg"
     :keyframes="item.keyframes"
     :duration="1000"
-    :width="96"
-    :height="96"
+    :width="90"
+    :height="90"
     @done="remove"
   />
 </template>
