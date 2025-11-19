@@ -1,8 +1,14 @@
 import { consola } from 'consola'
 import { colors } from 'consola/utils'
 import { getAppConfig } from '~~/server/services/app-config'
+import {
+  checkPlayerIsInLobby,
+  checkPlayerIsInRoom,
+  getPlayer,
+  sendToLobby,
+  sendToRoom
+} from './player'
 import type { UserData } from '#shared/interfaces/userData'
-import { getPlayer, sendToLobby, sendToRoom } from './player'
 
 const logger = consola.withTag('Chat Service')
 
@@ -23,10 +29,9 @@ const say = async (user: UserData, chatmsg: string) => {
   const config = await getAppConfig()
 
   // 根据玩家所在状态，选取不同冷却时间
-  const intervalSec =
-    player.state === 'in_room'
-      ? config.game.room.time.chatIntervalTimeSecond
-      : config.game.lobby.time.chatIntervalTimeSecond
+  const intervalSec = checkPlayerIsInRoom(player.id)
+    ? config.game.room.time.chatIntervalTimeSecond
+    : config.game.lobby.time.chatIntervalTimeSecond
 
   const intervalMs = intervalSec * 1000
 
@@ -40,14 +45,14 @@ const say = async (user: UserData, chatmsg: string) => {
   chatIntervalRecord.set(user.id, now + intervalMs)
 
   // 按状态广播消息
-  if (player.state === 'lobby') {
+  if (checkPlayerIsInLobby(player.id)) {
     sendToLobby({
       type: 'chat:event:say',
       sender: user,
       chatmsg,
       timestamp: now
     })
-  } else if (player.state === 'in_room' && typeof player.roomNumber !== 'undefined') {
+  } else if (checkPlayerIsInRoom(player.id)) {
     sendToRoom(
       {
         type: 'chat:event:say',
@@ -55,7 +60,7 @@ const say = async (user: UserData, chatmsg: string) => {
         chatmsg,
         timestamp: now
       },
-      player.roomNumber
+      player.state.roomNumber!
     )
   }
 
