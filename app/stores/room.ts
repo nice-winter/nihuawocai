@@ -462,6 +462,17 @@ export const useRoomStore = defineStore('roomStore', () => {
   }
 
   /**
+   * 房间内从旁观席坐到座位上
+   * @param seat 座位索引
+   */
+  const sit = (seat: number) => {
+    send({
+      type: 'room:sit',
+      seat
+    })
+  }
+
+  /**
    * 设置房间密码
    */
   const changeRoomPassword = (roomNumber: number, password?: string) => {
@@ -535,11 +546,6 @@ export const useRoomStore = defineStore('roomStore', () => {
     send({
       type: 'room:quick_match'
     })
-  }
-
-  // 未实现的功能
-  const sit = (seat: number) => {
-    // TODO: 实现坐下逻辑
   }
 
   return {
