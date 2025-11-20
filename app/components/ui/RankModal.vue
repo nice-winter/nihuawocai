@@ -45,7 +45,7 @@
                   </span>
 
                   <span class="w-14 flex items-center gap-1">
-                    <UIcon name="custom:icon-slipper" class="size-4 shrink-0" />
+                    <UIcon name="custom:icon-egg" class="size-4 shrink-0" />
                     <span>({{ p.egg }})</span>
                   </span>
 

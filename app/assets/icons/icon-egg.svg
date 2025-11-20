@@ -1,0 +1,16 @@
+<?xml version="1.0" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 20010904//EN"
+ "http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd">
+<svg width="76" height="103" viewBox="0 0 76 103" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M1.33701 53.7043C4.04217 29.3598 13.843 1 37.962 1C62.0811 1 71.714 28.8055 74.5869 53.7043C77.2668 76.9299 63.8677 101.942 37.962 101.049C12.0564 100.156 -1.34309 77.8232 1.33701 53.7043Z" fill="url(#paint0_radial_181_19)" stroke="#97713C" stroke-width="2"/>
+<path d="M45.7822 28.8383C44.3421 24.6672 45.0659 19.1541 49.3554 18.1187C53.6716 17.0769 56.5649 21.7965 57.395 26.1584C58.0759 29.7363 58.0075 33.534 54.7151 35.0913C50.8657 36.9121 47.1719 32.8634 45.7822 28.8383Z" fill="#FFFFE8"/>
+<ellipse cx="56.7209" cy="48.3445" rx="6.25305" ry="7.14635" fill="#FFFFDC"/>
+<defs>
+<radialGradient id="paint0_radial_181_19" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(37.9619 51.036) rotate(90) scale(50.036 36.9621)">
+<stop stop-color="#FFF6C4"/>
+<stop offset="0.5" stop-color="#FFF6C5"/>
+<stop offset="0.75" stop-color="#FFF7C7"/>
+<stop offset="1" stop-color="#FFDB91"/>
+</radialGradient>
+</defs>
+</svg>
