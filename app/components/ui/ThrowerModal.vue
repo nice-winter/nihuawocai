@@ -22,9 +22,9 @@
             <div v-if="showThrowItem && !isThrowed" class="flex items-center justify-between px-20">
               <div
                 class="size-9 flex items-center justify-center rounded-full bg-white cursor-pointer shadow-hard"
-                @click="() => throwItemClick('slipper')"
+                @click="() => throwItemClick('egg')"
               >
-                <UIcon name="custom:icon-slipper" class="size-7" />
+                <UIcon name="custom:icon-egg" class="size-6" />
               </div>
 
               <div

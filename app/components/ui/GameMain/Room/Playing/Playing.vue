@@ -69,7 +69,11 @@ const sketchpadContainerRef = useTemplateRef('sketchpadContainerRef')
 const throwerRef = useTemplateRef('throwerRef')
 
 const { show, destroy, destroyAll } = useBubble('#game-panel')
-const { open } = useModal(ThrowerModal, { answer: '爆浆蟑螂' }, { parent: '#sketchpad-container' })
+const throwerModal = useModal(
+  ThrowerModal,
+  { answer: '爆浆蟑螂' },
+  { parent: '#sketchpad-container' }
+)
 const rankModal = useModal(RankModal, { ranks: mockdata.ranks }, { parent: '#sketchpad-container' })
 
 const _players = computed(() => roomInfo.players.filter((p) => p !== null))
@@ -80,11 +84,8 @@ const drawingPlayer = _players.value[4]
 
 const b = async () => {
   // throwerRef.value?.throwFlower(1, -400, -60)
-  // await open()
-
-  // const ranks = mockdata.ranks
-
-  await rankModal.open()
+  await throwerModal.open()
+  //await rankModal.open()
 }
 
 useEventBus('chat:event:say', ({ chatmsg, sender }) => {
