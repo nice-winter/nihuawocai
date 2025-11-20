@@ -142,6 +142,13 @@ const sendChatMessage = () => {
   // }
 }
 
+watch(
+  () => currentRoom.value?.playing,
+  () => {
+    ChatPanelMessageListRef.value?.clear()
+  }
+)
+
 useEventBus('chat:event:say', ({ chatmsg, sender, timestamp }) => {
   ChatPanelMessageListRef.value?.addMessage({
     type: 'chat',

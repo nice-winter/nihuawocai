@@ -33,7 +33,7 @@
 </template>
 
 <script setup lang="ts">
-import { mockdata } from '#shared/utils/mockdata'
+// import { mockdata } from '#shared/utils/mockdata'
 
 // interface RoomProps {
 //   stage?: number
@@ -42,10 +42,10 @@ import { mockdata } from '#shared/utils/mockdata'
 // const { stage = 0 } = defineProps<RoomProps>()
 
 const roomStore = useRoomStore()
-const { leave, sit } = roomStore
+const { leave } = roomStore
 const { currentRoom } = storeToRefs(roomStore)
 
-const roomInfo = reactive(mockdata.roomList[4]!)
+// const roomInfo = reactive(mockdata.roomList[4]!)
 </script>
 
 <style scoped></style>
