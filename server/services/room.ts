@@ -283,7 +283,8 @@ const sit = async (id: string, seat: number) => {
   const room = rooms.get(roomNumber)
   if (room) {
     if (room.playing) throw new Error('游戏中无法坐下')
-    if (room.players[seat] === null && room.seats[seat] === true) {
+    if (room.players[seat] === null) {
+      if (!room.seats[seat]) throw new Error('房主关掉了这个坑位')
       // 从旁观者列表移除
       room.onlookers.splice(
         room.onlookers.findIndex((p) => p.id === id),
@@ -302,7 +303,7 @@ const sit = async (id: string, seat: number) => {
         player: user
       })
     } else {
-      throw new Error('该位置已经有人了...')
+      throw new Error('这个坑位有人了')
     }
   } else {
     throw new Error('房间不存在')
