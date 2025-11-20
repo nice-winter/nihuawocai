@@ -95,10 +95,11 @@
         :open="roomInfo?.seats![i - 1]"
         class="size-[114px]"
         :player="roomInfo?.players![i - 1] || undefined"
-        mode="seat"
+        :mode="seatMode"
         :verified-icon="{ show: true, size: 16 }"
-        :disabled="!isCurrentRoomOwner"
+        :disabled="!isCurrentRoomOwner && !isOnlooker"
         @switch="onSeatSwitch"
+        @sit="onSeatSit"
       />
 
       <p class="w-full text-sm text-center text-light truncate">
@@ -121,9 +122,9 @@ import type { Room } from '#shared/interfaces/room'
 const { roomInfo } = defineProps<{ roomInfo: Room }>()
 const playerStore = usePlayerStore()
 const { isSelf } = playerStore
-const { loggedInPlayer } = storeToRefs(playerStore)
+const { loggedInPlayer, isOnlooker } = storeToRefs(playerStore)
 const roomStore = useRoomStore()
-const { switchSeat, changeRoomPassword, broadcast, start } = roomStore
+const { sit, switchSeat, changeRoomPassword, broadcast, start } = roomStore
 const { isCurrentRoomOwner, broadcastRecord } = storeToRefs(roomStore)
 
 const passwordUInputRef = useTemplateRef('passwordUInputRef')
@@ -131,6 +132,12 @@ const RoomEventsRef = useTemplateRef('RoomEvents')
 
 // 是否可开始
 const canStart = computed(() => roomInfo.players.filter((p) => p).length > 1)
+const seatMode = computed(() => {
+  if (isCurrentRoomOwner.value && !isOnlooker.value) return 'switchable-seat'
+  if (!isCurrentRoomOwner.value && isOnlooker.value) return 'seat'
+  if (!isCurrentRoomOwner.value && !isOnlooker.value) return 'switchable-seat'
+  return 'display'
+})
 
 // 本地状态：由 prop 同步（房主可以修改）
 const lockedLocal = ref(roomInfo.locked)
@@ -254,8 +261,21 @@ const onCancel = () => {
   }
 }
 
+/**
+ * 切换座位开关
+ * @param open
+ * @param seat
+ */
 const onSeatSwitch = (open?: boolean, seat?: number | string) => {
   switchSeat(roomInfo.roomNumber, Number(seat) - 1, Boolean(open))
+}
+
+/**
+ * 从树上坐下
+ * @param seat
+ */
+const onSeatSit = (seat?: number | string) => {
+  sit(Number(seat) - 1)
 }
 
 useEventBus('current:room:event:password_change', ({ locked, password }) => {

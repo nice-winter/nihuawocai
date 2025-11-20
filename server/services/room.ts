@@ -202,7 +202,7 @@ const joinRoom = async (roomNumber: number, id: string, password?: string) => {
         room.onlookers.push(user) // 加入旁观者列表
         // 更新房间和玩家状态
         updateRoom(roomNumber, room)
-        updatePlayerState(user.id, roomNumber)
+        updatePlayerState(user.id, roomNumber, true)
         // 广播旁观者进房事件
         sendToAllPlayer({
           type: 'room:event:onlooker_join',
@@ -268,18 +268,31 @@ const joinRoom = async (roomNumber: number, id: string, password?: string) => {
 
 /**
  * 房间内坐下
- * @param roomNumber
- * @param user
+ * @param id
  * @param seat
  */
-const sit = async (roomNumber: number, id: string, seat: number) => {
+const sit = async (id: string, seat: number) => {
+  const player = getPlayer(id)
+
+  if (!player) throw new Error('玩家不存在')
   if (!checkPlayerIsInRoom(id)) throw new Error('当前不在房间内')
+
+  const roomNumber = player.state.roomNumber!
 
   const user = await getUserData(id)
   const room = rooms.get(roomNumber)
   if (room) {
-    if (!room.playing && room.players[seat] === null && room.seats[seat] === true) {
+    if (room.playing) throw new Error('游戏中无法坐下')
+    if (room.players[seat] === null && room.seats[seat] === true) {
+      // 从旁观者列表移除
+      room.onlookers.splice(
+        room.onlookers.findIndex((p) => p.id === id),
+        1
+      )
+      // 设置 players（座位）为此玩家
       room.players[seat] = user
+      // 更新玩家和房间状态
+      updatePlayerState(id, roomNumber, false)
       updateRoom(roomNumber, room)
       // @TODO: 广播旁观者坐下事件
       sendToAllPlayer({
@@ -291,6 +304,8 @@ const sit = async (roomNumber: number, id: string, seat: number) => {
     } else {
       throw new Error('该位置已经有人了...')
     }
+  } else {
+    throw new Error('房间不存在')
   }
 }
 
@@ -500,7 +515,31 @@ const start = (id: string, roomNumber?: number) => {
         }
 
         sendToAllPlayer(msg)
+
+        setTimeout(() => end(rn), 10000)
       }
+    }
+  }
+}
+
+/**
+ * 结束游戏
+ * @param roomNumber
+ */
+const end = (roomNumber: number) => {
+  const room = getRoom(roomNumber)
+  if (room) {
+    if (room.playing) {
+      room.playing = false
+      updateRoom(roomNumber, room)
+
+      const msg = {
+        type: 'room:event:stage_update',
+        from: roomNumber,
+        playing: false
+      }
+
+      sendToAllPlayer(msg)
     }
   }
 }

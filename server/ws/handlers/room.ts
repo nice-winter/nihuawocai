@@ -42,9 +42,9 @@ export default defineWsHandlers({
     return leaveRoom(user.id)
   },
   'room:sit': async ({ msg, user }) => {
-    const { roomNumber, seat } = msg as WebsocketMessage<{ roomNumber: number; seat: number }>
+    const { seat } = msg as WebsocketMessage<{ seat: number }>
 
-    return await sit(roomNumber, user.id, seat)
+    return await sit(user.id, seat)
   },
   'room:seat_switch': async ({ msg, user }) => {
     const { roomNumber, seat, open } = msg as WebsocketMessage<{

@@ -92,11 +92,12 @@
       </template>
     </UPopover>
 
-    <slot v-if="!player || !player.avatar_url" name="placeholder" />
-
-    <template v-if="mode === 'seat' && !player">
-      <UIcon v-if="!open" :name="`fe:disabled`" class="text-[#E20032] size-14" />
-      <span v-if="open" class="text-[.8rem]">等待玩家</span>
+    <template v-if="mode.includes('seat') && !player">
+      <span v-if="open" class="text-[.8rem]">
+        <!-- <slot name="placeholder" /> -->
+        等待玩家
+      </span>
+      <UIcon v-else :name="`fe:disabled`" class="text-[#E20032] size-14" />
     </template>
   </span>
 </template>
@@ -106,7 +107,7 @@ import type { Player } from '#shared/interfaces/player'
 
 interface AvatarProps {
   id?: number | string
-  mode?: 'display' | 'seat'
+  mode?: 'display' | 'seat' | 'switchable-seat'
   disabled?: boolean
   player?: Player
   position?: `${Side}-${Align}`
@@ -138,19 +139,29 @@ const open = defineModel<boolean>('open', { default: true })
 
 const emit = defineEmits<{
   (e: 'switch', open: boolean, seat?: number | string): void
+  (e: 'sit', seat?: number | string): void
 }>()
 
 const playerProfile = ref<Player | null>(null)
 const showProfilePopover = ref(false)
 
 const onClick = () => {
-  if (mode === 'seat' && !disabled) {
+  // 座位模式，触发 sit 事件
+  if (mode === 'seat') {
+    if (!player) {
+      emit('sit', id)
+    }
+  }
+
+  // 可切换座位模式，触发 switch 事件
+  if (mode === 'switchable-seat' && !disabled) {
     if (!player) {
       open.value = !open.value
       emit('switch', open.value, id)
     }
   }
 }
+
 const onAvatarClick = async () => {
   if (player && player.id) {
     const { id, profile } = await getPlayerProfile(player.id)
@@ -160,6 +171,7 @@ const onAvatarClick = async () => {
     }
   }
 }
+
 const onProfilePopoverClose = () => {
   playerProfile.value = null
 }
