@@ -96,8 +96,9 @@
         class="size-[114px]"
         :player="roomInfo?.players![i - 1] || undefined"
         :mode="seatMode"
+        :disabled="(!isCurrentRoomOwner && !isOnlooker) || (isOnlooker && !roomInfo?.seats![i - 1])"
         :verified-icon="{ show: true, size: 16 }"
-        :disabled="!isCurrentRoomOwner && !isOnlooker"
+        :placeholder="isOnlooker ? '点击坐下' : undefined"
         @switch="onSeatSwitch"
         @sit="onSeatSit"
       />
@@ -132,11 +133,15 @@ const RoomEventsRef = useTemplateRef('RoomEvents')
 
 // 是否可开始
 const canStart = computed(() => roomInfo.players.filter((p) => p).length > 1)
+// 座位模式
 const seatMode = computed(() => {
-  if (isCurrentRoomOwner.value && !isOnlooker.value) return 'switchable-seat'
-  if (!isCurrentRoomOwner.value && isOnlooker.value) return 'seat'
-  if (!isCurrentRoomOwner.value && !isOnlooker.value) return 'switchable-seat'
-  return 'display'
+  if (isCurrentRoomOwner.value) {
+    return 'switchable-seat' // 房主可控制座位开关
+  } else if (isOnlooker.value) {
+    return 'seat' // 旁观者可点击坐下
+  } else {
+    return 'switchable-seat' // 非房主玩家显示为可切换但会被禁用
+  }
 })
 
 // 本地状态：由 prop 同步（房主可以修改）
