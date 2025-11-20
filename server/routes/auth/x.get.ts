@@ -9,7 +9,7 @@ export default defineOAuthXEventHandler({
 
     await setUserSession(event, {
       user: {
-        user_type: 'x',
+        auth_provider: 'x',
         id: xUser.id,
         nickname: xUser.name,
         avatar_url
