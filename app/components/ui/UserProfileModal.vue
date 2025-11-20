@@ -56,7 +56,7 @@
           <div class="flex items-center">
             <span class="text-sm text-gray-400"
               >您当前的资料同步自<UIcon
-                :name="`i-simple-icons-${userData.user_type}`"
+                :name="`i-simple-icons-${userData.auth_provider}`"
                 class="size-4 align-top mx-0.5"
               />，部分可能无法更改。</span
             >

@@ -6,7 +6,7 @@ const userDataStorage = useStorage('user_data')
 
 const createUserData = async (
   id: string,
-  userType: UserData['user_type'],
+  authProvider: UserData['auth_provider'],
   avatarUrl: string,
   nickname?: string
 ) => {
@@ -16,20 +16,24 @@ const createUserData = async (
 
   const userData: UserData = {
     id,
-    user_type: userType,
+    auth_provider: authProvider,
     email: '',
     avatar_url: avatarUrl,
     nickname,
     gender: 0,
-    exinfo: {
+    stats: {
       score: 0,
-      flowers: 0,
-      count: 0
+      flower_count: 0,
+      egg_count: 0,
+      slipper_count: 0,
+      total_games: 0
     },
     verification: {
       verified: false,
-      verified_description: ''
-    }
+      description: ''
+    },
+    created_at: Date.now(),
+    last_login_at: 0
   }
 
   if (await userDataStorage.hasItem(id)) {
@@ -61,4 +65,17 @@ const updateUserData = async (id: string, userData: Partial<UserData>) => {
   return Boolean(_)
 }
 
-export { createUserData, hasUserData, getUserData, updateUserData, setUserData }
+const updateUserLastLoginAt = async (id: string) => {
+  return await updateUserData(id, {
+    last_login_at: Date.now()
+  })
+}
+
+export {
+  createUserData,
+  hasUserData,
+  getUserData,
+  updateUserData,
+  setUserData,
+  updateUserLastLoginAt
+}

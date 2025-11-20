@@ -7,7 +7,7 @@ export default defineOAuthSteamEventHandler({
 
     await setUserSession(event, {
       user: {
-        user_type: 'steam',
+        auth_provider: 'steam',
         id: steamUser.steamid,
         nickname: steamUser.personaname,
         avatar_url: steamUser.avatarfull
