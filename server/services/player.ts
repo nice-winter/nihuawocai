@@ -3,8 +3,9 @@ import { colors } from 'consola/utils'
 import mitt from 'mitt'
 import { isOpen, reply, safeSend, type WsPeer } from '~~/server/ws/utils'
 import { wsEventBus } from '~~/server/ws'
+import { getUserData, updateUserData, updateUserLastLoginAt } from './user'
 import type { WebsocketMessage } from '#shared/interfaces/ws'
-import type { UserData } from '#shared/interfaces/userData'
+import type { UserData, UserStats } from '#shared/interfaces/userData'
 import type { LoggedInPlayer } from '#shared/interfaces/player'
 
 interface ServerPlayer extends LoggedInPlayer {
@@ -38,11 +39,11 @@ const players = new Map<string, ServerPlayer>()
 const playerEventBus = mitt<PlayerEventBus>()
 
 // ------------------------ WS Events ------------------------
-wsEventBus.on('ws:connect', ({ peer, user, reply }) => {
+wsEventBus.on('ws:connect', async ({ peer, user, reply }) => {
   if (user) {
     checkDuplicateLogin(user.id)
     const player = { ...user, peer }
-    addPlayer(player)
+    await addPlayer(player)
   }
 })
 wsEventBus.on('ws:error', ({ user }) => {
@@ -104,7 +105,7 @@ const getLobbyPlayers = () => {
   }).filter((p) => checkPlayerIsInLobby(p.id))
 }
 
-const addPlayer = (user: UserData & { peer: WsPeer }) => {
+const addPlayer = async (user: UserData & { peer: WsPeer }) => {
   const player: ServerPlayer = {
     ...user,
     state: {
@@ -114,6 +115,7 @@ const addPlayer = (user: UserData & { peer: WsPeer }) => {
     }
   }
   players.set(user.id, player)
+  await updateUserLastLoginAt(user.id) // 更新玩家最后登录时间
 
   logger.debug('Added new player:', `${colors.cyan(player.nickname)}@${player.id}`)
 
@@ -208,6 +210,19 @@ const removePlayer = (id: string) => {
   }
 }
 
+/**
+ * 更新玩家统计数据
+ * @TODO 写在这里的原因是，考虑将来统计数据并不存在 UserData Service 中，而是独立出一个 UserStats Service
+ * @param id
+ * @param stats
+ */
+const updatePlayerStats = async (id: string, stats: Partial<UserStats>) => {
+  const userData = await getUserData(id)
+  const oldStats = userData.stats
+  const newStats = defuSum(stats, oldStats)
+  await updateUserData(id, { stats: newStats })
+}
+
 // ------------------------ Sender ------------------------
 const sendToPlayer = <T>(msg: WebsocketMessage<T>, id: string | string[]) => {
   const ids = Array.isArray(id) ? id : [id]
@@ -238,7 +253,7 @@ const sendToRoom = <T>(msg: WebsocketMessage<T>, roomNumber: number) => {
   }
 
   players.forEach((p) => {
-    if (p.state.type === 'in_room' && p.state.roomNumber === roomNumber) {
+    if (checkPlayerIsInRoom(p.state.type) && p.state.roomNumber === roomNumber) {
       safeSend(p.peer, encoded)
     }
   })
@@ -251,7 +266,7 @@ const sendToLobby = <T>(msg: WebsocketMessage<T>) => {
   }
 
   players.forEach((p) => {
-    if (p.state.type === 'lobby') {
+    if (checkPlayerIsInLobby(p.id)) {
       safeSend(p.peer, encoded)
     }
   })
@@ -266,6 +281,7 @@ export {
   checkPlayerIsInRoom,
   checkPlayerIsInLobby,
   updatePlayerState,
+  updatePlayerStats,
   sendToPlayer,
   sendToAllPlayer,
   sendToRoom,
