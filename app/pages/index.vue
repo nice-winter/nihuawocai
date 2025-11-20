@@ -41,6 +41,7 @@
             <span v-if="userSession.loggedIn.value">
               {{ stateText }}
             </span>
+            <span v-if="isOnlooker">旁观中</span>
           </div>
 
           <div class="flex-1 flex ml-auto relative">

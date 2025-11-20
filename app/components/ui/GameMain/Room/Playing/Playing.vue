@@ -17,7 +17,8 @@
       </div>
 
       <div class="w-12">
-        <UiButton size="sm" @click="b">结束</UiButton>
+        <span v-if="isOnlooker" class="text-[13px] text-(--game-normal)">旁观中</span>
+        <!-- <UiButton size="sm" @click="b">结束</UiButton> -->
       </div>
 
       <div class="flex flex-col items-center justify-center w-20">
@@ -68,6 +69,7 @@ const { roomInfo } = defineProps<{ roomInfo: RoomInfo }>()
 const sketchpadContainerRef = useTemplateRef('sketchpadContainerRef')
 const throwerRef = useTemplateRef('throwerRef')
 
+const { isOnlooker } = storeToRefs(usePlayerStore())
 const { show, destroy, destroyAll } = useBubble('#game-panel')
 const throwerModal = useModal(
   ThrowerModal,
