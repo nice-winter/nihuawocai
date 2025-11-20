@@ -56,7 +56,7 @@
             <template v-if="player?.verification.verified">
               <img class="size-3.5 inline-block align-middle" src="~/assets/icons/verified.png" />
               <span class="text-[#995d11] text-light truncate">{{
-                player.verification.verified_description
+                player.verification.description
               }}</span>
             </template>
           </span>
@@ -72,12 +72,12 @@
             <div class="flex flex-col gap-1">
               <div class="h-3.5 text-xs leading-3.5 inline-flex items-end gap-0.5">
                 <span class="text-[#804B19] min-w-[42px]"> 鲜ㅤ花： </span>
-                <span class="grow leading-[13px]">{{ playerProfile?.exinfo.flowers }}</span>
+                <span class="grow leading-[13px]">{{ playerProfile?.stats.flower_count }}</span>
               </div>
 
               <div class="h-3.5 text-xs leading-3.5 inline-flex items-end gap-0.5">
                 <span class="text-[#804B19] min-w-[42px]"> 盘ㅤ数： </span>
-                <span class="grow leading-[13px]">{{ playerProfile?.exinfo.count }}</span>
+                <span class="grow leading-[13px]">{{ playerProfile?.stats.total_games }}</span>
               </div>
             </div>
           </div>
@@ -179,7 +179,7 @@ const onProfilePopoverClose = () => {
 }
 
 const levelInfo = computed(() =>
-  levelHelper.getUserLevelInfo(playerProfile.value?.exinfo.score || 0)
+  levelHelper.getUserLevelInfo(playerProfile.value?.stats.score || 0)
 )
 
 watch(
