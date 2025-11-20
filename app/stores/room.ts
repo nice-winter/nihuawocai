@@ -40,6 +40,13 @@ export const useRoomStore = defineStore('roomStore', () => {
     () => playerStore.loggedInPlayer?.id === currentRoom.value?.owner
   )
 
+  /**
+   * 当前房间的真实（在座位上的）玩家
+   */
+  const currentRoomRealPlayers = computed(() =>
+    currentRoom.value?.players.filter((p) => p !== null)
+  )
+
   // 工具函数
   /**
    * 清空当前所在房间信息
@@ -548,6 +555,7 @@ export const useRoomStore = defineStore('roomStore', () => {
 
     // Computed
     currentPageRooms,
+    currentRoomRealPlayers,
 
     // Actions
     pullRoomList,
