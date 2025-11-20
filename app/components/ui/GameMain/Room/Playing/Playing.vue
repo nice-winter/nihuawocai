@@ -80,7 +80,7 @@ const _players = computed(() => roomInfo.players.filter((p) => p !== null))
 
 const bingoPlayers = [false, true, true, true, false, false, true]
 const playerScore = [4, 8, 4, 4, 10, 0, 4]
-const drawingPlayer = _players.value[4]
+const drawingPlayer = _players.value[0]
 
 const b = async () => {
   // throwerRef.value?.throwFlower(1, -400, -60)
