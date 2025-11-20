@@ -93,10 +93,7 @@
     </UPopover>
 
     <template v-if="mode.includes('seat') && !player">
-      <span v-if="open" class="text-[.8rem]">
-        <!-- <slot name="placeholder" /> -->
-        等待玩家
-      </span>
+      <span v-if="open" class="text-[.8rem]">{{ placeholder }}</span>
       <UIcon v-else :name="`fe:disabled`" class="text-[#E20032] size-14" />
     </template>
   </span>
@@ -117,6 +114,7 @@ interface AvatarProps {
     right?: number
     bottom?: number
   }
+  placeholder?: string
 }
 type Side = 'top' | 'right' | 'bottom' | 'left'
 type Align = 'end' | 'start' | 'center'
@@ -127,7 +125,8 @@ const {
   disabled = true,
   player = undefined,
   position = 'right-end',
-  verifiedIcon = undefined
+  verifiedIcon = undefined,
+  placeholder = '等待玩家'
 } = defineProps<AvatarProps>()
 
 const playerStore = usePlayerStore()
@@ -146,6 +145,9 @@ const playerProfile = ref<Player | null>(null)
 const showProfilePopover = ref(false)
 
 const onClick = () => {
+  // 禁用状态不触发任何事件
+  if (disabled) return
+
   // 座位模式，触发 sit 事件
   if (mode === 'seat') {
     if (!player) {
@@ -154,7 +156,7 @@ const onClick = () => {
   }
 
   // 可切换座位模式，触发 switch 事件
-  if (mode === 'switchable-seat' && !disabled) {
+  if (mode === 'switchable-seat') {
     if (!player) {
       open.value = !open.value
       emit('switch', open.value, id)
