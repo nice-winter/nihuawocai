@@ -253,7 +253,7 @@ const sendToRoom = <T>(msg: WebsocketMessage<T>, roomNumber: number) => {
   }
 
   players.forEach((p) => {
-    if (checkPlayerIsInRoom(p.state.type) && p.state.roomNumber === roomNumber) {
+    if (checkPlayerIsInRoom(p.id) && p.state.roomNumber === roomNumber) {
       safeSend(p.peer, encoded)
     }
   })
