@@ -2,6 +2,7 @@ import { consola } from 'consola'
 import { colors } from 'consola/utils'
 import { getAppConfig } from '~~/server/services/app-config'
 import { defu } from 'defu'
+
 import {
   playerEventBus,
   getPlayer,
@@ -13,12 +14,65 @@ import {
   checkPlayerIsInLobby
 } from './player'
 import { getUserData } from './user'
+import mitt from 'mitt'
 import type { AppConfig } from '#shared/interfaces/appConfig'
 import type { Room, RoomInfo, RoomOptions } from '#shared/interfaces/room'
+import type { UserData } from '~~/shared/interfaces/userData'
+
+type RoomEventBus = {
+  'room:event:create': {
+    roomNumber: number
+    room: Room
+  }
+  'room:event:destroy': {
+    roomNumber: number
+  }
+  'room:event:player_join': {
+    seat: number
+    player: UserData
+    roomNumber: number
+    room: Room
+  }
+  'room:event:player_leave': {
+    seat: number
+    player: UserData
+    roomNumber: number
+    room: Room
+  }
+  'room:event:onlooker_join': {
+    player: UserData
+    roomNumber: number
+    room: Room
+  }
+  'room:event:onlooker_sit': {
+    seat: number
+    player: UserData
+    roomNumber: number
+    room: Room
+  }
+  'room:event:onlooker_leave': {
+    player: UserData
+    roomNumber: number
+    room: Room
+  }
+  'room:event:game_start': {
+    roomNumber: number
+    room: Room
+  }
+  'room:event:game_end': {
+    roomNumber: number
+    room: Room
+  }
+}
 
 const logger = consola.withTag('Room Service')
 
 // ------------------------- Records -------------------------
+/**
+ * 事件总线
+ */
+const roomEventBus = mitt<RoomEventBus>()
+
 /**
  * 所有房间
  */
@@ -93,7 +147,7 @@ const createRoom = async (
   }
 
   const roomOptions: RoomOptions = defu(options, defaultRoomOptions),
-    roomConfig = config ? defu(config, appConfig.game.room) : null,
+    roomConfig = config ? defu(config, appConfig.game.room) : null, // 将房间自定义配置与全局应用配置合并覆盖
     roomNumber = getNextRoomNumber(),
     seats = Array.from({ length: 7 }, (_, i) => i === 0 || i <= (opens || 0)),
     locked = roomOptions.password.trim() !== ''
@@ -130,6 +184,11 @@ const createRoom = async (
     room: roomInfo
   })
 
+  roomEventBus.emit('room:event:create', {
+    roomNumber,
+    room: getRoom(roomNumber)!
+  })
+
   logger.info(
     `A new room ${colors.cyan(room.roomNumber)} has been created by`,
     `${colors.cyan(user.nickname)}@${user.id}`,
@@ -163,6 +222,10 @@ const destroyRoom = (roomNumber: number) => {
       })
     room.onlookers.forEach((p) => {
       updatePlayerState(p.id)
+    })
+
+    roomEventBus.emit('room:event:destroy', {
+      roomNumber
     })
 
     logger.info(
@@ -209,6 +272,12 @@ const joinRoom = async (roomNumber: number, id: string, password?: string) => {
           from: roomNumber,
           player: user
         })
+
+        roomEventBus.emit('room:event:onlooker_join', {
+          roomNumber,
+          player: user,
+          room
+        })
       } else {
         throw new Error('旁观人数已满')
       }
@@ -234,6 +303,13 @@ const joinRoom = async (roomNumber: number, id: string, password?: string) => {
             from: roomNumber,
             seat,
             player: user
+          })
+
+          roomEventBus.emit('room:event:player_join', {
+            seat,
+            player: user,
+            roomNumber,
+            room
           })
         } else {
           throw new Error('房间人数已满')
@@ -301,6 +377,13 @@ const sit = async (id: string, seat: number) => {
         from: roomNumber,
         seat,
         player: user
+      })
+
+      roomEventBus.emit('room:event:onlooker_sit', {
+        seat,
+        player: user,
+        roomNumber,
+        room
       })
     } else {
       throw new Error('这个坑位有人了')
@@ -499,7 +582,7 @@ const invite = async (id: string, toId: string) => {
  * @param id
  * @param roomNumber
  */
-const start = (id: string, roomNumber?: number) => {
+const start = async (id: string, roomNumber?: number) => {
   const player = getPlayer(id)
   if (player) {
     const rn = player.state.roomNumber ?? roomNumber
@@ -517,7 +600,10 @@ const start = (id: string, roomNumber?: number) => {
 
         sendToAllPlayer(msg)
 
-        setTimeout(() => end(rn), 10000)
+        roomEventBus.emit('room:event:game_start', {
+          roomNumber: rn,
+          room
+        })
       }
     }
   }
@@ -541,6 +627,11 @@ const end = (roomNumber: number) => {
       }
 
       sendToAllPlayer(msg)
+
+      roomEventBus.emit('room:event:game_end', {
+        roomNumber,
+        room
+      })
     }
   }
 }
@@ -598,6 +689,13 @@ const removeRoomPlayer = async (roomNumber: number, id: string) => {
         seat,
         player
       })
+
+      roomEventBus.emit('room:event:player_leave', {
+        seat,
+        player,
+        roomNumber,
+        room
+      })
     } else if (onlookersIndex > -1) {
       // 广播玩家（从树上）离开房间事件
       sendToAllPlayer({
@@ -605,6 +703,12 @@ const removeRoomPlayer = async (roomNumber: number, id: string) => {
         from: roomNumber,
         onlookersIndex,
         player
+      })
+
+      roomEventBus.emit('room:event:onlooker_leave', {
+        player,
+        roomNumber,
+        room
       })
     }
 
@@ -663,6 +767,7 @@ const removeRoomPlayer = async (roomNumber: number, id: string) => {
 }
 
 export {
+  roomEventBus,
   getRoom,
   getRoomList,
   createRoom,
@@ -674,6 +779,7 @@ export {
   broadcast,
   invite,
   start,
+  end,
   leaveRoom,
   removeRoomPlayer
 }
