@@ -24,11 +24,15 @@
       <UButton @click="() => flower(1000)">送花1000朵</UButton>
       <UButton @click="() => flower(114514)">送花114514朵</UButton>
     </div>
+    <div class="flex gap-4">
+      <UButton @click="() => countdown()">倒计时</UButton>
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import Text from '~/components/ui/TextRender.vue'
+import CountdownModal from '~/components/ui/CountdownModal.vue'
 
 const testRef = ref<HTMLElement | null>(null)
 const throwerRef = useTemplateRef('throwerRef')
@@ -42,6 +46,7 @@ const text = `wkmsadkw<a href="111">222</a>啊啊啊{:30:}啊啊啊啊啊啊啊�
 const wsStore = useWsStore()
 const { send, open } = wsStore
 const { status, data } = storeToRefs(wsStore)
+const countdownModal = useModal(CountdownModal, { initialValue: 5 }, { parent: '#test' })
 
 const roomNumber = ref('')
 
@@ -78,6 +83,10 @@ const join = () => {
 
 const msgbox = () => {
   useMessageBox().show('aaaaa')
+}
+
+const countdown = async () => {
+  await countdownModal.open()
 }
 </script>
 
