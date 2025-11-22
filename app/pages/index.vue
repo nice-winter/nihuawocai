@@ -4,20 +4,9 @@
     class="w-5xl min-w-5xl min-h-[1151px] flex flex-col custom-bg bg-top bg-size-[1024px]"
   >
     <div class="w-full h-40 flex relative">
-      <div class="absolute right-24 top-4 flex gap-4 text-sm">
-        <ULink as="button" @click="() => (gameStore.isInRoom = false)">大厅页面</ULink>
-        <ULink as="button" @click="() => (gameStore.isInRoom = true) && (gameStore.roomStage = 0)"
-          >房间·等待页面</ULink
-        >
-        <ULink as="button" @click="() => (gameStore.isInRoom = true) && (gameStore.roomStage = 1)"
-          >房间·游戏中页面</ULink
-        >
+      <div class="absolute right-23 top-6 flex gap-4 text-sm">
+        <UiUserMenu v-if="userSession.loggedIn.value && userSession.user.value" class="" />
       </div>
-
-      <UiUserMenu
-        v-if="userSession.loggedIn.value && userSession.user.value"
-        class="absolute right-24 top-24"
-      />
     </div>
     <div class="w-full h-10 flex justify-center items-center">
       <div class="w-[900px] flex flex-row justify-center">

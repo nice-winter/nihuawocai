@@ -1,8 +1,10 @@
 <template>
-  <div class="text-[13px] flex gap-4">
+  <div class="text-[13px] flex gap-4 select-none">
     <UUser :avatar="{ src: user?.avatar_url }" :name="user?.nickname" />
-    <UiLinkButton class="underline" @click="openUserProfileModal">个人资料</UiLinkButton>
-    <UiLinkButton @click="logout">注销</UiLinkButton>
+    <UiLinkButton type="button" class="underline" @click="openUserProfileModal">
+      个人资料
+    </UiLinkButton>
+    <UiLinkButton type="button" @click="logout">注销</UiLinkButton>
   </div>
 </template>
 
