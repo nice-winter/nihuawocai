@@ -8,6 +8,7 @@ export const usePlayerStore = defineStore('playerStore', () => {
   const loggedInPlayer = ref<LoggedInPlayer | null>(null)
   const lobbyPlayers = reactive<Map<string, Player>>(new Map())
 
+  const myId = computed(() => loggedInPlayer.value?.id ?? null)
   const isInRoom = computed(
     () =>
       loggedInPlayer.value !== null &&
@@ -20,8 +21,8 @@ export const usePlayerStore = defineStore('playerStore', () => {
       loggedInPlayer.value.state.type === 'lobby' &&
       loggedInPlayer.value.state.roomNumber == null
   )
-  const currentRoomNumber = computed(() => loggedInPlayer.value?.state.roomNumber)
   const isOnlooker = computed(() => loggedInPlayer.value?.state.onlooker)
+  const currentRoomNumber = computed(() => loggedInPlayer.value?.state.roomNumber)
 
   const isSelf = (id: string) => id === loggedInPlayer.value?.id
 
@@ -80,10 +81,11 @@ export const usePlayerStore = defineStore('playerStore', () => {
     loggedInPlayer,
     lobbyPlayers,
 
+    myId,
     isInRoom,
     isInLobby,
-    currentRoomNumber,
     isOnlooker,
+    currentRoomNumber,
 
     isSelf,
     clear,
