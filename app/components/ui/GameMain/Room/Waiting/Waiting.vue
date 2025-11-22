@@ -71,7 +71,11 @@
     </div>
 
     <div class="grow flex flex-col items-center justify-center">
-      <UiGameMainRoomTimer v-if="!roomInfo.locked && canStart" />
+      <UiGameMainRoomTimer
+        v-if="!roomInfo.locked && canStart"
+        ref="Timer"
+        v-model:seconds="prepareStartSeconds"
+      />
     </div>
   </div>
 
@@ -130,6 +134,9 @@ const { isCurrentRoomOwner, broadcastRecord } = storeToRefs(roomStore)
 
 const passwordUInputRef = useTemplateRef('passwordUInputRef')
 const RoomEventsRef = useTemplateRef('RoomEvents')
+const TimerRef = useTemplateRef('Timer')
+
+const prepareStartSeconds = ref(13)
 
 // 是否可开始
 const canStart = computed(() => roomInfo.players.filter((p) => p).length > 1)
