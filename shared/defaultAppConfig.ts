@@ -3,7 +3,7 @@ import type { AppConfig } from '#shared/interfaces/appConfig'
 export const defaultAppConfig: AppConfig = {
   name: '我画你猜',
   announcements: [
-    '【公告】阿星啊，你总得<a href="#">计划</a>一下吧，这么年轻难道不工作，就混小太保啊。'
+    '【公告】哈→基→米{:307:}南北路多阿西噶↓哈呀{:311:}↓库奶龙↗阿西噶叮咚鸡大狗叫带段'
   ],
   genders: [
     {
@@ -179,17 +179,18 @@ export const defaultAppConfig: AppConfig = {
           roundPromptTimeSecond: [20, 40],
           roundBingoTimeSecond: 20,
           roundEndWaitTimeSecond: 5,
-          cycleEndWaitTimeSecond: 12
+          cycleEndWaitTimeSecond: 8
         },
         scoreRule: {
           drawingPlayer: {
-            bingo: 2,
-            firstBingo: 3
+            firstBingo: 3,
+            bingo: 2
           },
           player: {
-            bingo: 1,
-            firstBingo: 2
-          }
+            firstBingo: 2,
+            bingo: 1
+          },
+          includeLeaversInSettlement: false
         }
       }
     }
