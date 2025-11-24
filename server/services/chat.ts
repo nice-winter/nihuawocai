@@ -9,6 +9,7 @@ import {
   sendToRoom
 } from './player'
 import type { UserData } from '#shared/interfaces/userData'
+import { handleGuess } from './game'
 
 const logger = consola.withTag('Chat Service')
 
@@ -24,6 +25,13 @@ const chatIntervalRecord = new Map<string, number>()
 const say = async (user: UserData, chatmsg: string) => {
   const player = getPlayer(user.id)
   if (!player) throw new Error('玩家不存在')
+
+  // 如果在房间内，则尝试走猜词逻辑
+  // @TODO: 判断当前房间是否游戏中等
+  if (checkPlayerIsInRoom(player.id)) {
+    const bingo = handleGuess(player.state.roomNumber!, player.id, chatmsg)
+    if (bingo) return // 猜对答案，略过后续处理过程，交由 game service 处理后续消息推送
+  }
 
   const now = Date.now()
   const config = await getAppConfig()
