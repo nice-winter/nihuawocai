@@ -20,32 +20,26 @@
       <UiGameMainRoomWaitingInvitePanel v-if="!currentRoom.playing" />
 
       <div v-if="currentRoom.playing" class="h-[166.6px] w-full border-y border-y-white/50">
-        <!-- <img src="~/assets/banner.webp" class="w-full" /> -->
-        <UiGameMainRoomPlayingToolbar class="size-full" />
+        <UiGameMainRoomPlayingToolbar v-if="gameStore.state.draw" class="size-full" />
+        <img v-if="!gameStore.state.draw" src="~/assets/banner.webp" class="w-full" />
       </div>
 
       <UiGameMainChatPanel
+        ref="ChatPanelRef"
         class="grow max-w-[227.89px]"
-        :style="{ '--action-text-color': '#7f7f7f', '--system-text-color': '#7f7f7f' }"
+        :style="{ '--action-text-color': '#7f7f7f', '--system-text-color': '#d4bea9' }"
       />
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-// import { mockdata } from '#shared/utils/mockdata'
-
-// interface RoomProps {
-//   stage?: number
-// }
-
-// const { stage = 0 } = defineProps<RoomProps>()
-
 const roomStore = useRoomStore()
+const gameStore = useGameStore()
 const { leave } = roomStore
 const { currentRoom } = storeToRefs(roomStore)
 
-// const roomInfo = reactive(mockdata.roomList[4]!)
+const ChatPanelRef = useTemplateRef('ChatPanelRef')
 </script>
 
 <style scoped></style>
