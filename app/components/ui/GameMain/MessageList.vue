@@ -40,7 +40,7 @@
               class="message-item"
               :class="[`message-item-${item.type}`]"
               :style="{
-                color: item.style?.color || 'inherit',
+                color: item.style?.color || 'var(--action-text-color)',
                 fontSize: item.style?.fontSize || `13px`,
                 fontWeight: item.style?.fontWeight || 'normal'
               }"
