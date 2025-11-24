@@ -246,14 +246,18 @@ const sendToAllPlayer = <T>(msg: WebsocketMessage<T>) => {
   players.forEach((p) => safeSend(p.peer, encoded))
 }
 
-const sendToRoom = <T>(msg: WebsocketMessage<T>, roomNumber: number) => {
+const sendToRoom = <T>(msg: WebsocketMessage<T>, roomNumber: number, excludes?: string[]) => {
   const encoded = {
     ...msg,
     _scope: 'room'
   }
 
   players.forEach((p) => {
-    if (checkPlayerIsInRoom(p.id) && p.state.roomNumber === roomNumber) {
+    if (
+      checkPlayerIsInRoom(p.id) &&
+      p.state.roomNumber === roomNumber &&
+      !excludes?.includes(p.id)
+    ) {
       safeSend(p.peer, encoded)
     }
   })
