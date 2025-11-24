@@ -53,7 +53,7 @@ watch(seconds, () => {
   }
 })
 
-onMounted(play)
+// onMounted(play)
 
 onBeforeUnmount(clear)
 
