@@ -74,12 +74,12 @@ export interface RankItem {
   player: Player
 }
 
-export interface ThrowerModalProps {
+export interface RankModalProps {
   countdown?: number
   ranks?: RankItem[]
   parent?: Element
 }
-const { parent = '', ranks = [], countdown = 8 } = defineProps<ThrowerModalProps>()
+const { parent = '', ranks = [], countdown = 8 } = defineProps<RankModalProps>()
 
 const visible = ref(false)
 const resolveFn = ref<(() => void) | null>(null)
