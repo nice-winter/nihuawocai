@@ -2,7 +2,6 @@ import { consola } from 'consola'
 import { colors } from 'consola/utils'
 import { getAppConfig } from '~~/server/services/app-config'
 import { defu } from 'defu'
-
 import {
   playerEventBus,
   getPlayer,
