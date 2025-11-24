@@ -46,7 +46,7 @@ const text = `wkmsadkw<a href="111">222</a>啊啊啊{:30:}啊啊啊啊啊啊啊�
 const wsStore = useWsStore()
 const { send, open } = wsStore
 const { status, data } = storeToRefs(wsStore)
-const countdownModal = useModal(CountdownModal, { initialValue: 5 }, { parent: '#test' })
+const countdownModal = useModal(CountdownModal, { parent: '#test' })
 
 const roomNumber = ref('')
 
@@ -86,7 +86,7 @@ const msgbox = () => {
 }
 
 const countdown = async () => {
-  await countdownModal.open()
+  await countdownModal.open({ initialValue: 5 })
 }
 </script>
 
