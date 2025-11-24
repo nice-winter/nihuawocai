@@ -10,7 +10,7 @@
 </template>
 
 <script setup lang="ts">
-import type { Canvas } from 'fabric'
+import { Point, type Canvas } from 'fabric'
 import { useSketchpadStore } from '~/stores/sketchpad/sketchpadStore'
 import { useEventBus } from '~/composables/eventBus'
 import { SketchpadCanvas } from './fabric/SketchpadCanvas'
@@ -19,6 +19,7 @@ import { PencilBrush } from './fabric/brushes/PencilBrush'
 const SketchpadRef = useTemplateRef('Sketchpad')
 const SketchpadCanvasRef = useTemplateRef('Canvas')
 const sketchpadStore = useSketchpadStore()
+const gameStore = useGameStore()
 
 let canvas: Canvas
 
@@ -39,19 +40,23 @@ useEventBus('sketchpad:redo', eventsHandler.onRedo)
 useEventBus('sketchpad:clear', eventsHandler.onClear)
 
 onMounted(() => {
+  // 创建 canvas 实例
   canvas = new SketchpadCanvas(SketchpadCanvasRef.value!, {
     width: SketchpadRef.value?.clientWidth,
     height: SketchpadRef.value?.clientHeight,
-    isDrawingMode: true
+    isDrawingMode: false, // 默认禁止操作
+    selection: false,
+    skipTargetFind: true
   })
 
-  canvas.on('cache:flush', (points) => {
-    console.log('[Cache]', points)
+  // 监听 canvas 绘画事件
+  canvas.on('cache:flush', async (points) => {
+    await sketchpadStore.draw(points)
   })
 
   const updateCanvasBrushOptions = (bo: { color: string; width: number }) => {
     if (canvas?.freeDrawingBrush) {
-      canvas.freeDrawingBrush.width = sketchpadStore.getCurrentBrushObjetc()?.widths[bo.width] || 0
+      canvas.freeDrawingBrush.width = sketchpadStore.currentBrushObjetc?.widths[bo.width] || 0
 
       if (sketchpadStore.currentBrush !== 'eraser') {
         canvas.freeDrawingBrush.color = bo.color
@@ -59,12 +64,6 @@ onMounted(() => {
         canvas.freeDrawingBrush.color = '#fff'
       }
     }
-    console.log(
-      `[Sketchpad-Component]`,
-      `[update]`,
-      canvas.freeDrawingBrush?.width,
-      canvas.freeDrawingBrush?.color
-    )
   }
 
   const brushes = {
@@ -74,9 +73,9 @@ onMounted(() => {
 
   watch(
     () => sketchpadStore.currentBrush,
-    (newVavle) => {
+    (newBrushName) => {
       if (canvas) {
-        const brush = brushes[sketchpadStore.currentBrush]
+        const brush = brushes[newBrushName]
         if (brush) {
           canvas.freeDrawingBrush = brush
         }
@@ -96,6 +95,35 @@ onMounted(() => {
     },
     { immediate: true, deep: true }
   )
+
+  watch(
+    () => gameStore.state.draw,
+    (newState) => (canvas.isDrawingMode = newState),
+    { immediate: true }
+  )
+})
+
+useEventBus('sketchpad:draw', ({ points }) => {
+  if (!canvas || !canvas.freeDrawingBrush) return
+  const canvasBrush = canvas.freeDrawingBrush as unknown as PencilBrush
+
+  const _points = points.map((p) => {
+    return {
+      ...p,
+      point: new Point(p.point)
+    }
+  })
+
+  _points.forEach((p) => {
+    if (p.action === 'down') canvasBrush.onMouseDown(p.point)
+    if (p.action === 'move') canvasBrush.onMouseMove(p.point)
+    if (p.action === 'up') canvasBrush.onMouseUp()
+  })
+})
+useEventBus('game:event:interaction:start', () => {
+  if (!canvas || !canvas.freeDrawingBrush) return
+  const canvasBrush = canvas.freeDrawingBrush as unknown as PencilBrush
+  canvasBrush.onMouseUp()
 })
 </script>
 
