@@ -8,11 +8,7 @@ import {
   type VNode
 } from 'vue'
 
-export const useModal = <T>(
-  component: Component,
-  props: Record<string, unknown> = {},
-  options: { parent?: string | Element } = {}
-) => {
+export const useModal = <T>(component: Component, options: { parent?: string | Element } = {}) => {
   const current = getCurrentInstance()
   if (!current) {
     throw new Error('useModal: useModal() 必须在 setup() 中调用')
@@ -37,7 +33,7 @@ export const useModal = <T>(
   /**
    * 挂载组件并返回其 open 方法
    */
-  const mount = (parentEl: Element): (() => Promise<T>) => {
+  const mount = (parentEl: Element, props: Record<string, unknown> = {}): (() => Promise<T>) => {
     unmount()
 
     container = document.createElement('div')
@@ -68,7 +64,7 @@ export const useModal = <T>(
     return options.parent ?? document.body
   }
 
-  const open = async (): Promise<T> => {
+  const open = async (props: Record<string, unknown> = {}): Promise<T> => {
     await nextTick()
 
     const parentEl = resolveParent()
@@ -76,7 +72,7 @@ export const useModal = <T>(
       throw new Error('useModal: 未找到父元素 (parent)')
     }
 
-    const internalOpen = mount(parentEl)
+    const internalOpen = mount(parentEl, props)
 
     try {
       const result = await internalOpen()

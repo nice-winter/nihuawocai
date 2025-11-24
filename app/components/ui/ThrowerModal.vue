@@ -9,7 +9,7 @@
         <div class="h-40 p-4">
           <div class="flex flex-col gap-4 text-[#804B19] text-light select-none">
             <div class="flex justify-between text-[13px]">
-              <span>所有人猜对</span>
+              <span>{{ reason }}</span>
               <span
                 >倒计时：<span class="text-(--game-red)">{{ t }}</span></span
               >
@@ -56,20 +56,20 @@ import type { Player } from '~~/shared/interfaces/player'
 
 export interface ThrowerModalProps {
   answer?: ''
+  reason?: 'give_up' | 'bingo_all' | 'timeout' | 'afk' | 'force' | 'leave'
   countdown?: number
-  bingoPlayers?: Player[]
-  missPlayers?: Player[]
   showThrowItem?: boolean
   parent?: Element
 }
 const {
   parent = '',
   answer = '',
+  reason = '',
   countdown = 5,
-  bingoPlayers = [],
-  missPlayers = [],
   showThrowItem = true
 } = defineProps<ThrowerModalProps>()
+
+const { sendGift } = useGameStore()
 
 const visible = ref(false)
 const resolveFn = ref<(() => void) | null>(null)
@@ -84,6 +84,7 @@ const isThrowed = ref(false)
 const throwItemClick = (type: 'egg' | 'flower' | 'slipper') => {
   console.log(type)
   isThrowed.value = true
+  sendGift('flower')
 }
 
 const open = (): Promise<void> => {
