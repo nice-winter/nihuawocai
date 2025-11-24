@@ -5,7 +5,7 @@
     <div class="grow flex flex-col bg-[#f1d0ae42] border-l-2 border-white/60">
       <UiGameMainChatPanel
         class="grow max-w-[227.89px]"
-        :style="{ '--action-text-color': '#7f7f7f', '--system-text-color': '#7f7f7f' }"
+        :style="{ '--action-text-color': '#7f7f7f', '--system-text-color': '#d4bea9' }"
       />
     </div>
   </div>
