@@ -5,7 +5,10 @@
       class="z-114514 flex items-center justify-center bg-transparent countdown-container"
       :class="parent ? 'absolute inset-0' : 'fixed inset-0'"
     >
-      <div :key="currentValue" class="text-8xl text-(--game-red) font-bold countdown-number">
+      <div
+        :key="currentValue"
+        class="text-5xl text-(--game-red) font-bold countdown-number select-none"
+      >
         {{ currentValue }}
       </div>
     </div>
