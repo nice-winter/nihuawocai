@@ -38,7 +38,7 @@ class BubbleRegistry {
   }
 
   updateRect(id: string, rect: DOMRect) {
-    console.log('Updating rect for:', id, rect)
+    // console.log('Updating rect for:', id, rect)
     const record = this.getOrCreateRecord(id)
     record.rect = rect // 存储最新的 rect
     const comp = record.vnode?.component
@@ -102,7 +102,7 @@ class BubbleRegistry {
       return
     }
 
-    console.log('Destroying bubble:', id) // 清除 timeout
+    // console.log('Destroying bubble:', id) // 清除 timeout
 
     if (record.hideTimer !== null) {
       clearTimeout(record.hideTimer)
@@ -123,7 +123,8 @@ class BubbleRegistry {
    * 销毁所有气泡
    */
   public destroyAll() {
-    console.log('Destroying all bubbles...')
+    // console.log('Destroying all bubbles...')
+
     this.map.forEach((record) => {
       if (record.hideTimer !== null) {
         clearTimeout(record.hideTimer)
