@@ -113,6 +113,14 @@ export const useRoomStore = defineStore('roomStore', () => {
     }
   }
 
+  /**
+   * 从当前房间中获取指定玩家
+   * @param id
+   */
+  const getPlayerFromCurrentRoom = (id: string) => {
+    return currentRoomRealPlayers.value?.find((p) => p.id === id)
+  }
+
   // Watch
   /**
    * 监听玩家状态，如果玩家状态变更为不在房间内的状态，则清空当前所在房间信息
@@ -576,6 +584,7 @@ export const useRoomStore = defineStore('roomStore', () => {
     prevPage,
     nextPage,
     createRoom,
-    quickMatch
+    quickMatch,
+    getPlayerFromCurrentRoom
   }
 })
