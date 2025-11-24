@@ -22,7 +22,7 @@
             selected: sketchpadStore.brushOptions.width === index,
             'bg-white': sketchpadStore.brushOptions.width === index
           }"
-          :data-width="sketchpadStore.getCurrentBrushObjetc()?.widths[index]"
+          :data-width="sketchpadStore.currentBrushObjetc?.widths[index]"
           @click="onSelectWidth(index)"
         >
           <span
