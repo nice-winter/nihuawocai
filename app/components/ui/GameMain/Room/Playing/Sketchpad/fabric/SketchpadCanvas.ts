@@ -3,10 +3,14 @@ import { Canvas, Point, type TPointerEvent, type TPointerEventInfo } from 'fabri
 export interface CanvasCacheOptions {
   /**
    * 缓存队列大小，当缓存的坐标组数量达到此值时，触发刷新。
+   *
+   * @default 5
    */
   cacheSize: number
   /**
    * 强制刷新缓存的触发时间（ms）
+   *
+   * @default 50
    */
   flushDelay: number
 }
@@ -32,6 +36,10 @@ export interface SketchpadCanvasOptions extends TCanvasOptions {
   onFlush?: (cache: CachedPoint[]) => void
 }
 
+/**
+ * SketchpadCanvas 画板
+ * 继承自 fabric.js 的 Canvas 类，添加了 cache feature
+ */
 export class SketchpadCanvas extends Canvas {
   private cacheOptions: CanvasCacheOptions
   private cacheState: CanvasCacheState
@@ -56,18 +64,24 @@ export class SketchpadCanvas extends Canvas {
 
   private _registerCacheEventHandlers(): void {
     this.on('mouse:down', (context: TPointerEventInfo<TPointerEvent>) => {
+      if (!this.isDrawingMode) return // 非可操作状态，不做任何处理
+
       this.cacheState.isMouseDown = true
       this._addPointToCache(context.scenePoint, 'down')
       this._flushCache() // 立即推送第一个点
     })
 
     this.on('mouse:move', (context: TPointerEventInfo<TPointerEvent>) => {
+      if (!this.isDrawingMode) return
+
       if (this.cacheState.isMouseDown) {
         this._addPointToCache(context.scenePoint, 'move')
       }
     })
 
     this.on('mouse:up:before', (context: TPointerEventInfo<TPointerEvent>) => {
+      if (!this.isDrawingMode) return
+
       this.cacheState.isMouseDown = false
       const mouseUpPoint = this.getScenePoint(context.e)
       this._addPointToCache(mouseUpPoint, 'up')
