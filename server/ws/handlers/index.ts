@@ -4,6 +4,7 @@ import { wsEventBus } from '~~/server/ws/core/events'
 import playerHandler from './player'
 import roomHandler from './room'
 import chatHandler from './chat'
+import gameHandler from './game'
 import type { WsHandlers } from '~~/server/ws/utils'
 
 const logger = consola.withTag('Handlers')
@@ -61,6 +62,7 @@ export default function () {
   registerHandlers({
     ...playerHandler,
     ...roomHandler,
-    ...chatHandler
+    ...chatHandler,
+    ...gameHandler
   })
 }
