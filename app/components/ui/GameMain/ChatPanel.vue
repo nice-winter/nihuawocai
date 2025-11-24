@@ -66,9 +66,6 @@
 
 <script setup lang="ts">
 import { defaultEmojis } from '#shared/defaultEmojis'
-// import { mockdata } from '#shared/utils/mockdata'
-
-// const testPlayer = ref(mockdata.players[0]!)
 const { isSelf } = usePlayerStore()
 const { loggedInPlayer } = storeToRefs(usePlayerStore())
 const { currentRoom } = storeToRefs(useRoomStore())
@@ -104,42 +101,6 @@ const sendChatMessage = () => {
   } else {
     ChatMessageInputRef.value?.inputRef?.focus()
   }
-
-  // if (msg === 'bingo') {
-  //   ChatPanelMessageListRef.value?.addMessage({
-  //     type: 'action',
-  //     sender: testPlayer.value,
-  //     msg: '猜对了答案。'
-  //   })
-  //   chatMessageInputValue.value = ''
-  //   return
-  // }
-  // if (msg === 'start') {
-  //   ChatPanelMessageListRef.value?.addMessage({
-  //     type: 'system',
-  //     msg: '回合开始'
-  //   })
-  //   chatMessageInputValue.value = ''
-  //   return
-  // }
-  // if (msg === 'broadcast') {
-  //   ChatPanelMessageListRef.value?.addMessage({
-  //     type: 'broadcast',
-  //     sender: testPlayer.value,
-  //     roomNumber: 4
-  //   })
-  //   chatMessageInputValue.value = ''
-  //   return
-  // }
-
-  // if (msg) {
-  //   ChatPanelMessageListRef.value?.addMessage({
-  //     type: 'chat',
-  //     sender: testPlayer.value,
-  //     msg
-  //   })
-  //   chatMessageInputValue.value = ''
-  // }
 }
 
 watch(
@@ -195,6 +156,127 @@ useEventBus('current:room:event:onlooker_leave', ({ player }) => {
     type: 'action',
     sender: player,
     msg: `从树上离开了`
+  })
+})
+
+// 游戏事件通知
+useEventBus('game:event:round:prepare', ({ drawerPlayer }) => {
+  ChatPanelMessageListRef.value?.addMessage({
+    type: 'system',
+    msg: '回合开始'
+  })
+  ChatPanelMessageListRef.value?.addMessage({
+    type: 'text',
+    msg: `本回合由 ${drawerPlayer.nickname} 作画。`
+  })
+})
+useEventBus('game:event:drawing:start', ({ drawerPlayer }) => {
+  ChatPanelMessageListRef.value?.addMessage({
+    type: 'action',
+    sender: drawerPlayer,
+    msg: `开始作画...`
+  })
+})
+useEventBus('game:event:prompt', ({ index, content }) => {
+  ChatPanelMessageListRef.value?.addMessage({
+    type: 'text',
+    msg: `提示${index}：${content}。`
+  })
+})
+useEventBus('game:event:guess:bingo', ({ player }) => {
+  ChatPanelMessageListRef.value?.addMessage({
+    type: 'action',
+    sender: player,
+    msg: `猜对了答案！`
+  })
+})
+useEventBus('game:event:interaction:start', ({ drawerPlayer, reason, bingo_players }) => {
+  switch (reason) {
+    case 'afk': {
+      ChatPanelMessageListRef.value?.addMessage({
+        type: 'action',
+        sender: drawerPlayer,
+        msg: `超时未作画，本回合结束。`
+      })
+      break
+    }
+    case 'bingo_all': {
+      ChatPanelMessageListRef.value?.addMessage({
+        type: 'action',
+        sender: drawerPlayer,
+        msg: `的画被所有人猜对了，本回合结束。`
+      })
+      break
+    }
+    case 'force': {
+      //
+      break
+    }
+    case 'give_up': {
+      ChatPanelMessageListRef.value?.addMessage({
+        type: 'action',
+        sender: drawerPlayer,
+        msg: `放弃作画。`
+      })
+      break
+    }
+    case 'leave': {
+      ChatPanelMessageListRef.value?.addMessage({
+        type: 'action',
+        sender: drawerPlayer,
+        msg: `离开了房间，本回合结束。`
+      })
+      break
+    }
+    case 'timeout': {
+      let msg = ''
+      if (bingo_players.length === 0) msg = '没有人猜对。'
+      if (bingo_players.length === 1) msg = '只有1人猜对。'
+      if (bingo_players.length > 1) msg = `共有${bingo_players.length}人猜对。`
+      ChatPanelMessageListRef.value?.addMessage({
+        type: 'text',
+        msg: `作画时间到，${msg}`
+      })
+      break
+    }
+  }
+  ChatPanelMessageListRef.value?.addMessage({
+    type: 'system',
+    msg: '回合结束'
+  })
+})
+useEventBus('game:event:gift', ({ fromPlayer, item_type }) => {
+  switch (item_type) {
+    case 'flower': {
+      ChatPanelMessageListRef.value?.addMessage({
+        type: 'action',
+        sender: fromPlayer,
+        msg: `赠送了鲜花~`
+      })
+      break
+    }
+    case 'egg': {
+      ChatPanelMessageListRef.value?.addMessage({
+        type: 'action',
+        sender: fromPlayer,
+        msg: `扔出了鸡蛋...`
+      })
+      break
+    }
+    case 'slipper': {
+      ChatPanelMessageListRef.value?.addMessage({
+        type: 'action',
+        sender: fromPlayer,
+        msg: `扔出了带脚气的拖鞋...`
+      })
+      break
+    }
+  }
+})
+useEventBus('game:event:settlement', () => {
+  ChatPanelMessageListRef.value?.addMessage({
+    type: 'system',
+    msg: '游戏结束'
   })
 })
 </script>
