@@ -51,10 +51,10 @@
           v-show="roomInfo.playing"
           size="xl"
           color="playing"
-          :disabled="roomInfo.onlookers.length >= 5"
+          :disabled="roomInfo.onlookers.length >= roomInfo.options.maxOnlookers"
           @click="emit('lookButtonClick', roomInfo.roomNumber)"
         >
-          旁观ㅤ{{ roomInfo.onlookers.length }}/5
+          旁观ㅤ{{ roomInfo.onlookers.length }}/{{ roomInfo.options.maxOnlookers }}
         </UiButton>
       </div>
     </div>

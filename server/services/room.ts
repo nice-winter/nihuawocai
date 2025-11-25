@@ -99,7 +99,7 @@ playerEventBus.on('player:beforeDisconnect', ({ player }) => {
 
 // ------------------------ Actions ------------------------
 /**
- * 获取房间信息
+ * 获取房间
  * @param roomNumber 房间号
  */
 const getRoom = (roomNumber: number) => {
@@ -107,10 +107,19 @@ const getRoom = (roomNumber: number) => {
 }
 
 /**
+ * 替换 Room 属性
+ * @param room
+ * @param property
+ */
+const roomPropertyFilter = (room: Room) => {
+  return defu({ options: { password: '***' } }, room)
+}
+
+/**
  * 获取整个房间列表
  */
 const getRoomList = (): RoomInfo[] => {
-  return [...rooms.values()]
+  return [...rooms.values().map((r) => roomPropertyFilter(r))]
 }
 
 /**
@@ -140,11 +149,12 @@ const createRoom = async (
 
   const defaultRoomOptions: RoomOptions = {
     password: '',
-    maxOnlookers: 5
+    maxOnlookers: 5,
+    libIds: []
   }
 
   const roomOptions: RoomOptions = defu(options, defaultRoomOptions),
-    roomConfig = config ? defu(config, appConfig.game.room) : null, // 将房间自定义配置与全局应用配置合并覆盖
+    roomConfig = config ?? null,
     roomNumber = getNextRoomNumber(),
     seats = Array.from({ length: 7 }, (_, i) => i === 0 || i <= (opens || 0)),
     locked = roomOptions.password.trim() !== ''
@@ -167,14 +177,11 @@ const createRoom = async (
   // 把房主加入房间
   await joinRoom(roomNumber, owner, roomOptions.password)
 
-  // @TODO: 房间信息，需要过滤不需要的字段
-  const roomInfo = {
-    ...getRoom(roomNumber),
-    options: {
-      password: '***'
-    }
-  }
+  // 向所有人推送新的房间信息
+  // @TODO: 需要过滤不需要的字段
+  const roomInfo: RoomInfo = roomPropertyFilter(getRoom(roomNumber)!)
 
+  logger.debug(roomInfo)
   // 广播房间创建事件
   sendToAllPlayer({
     type: 'room:event:create',
