@@ -437,8 +437,8 @@ export const useRoomStore = defineStore('room', () => {
   /**
    * 加入指定房间
    */
-  const join = (roomNumber: number, password?: string) => {
-    send({
+  const join = async (roomNumber: number, password?: string) => {
+    await send({
       type: 'room:join',
       roomNumber,
       password
@@ -448,8 +448,8 @@ export const useRoomStore = defineStore('room', () => {
   /**
    * 离开当前房间
    */
-  const leave = () => {
-    send({
+  const leave = async () => {
+    await send({
       type: 'room:leave'
     })
   }
@@ -457,8 +457,8 @@ export const useRoomStore = defineStore('room', () => {
   /**
    * 切换座位开关状态
    */
-  const switchSeat = (roomNumber: number, seat: number, open: boolean) => {
-    send({
+  const switchSeat = async (roomNumber: number, seat: number, open: boolean) => {
+    await send({
       type: 'room:seat_switch',
       roomNumber,
       seat,
@@ -470,8 +470,8 @@ export const useRoomStore = defineStore('room', () => {
    * 房间内从旁观席坐到座位上
    * @param seat 座位索引
    */
-  const sit = (seat: number) => {
-    send({
+  const sit = async (seat: number) => {
+    await send({
       type: 'room:sit',
       seat
     })
@@ -480,8 +480,8 @@ export const useRoomStore = defineStore('room', () => {
   /**
    * 设置房间密码
    */
-  const changeRoomPassword = (roomNumber: number, password?: string) => {
-    send({
+  const changeRoomPassword = async (roomNumber: number, password?: string) => {
+    await send({
       type: 'room:password_change',
       roomNumber,
       password
@@ -506,7 +506,7 @@ export const useRoomStore = defineStore('room', () => {
       toId
     })
 
-    if (typeof (msg as WebsocketMessage<{ successful: boolean }>).successful === 'undefined') return
+    if (typeof (msg as WebsocketMessage<WS_RECV>).successful === 'undefined') return
     const { to, expAt } = msg as unknown as WebsocketMessage<{
       from: Player
       to: Player
