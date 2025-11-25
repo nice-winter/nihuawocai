@@ -61,9 +61,6 @@ importers:
       fabric:
         specifier: ^7.0.0-beta1
         version: 7.0.0-beta1(patch_hash=2c87bae9647827c5c912353b91f193a6e4f57e4f7eb57e64a7b509c0eb74182d)
-      less:
-        specifier: ^4.4.2
-        version: 4.4.2
       mitt:
         specifier: ^3.0.1
         version: 3.0.1
@@ -8156,6 +8153,7 @@ snapshots:
   copy-anything@2.0.6:
     dependencies:
       is-what: 3.14.1
+    optional: true
 
   copy-anything@4.0.5:
     dependencies:
@@ -9161,7 +9159,8 @@ snapshots:
 
   is-stream@3.0.0: {}
 
-  is-what@3.14.1: {}
+  is-what@3.14.1:
+    optional: true
 
   is-what@5.5.0: {}
 
@@ -9286,6 +9285,7 @@ snapshots:
       mime: 1.6.0
       needle: 3.3.1
       source-map: 0.6.1
+    optional: true
 
   levn@0.4.1:
     dependencies:
@@ -9975,7 +9975,8 @@ snapshots:
     dependencies:
       parse-statements: 1.0.11
 
-  parse-node-version@1.0.1: {}
+  parse-node-version@1.0.1:
+    optional: true
 
   parse-path@7.1.0:
     dependencies:
