@@ -20,7 +20,12 @@ export const WS_MESSAGE_DUPLICATE_LOGIN: WebsocketMessage = {
 
 export type WebsocketMessage<T = object> = BaseWebsocketMessage & T
 
-export type WS_RECV<T = object> = WebsocketMessage<{ _reply: boolean; _rid: string; _t: number }> &
+export type WS_RECV<T = object> = WebsocketMessage<{
+  _reply: boolean
+  _rid: string
+  _t: number
+  successful?: boolean
+}> &
   T
 
 export type WebsocketMessageType = 'ping' | 'pong' | string
