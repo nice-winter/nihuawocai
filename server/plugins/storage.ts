@@ -29,6 +29,10 @@ export default defineNitroPlugin(() => {
       driver: sqliteDriver('session')
     },
     {
+      name: 'word',
+      driver: sqliteDriver('word')
+    },
+    {
       name: 'user_data',
       driver: sqliteDriver('user_data')
     }
@@ -45,6 +49,12 @@ export default defineNitroPlugin(() => {
       name: 'session',
       driver: fsDriver({
         base: `./.data/${databaseName}/session`
+      })
+    },
+    {
+      name: 'word',
+      driver: fsDriver({
+        base: `./.data/${databaseName}/word`
       })
     },
     {
