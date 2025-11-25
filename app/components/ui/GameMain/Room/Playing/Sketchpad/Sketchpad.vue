@@ -11,7 +11,6 @@
 
 <script setup lang="ts">
 import { Point, type Canvas } from 'fabric'
-import { useSketchpadStore } from '~/stores/sketchpad/sketchpadStore'
 import { useEventBus } from '~/composables/eventBus'
 import { SketchpadCanvas } from './fabric/SketchpadCanvas'
 import { PencilBrush } from './fabric/brushes/PencilBrush'

@@ -2,7 +2,7 @@ import type { LoggedInPlayer, Player, PlayerState } from '#shared/interfaces/pla
 import type { WebsocketMessage } from '#shared/interfaces/ws'
 import consola from 'consola'
 
-export const usePlayerStore = defineStore('playerStore', () => {
+export const usePlayerStore = defineStore('player', () => {
   const { wsEventBus, send } = useWsStore()
 
   const loggedInPlayer = ref<LoggedInPlayer | null>(null)

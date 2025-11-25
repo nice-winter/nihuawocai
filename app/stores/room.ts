@@ -7,7 +7,7 @@ import type { Player } from '#shared/interfaces/player'
  * 游戏房间列表 Store
  * 负责管理游戏房间的列表、当前房间状态以及与房间相关的 WebSocket 通信
  */
-export const useRoomStore = defineStore('roomStore', () => {
+export const useRoomStore = defineStore('room', () => {
   const appConfigStore = useAppConfigStore()
   const { appConfig } = storeToRefs(appConfigStore)
   const { wsEventBus, send } = useWsStore()
