@@ -66,7 +66,7 @@ const classNameSize = computed(() => {
 const classNameColor = computed(() => `game-button-color__${color}`)
 </script>
 
-<style lang="css" scoped>
+<style scoped>
 .game-button {
   text-shadow: 1px 1px 0px rgba(0, 0, 0, 0.5);
 
