@@ -18,9 +18,12 @@ interface RoomOptions {
   maxOnlookers: number
 }
 
+type RoomConfig = AppConfig['game']['room']
+
 interface Room extends RoomInfo {
+  id: string
   options: RoomOptions
-  config: AppConfig['game']['room'] | null
+  config: RoomConfig | null
 }
 
-export type { RoomInfo, RoomOptions, Room }
+export type { RoomInfo, RoomOptions, RoomConfig, Room }

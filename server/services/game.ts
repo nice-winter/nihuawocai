@@ -3,7 +3,7 @@
  * @author Winter <doyouknowmeemail@gmail.com>
  * @description 负责游戏核心流程循环、状态管理和主要计分机制
  * @created 2025-11-22
- * @lastModified 2025-11-24
+ * @lastModified 2025-11-25
  *
  * @module Game
  */
@@ -19,7 +19,7 @@ import {
 } from './player'
 import { end, roomEventBus } from './room'
 import type { AppConfig } from '~~/shared/interfaces/appConfig'
-import type { Room } from '~~/shared/interfaces/room'
+import type { Room, RoomConfig } from '~~/shared/interfaces/room'
 import { useWordManager, type WordItem } from './word'
 
 // ----------------------------------------------------------------
@@ -53,7 +53,7 @@ export interface GiftRecord {
 }
 
 export interface GameState {
-  config: AppConfig['game']['room']
+  config: RoomConfig
 
   // --- 状态标识 ---
   gamePhase: GamePhase

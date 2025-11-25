@@ -15,8 +15,9 @@ import {
 import { getUserData } from './user'
 import mitt from 'mitt'
 import type { AppConfig } from '#shared/interfaces/appConfig'
-import type { Room, RoomInfo, RoomOptions } from '#shared/interfaces/room'
+import type { Room, RoomConfig, RoomInfo, RoomOptions } from '#shared/interfaces/room'
 import type { UserData } from '~~/shared/interfaces/userData'
+import { nanoid } from 'nanoid'
 
 type RoomEventBus = {
   'room:event:create': {
@@ -133,7 +134,7 @@ const createRoom = async (
   owner: string,
   opens?: number,
   options?: Partial<RoomOptions>,
-  config?: Partial<AppConfig['game']['room']>
+  config?: Partial<RoomConfig>
 ) => {
   const appConfig = await getAppConfig()
   const user = await getUserData(owner)
@@ -152,6 +153,7 @@ const createRoom = async (
     locked = roomOptions.password.trim() !== ''
 
   const room: Room = {
+    id: nanoid(),
     options: roomOptions,
     config: roomConfig,
     roomNumber,
