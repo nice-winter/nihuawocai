@@ -18,7 +18,6 @@ import {
   updatePlayerStats
 } from './player'
 import { end, roomEventBus } from './room'
-import type { AppConfig } from '~~/shared/interfaces/appConfig'
 import type { Room, RoomConfig } from '~~/shared/interfaces/room'
 import { useWordManager, type WordItem } from './word'
 
@@ -421,6 +420,7 @@ const handleDrawingTick = (roomNumber: number, st: GameState, now: number) => {
   // 2. 提示词逻辑
   const promptTimes = st.config.cycle.time.roundPromptTimeSecond
   if (st.revealedPrompts < promptTimes.length) {
+    if (st.bingoPlayers.length > 0) return // 如果已有玩家猜对，则后续不再弹出提示词
     const nextPromptTime = promptTimes[st.revealedPrompts]
     if (elapsedSeconds >= nextPromptTime) {
       const promptIndex = st.revealedPrompts
@@ -478,7 +478,6 @@ const enterInteractionPhase = (
  */
 const endCurrentRound = (roomNumber: number, st: GameState) => {
   st.roundPhase = 'round_end'
-  // calculateScore(st)
 
   // 极短过渡，由 Tick 处理跳转
   setupTimer(st, 0)
