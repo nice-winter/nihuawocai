@@ -25,12 +25,12 @@ export const useWsStore = defineStore('ws', () => {
     close
   } = useWebSocket('/_ws/server', {
     immediate: false,
-    autoReconnect: true,
+    // autoReconnect: true,
     heartbeat: {
       message: encode(WS_MESSAGE_PING),
       responseMessage: encode(WS_MESSAGE_PONG),
-      interval: 10000,
-      pongTimeout: 5000
+      interval: 30000,
+      pongTimeout: 30000
     },
     onConnected(ws) {
       ws.binaryType = 'arraybuffer'
@@ -155,7 +155,7 @@ export const useWsStore = defineStore('ws', () => {
   }
 
   // 无等待发送
-  const sendFireAndForget = (msg: WebsocketMessage) => {
+  const sendFireAndForget = <T>(msg: WebsocketMessage<T>) => {
     rawSend(encode(msg))
     logger.withTag('⬆').log(msg)
   }
