@@ -1,7 +1,19 @@
-// https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
+  // 基础设置
   compatibilityDate: '2025-07-15',
-  devtools: { enabled: true },
+  ssr: false,
+
+  // 应用信息
+  app: {
+    head: {
+      title: '我画你猜'
+    }
+  },
+
+  // 全局样式
+  css: ['~/assets/css/main.css'],
+
+  // 模块
   modules: [
     '@nuxt/eslint',
     '@nuxt/fonts',
@@ -14,27 +26,21 @@ export default defineNuxtConfig({
     '@pinia/nuxt',
     '@vueuse/nuxt'
   ],
-  ssr: false,
-  vite: {
-    server: {
-      hmr: {
-        path: 'hmr/'
-      }
-    }
-  },
-  experimental: {
-    typescriptPlugin: true
-  },
-  css: ['~/assets/css/main.css'],
+
+  // UI 相关
   ui: {
     colorMode: false,
     experimental: {
       componentDetection: true
     }
   },
+
+  // 字体
   fonts: {
     provider: 'local'
   },
+
+  // 图标
   icon: {
     serverBundle: 'local',
     customCollections: [
@@ -44,11 +50,30 @@ export default defineNuxtConfig({
       }
     ]
   },
+
+  // Vite 配置
+  vite: {
+    server: {
+      hmr: {
+        path: 'hmr/'
+      }
+    }
+  },
+
+  // Nitro 配置
   nitro: {
     experimental: {
       websocket: true,
       database: true,
       tasks: true
     }
-  }
+  },
+
+  // 实验功能
+  experimental: {
+    typescriptPlugin: true
+  },
+
+  // Devtools
+  devtools: { enabled: true }
 })
