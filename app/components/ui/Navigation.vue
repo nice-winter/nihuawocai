@@ -20,13 +20,13 @@
 
     <UTooltip
       :delay-duration="0"
-      :text="`音效：${sound ? '开启' : '关闭'}`"
+      :text="`音效：${settingStore.settings.sound ? '开启' : '关闭'}`"
       :disable-closing-trigger="true"
     >
       <li
         class="size-6 sprites-icon nav-icon"
-        :class="sound ? 'sound-enabled' : 'sound-disabled'"
-        @click="sound = !sound"
+        :class="settingStore.settings.sound ? 'sound-enabled' : 'sound-disabled'"
+        @click="settingStore.switchSound"
       ></li>
     </UTooltip>
 
@@ -41,6 +41,8 @@
 </template>
 
 <script setup lang="ts">
+const settingStore = useSettingStore()
+
 const hi = ref(0)
 const sound = ref(true)
 
