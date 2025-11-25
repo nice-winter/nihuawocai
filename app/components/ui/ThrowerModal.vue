@@ -52,8 +52,6 @@
 </template>
 
 <script setup lang="ts">
-import type { Player } from '~~/shared/interfaces/player'
-
 export interface ThrowerModalProps {
   answer?: ''
   reason?: 'give_up' | 'bingo_all' | 'timeout' | 'afk' | 'force' | 'leave'

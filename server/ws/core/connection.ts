@@ -1,6 +1,5 @@
 import { getUserData } from '~~/server/services/user'
 import type { WsPeer } from '~~/server/ws/utils'
-import type { UserData } from '#shared/interfaces/userData'
 
 export const resolveUserFromPeer = async (peer: WsPeer) => {
   try {

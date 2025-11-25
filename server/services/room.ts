@@ -14,9 +14,6 @@ import {
 } from './player'
 import { getUserData } from './user'
 import mitt from 'mitt'
-import type { AppConfig } from '#shared/interfaces/appConfig'
-import type { Room, RoomConfig, RoomInfo, RoomOptions } from '#shared/interfaces/room'
-import type { UserData } from '~~/shared/interfaces/userData'
 import { nanoid } from 'nanoid'
 
 type RoomEventBus = {

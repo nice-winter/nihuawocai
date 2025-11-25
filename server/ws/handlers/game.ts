@@ -1,7 +1,6 @@
 import { consola } from 'consola'
 import { defineWsHandlers } from '~~/server/ws/utils'
 import { handleGiveUp, handleGift, handleSketchpad } from '~~/server/services/game'
-import type { WebsocketMessage } from '#shared/interfaces/ws'
 
 const logger = consola.withTag('Game Handler')
 

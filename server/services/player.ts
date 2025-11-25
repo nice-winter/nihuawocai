@@ -4,9 +4,6 @@ import mitt from 'mitt'
 import { isOpen, reply, safeSend, type WsPeer } from '~~/server/ws/utils'
 import { wsEventBus } from '~~/server/ws'
 import { getUserData, updateUserData, updateUserLastLoginAt } from './user'
-import type { WebsocketMessage } from '#shared/interfaces/ws'
-import type { UserData, UserStats } from '#shared/interfaces/userData'
-import type { LoggedInPlayer } from '#shared/interfaces/player'
 
 interface ServerPlayer extends LoggedInPlayer {
   peer: WsPeer

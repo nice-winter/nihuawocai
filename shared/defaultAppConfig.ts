@@ -1,4 +1,4 @@
-import type { AppConfig } from '#shared/interfaces/appConfig'
+import type { AppConfig } from '~~/shared/types/appConfig'
 
 export const defaultAppConfig: AppConfig = {
   name: '我画你猜',

@@ -1,6 +1,5 @@
 import { defaultAppConfig } from '#shared/defaultAppConfig'
 import { defu } from 'defu'
-import type { AppConfig } from '#shared/interfaces/appConfig'
 
 const appStorage = useStorage('app')
 const keyName = 'app_config'

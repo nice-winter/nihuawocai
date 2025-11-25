@@ -5,8 +5,6 @@ import { wsEventBus } from './core/events'
 import { resolveUserFromPeer } from './core/connection'
 import { safeSend, reply } from './utils'
 import handlers from './handlers'
-import { WS_MESSAGE_PING, WS_MESSAGE_PONG } from '#shared/interfaces/ws'
-import type { WebsocketMessage } from '#shared/interfaces/ws'
 
 const logger = consola.withTag('WS')
 

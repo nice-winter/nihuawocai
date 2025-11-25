@@ -1,4 +1,3 @@
-import type { XUser } from '#shared/interfaces/user'
 import { createUserData, hasUserData, updateUserData } from '~~/server/services/user'
 
 export default defineOAuthXEventHandler({

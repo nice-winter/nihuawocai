@@ -122,8 +122,6 @@
 </template>
 
 <script setup lang="ts">
-import type { Room } from '#shared/interfaces/room'
-
 const { roomInfo } = defineProps<{ roomInfo: Room }>()
 const playerStore = usePlayerStore()
 const { isSelf } = playerStore

@@ -106,7 +106,6 @@
 </template>
 
 <script setup lang="ts">
-import type { Player } from '#shared/interfaces/player'
 import type { ContextMenuItem } from '@nuxt/ui'
 
 interface MessageListProps {

@@ -1,11 +1,11 @@
 import mitt from 'mitt'
-import type { Player } from '#shared/interfaces/player'
 
 type Events = {
   // ui
   'user:logout': unknown
   'ui:screenshot': unknown
 
+  // sketchpad
   'sketchpad:draw': {
     points: {
       point: {

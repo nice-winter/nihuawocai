@@ -1,10 +1,8 @@
 import { defineStore } from 'pinia'
 import mitt from 'mitt'
 import { encode, decode } from '#shared/utils/crypto'
-import { WS_MESSAGE_PING, WS_MESSAGE_PONG, WS_MESSAGE_DUPLICATE_LOGIN } from '#shared/interfaces/ws'
 import { consola } from 'consola/browser'
 import { nanoid } from 'nanoid'
-import type { WebsocketMessage, WS_RECV } from '#shared/interfaces/ws'
 
 type WsEvents = {
   'ws:connected': WebSocket

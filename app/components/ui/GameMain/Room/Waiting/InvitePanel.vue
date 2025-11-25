@@ -50,9 +50,6 @@
 </template>
 
 <script setup lang="ts">
-// import { mockdata } from '#shared/utils/mockdata'
-// import type { Player } from '#shared/interfaces/player'
-
 const playerStore = usePlayerStore()
 const { getLobbyPlayers } = playerStore
 const { lobbyPlayers } = storeToRefs(playerStore)
@@ -67,13 +64,11 @@ onMounted(() => {
 const tabItems = [
   {
     label: '空闲玩家',
-    // icon: 'ph:user-check-fill',
     slot: 'user1'
   },
   {
     disabled: true,
     label: '同城玩家',
-    // icon: 'ph:users-fill',
     slot: 'user2'
   }
 ]
