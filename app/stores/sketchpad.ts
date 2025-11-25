@@ -4,7 +4,7 @@ import type { CachedPoint } from '~/components/ui/GameMain/Room/Playing/Sketchpa
 import type { WebsocketMessage } from '~~/shared/interfaces/ws'
 
 export const useSketchpadStore = defineStore('sketchpad', () => {
-  const { wsEventBus, send } = useWsStore()
+  const { wsEventBus, send, sendRaw } = useWsStore()
   const gameStore = useGameStore()
 
   const options = reactive({
@@ -85,8 +85,8 @@ export const useSketchpadStore = defineStore('sketchpad', () => {
     })
   }
 
-  const draw = async (points: CachedPoint[]) => {
-    await send({
+  const draw = (points: CachedPoint[]) => {
+    sendRaw({
       type: 'game:drawing:sketchpad',
       command: 'draw',
       payload: {
