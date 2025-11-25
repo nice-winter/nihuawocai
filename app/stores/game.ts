@@ -212,7 +212,6 @@ export const useGameStore = defineStore('game', () => {
 
         // !!! ⚡ UI 广播点 ⚡ !!!
         // 显示 "第X轮开始" 过场动画
-        eventBus.emit('sketchpad:clear') // 下发画板清除指令
         eventBus.emit('game:event:round:prepare', {
           ...payload,
           drawerPlayer: getPlayerFromCurrentRoom(payload.drawer)!
@@ -260,7 +259,7 @@ export const useGameStore = defineStore('game', () => {
         // !!! ⚡ UI 广播点 ⚡ !!!
         // 1. 弹窗显示答案
         // 2. 显示本轮猜对的人 payload.bingo_players
-        if (isMyTurn.value) state.draw = false
+        state.draw = false
         eventBus.emit('game:event:interaction:start', {
           ...payload,
           drawerPlayer: getPlayerFromCurrentRoom(state.drawer!)!,

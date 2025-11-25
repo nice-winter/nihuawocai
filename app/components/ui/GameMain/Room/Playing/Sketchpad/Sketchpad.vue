@@ -20,7 +20,7 @@ const SketchpadCanvasRef = useTemplateRef('Canvas')
 const sketchpadStore = useSketchpadStore()
 const gameStore = useGameStore()
 
-let canvas: Canvas
+let canvas: SketchpadCanvas
 
 const eventsHandler = {
   onClear: () => {
@@ -49,8 +49,8 @@ onMounted(() => {
   })
 
   // 监听 canvas 绘画事件
-  canvas.on('cache:flush', async (points) => {
-    await sketchpadStore.draw(points)
+  canvas.on('cache:flush', (points) => {
+    sketchpadStore.draw(points)
   })
 
   const updateCanvasBrushOptions = (bo: { color: string; width: number }) => {
@@ -95,34 +95,54 @@ onMounted(() => {
     { immediate: true, deep: true }
   )
 
-  watch(
-    () => gameStore.state.draw,
-    (newState) => (canvas.isDrawingMode = newState),
-    { immediate: true }
-  )
+  // 监听 draw 状态，判断是否可绘画
+  // watch(
+  //   () => gameStore.state.draw,
+  //   (newState) => (canvas.isDrawingMode = newState),
+  //   { immediate: true }
+  // )
 })
 
+// 绘画消息
 useEventBus('sketchpad:draw', ({ points }) => {
   if (!canvas || !canvas.freeDrawingBrush) return
   const canvasBrush = canvas.freeDrawingBrush as unknown as PencilBrush
-
+  // ws 转发来的坐标是纯 xy，这里要把 xy 转为 fabric.js 的 Point 对象
   const _points = points.map((p) => {
     return {
       ...p,
       point: new Point(p.point)
     }
   })
-
+  // 遍历坐标点，绘制
   _points.forEach((p) => {
-    if (p.action === 'down') canvasBrush.onMouseDown(p.point)
-    if (p.action === 'move') canvasBrush.onMouseMove(p.point)
-    if (p.action === 'up') canvasBrush.onMouseUp()
+    switch (p.action) {
+      case 'down':
+        canvasBrush.onMouseDown(p.point)
+        break
+      case 'move':
+        canvasBrush.onMouseMove(p.point)
+        break
+      case 'up':
+        canvasBrush.onMouseUp()
+        break
+    }
   })
 })
+// 新回合开始，清除画板画作
+useEventBus('game:event:round:prepare', () => {
+  // 短暂开启 isDrawingMode，否则 clear 会不生效
+  canvas.isDrawingMode = true
+  canvas?.clear()
+  canvas.isDrawingMode = false
+})
+useEventBus('game:event:drawing:start', () => {
+  if (gameStore.isMyTurn) canvas.isDrawingMode = true
+})
+// 进入互动阶段，此时重置画板的状态，但仍然保留画作直至下一回合开始
 useEventBus('game:event:interaction:start', () => {
-  if (!canvas || !canvas.freeDrawingBrush) return
-  const canvasBrush = canvas.freeDrawingBrush as unknown as PencilBrush
-  canvasBrush.onMouseUp()
+  canvas.resetCacheState() // 重置缓存状态
+  canvas.isDrawingMode = false
 })
 </script>
 
