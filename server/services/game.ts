@@ -10,10 +10,17 @@
 
 import defu from 'defu'
 import { getAppConfig } from './app-config'
-import { checkPlayerIsInRoom, getPlayer, sendToPlayer, sendToRoom } from './player'
+import {
+  checkPlayerIsInRoom,
+  getPlayer,
+  sendToPlayer,
+  sendToRoom,
+  updatePlayerStats
+} from './player'
 import { end, roomEventBus } from './room'
 import type { AppConfig } from '~~/shared/interfaces/appConfig'
 import type { Room } from '~~/shared/interfaces/room'
+import { useWordManager, type WordItem } from './word'
 
 // ----------------------------------------------------------------
 //                          类型定义
@@ -30,11 +37,6 @@ export type RoundPhase =
   | 'drawing' // 绘画中
   | 'interaction' // 互动 (答案展示/送花)
   | 'round_end' // 回合结束
-
-export interface WordItem {
-  word: string
-  prompts: string[]
-}
 
 export interface ItemCounts {
   flower: number
@@ -94,22 +96,7 @@ export interface GameState {
 const GameStateRecord = new Map<number, GameState>()
 const GameLoopHandles = new Map<number, number>()
 
-// @TODO: 词库模块
-const WORDS: WordItem[] = [
-  { word: '苹果', prompts: ['一种常见水果', '红色的', '乔布斯'] },
-  { word: '珍珠奶茶', prompts: ['一种饮料', '里面有黑色的圆球', '现在的年轻人很爱喝'] },
-  { word: '西瓜', prompts: ['一种水果', '外绿内红', '夏天吃很解渴'] },
-  { word: '汽车', prompts: ['交通工具', '四个轮子', '即使没油也能跑'] },
-  { word: '拖鞋', prompts: ['生活用品', '穿在脚上的', '一般在家里穿'] },
-  { word: '爆浆蟑螂', prompts: ['美食', '特别好吃', '咬开会爆浆'] },
-  { word: '奶龙', prompts: ['卡通角色', '黄颜色的', '像鼻涕泡一样'] },
-  { word: '叮咚鸡', prompts: ['卡通角色', '白颜色的', '设定是一种鸡'] },
-  { word: '电棍', prompts: ['知名人物', '前LPL职业选手', '母亲没了'] }
-]
-
-const pickWord = (): WordItem => {
-  return WORDS[Math.floor(Math.random() * WORDS.length)]
-}
+const wordManager = useWordManager()
 
 // ----------------------------------------------------------------
 //                           事件监听
@@ -189,7 +176,7 @@ const gameStart = async (roomNumber: number, room: Room) => {
   )
 
   // 启动第一回合
-  startRound(roomNumber)
+  await startRound(roomNumber)
 }
 
 /**
@@ -250,6 +237,18 @@ const enterSettlementPhase = (roomNumber: number, st: GameState) => {
     )
   }
   // ------------------
+  //   更新玩家统计信息
+  const ids = Object.keys(finalScores)
+  ids.forEach((id) => {
+    updatePlayerStats(id, {
+      total_games: 1,
+      score: finalScores[id],
+      flower_count: finalItemCounts[id].flower,
+      egg_count: finalItemCounts[id].egg,
+      slipper_count: finalItemCounts[id].slipper
+    })
+  })
+  // ------------------
 
   sendToRoom(
     {
@@ -287,7 +286,7 @@ const endGame = (roomNumber: number) => {
 /**
  * 开始新回合
  */
-const startRound = (roomNumber: number) => {
+const startRound = async (roomNumber: number) => {
   const st = GameStateRecord.get(roomNumber)
   if (!st) return
 
@@ -311,11 +310,11 @@ const startRound = (roomNumber: number) => {
   // 如果算出来的画手不在了，直接开启新回合
   if (!drawerId) {
     st.currentRoundIndex++
-    startRound(roomNumber)
+    await startRound(roomNumber)
     return
   }
 
-  st.currentWord = pickWord()
+  st.currentWord = await wordManager.pickWord()
   const prepareSeconds = st.config.cycle.time.roundStartWaitTimeSecond
   setupTimer(st, prepareSeconds)
 
