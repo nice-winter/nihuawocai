@@ -3,6 +3,7 @@ import mitt from 'mitt'
 import { encode, decode } from '#shared/utils/crypto'
 import { WS_MESSAGE_PING, WS_MESSAGE_PONG, WS_MESSAGE_DUPLICATE_LOGIN } from '#shared/interfaces/ws'
 import { consola } from 'consola/browser'
+import { nanoid } from 'nanoid'
 import type { WebsocketMessage, WS_RECV } from '#shared/interfaces/ws'
 
 type WsEvents = {
@@ -123,7 +124,7 @@ export const useWsStore = defineStore('ws', () => {
     msg: WebsocketMessage<T>,
     opts?: { timeout?: number }
   ): Promise<R> => {
-    const rid = shortHash()
+    const rid = nanoid(8)
     const _msg = { ...(msg as object), rid } as WebsocketMessage & { rid: string }
     const timeout = opts?.timeout ?? 5000
 
