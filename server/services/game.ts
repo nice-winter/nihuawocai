@@ -51,6 +51,8 @@ export interface GiftRecord {
 }
 
 export interface GameState {
+  // --- 房间设置、配置 ---
+  options: RoomOptions
   config: RoomConfig
 
   // --- 状态标识 ---
@@ -125,6 +127,7 @@ const gameStart = async (roomNumber: number, room: Room) => {
   const players = room.players.filter((p) => p !== null)
   if (players.length < 2) throw new Error('玩家数不足 2 人无法开始游戏')
 
+  const options = room.options
   const defaultConfig = (await getAppConfig()).game.room
   const config = defu(room.config, defaultConfig)
 
@@ -141,6 +144,7 @@ const gameStart = async (roomNumber: number, room: Room) => {
 
   const state: GameState = {
     config,
+    options,
     gamePhase: 'game_start',
     roundPhase: 'round_prepare',
     currentRoundIndex: 0,
@@ -312,7 +316,7 @@ const startRound = async (roomNumber: number) => {
     return
   }
 
-  st.currentWord = await wordManager.pickWord()
+  st.currentWord = await wordManager.pickWord(st.options.libIds)
   const prepareSeconds = st.config.cycle.time.roundStartWaitTimeSecond
   setupTimer(st, prepareSeconds)
 
