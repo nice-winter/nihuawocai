@@ -158,4 +158,14 @@ export class SketchpadCanvas extends Canvas {
   public clearCache(): void {
     this._clearCache()
   }
+
+  public resetCacheState(): void {
+    this.clearCache()
+    this.cacheState = {
+      cachedPoints: [],
+      isMouseDown: false,
+      flushTimer: null,
+      sequenceCounter: 0
+    }
+  }
 }
