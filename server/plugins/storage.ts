@@ -7,65 +7,34 @@ export default defineNitroPlugin(() => {
   const databaseName = 'database'
   const storage = useStorage()
 
+  // 所有表名
+  const tables = ['app', 'session', 'word', 'user_data']
+
+  // SQLite 原生 db0 实例
   const database = createDatabase(
     sqlite({
       name: databaseName
     })
   )
-  const sqliteDriver = (name?: string) => {
-    return dbDriver({
+
+  const sqliteDriver = (table: string) =>
+    dbDriver({
       database,
-      tableName: name
+      tableName: table
     })
-  }
 
-  const mountPoints = [
-    {
-      name: 'app',
-      driver: sqliteDriver('app')
-    },
-    {
-      name: 'session',
-      driver: sqliteDriver('session')
-    },
-    {
-      name: 'word',
-      driver: sqliteDriver('word')
-    },
-    {
-      name: 'user_data',
-      driver: sqliteDriver('user_data')
-    }
-  ]
+  const fsDevDriver = (table: string) =>
+    fsDriver({
+      base: `./.data/${databaseName}/${table}`
+    })
 
-  const mountPointsDevOnly = [
-    {
-      name: 'app',
-      driver: fsDriver({
-        base: `./.data/${databaseName}/app`
-      })
-    },
-    {
-      name: 'session',
-      driver: fsDriver({
-        base: `./.data/${databaseName}/session`
-      })
-    },
-    {
-      name: 'word',
-      driver: fsDriver({
-        base: `./.data/${databaseName}/word`
-      })
-    },
-    {
-      name: 'user_data',
-      driver: fsDriver({
-        base: `./.data/${databaseName}/user_data`
-      })
-    }
-  ]
+  // 根据是否开发模式，使用对应的 Driver
+  // 生产模式：sqlite
+  // 开发模式：fs（便于调试）
+  const pickDriver = import.meta.dev ? fsDevDriver : sqliteDriver
 
-  ;(!import.meta.dev ? mountPoints : mountPointsDevOnly).forEach((mountPoint) =>
-    storage.mount(mountPoint.name, mountPoint.driver)
-  )
+  // 自动挂载
+  tables.forEach((t) => {
+    storage.mount(t, pickDriver(t))
+  })
 })
