@@ -44,7 +44,10 @@
 
       <div class="flex flex-col items-center justify-center w-20">
         <UiGameMainRoomTimer
-          v-show="gameStore.state.roundPhase === 'drawing'"
+          v-show="
+            gameStore.state.roundPhase === 'drawing' &&
+            gameStore.state.gamePhase !== 'game_settlement'
+          "
           ref="Timer"
           :seconds="gameStore.state.timeLeft"
         />
@@ -158,6 +161,8 @@ useEventBus(
         break
     }
 
+    playSound('end')
+
     timerRef.value?.pause()
     await throwerModal.open({
       answer,
@@ -171,6 +176,7 @@ useEventBus('game:event:gift', async ({ item_type, from, to }) => {
   throwerRef.value?.throwFlower(1, -400, -50)
 })
 useEventBus('game:event:settlement', async ({ scores, item_counts, seconds }) => {
+  timerRef.value?.pause()
   const ranks = _players.value.map((p) => {
     return {
       player: p,
