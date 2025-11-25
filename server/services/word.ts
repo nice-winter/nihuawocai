@@ -92,8 +92,6 @@ export const useWordManager = () => {
 
       await _saveLibrary(defaultLib)
       await _addToIndex(DEFAULT_LIB_ID)
-    } else {
-      logger.log(`词库已加载：${index.length} 个合集`)
     }
   }
 
