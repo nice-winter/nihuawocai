@@ -64,8 +64,6 @@
 </template>
 
 <script setup lang="ts">
-import type { Player } from '~~/shared/interfaces/player'
-
 export interface RankItem {
   score: number
   flower: number

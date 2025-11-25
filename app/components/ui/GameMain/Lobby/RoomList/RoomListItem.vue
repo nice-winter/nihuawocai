@@ -62,8 +62,6 @@
 </template>
 
 <script setup lang="ts">
-import type { RoomInfo } from '#shared/interfaces/room'
-
 type RoomListItemProps = RoomInfo
 
 const { roomInfo } = defineProps<{ roomInfo: RoomListItemProps }>()

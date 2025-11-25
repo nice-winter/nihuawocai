@@ -1,5 +1,5 @@
-import type { LevelInfo } from '#shared/interfaces/level'
-import type { Gender } from '#shared/interfaces/gender'
+import type { LevelInfo } from '~~/shared/types/level'
+import type { Gender } from '~~/shared/types/gender'
 
 export interface AppConfig {
   name: string

@@ -1,7 +1,6 @@
 import { safeSend, isOpen } from '~~/server/ws/utils'
 import { players } from '~~/server/services/player'
 import { channels } from './channel'
-import type { WebsocketMessage } from '#shared/interfaces/ws'
 import type { WsPeer } from '~~/server/ws/utils'
 
 export const sendToAll = <T>(msg: WebsocketMessage<T>, peers: Set<WsPeer>) => {

@@ -1,4 +1,4 @@
-import type { LevelInfo, UserLevelInfo } from '#shared/interfaces/level'
+import type { LevelInfo, UserLevelInfo } from '~~/shared/types/level'
 import { defaultAppConfig } from '#shared/defaultAppConfig'
 
 export const defaultLevels: LevelInfo[] = defaultAppConfig.game.levels

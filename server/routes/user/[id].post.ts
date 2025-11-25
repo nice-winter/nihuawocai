@@ -1,4 +1,3 @@
-import type { UserData } from '#shared/interfaces/userData'
 import { getUserData, updateUserData } from '~~/server/services/user'
 
 export default defineEventHandler(async (event) => {

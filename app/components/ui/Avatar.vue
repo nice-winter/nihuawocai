@@ -100,8 +100,6 @@
 </template>
 
 <script setup lang="ts">
-import type { Player } from '#shared/interfaces/player'
-
 interface AvatarProps {
   id?: number | string
   mode?: 'display' | 'seat' | 'switchable-seat'

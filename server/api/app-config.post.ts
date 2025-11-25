@@ -1,4 +1,3 @@
-import type { AppConfig } from '#shared/interfaces/appConfig'
 import { updateAppConfig } from '~~/server/services/app-config'
 
 export default defineEventHandler(async (event) => {

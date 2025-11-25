@@ -88,7 +88,7 @@
 </template>
 
 <script setup lang="ts">
-import type { RoomInfo } from '#shared/interfaces/room'
+import type { RoomInfo } from '~~/shared/types/room'
 import CountdownModal from '~/components/ui/CountdownModal.vue'
 import ThrowerModal from '~/components/ui/ThrowerModal.vue'
 import RankModal from '~/components/ui/RankModal.vue'

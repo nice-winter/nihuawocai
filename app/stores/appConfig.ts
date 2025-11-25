@@ -1,7 +1,6 @@
 import { defaultAppConfig } from '#shared/defaultAppConfig'
 import defu from 'defu'
 import { consola } from 'consola/browser'
-import type { AppConfig } from '#shared/interfaces/appConfig'
 
 const logger = consola.withTag('应用配置')
 

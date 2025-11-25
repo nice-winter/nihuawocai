@@ -12,8 +12,6 @@ import {
   seatSwitch,
   sit
 } from '~~/server/services/room'
-import type { WebsocketMessage } from '#shared/interfaces/ws'
-import type { WsProcotolRoomJoin } from '#shared/interfaces/protocol'
 
 const logger = consola.withTag('Room Handler')
 

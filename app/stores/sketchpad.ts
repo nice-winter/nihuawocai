@@ -1,7 +1,6 @@
 import { eventBus } from '~/composables/eventBus'
 import type { Brush, BrushesNameString } from '~/interfaces/brush'
 import type { CachedPoint } from '~/components/ui/GameMain/Room/Playing/Sketchpad/fabric/SketchpadCanvas'
-import type { WebsocketMessage } from '~~/shared/interfaces/ws'
 
 export const useSketchpadStore = defineStore('sketchpad', () => {
   const { wsEventBus, send, sendRaw } = useWsStore()

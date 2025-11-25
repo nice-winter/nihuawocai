@@ -1,4 +1,4 @@
-import type { UserData } from '#shared/interfaces/userData'
+import type { UserData } from '~~/shared/types/userData'
 
 type Player = UserData
 

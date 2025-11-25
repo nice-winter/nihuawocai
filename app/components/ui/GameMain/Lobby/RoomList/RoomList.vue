@@ -49,27 +49,19 @@
 </template>
 
 <script setup lang="ts">
-// import { mockdata } from '#shared/utils/mockdata'
-// import type { RoomInfo } from '#shared/interfaces/room'
 import PasswordModal from '@/components/ui/PasswordModal.vue'
 import CreateRoomModal from '@/components/ui/CreateRoomModal.vue'
 
 const roomStore = useRoomStore()
 const { rooms, pullRoomList, join, prevPage, nextPage, createRoom, quickMatch } = roomStore
 const { currentPageRooms, currentPageNumber, showOnlyWaitingRooms } = storeToRefs(roomStore)
-const passwordModal = useModal<string>(
-  PasswordModal,
-  { parent: '#game-rooms' },
-  { parent: '#game-rooms' }
-)
+const passwordModal = useModal<string>(PasswordModal, { parent: '#game-rooms' })
 const createRoomModal = useModal<{ opens: number; password: string; maxOnlookers: number }>(
   CreateRoomModal,
-  { parent: '#game-rooms' },
   { parent: '#game-rooms' }
 )
 
 const roomNumberInputValue = ref('')
-// const rooms = ref(mockdata.roomList)
 
 // 不要阻塞组件创建，所以放到即将挂载时处理，否则这个组件会比别的组件慢半拍加载导致错位
 onBeforeMount(async () => {

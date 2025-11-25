@@ -1,6 +1,5 @@
 import { useWsStore } from './ws'
 import { usePlayerStore } from './player'
-import type { WebsocketMessage } from '~~/shared/interfaces/ws'
 
 // ----------------------------------------------------------------
 //                          类型定义

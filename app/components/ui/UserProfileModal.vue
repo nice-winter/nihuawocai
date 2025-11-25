@@ -72,8 +72,6 @@
 </template>
 
 <script setup lang="ts">
-import type { UserData } from '#shared/interfaces/userData'
-
 const { user } = useUserSession()
 const userData = reactive((await $fetch(`/user/${user.value?.id}`)) as UserData)
 const appConfigStore = useAppConfigStore()

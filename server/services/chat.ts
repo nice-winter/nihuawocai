@@ -8,7 +8,6 @@ import {
   sendToLobby,
   sendToRoom
 } from './player'
-import type { UserData } from '#shared/interfaces/userData'
 import { handleGuess } from './game'
 
 const logger = consola.withTag('Chat Service')

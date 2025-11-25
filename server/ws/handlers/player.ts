@@ -3,7 +3,6 @@ import { defineWsHandlers } from '~~/server/ws/utils'
 import { say } from '~~/server/services/chat'
 import { getLobbyPlayers } from '~~/server/services/player'
 import { getUserData } from '~~/server/services/user'
-import type { WebsocketMessage } from '#shared/interfaces/ws'
 
 const logger = consola.withTag('Player Handler')
 

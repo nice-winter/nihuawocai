@@ -3,7 +3,7 @@
  * @author Winter <doyouknowmeemail@gmail.com>
  * @description 负责游戏核心流程循环、状态管理和主要计分机制
  * @created 2025-11-22
- * @lastModified 2025-11-25
+ * @lastModified 2025-11-26
  *
  * @module Game
  */
@@ -18,7 +18,6 @@ import {
   updatePlayerStats
 } from './player'
 import { end, roomEventBus } from './room'
-import type { Room, RoomConfig } from '~~/shared/interfaces/room'
 import { useWordManager, type WordItem } from './word'
 
 // ----------------------------------------------------------------

@@ -1,7 +1,4 @@
 import { defineStore } from 'pinia'
-import type { Room, RoomInfo } from '#shared/interfaces/room'
-import type { WebsocketMessage } from '#shared/interfaces/ws'
-import type { Player } from '#shared/interfaces/player'
 
 /**
  * 游戏房间列表 Store

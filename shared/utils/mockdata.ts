@@ -1,5 +1,5 @@
-import type { Player } from '#shared/interfaces/player'
-import type { RoomInfo } from '#shared/interfaces/room'
+import type { Player } from '~~/shared/types/player'
+import type { RoomInfo } from '~~/shared/types/room'
 
 const roomList: RoomInfo[] = [
   {

@@ -1,5 +1,3 @@
-import type { LoggedInPlayer, Player, PlayerState } from '#shared/interfaces/player'
-import type { WebsocketMessage } from '#shared/interfaces/ws'
 import consola from 'consola'
 
 export const usePlayerStore = defineStore('player', () => {

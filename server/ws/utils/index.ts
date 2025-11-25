@@ -1,5 +1,3 @@
-import type { WebsocketMessage } from '#shared/interfaces/ws'
-import type { UserData } from '#shared/interfaces/userData'
 import type { AdapterInternal, Peer, WSError } from 'crossws'
 
 type WsPeer = Peer<AdapterInternal>
