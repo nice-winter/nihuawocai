@@ -1,9 +1,6 @@
-import { defineStore, storeToRefs } from 'pinia'
-import { reactive, computed } from 'vue'
 import { useWsStore } from './ws'
 import { usePlayerStore } from './player'
 import type { WebsocketMessage } from '~~/shared/interfaces/ws'
-import { useSketchpadStore } from './sketchpad/sketchpadStore'
 
 // ----------------------------------------------------------------
 //                          类型定义
@@ -48,7 +45,7 @@ export interface GameState {
   draw: boolean
 }
 
-export const useGameStore = defineStore('gameStore', () => {
+export const useGameStore = defineStore('game', () => {
   const { wsEventBus, send } = useWsStore()
   const { myId } = storeToRefs(usePlayerStore())
   const { currentRoom } = storeToRefs(useRoomStore())

@@ -1,7 +1,7 @@
 import type { Player } from '#shared/interfaces/player'
 import type { WebsocketMessage } from '#shared/interfaces/ws'
 
-export const useChatStore = defineStore('chatStore', () => {
+export const useChatStore = defineStore('chat', () => {
   const { wsEventBus, send } = useWsStore()
 
   wsEventBus.on('ws:message', (msg) => {

@@ -72,7 +72,6 @@
 
 <script setup lang="ts">
 import type { BrushesNameString } from '~/interfaces/brush'
-import { useSketchpadStore } from '~/stores/sketchpad/sketchpadStore'
 
 const sketchpadStore = useSketchpadStore()
 
