@@ -67,6 +67,9 @@ importers:
       mitt:
         specifier: ^3.0.1
         version: 3.0.1
+      nanoid:
+        specifier: ^5.1.6
+        version: 5.1.6
       nuxt:
         specifier: 4.2.1
         version: 4.2.1(@parcel/watcher@2.5.1)(@vue/compiler-sfc@3.5.25)(better-sqlite3@12.4.6)(db0@0.3.4(better-sqlite3@12.4.6))(eslint@9.39.1(jiti@2.6.1))(ioredis@5.8.2)(less@4.4.2)(lightningcss@1.30.2)(magicast@0.5.1)(optionator@0.9.4)(rollup@4.53.3)(terser@5.44.1)(typescript@5.9.3)(vite@7.2.4(jiti@2.6.1)(less@4.4.2)(lightningcss@1.30.2)(terser@5.44.1)(yaml@2.8.1))(yaml@2.8.1)
@@ -79,9 +82,6 @@ importers:
       unstorage:
         specifier: ^1.17.3
         version: 1.17.3(db0@0.3.4(better-sqlite3@12.4.6))(ioredis@5.8.2)
-      uuid:
-        specifier: ^13.0.0
-        version: 13.0.0
       vue:
         specifier: ^3.5.25
         version: 3.5.25(typescript@5.9.3)
@@ -5143,10 +5143,6 @@ packages:
 
   util-deprecate@1.0.2:
     resolution: {integrity: sha512-EPD5q1uXyFxJpCrLnCc1nHnq3gOa6DZBocAIiI2TaSCA7VCJ1UJDMagCzIkXNsUYfD1daK//LTEQ8xiIbrHtcw==}
-
-  uuid@13.0.0:
-    resolution: {integrity: sha512-XQegIaBTVUjSHliKqcnFqYypAd4S+WCYt5NIeRs6w/UAry7z8Y9j5ZwRRL4kzq9U3sD6v+85er9FvkEaBpji2w==}
-    hasBin: true
 
   valibot@1.2.0:
     resolution: {integrity: sha512-mm1rxUsmOxzrwnX5arGS+U4T25RdvpPjPN4yR0u9pUBov9+zGVtO84tif1eY4r6zWxVxu3KzIyknJy3rxfRZZg==}
@@ -10997,8 +10993,6 @@ snapshots:
       punycode: 2.3.1
 
   util-deprecate@1.0.2: {}
-
-  uuid@13.0.0: {}
 
   valibot@1.2.0(typescript@5.9.3):
     optionalDependencies:
