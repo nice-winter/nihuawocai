@@ -1,10 +1,35 @@
-export interface WsProcotolRoomCreate {
-  type: 'room:create'
-}
+export interface WsProcotol {
+  room: {
+    create: {
+      type: 'room:create'
+      opens: number
+      options: { password: string; maxOnlookers: number }
+    }
 
-export interface WsProcotolRoomJoin {
-  type: 'room:join'
-  roomNumber: number
-  password: string
-  look?: boolean
+    join: {
+      type: 'room:join'
+      roomNumber: number
+      password: string
+      look?: boolean
+    }
+
+    sit: {
+      seat: number
+    }
+
+    sitSwitch: {
+      roomNumber: number
+      seat: number
+      open: boolean
+    }
+
+    passwordChange: {
+      roomNumber: number
+      password: string
+    }
+
+    invite: {
+      toId: string
+    }
+  }
 }
