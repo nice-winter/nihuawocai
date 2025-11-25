@@ -2,6 +2,10 @@ import { createDatabase } from 'db0'
 import dbDriver from 'unstorage/drivers/db0'
 import fsDriver from 'unstorage/drivers/fs'
 import sqlite from 'db0/connectors/node-sqlite'
+import { consola } from 'consola'
+import { colors } from 'consola/utils'
+
+const logger = consola.withTag('Storage Plugin')
 
 export default defineNitroPlugin(() => {
   const databaseName = 'database'
@@ -37,4 +41,6 @@ export default defineNitroPlugin(() => {
   tables.forEach((t) => {
     storage.mount(t, pickDriver(t))
   })
+
+  logger.success(`储存层初始化完成，数据表：`, tables.map((t) => colors.blueBright(t)).join(', '))
 })
