@@ -17,7 +17,7 @@
         <span v-if="gameStore.isMyTurn && gameStore.state.currentWord !== null"
           >题目是：<span class="text-red-600">{{ gameStore.state.currentWord }}</span></span
         >
-        <span v-else-if="gameStore.state.prompts.length" class="w-full truncate"
+        <span v-else-if="gameStore.state.prompts.length" class="w-full text-center truncate"
           >提示：
           <template v-for="(prompt, index) in gameStore.state.prompts" :key="index">
             <span class="text-red-600">{{ prompt }}</span>
@@ -114,7 +114,7 @@ useEventBus('chat:event:say', ({ chatmsg, sender }) => {
   show(sender.id, chatmsg)
 })
 useEventBus('game:event:round:prepare', async ({ seconds }) => {
-  await countdownModal.open({ initialValue: 5 })
+  await countdownModal.open({ seconds: 5 })
 })
 useEventBus('game:event:drawing:start', () => {
   timerRef.value?.play()
@@ -159,7 +159,7 @@ useEventBus(
       answer,
       reason: text,
       showThrowItem: !gameStore.isMyTurn,
-      countdown: seconds + 1
+      seconds: seconds + 1
     })
   }
 )
@@ -178,7 +178,7 @@ useEventBus('game:event:settlement', async ({ scores, item_counts, seconds }) =>
   })
   await rankModal.open({
     ranks,
-    countdown: seconds + 1
+    seconds
   })
 })
 </script>

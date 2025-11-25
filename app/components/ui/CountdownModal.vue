@@ -18,12 +18,12 @@
 <script setup lang="ts">
 interface Props {
   parent?: Element
-  initialValue?: number
+  seconds?: number
 }
 
-const { parent = '', initialValue = 5 } = defineProps<Props>()
+const { parent = '', seconds = 5 } = defineProps<Props>()
 
-const currentValue = ref(initialValue)
+const currentValue = ref(seconds)
 let countdownInterval: number | null = null
 
 const visible = ref(false)
@@ -70,7 +70,7 @@ const playAnimation = () => {
 const startCountdown = () => {
   if (countdownInterval) clearInterval(countdownInterval)
 
-  currentValue.value = initialValue
+  currentValue.value = seconds
   playAnimation()
 
   countdownInterval = window.setInterval(() => {
@@ -85,7 +85,7 @@ const startCountdown = () => {
 }
 
 watch(
-  () => initialValue,
+  () => seconds,
   () => {
     if (countdownInterval) clearInterval(countdownInterval!)
     startCountdown()

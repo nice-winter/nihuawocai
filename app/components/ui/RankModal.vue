@@ -75,11 +75,11 @@ export interface RankItem {
 }
 
 export interface RankModalProps {
-  countdown?: number
+  seconds?: number
   ranks?: RankItem[]
   parent?: Element
 }
-const { parent = '', ranks = [], countdown = 8 } = defineProps<RankModalProps>()
+const { parent = '', ranks = [], seconds = 8 } = defineProps<RankModalProps>()
 
 const visible = ref(false)
 const resolveFn = ref<(() => void) | null>(null)
@@ -89,7 +89,7 @@ const targetEl = computed(() => parent ?? document.body)
 
 const r = computed(() => [...ranks].sort((a, b) => b.score - a.score))
 
-const t = ref(countdown)
+const t = ref(seconds)
 const timer = ref<number | null>(null)
 
 const open = (): Promise<void> => {

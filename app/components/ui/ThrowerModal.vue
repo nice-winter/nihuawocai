@@ -57,7 +57,7 @@ import type { Player } from '~~/shared/interfaces/player'
 export interface ThrowerModalProps {
   answer?: ''
   reason?: 'give_up' | 'bingo_all' | 'timeout' | 'afk' | 'force' | 'leave'
-  countdown?: number
+  seconds?: number
   showThrowItem?: boolean
   parent?: Element
 }
@@ -65,7 +65,7 @@ const {
   parent = '',
   answer = '',
   reason = '',
-  countdown = 5,
+  seconds = 5,
   showThrowItem = true
 } = defineProps<ThrowerModalProps>()
 
@@ -77,7 +77,7 @@ const rejectFn = ref<(() => void) | null>(null)
 const modalRef = ref<HTMLDivElement | null>(null)
 const targetEl = computed(() => parent ?? document.body)
 
-const t = ref(countdown)
+const t = ref(seconds)
 const timer = ref<number | null>(null)
 const isThrowed = ref(false)
 
