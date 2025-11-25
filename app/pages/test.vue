@@ -27,6 +27,10 @@
     <div class="flex gap-4">
       <UButton @click="() => countdown()">倒计时</UButton>
     </div>
+    <div class="flex gap-4">
+      <UButton @click="() => playSound('pop')">泡泡音效</UButton>
+      <UButton @click="() => playSound('clock')">时钟</UButton>
+    </div>
   </div>
 </template>
 
@@ -36,6 +40,8 @@ import CountdownModal from '~/components/ui/CountdownModal.vue'
 
 const testRef = ref<HTMLElement | null>(null)
 const throwerRef = useTemplateRef('throwerRef')
+
+const { playSound } = useSound()
 
 const flower = (count?: number) => {
   throwerRef.value?.throwFlower(count)
@@ -51,7 +57,7 @@ const countdownModal = useModal(CountdownModal, { parent: '#test' })
 const roomNumber = ref('')
 
 onMounted(() => {
-  open()
+  // open()
 })
 
 const pullRoomList = () => {

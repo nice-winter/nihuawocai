@@ -105,6 +105,7 @@ const { show, destroy, destroyAll } = useBubble('#game-panel')
 const countdownModal = useModal(CountdownModal, { parent: '#sketchpad-container' })
 const throwerModal = useModal(ThrowerModal, { parent: '#sketchpad-container' })
 const rankModal = useModal(RankModal, { parent: '#sketchpad-container' })
+const { playSound } = useSound()
 
 const _players = computed(() => roomInfo.players.filter((p) => p !== null))
 const drawingPlayer = computed(() => _players.value.find((p) => p.id === gameStore.state.drawer))
@@ -114,10 +115,13 @@ useEventBus('chat:event:say', ({ chatmsg, sender }) => {
   show(sender.id, chatmsg)
 })
 useEventBus('game:event:round:prepare', async ({ seconds }) => {
-  await countdownModal.open({ seconds: 5 })
+  await countdownModal.open({ seconds })
 })
 useEventBus('game:event:drawing:start', () => {
   timerRef.value?.play()
+})
+useEventBus('game:event:prompt', () => {
+  playSound('pop') // 弹出提示词时，发出泡泡音效
 })
 useEventBus('game:event:guess:bingo', ({ score_delta }) => {
   show(score_delta.drawerId, `+${score_delta.drawerGain}`)
