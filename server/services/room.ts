@@ -181,7 +181,6 @@ const createRoom = async (
   // @TODO: 需要过滤不需要的字段
   const roomInfo: RoomInfo = roomPropertyFilter(getRoom(roomNumber)!)
 
-  logger.debug(roomInfo)
   // 广播房间创建事件
   sendToAllPlayer({
     type: 'room:event:create',
