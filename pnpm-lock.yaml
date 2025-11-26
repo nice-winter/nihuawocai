@@ -61,6 +61,9 @@ importers:
       fabric:
         specifier: ^7.0.0-beta1
         version: 7.0.0-beta1(patch_hash=2c87bae9647827c5c912353b91f193a6e4f57e4f7eb57e64a7b509c0eb74182d)
+      howler:
+        specifier: ^2.2.4
+        version: 2.2.4
       mitt:
         specifier: ^3.0.1
         version: 3.0.1
@@ -3407,6 +3410,9 @@ packages:
 
   hookable@5.5.3:
     resolution: {integrity: sha512-Yc+BQe8SvoXH1643Qez1zqLRmbA5rCL+sSmk6TVos0LWVfNIB7PGncdlId77WzLGSIB5KaWgTaNTs2lNVEI6VQ==}
+
+  howler@2.2.4:
+    resolution: {integrity: sha512-iARIBPgcQrwtEr+tALF+rapJ8qSc+Set2GJQl7xT1MQzWaVkFebdJhR3alVlSiUf5U7nAANKuj3aWpwerocD5w==}
 
   html-encoding-sniffer@4.0.0:
     resolution: {integrity: sha512-Y22oTqIU4uuPgEemfz7NDJz6OeKf12Lsu+QC+s3BVpda64lTiMYCyGwg5ki4vFxkMwQdeZDl2adZoqUgdFuTgQ==}
@@ -8973,6 +8979,8 @@ snapshots:
   hey-listen@1.0.8: {}
 
   hookable@5.5.3: {}
+
+  howler@2.2.4: {}
 
   html-encoding-sniffer@4.0.0:
     dependencies:
