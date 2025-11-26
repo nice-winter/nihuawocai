@@ -71,9 +71,10 @@
               :player="player"
               class="size-18 rounded-lg overflow-hidden"
               :class="{
-                bingo: gameStore.state.bingoPlayers.findIndex((p) => p === player.id) > -1,
+                bingo: gameStore.state.bingoPlayers.includes(player.id),
                 drawing: player.id === gameStore.state.drawer,
-                'drawing-bingo': gameStore.state.bingoPlayers.length > 0
+                'drawing-bingo':
+                  player.id === gameStore.state.drawer && gameStore.state.bingoPlayers.length > 0
               }"
               :verified-icon="{ show: true, size: 12, bottom: 2, right: 2 }"
             />
@@ -129,6 +130,7 @@ useEventBus('game:event:prompt', () => {
 useEventBus('game:event:guess:bingo', ({ score_delta }) => {
   show(score_delta.drawerId, `+${score_delta.drawerGain}`)
   show(score_delta.guesserId, `+${score_delta.guesserGain}`)
+  playSound('bingo')
 })
 useEventBus(
   'game:event:interaction:start',
