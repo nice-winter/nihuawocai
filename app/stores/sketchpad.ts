@@ -79,7 +79,9 @@ export const useSketchpadStore = defineStore('sketchpad', () => {
       type: 'game:drawing:sketchpad',
       command: 'pencil_options_update',
       payload: {
-        options: brushOptions
+        options: {
+          ...brushOptions // 解构防止把额外的东西带进去，postMessage 只能带基本类型
+        }
       }
     })
   }
