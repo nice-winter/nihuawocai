@@ -9,7 +9,6 @@
       <UButton @click="msgbox">msgbox</UButton>
     </p>
     <p>Status: {{ status }}</p>
-    <p>Data: {{ data }}</p>
     <div>
       <Text :text="text" style="--emoji-size: 20px" />
     </div>
@@ -51,7 +50,7 @@ const text = `wkmsadkw<a href="111">222</a>啊啊啊{:30:}啊啊啊啊啊啊啊�
 
 const wsStore = useWsStore()
 const { send, open } = wsStore
-const { status, data } = storeToRefs(wsStore)
+const { status } = storeToRefs(wsStore)
 const countdownModal = useModal(CountdownModal, { parent: '#test' })
 
 const roomNumber = ref('')
