@@ -21,7 +21,7 @@
 
       <div v-if="currentRoom.playing" class="h-[166.6px] w-full border-y border-y-white/50">
         <UiGameMainRoomPlayingToolbar v-if="gameStore.state.draw" class="size-full" />
-        <img v-if="!gameStore.state.draw" src="~/assets/banner.webp" class="w-full" />
+        <img v-if="!gameStore.state.draw" src="~/assets/banner-painting.webp" class="w-full" />
       </div>
 
       <UiGameMainChatPanel
