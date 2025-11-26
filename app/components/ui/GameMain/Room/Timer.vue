@@ -11,10 +11,15 @@
 <script setup lang="ts">
 const seconds = defineModel<number>('seconds', { required: true })
 
+const { playSound, stopSound } = useSound()
+
 let timer: number | null = null
 
-// 是否正在运行
+// 是否正在运行倒计时
 const running = ref(false)
+
+// 是否已经触发过 clock 播放（避免重复 play）
+const clockStarted = ref(false)
 
 /** 清理定时器 */
 const clear = () => {
@@ -29,13 +34,16 @@ const play = () => {
   if (running.value) return
   running.value = true
 
+  // 如需重开计时，先停掉 clock（避免之前残留）
+  clockStarted.value = false
+  stopSound('clock')
+
   clear()
 
   timer = setInterval(() => {
     if (seconds.value > 0) {
       seconds.value -= 1
     } else {
-      // 到 0 自动停止
       pause()
     }
   }, 1000)
@@ -45,17 +53,33 @@ const play = () => {
 const pause = () => {
   running.value = false
   clear()
+
+  // 停止循环音效
+  stopSound('clock')
+  clockStarted.value = false
 }
 
-watch(seconds, () => {
-  if (running.value) {
-    play()
+/** 监听秒数变化，用来触发 10 秒以下的 clock */
+watch(seconds, (newVal) => {
+  if (!running.value) return
+
+  // 进入 10 秒区间
+  if (newVal <= 10 && !clockStarted.value) {
+    playSound('clock') // 只需 play 一次（loop 自动循环）
+    clockStarted.value = true
+  }
+
+  // 时间到、保护逻辑
+  if (newVal <= 0) {
+    stopSound('clock')
+    clockStarted.value = false
   }
 })
 
-// onMounted(play)
-
-onBeforeUnmount(clear)
+onBeforeUnmount(() => {
+  clear()
+  stopSound('clock')
+})
 
 defineExpose({ play, pause })
 </script>
