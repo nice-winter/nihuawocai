@@ -74,6 +74,20 @@
               </span>
             </li>
 
+            <li
+              v-if="item.type === 'prompt'"
+              class="message-item"
+              :class="[`message-item-${item.type}`]"
+              :style="{
+                color: item.style?.color || 'var(--action-text-color)',
+                fontSize: item.style?.fontSize || `13px`,
+                fontWeight: item.style?.fontWeight || 'normal'
+              }"
+            >
+              <span>提示{{ item.index }}：</span
+              ><span class="text-red-600">{{ item.content }}</span>
+            </li>
+
             <li v-else-if="item.type === 'system'">
               <USeparator
                 class="select-none"
@@ -140,6 +154,12 @@ type IMessage =
   | {
       type: 'system'
       msg: string
+      style?: TextStyle
+    }
+  | {
+      type: 'prompt'
+      index: number
+      content: string
       style?: TextStyle
     }
   | {

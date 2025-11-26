@@ -179,8 +179,9 @@ useEventBus('game:event:drawing:start', ({ drawerPlayer }) => {
 })
 useEventBus('game:event:prompt', ({ index, content }) => {
   ChatPanelMessageListRef.value?.addMessage({
-    type: 'text',
-    msg: `提示${index}：${content}。`
+    type: 'prompt',
+    index,
+    content
   })
 })
 useEventBus('game:event:guess:bingo', ({ player }) => {
