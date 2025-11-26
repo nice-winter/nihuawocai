@@ -77,13 +77,13 @@ export const hooks = defineHooks({
 
     const { userData } = await resolveUserFromPeer(peer)
     wsEventBus.emit('ws:disconnect', { peer, user: userData, ...e })
-    logger.warn(e)
+    // logger.warn(e)
   },
 
   async error(peer, error) {
     const { userData } = await resolveUserFromPeer(peer)
     wsEventBus.emit('ws:error', { peer, user: userData, error })
-    logger.warn(error)
+    // logger.warn(error)
   }
 })
 
