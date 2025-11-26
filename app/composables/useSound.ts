@@ -18,7 +18,7 @@ export const useSound = () => {
     }),
     bingo: new Howl({
       src: [`${baseUrl}/bingo.mp3`],
-      volume: 0.6,
+      volume: 0.1,
       preload: true
     }),
     giveUp: new Howl({
@@ -27,6 +27,11 @@ export const useSound = () => {
     }),
     end: new Howl({
       src: [`${baseUrl}/end.mp3`],
+      preload: true
+    }),
+    flower: new Howl({
+      src: [`${baseUrl}/flower.mp3`],
+      volume: 0.08,
       preload: true
     })
   }

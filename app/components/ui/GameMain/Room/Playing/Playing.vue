@@ -175,7 +175,16 @@ useEventBus(
   }
 )
 useEventBus('game:event:gift', async ({ item_type, from, to }) => {
-  throwerRef.value?.throwFlower(1, -400, -50)
+  switch (item_type) {
+    case 'flower':
+      throwerRef.value?.throwFlower(1, -400, -50)
+      playSound('flower')
+      break
+    case 'egg':
+      break
+    case 'slipper':
+      break
+  }
 })
 useEventBus('game:event:settlement', async ({ scores, item_counts, seconds }) => {
   timerRef.value?.pause()
