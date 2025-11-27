@@ -17,15 +17,18 @@ type Idle = {
   i: number
 }
 
-const PING_MESSAGE_ENCODED = encode({
-  ...WS_MESSAGE_PING,
-  payload: {
-    msg: 'いいよ！ こいよ！',
-    code: 1145141919810,
-    reason: 'keep_alive',
-    random: nanoid()
-  }
-})
+const PING_MESSAGE_ENCODED = () => {
+  return encode({
+    ...WS_MESSAGE_PING,
+    payload: {
+      msg: 'いいよ！こいよ！',
+      code: 1145141919810,
+      reason: 'keep_alive',
+      random: nanoid(),
+      t: Date.now()
+    }
+  })
+}
 const PONG_MESSAGE_ENCODED = encode(WS_MESSAGE_PONG)
 
 let ws: WebSocket | null = null
@@ -35,7 +38,7 @@ const idle: Idle = {
   i: 30_000 // 30s
 }
 const _idle = () => {
-  ws?.send(PING_MESSAGE_ENCODED)
+  ws?.send(PING_MESSAGE_ENCODED())
 }
 const startIdle = () => {
   if (!idle.timer) idle.timer = setInterval(_idle, idle.i)
