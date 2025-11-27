@@ -29,3 +29,5 @@ export type WS_RECV<T = object> = WebsocketMessage<{
   T
 
 export type WebsocketMessageType = 'ping' | 'pong' | string
+
+export const NON_REPONSE = 'NON_REPONSE'
