@@ -1,24 +1,19 @@
-const encoder = new TextEncoder()
-const decoder = new TextDecoder()
+import * as cbor from 'cbor2'
 
 /**
  * 将对象编码为 ArrayBuffer
- * @param data 要编码的数据
- * @returns 编码后的 ArrayBuffer
  */
 const encode = <T = unknown>(data: T): ArrayBuffer => {
-  const jsonString = JSON.stringify(data)
-  return encoder.encode(jsonString).buffer
+  const encoded = cbor.encode(data)
+  return encoded.buffer as ArrayBuffer
 }
 
 /**
  * 将 ArrayBuffer 解码为对象
- * @param buffer 要解码的 ArrayBuffer
- * @returns 解码后的对象
  */
-const decode = <T = unknown>(buffer: ArrayBuffer): T => {
-  const jsonString = decoder.decode(new Uint8Array(buffer))
-  return JSON.parse(jsonString) as T
+const decode = <T = unknown>(buffer: Uint8Array<ArrayBufferLike>): T => {
+  const decoded = cbor.decode(buffer) as T
+  return decoded
 }
 
 export { encode, decode }

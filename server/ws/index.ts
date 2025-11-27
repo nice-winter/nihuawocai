@@ -40,7 +40,8 @@ export const hooks = defineHooks({
 
   async message(peer, message) {
     try {
-      const msg = message.json() as WebsocketMessage<{ rid?: string }>
+      const msg = decode(message.uint8Array()) as WebsocketMessage<{ rid?: string }>
+
       if (!msg || !msg.type) return
 
       if (msg.type === WS_MESSAGE_PONG.type) {

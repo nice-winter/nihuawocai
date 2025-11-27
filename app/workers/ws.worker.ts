@@ -81,7 +81,7 @@ function initWebSocket(url: string) {
 
   ws.onmessage = (e) => {
     try {
-      const decoded = decode(e.data) as WebsocketMessage<unknown>
+      const decoded = decode(new Uint8Array(e.data)) as WebsocketMessage<unknown>
 
       if (decoded.type === 'ping') {
         // 心跳包消息，回复 pong
