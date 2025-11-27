@@ -11,7 +11,29 @@
   </div>
 </template>
 
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import OfflineModal from '@/components/ui/OfflineModal.vue'
+
+const { useWsEventBus } = useWsStore()
+const offlineModal = useModal(OfflineModal, { parent: '#game-panel' })
+
+useWsEventBus('ws:disconnected', ({ code, reason }) => {
+  if (code === 4001) {
+    offlineModal.open({
+      reason: '你的账号在另一处登录。'
+    })
+  } else {
+    offlineModal.open({
+      reason
+    })
+  }
+})
+useWsEventBus('ws:error', (error) => {
+  offlineModal.open({
+    reason: error
+  })
+})
+</script>
 
 <style scoped>
 .custom-foreground-bg {

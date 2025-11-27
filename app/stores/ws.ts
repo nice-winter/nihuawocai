@@ -11,11 +11,17 @@ type WsEvents = {
   'ws:error': unknown
   'ws:disconnected': { code: number; reason: string }
 }
+type WsEventKeys = keyof WsEvents
+type WsEventHandler<K extends WsEventKeys> = (payload: WsEvents[K]) => void
 
 const logger = consola.withTag('WebSocket')
 
 export const useWsStore = defineStore('ws', () => {
   const wsEventBus = mitt<WsEvents>()
+  const useWsEventBus = <K extends WsEventKeys>(event: K, handler: WsEventHandler<K>) => {
+    onBeforeMount(() => wsEventBus.on(event, handler))
+    onUnmounted(() => wsEventBus.off(event, handler))
+  }
 
   // 状态管理
   const status = ref<'OPEN' | 'CONNECTING' | 'CLOSED'>('CLOSED')
@@ -176,6 +182,7 @@ export const useWsStore = defineStore('ws', () => {
 
   return {
     wsEventBus,
+    useWsEventBus,
     status,
     send: _send,
     sendRaw: sendFireAndForget,
