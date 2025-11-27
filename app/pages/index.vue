@@ -8,6 +8,7 @@
         <UiUserMenu v-if="userSession.loggedIn.value && userSession.user.value" class="" />
       </div>
     </div>
+
     <div class="w-full h-10 flex justify-center items-center">
       <div class="w-[900px] flex flex-row justify-center">
         <UIcon name="custom:quota-left" class="size-5 -mt-1" />
@@ -19,6 +20,7 @@
         <UIcon name="custom:quota-right" class="size-5 -mt-1" />
       </div>
     </div>
+
     <UiGameMainFrame ref="GameMain">
       <template #header>
         <div
@@ -86,6 +88,10 @@
         </div>
       </template>
     </UiGameMainFrame>
+
+    <div class="w-full grow flex justify-center items-center">
+      <UiGameMainRank class="w-[900px]" />
+    </div>
 
     <UModal :open="!userSession.loggedIn.value" :dismissible="false" class="w-sm">
       <template #content>
