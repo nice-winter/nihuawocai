@@ -32,7 +32,7 @@ export interface ThrowerModalProps {
   reason?: string
   parent?: Element
 }
-const { parent = '', reason = '' } = defineProps<ThrowerModalProps>()
+const { parent = '', reason = '与服务器断开连接' } = defineProps<ThrowerModalProps>()
 
 const visible = ref(false)
 const resolveFn = ref<(() => void) | null>(null)
