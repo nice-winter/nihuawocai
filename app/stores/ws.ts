@@ -129,9 +129,9 @@ export const useWsStore = defineStore('ws', () => {
     msg: WebsocketMessage<T>,
     opts?: { timeout?: number }
   ): Promise<R> => {
-    const rid = nanoid(8)
+    const rid = nanoid(8) // 生成请求唯一标识
     const _msg = { ...(msg as object), rid } as WebsocketMessage & { rid: string }
-    const timeout = opts?.timeout ?? 5000
+    const timeout = opts?.timeout ?? 5000 // 默认 5s 超时
 
     return new Promise<R>((resolve, reject) => {
       // 1. 注册 Pending
