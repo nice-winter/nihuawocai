@@ -9,8 +9,7 @@
 </template>
 
 <script setup lang="ts">
-import { eventBus } from '~/composables/eventBus'
-import LazyUserProfileModal from './UserProfileModal.vue'
+import LazyUserProfileModal from '@/components/modal/UserProfileModal.vue'
 
 const { loggedIn, user, clear } = useUserSession()
 

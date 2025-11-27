@@ -35,7 +35,7 @@
 
 <script setup lang="ts">
 import Text from '~/components/ui/TextRender.vue'
-import CountdownModal from '~/components/ui/CountdownModal.vue'
+import CountdownModal from '~/components/modal/CountdownModal.vue'
 
 const testRef = ref<HTMLElement | null>(null)
 const throwerRef = useTemplateRef('throwerRef')
