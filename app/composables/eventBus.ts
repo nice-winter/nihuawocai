@@ -132,7 +132,7 @@ type Events = {
     seconds: number
     reason: string
   }
-  'game:event:gift': {
+  'game:event:interaction:gift': {
     from: string
     fromPlayer: Player
     to: string
