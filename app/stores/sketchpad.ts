@@ -66,7 +66,7 @@ export const useSketchpadStore = defineStore('sketchpad', () => {
         type: 'game:drawing:sketchpad',
         command: 'pencil_switch',
         payload: {
-          name: brushName
+          name: currentBrush.value
         }
       })
     }
@@ -79,9 +79,7 @@ export const useSketchpadStore = defineStore('sketchpad', () => {
       type: 'game:drawing:sketchpad',
       command: 'pencil_options_update',
       payload: {
-        options: {
-          ...brushOptions // 解构防止把额外的东西带进去，postMessage 只能带基本类型
-        }
+        options: toRaw(brushOptions) // 这里不要把响应式层的东西发到 worker，否则会报错
       }
     })
   }
@@ -173,6 +171,8 @@ export const useSketchpadStore = defineStore('sketchpad', () => {
     }
   })
 
+  // 绘画开始时，重新设置一次笔触和笔触设置
+  // @TODO: 将来可以完善成记忆设置，例如设置为个人偏好中的笔相关设置
   useEventBus('game:event:drawing:start', () => {
     if (gameStore.isMyTurn) {
       setCurrentBrush('pencil')
