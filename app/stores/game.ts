@@ -362,7 +362,7 @@ export const useGameStore = defineStore('game', () => {
         break
       }
 
-      case 'game:event:gift': {
+      case 'game:event:interaction:gift': {
         const { payload } = msg as WebsocketMessage<{
           payload: {
             from: string
@@ -380,7 +380,7 @@ export const useGameStore = defineStore('game', () => {
 
         // !!! ⚡ UI 广播点 ⚡ !!!
         // 播放抛物线动画: from -> to
-        eventBus.emit('game:event:gift', {
+        eventBus.emit('game:event:interaction:gift', {
           ...payload,
           fromPlayer: getPlayerFromCurrentRoom(payload.from)!
         })

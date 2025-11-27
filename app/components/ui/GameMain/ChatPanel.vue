@@ -246,7 +246,7 @@ useEventBus('game:event:interaction:start', ({ drawerPlayer, reason, bingo_playe
     msg: '回合结束'
   })
 })
-useEventBus('game:event:gift', ({ fromPlayer, item_type }) => {
+useEventBus('game:event:interaction:gift', ({ fromPlayer, item_type }) => {
   switch (item_type) {
     case 'flower': {
       ChatPanelMessageListRef.value?.addMessage({

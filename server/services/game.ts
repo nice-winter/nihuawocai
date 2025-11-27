@@ -691,7 +691,7 @@ const handleGift = (id: string, itemType: 'flower' | 'egg' | 'slipper') => {
 
   sendToRoom(
     {
-      type: 'game:event:gift',
+      type: 'game:event:interaction:gift',
       from: roomNumber,
       payload: {
         from: id,
