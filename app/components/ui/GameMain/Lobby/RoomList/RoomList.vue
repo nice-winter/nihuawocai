@@ -49,8 +49,8 @@
 </template>
 
 <script setup lang="ts">
-import PasswordModal from '@/components/ui/PasswordModal.vue'
-import CreateRoomModal from '@/components/ui/CreateRoomModal.vue'
+import PasswordModal from '@/components/modal/PasswordModal.vue'
+import CreateRoomModal from '@/components/modal/CreateRoomModal.vue'
 
 const roomStore = useRoomStore()
 const { rooms, pullRoomList, join, prevPage, nextPage, createRoom, quickMatch } = roomStore

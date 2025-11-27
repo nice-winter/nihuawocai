@@ -12,7 +12,7 @@
 </template>
 
 <script setup lang="ts">
-import OfflineModal from '@/components/ui/OfflineModal.vue'
+import OfflineModal from '@/components/modal/OfflineModal.vue'
 
 const { useWsEventBus } = useWsStore()
 const offlineModal = useModal(OfflineModal, { parent: '#game-panel' })
