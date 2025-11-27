@@ -1,9 +1,19 @@
 <template>
-  <div class="w-full flex flex-row justify-center">
+  <div class="w-full flex flex-row justify-center custom-bg">
     <slot />
   </div>
 </template>
 
 <script setup lang="ts"></script>
 
-<style scoped></style>
+<style scoped>
+.custom-bg {
+  background-color: antiquewhite;
+  --line-color: #eae0d0ba;
+  --size: 24px;
+  background-image:
+    linear-gradient(var(--line-color) 1px, transparent 1px),
+    linear-gradient(90deg, var(--line-color) 1px, transparent 1px);
+  background-size: var(--size) var(--size);
+}
+</style>
