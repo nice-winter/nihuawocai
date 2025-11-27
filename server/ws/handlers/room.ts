@@ -10,7 +10,8 @@ import {
   joinRoom,
   leaveRoom,
   seatSwitch,
-  sit
+  sit,
+  quickMatch
 } from '~~/server/services/room'
 
 const logger = consola.withTag('Room Handler')
@@ -19,6 +20,9 @@ export default defineWsHandlers({
   'room:list_pull': async () => {
     const roomList = getRoomList()
     return { room_list: roomList }
+  },
+  'room:quick_match': async ({ user }) => {
+    return await quickMatch(user.id)
   },
   'room:create': async ({ msg, user }) => {
     const { opens, options } = msg as WebsocketMessage<WsProcotol['room']['create']>
