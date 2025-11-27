@@ -770,6 +770,48 @@ const removeRoomPlayer = async (roomNumber: number, id: string) => {
   }
 }
 
+/**
+ * 快速匹配房间（快速开始）
+ */
+const quickMatch = async (id: string) => {
+  const player = getPlayer(id)
+  if (!player) throw new Error('玩家不存在')
+  if (!checkPlayerIsInLobby(id)) throw new Error('你当前不在大厅')
+
+  const rooms = getRoomList() // RoomInfo[]
+
+  // 1. 筛选可加入房间
+  const candidates = rooms.filter((room) => {
+    if (room.locked) return false // 上锁 → 不可加入
+    if (room.playing) return false // 正在游戏中 → 不可加入
+
+    // 判断是否存在 “空位且启用的 seat”
+    const hasValidSeat = room.players.some((p, idx) => {
+      return p === null && room.seats[idx] === true
+    })
+
+    if (!hasValidSeat) return false
+
+    return true
+  })
+
+  if (candidates.length === 0) {
+    throw new Error('当前没有可加入的房间')
+  }
+
+  // 2. 随机选房
+  const room = candidates[Math.floor(Math.random() * candidates.length)]
+
+  // 3. 加入房间
+  try {
+    await joinRoom(room.roomNumber, id)
+  } catch (err) {
+    throw new Error(`加入房间失败：${(err as Error).message}`)
+  }
+
+  return room.roomNumber
+}
+
 export {
   roomEventBus,
   getRoom,
@@ -785,5 +827,6 @@ export {
   start,
   end,
   leaveRoom,
-  removeRoomPlayer
+  removeRoomPlayer,
+  quickMatch
 }
