@@ -13,7 +13,9 @@ export default defineWsHandlers({
       command: 'pencil_switch' | 'pencil_options_update' | 'draw' | 'clear'
       payload: unknown
     }>
-    return await handleSketchpad(user.id, command, payload)
+    const res = await handleSketchpad(user.id, command, payload)
+    if (command === 'draw') return 'NON_REPONSE' // 画板坐标传输协议，不返回任何内容
+    return res
   },
   'game:interaction:gift': async ({ msg, user }) => {
     const { item_type, count } = msg as WebsocketMessage<{
