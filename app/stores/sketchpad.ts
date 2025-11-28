@@ -1,6 +1,5 @@
-import { eventBus } from '~/composables/eventBus'
-import type { Brush, BrushesNameString } from '~/interfaces/brush'
-import type { CachedPoint } from '~/components/ui/GameMain/Room/Playing/Sketchpad/fabric/SketchpadCanvas'
+import type { Brush, BrushesNameString } from '@/interfaces/brush'
+import type { CachedPoint } from '@/components/ui/GameMain/Room/Playing/Sketchpad/fabric/InputBatcher'
 
 export const useSketchpadStore = defineStore('sketchpad', () => {
   const { wsEventBus, send, sendRaw } = useWsStore()
@@ -89,15 +88,7 @@ export const useSketchpadStore = defineStore('sketchpad', () => {
       type: 'game:drawing:sketchpad',
       command: 'draw',
       payload: {
-        points: points.map((p) => {
-          return {
-            ...p,
-            point: {
-              x: p.point.x,
-              y: p.point.y
-            }
-          }
-        })
+        points
       }
     })
   }
