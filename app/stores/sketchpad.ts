@@ -93,11 +93,21 @@ export const useSketchpadStore = defineStore('sketchpad', () => {
     })
   }
 
-  const undo = () => {
+  const undo = async () => {
     eventBus.emit('sketchpad:undo')
+
+    await send({
+      type: 'game:drawing:sketchpad',
+      command: 'undo'
+    })
   }
-  const redo = () => {
+  const redo = async () => {
     eventBus.emit('sketchpad:redo')
+
+    await send({
+      type: 'game:drawing:sketchpad',
+      command: 'redo'
+    })
   }
   const clear = async () => {
     eventBus.emit('sketchpad:clear')
@@ -109,7 +119,7 @@ export const useSketchpadStore = defineStore('sketchpad', () => {
   }
 
   const handleSketchpadEvents = (
-    command: 'pencil_switch' | 'pencil_options_update' | 'draw' | 'clear',
+    command: 'pencil_switch' | 'pencil_options_update' | 'draw' | 'undo' | 'redo' | 'clear',
     payload: unknown
   ) => {
     switch (command) {
@@ -142,6 +152,16 @@ export const useSketchpadStore = defineStore('sketchpad', () => {
         eventBus.emit('sketchpad:draw', {
           points
         })
+        break
+      }
+      // 撤销
+      case 'undo': {
+        eventBus.emit('sketchpad:undo')
+        break
+      }
+      // 重做
+      case 'redo': {
+        eventBus.emit('sketchpad:redo')
         break
       }
       // 清空画板

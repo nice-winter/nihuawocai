@@ -10,7 +10,7 @@ export default defineWsHandlers({
   },
   'game:drawing:sketchpad': async ({ msg, user }) => {
     const { command, payload } = msg as WebsocketMessage<{
-      command: 'pencil_switch' | 'pencil_options_update' | 'draw' | 'clear'
+      command: 'pencil_switch' | 'pencil_options_update' | 'draw' | 'undo' | 'redo' | 'clear'
       payload: unknown
     }>
     const res = await handleSketchpad(user.id, command, payload)
