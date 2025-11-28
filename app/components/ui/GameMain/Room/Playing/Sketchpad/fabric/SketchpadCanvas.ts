@@ -12,6 +12,8 @@ export interface SketchpadCanvasOptions
 export class SketchpadCanvas extends Canvas {
   private inputBatcher: InputBatcher
   private isInternalDrawing = false // 内部标记，用于区分是用户画的还是程序画的
+  private undoStack: Path[] = []
+  private redoStack: Path[] = []
 
   constructor(el: string | HTMLCanvasElement, options?: SketchpadCanvasOptions) {
     super(el, options)
@@ -32,12 +34,11 @@ export class SketchpadCanvas extends Canvas {
     this.on('mouse:down', this._md)
     this.on('mouse:move', this._mm)
     this.on('mouse:up', this._mu)
-    // this.on('mouse:out', this._mo)
 
     // --- 历史记录采集 (用于 Undo/Redo) ---
     this.on('path:created', (e: { path: Path }) => {
-      console.log('对象已创建，添加到历史栈:', e.path)
-      // this.historyManager.push(e.path)
+      this.undoStack.push(e.path) // 添加入撤销路径栈
+      this.redoStack.length = 0 // 清空重做路径对象栈，要不然历史记录链会出问题
     })
   }
 
@@ -64,15 +65,34 @@ export class SketchpadCanvas extends Canvas {
     this.isInternalDrawing = false // 标记结束
   }
 
-  // private _mo = () => {
-  //   // 如果鼠标移出画布，且当前正在绘制，强制结束当前笔画
-  //   if (this.isInternalDrawing) {
-  //     this.inputBatcher.flush()
-  //     this.isInternalDrawing = false
-  //   }
-  // }
-
   // --- 外部接口 ---
+
+  public undo() {
+    if (this.undoStack.length === 0) return
+
+    const path = this.undoStack.pop()
+    if (!path) return
+
+    this.redoStack.push(path)
+    this.remove(path)
+    this.requestRenderAll?.()
+  }
+
+  public redo() {
+    if (this.redoStack.length === 0) return
+
+    const path = this.redoStack.pop()
+    if (!path) return
+
+    this.undoStack.push(path)
+    this.add(path)
+    this.requestRenderAll?.()
+  }
+
+  public clearHistory() {
+    this.undoStack.length = 0
+    this.redoStack.length = 0
+  }
 
   /**
    * 当 Batcher 攒够数据吐出来时调用
@@ -95,5 +115,11 @@ export class SketchpadCanvas extends Canvas {
   public reset() {
     this.isInternalDrawing = false
     this.inputBatcher.clear()
+    this.clearHistory()
+  }
+
+  public realClear() {
+    this.clear()
+    this.clearHistory()
   }
 }

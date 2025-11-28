@@ -11,9 +11,9 @@
 
 <script setup lang="ts">
 import { Point, type Canvas } from 'fabric'
-import { useEventBus } from '~/composables/eventBus'
 import { SketchpadCanvas } from './fabric/SketchpadCanvas'
 import { PencilBrush } from './fabric/brushes/PencilBrush'
+import { EraserBrush } from './fabric/brushes/EraserBrush'
 
 const SketchpadRef = useTemplateRef('Sketchpad')
 const SketchpadCanvasRef = useTemplateRef('Canvas')
@@ -24,14 +24,13 @@ let canvas: SketchpadCanvas
 
 const eventsHandler = {
   onClear: () => {
-    canvas.clear()
-    console.log(`[Sketchpad-Component]`, 'clear')
+    canvas.realClear()
   },
   onUndo: () => {
-    console.log(`[Sketchpad-Component]`, 'undo')
+    canvas.undo()
   },
   onRedo: () => {
-    console.log(`[Sketchpad-Component]`, 'redo')
+    canvas.redo()
   }
 }
 useEventBus('sketchpad:undo', eventsHandler.onUndo)
@@ -60,14 +59,14 @@ onMounted(() => {
       if (sketchpadStore.currentBrush !== 'eraser') {
         canvas.freeDrawingBrush.color = bo.color
       } else {
-        canvas.freeDrawingBrush.color = '#fff'
+        canvas.freeDrawingBrush.color = '#fff' // 橡皮擦模式下，设置为画板的背景色，其实这里设不设也无所谓
       }
     }
   }
 
   const brushes = {
     pencil: new PencilBrush(canvas),
-    eraser: new PencilBrush(canvas)
+    eraser: new EraserBrush(canvas)
   }
 
   watch(
@@ -133,7 +132,7 @@ useEventBus('sketchpad:draw', ({ points }) => {
 useEventBus('game:event:round:prepare', () => {
   // 短暂开启 isDrawingMode，否则 clear 会不生效
   canvas.isDrawingMode = true
-  canvas?.clear()
+  canvas?.realClear()
   canvas.isDrawingMode = false
 })
 useEventBus('game:event:drawing:start', () => {

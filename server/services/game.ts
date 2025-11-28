@@ -507,7 +507,7 @@ const endCurrentRound = (roomNumber: number, st: GameState) => {
  */
 const handleSketchpad = async (
   id: string,
-  command: 'pencil_switch' | 'pencil_options_update' | 'draw' | 'clear',
+  command: 'pencil_switch' | 'pencil_options_update' | 'draw' | 'undo' | 'redo' | 'clear',
   payload: unknown
 ) => {
   const player = getPlayer(id)
@@ -533,6 +533,12 @@ const handleSketchpad = async (
     case 'draw':
       // 更新上次作画时间，避免触发 afk
       st.lastDrawTime = Date.now()
+      break
+    // 撤销
+    case 'undo':
+      break
+    // 重做
+    case 'redo':
       break
     // 清空画板
     case 'clear':
