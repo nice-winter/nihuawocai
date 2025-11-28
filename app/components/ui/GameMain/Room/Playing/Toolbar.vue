@@ -1,6 +1,6 @@
 <template>
   <div class="flex flex-col gap-4 px-0.5 bg-[#ffffff2b]">
-    <div class="grid grid-cols-7 grid-rows-2 gap-0 items-center justify-center">
+    <div class="relative grid grid-cols-7 grid-rows-2 gap-0 items-center justify-center">
       <span
         v-for="color in sketchpadStore.options.colors"
         :key="color"
@@ -10,6 +10,13 @@
         :data-hexcolor="color"
         @click="onSelectColor(color)"
       />
+
+      <div
+        v-show="sketchpadStore.currentBrush === 'eraser'"
+        class="absolute z-114 top-0 left-0 size-full flex justify-center items-center bg-white/65 select-none"
+      >
+        <span class="text-[13px] text-light">当前正在使用橡皮擦</span>
+      </div>
     </div>
 
     <div class="flex flex-col gap-4">
