@@ -141,7 +141,7 @@ useEventBus('game:event:drawing:start', () => {
 })
 // 进入互动阶段，此时重置画板的状态，但仍然保留画作直至下一回合开始
 useEventBus('game:event:interaction:start', () => {
-  canvas.resetCacheState() // 重置缓存状态
+  canvas.reset() // 重置缓存状态
   canvas.isDrawingMode = false
 })
 </script>
