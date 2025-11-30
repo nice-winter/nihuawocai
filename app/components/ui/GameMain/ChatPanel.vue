@@ -40,15 +40,15 @@
                 :style="{ '--scrollbar-color': '#bc966f', '--scrollbar-color-hover': '#cea57c' }"
                 :size="4"
               >
-                <div class="max-h-30 select-none bg-texture scroll-auto">
-                  <div class="w-50 grid grid-cols-6 gap-2 p-2">
-                    <img
+                <div class="relative max-h-30 bg-texture scroll-auto select-none">
+                  <div class="w-50 grid grid-cols-6 gap-1 p-2">
+                    <div
                       v-for="emoji in emojis"
                       :key="emoji.name"
-                      :src="emoji.img"
-                      class="size-5 cursor-pointer"
-                      @click="selectEmoji(emoji.name)"
-                    />
+                      class="size-6 flex justify-center items-center rounded cursor-pointer hover:bg-[#5035024d]"
+                    >
+                      <img :src="emoji.img" class="size-5" @click="selectEmoji(emoji.name)" />
+                    </div>
                   </div>
                 </div>
               </UiScrollBar>
