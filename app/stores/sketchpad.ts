@@ -28,8 +28,8 @@ export const useSketchpadStore = defineStore('sketchpad', () => {
   const brushes = ref<Brush[]>([
     {
       name: 'pencil',
-      icon: 'mdi:pencil-outline',
-      widths: [1.3, 4, 8, 24, 48],
+      icon: 'custom:icon-pencil',
+      widths: [1.4, 4, 8, 24, 48],
       defaultOptions: {
         color: '#000000',
         width: 1
@@ -37,7 +37,7 @@ export const useSketchpadStore = defineStore('sketchpad', () => {
     },
     {
       name: 'eraser',
-      icon: 'mdi:eraser',
+      icon: 'custom:icon-eraser',
       widths: [4, 8, 16, 32, 64],
       defaultOptions: {
         color: '#ffffff',
