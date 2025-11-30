@@ -1,6 +1,11 @@
-<
 <template>
-  <div ref="Sketchpad" class="relative size-full bg-white" style="">
+  <div ref="Sketchpad" class="relative size-full bg-white">
+    <UIcon
+      v-show="showBrushIcon"
+      :name="sketchpadStore.currentBrushObjetc?.icon"
+      class="absolute z-114 size-6 pointer-events-none"
+      :style="brushIconXY"
+    />
     <div
       class="absolute z-2 size-full pointer-events-none"
       style="box-shadow: rgb(0 0 0 / 40%) 0px 0px 3px 1px inset"
@@ -20,7 +25,27 @@ const SketchpadCanvasRef = useTemplateRef('Canvas')
 const sketchpadStore = useSketchpadStore()
 const gameStore = useGameStore()
 
+const { elementX, elementY, isOutside } = useMouseInElement(SketchpadRef)
+const drawerLastXY = reactive({ x: -1, y: -1 })
+
 let canvas: SketchpadCanvas
+
+const showBrushIcon = computed(() => {
+  if (gameStore.state.draw) {
+    return !isOutside.value
+  }
+  if (gameStore.state.roundPhase === 'drawing') {
+    return drawerLastXY.x > -1 && drawerLastXY.y > -1
+  }
+  return false
+})
+const brushIconXY = computed(() => {
+  if (gameStore.state.draw)
+    return { top: `${elementY.value - 22}px`, left: `${elementX.value - 2}px` }
+  if (gameStore.state.roundPhase === 'drawing')
+    return { top: `${drawerLastXY.y - 22}px`, left: `${drawerLastXY.x - 2}px` }
+  return { top: `${-1}px`, left: `${-1}px` }
+})
 
 const eventsHandler = {
   onClear: () => {
@@ -126,6 +151,9 @@ useEventBus('sketchpad:draw', ({ points }) => {
         canvasBrush.onMouseUp()
         break
     }
+
+    drawerLastXY.x = p.point.x
+    drawerLastXY.y = p.point.y
   })
 })
 // 新回合开始，清除画板画作
@@ -142,6 +170,8 @@ useEventBus('game:event:drawing:start', () => {
 useEventBus('game:event:interaction:start', () => {
   canvas.reset() // 重置缓存状态
   canvas.isDrawingMode = false
+  drawerLastXY.x = -1
+  drawerLastXY.y = -1
 })
 </script>
 
