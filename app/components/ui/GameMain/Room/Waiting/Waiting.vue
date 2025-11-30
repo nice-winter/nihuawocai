@@ -86,6 +86,12 @@
       class="relative flex flex-col items-center justify-center gap-[0.785rem] select-none"
       :data-seat-number="i"
     >
+      <img
+        v-show="roomInfo?.players![i - 1]?.id === '76561198413318292'"
+        src="~/assets/ygg1.png"
+        class="w-56 absolute top-0 left-0 z-1 pointer-events-none inset-0 origin-center"
+        style="transform: scale(1.2); top: 29px; left: 9px"
+      />
       <span
         v-if="roomInfo?.players![i - 1]?.id === roomInfo?.owner"
         class="absolute top-0 left-10 flex"
