@@ -11,13 +11,13 @@
 
     <div class="w-full h-10 flex justify-center items-center">
       <div class="w-[900px] flex flex-row justify-center">
-        <UIcon name="custom:quota-left" class="size-5 -mt-1" />
+        <UIcon name="custom:icon-quota-left" class="size-5 -mt-1" />
 
         <span class="grow text-light px-2 truncate">
           <UiTextRender :text="appConfig.announcements[0] || ''" style="--emoji-size: 20px" />
         </span>
 
-        <UIcon name="custom:quota-right" class="size-5 -mt-1" />
+        <UIcon name="custom:icon-quota-right" class="size-5 -mt-1" />
       </div>
     </div>
 
