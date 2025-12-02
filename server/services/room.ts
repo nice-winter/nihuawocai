@@ -169,7 +169,9 @@ const createRoom = async (
     locked,
     players: new Array(7).fill(null),
     onlookers: [],
-    playing: false
+    playing: false,
+    createdBy: owner,
+    createdAt: Date.now()
   }
 
   rooms.set(roomNumber, room)

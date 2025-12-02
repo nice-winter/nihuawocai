@@ -39,6 +39,8 @@ interface Room extends RoomInfo {
   id: string
   options: RoomOptions
   config: Partial<RoomConfig> | null
+  createdBy: string
+  createdAt: number
 }
 
 export type { RoomInfo, RoomOptions, RoomConfig, Room }
