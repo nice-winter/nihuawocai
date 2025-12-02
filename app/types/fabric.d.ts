@@ -3,8 +3,7 @@ import type { CachedPoint } from '@/components/ui/GameMain/Room/Playing/Sketchpa
 
 declare module 'fabric' {
   interface CanvasEvents {
-    'cache:flush': CachedPoint[]
-    'stream:data': CachedPoint[]
+    'stream:points': CachedPoint[]
   }
 }
 

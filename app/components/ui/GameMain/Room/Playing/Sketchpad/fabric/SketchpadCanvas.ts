@@ -1,8 +1,9 @@
-import { Canvas, Point, type Path, type TPointerEvent, type TPointerEventInfo } from 'fabric'
+import { Canvas, type Path, type TPointerEvent, type TPointerEventInfo } from 'fabric'
 import { InputBatcher, type CachedPoint } from './InputBatcher'
 
-export interface SketchpadCanvasOptions
-  extends NonNullable<ConstructorParameters<typeof Canvas>[1]> {
+export interface SketchpadCanvasOptions extends NonNullable<
+  ConstructorParameters<typeof Canvas>[1]
+> {
   batchOptions?: {
     cacheSize?: number
     flushDelay?: number
@@ -14,6 +15,8 @@ export class SketchpadCanvas extends Canvas {
   private isInternalDrawing = false // 内部标记，用于区分是用户画的还是程序画的
   private undoStack: Path[] = []
   private redoStack: Path[] = []
+
+  private lastMouseEvent: TPointerEventInfo<TPointerEvent> | null = null
 
   constructor(el: string | HTMLCanvasElement, options?: SketchpadCanvasOptions) {
     super(el, options)
@@ -46,21 +49,22 @@ export class SketchpadCanvas extends Canvas {
 
   private _md = (opt: TPointerEventInfo<TPointerEvent>) => {
     if (!this.isDrawingMode) return
+    this.lastMouseEvent = opt
     this.isInternalDrawing = true // 标记开始绘制
     this.inputBatcher.add(opt.scenePoint, 'down')
   }
 
   private _mm = (opt: TPointerEventInfo<TPointerEvent>) => {
     if (!this.isDrawingMode || !this.isInternalDrawing) return
+    this.lastMouseEvent = opt
     this.inputBatcher.add(opt.scenePoint, 'move')
   }
 
   private _mu = (opt: TPointerEventInfo<TPointerEvent>) => {
     if (!this.isDrawingMode || !this.isInternalDrawing) return
-
+    this.lastMouseEvent = null
     const point = opt.scenePoint
     this.inputBatcher.add(point, 'up')
-
     this.inputBatcher.resetSequence() // 重置序列
     this.isInternalDrawing = false // 标记结束
   }
@@ -98,7 +102,7 @@ export class SketchpadCanvas extends Canvas {
    * 当 Batcher 攒够数据吐出来时调用
    */
   private _handleFlush(points: CachedPoint[]) {
-    this.fire('cache:flush', points)
+    this.fire('stream:points', points)
   }
 
   /**
@@ -113,12 +117,14 @@ export class SketchpadCanvas extends Canvas {
    * 重置所有状态
    */
   public reset() {
+    if (this.lastMouseEvent) this._onMouseUp(this.lastMouseEvent.e)
     this.isInternalDrawing = false
     this.inputBatcher.clear()
     this.clearHistory()
   }
 
   public realClear() {
+    this._isCurrentlyDrawing = false
     this.clear()
     this.clearHistory()
   }
