@@ -175,22 +175,10 @@ export const useSketchpadStore = defineStore('sketchpad', () => {
   wsEventBus.on('ws:message', (msg) => {
     if (msg.type.startsWith('game:event:sketchpad')) {
       const { command, payload } = msg as WebsocketMessage<{
-        command: 'pencil_switch' | 'pencil_options_update' | 'draw' | 'clear'
+        command: 'pencil_switch' | 'pencil_options_update' | 'draw' | 'undo' | 'redo' | 'clear'
         payload: unknown
       }>
       handleSketchpadEvents(command, payload)
-    }
-  })
-
-  // 绘画开始时，重新设置一次笔触和笔触设置
-  // @TODO: 将来可以完善成记忆设置，例如设置为个人偏好中的笔相关设置
-  useEventBus('game:event:drawing:start', () => {
-    if (gameStore.isMyTurn) {
-      setCurrentBrush('pencil')
-      updateBrushOptions({
-        color: '#000000',
-        width: 1
-      })
     }
   })
 

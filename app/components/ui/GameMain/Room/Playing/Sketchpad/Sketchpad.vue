@@ -130,7 +130,6 @@ onMounted(async () => {
 
     if (!canvas.freeDrawingBrush) return
     canvas.freeDrawingBrush.width = sketchpadStore.currentBrushObjetc?.widths[bo.width] || 0
-
     canvas.freeDrawingBrush.color = sketchpadStore.currentBrush !== 'eraser' ? bo.color : '#fff'
   }
 
@@ -181,7 +180,16 @@ useEventBus('game:event:round:prepare', () => {
 })
 
 useEventBus('game:event:drawing:start', () => {
-  if (gameStore.isMyTurn) canvas.isDrawingMode = true
+  if (gameStore.isMyTurn) {
+    // 绘画开始时，重新设置一次笔触和笔触设置
+    sketchpadStore.setCurrentBrush('pencil')
+    sketchpadStore.updateBrushOptions({
+      color: '#000000',
+      width: 1
+    })
+    // 开放 canvas 绘画模式
+    canvas.isDrawingMode = true
+  }
 })
 
 useEventBus('game:event:interaction:start', () => {
