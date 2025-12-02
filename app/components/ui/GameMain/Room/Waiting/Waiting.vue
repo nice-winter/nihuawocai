@@ -88,6 +88,13 @@
     >
       <img
         v-show="roomInfo?.players![i - 1]?.id === '76561198413318292'"
+        src="~/assets/cxy.png"
+        class="w-56 absolute top-0 left-0 z-1 pointer-events-none inset-0 origin-center"
+        style="transform: scale(1.14); top: 14px; left: -2px"
+      />
+
+      <img
+        v-show="roomInfo?.players![i - 1]?.id === '76561199014647682'"
         src="~/assets/ygg1.png"
         class="w-56 absolute top-0 left-0 z-1 pointer-events-none inset-0 origin-center"
         style="transform: scale(1.2); top: 29px; left: 9px"
