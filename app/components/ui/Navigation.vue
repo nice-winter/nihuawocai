@@ -31,11 +31,11 @@
     </UTooltip>
 
     <UTooltip :delay-duration="0" text="帮助" :disable-closing-trigger="true">
-      <li class="size-6 sprites-icon nav-icon help"></li>
+      <li class="size-6 sprites-icon nav-icon help" @click="openWiki"></li>
     </UTooltip>
 
     <UTooltip :delay-duration="0" text="GitHub" :disable-closing-trigger="true">
-      <li class="size-6 sprites-icon nav-icon github"></li>
+      <li class="size-6 sprites-icon nav-icon github" @click="openRepo"></li>
     </UTooltip>
   </ul>
 </template>
@@ -50,6 +50,14 @@ const hiCountText = computed(() => (hi.value > 99 ? '99+' : hi.value.toString())
 
 const screenshot = () => {
   setTimeout(() => eventBus.emit('ui:screenshot'), 114) // 延迟等 Tooltip 消失再触发
+}
+
+const openWiki = () => {
+  window.open('https://github.com/nice-winter/nihuawocai/wiki', '_blank')
+}
+
+const openRepo = () => {
+  window.open('https://github.com/nice-winter/nihuawocai', '_blank')
 }
 </script>
 
