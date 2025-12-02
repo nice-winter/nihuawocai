@@ -19,6 +19,7 @@ import {
 } from './player'
 import { end, roomEventBus } from './room'
 import { useWordManager, type WordItem } from './word'
+import { nanoid } from 'nanoid'
 
 // ----------------------------------------------------------------
 //                          类型定义
@@ -51,6 +52,9 @@ export interface GiftRecord {
 }
 
 export interface GameState {
+  // 游戏场次唯一 ID
+  id: string
+
   // --- 房间设置、配置 ---
   options: RoomOptions
   config: RoomConfig
@@ -143,6 +147,7 @@ const gameStart = async (roomNumber: number, room: Room) => {
   })
 
   const state: GameState = {
+    id: nanoid(),
     config,
     options,
     gamePhase: 'game_start',
