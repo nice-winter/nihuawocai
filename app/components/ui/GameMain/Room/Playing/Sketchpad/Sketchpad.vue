@@ -2,173 +2,190 @@
   <div ref="Sketchpad" class="relative size-full bg-white">
     <UIcon
       v-show="showBrushIcon"
+      ref="BrushCursor"
       :name="sketchpadStore.currentBrushObjetc?.icon"
       class="absolute z-114 size-6 pointer-events-none"
-      :style="brushIconXY"
     />
+
     <div
       class="absolute z-2 size-full pointer-events-none"
       style="box-shadow: rgb(0 0 0 / 40%) 0px 0px 3px 1px inset"
     />
+
     <canvas ref="Canvas" class="size-full sketchpad" />
   </div>
 </template>
 
 <script setup lang="ts">
-import { Point, type Canvas } from 'fabric'
+import { Point } from 'fabric'
 import { SketchpadCanvas } from './fabric/SketchpadCanvas'
 import { PencilBrush } from './fabric/brushes/PencilBrush'
 import { EraserBrush } from './fabric/brushes/EraserBrush'
 
+/* ---------------- refs & stores ---------------- */
 const SketchpadRef = useTemplateRef('Sketchpad')
 const SketchpadCanvasRef = useTemplateRef('Canvas')
+const BrushCursor = useTemplateRef('BrushCursor')
+
 const sketchpadStore = useSketchpadStore()
 const gameStore = useGameStore()
 
-const { elementX, elementY, isOutside } = useMouseInElement(SketchpadRef)
-const drawerLastXY = reactive({ x: -1, y: -1 })
-
 let canvas: SketchpadCanvas
 
+/* ---------------- 坐标状态 ---------------- */
+const drawerLastXY = reactive({ x: -1, y: -1 }) // 网络回放坐标
+let localX = -1
+let localY = -1
+const isOutside = ref(true)
+
+/* ---------------- 鼠标事件 ---------------- */
+const onPointerMove = (e: PointerEvent) => {
+  const box = SketchpadRef.value?.getBoundingClientRect()
+  if (!box) return
+  localX = e.clientX - box.left
+  localY = e.clientY - box.top
+}
+const onPointerEnter = () => (isOutside.value = false)
+const onPointerLeave = () => {
+  isOutside.value = true
+  localX = -1
+  localY = -1
+}
+
+/* ---------------- 是否显示 Brush 图标 ---------------- */
 const showBrushIcon = computed(() => {
-  if (gameStore.state.draw) {
-    return !isOutside.value
-  }
+  if (gameStore.state.draw) return !isOutside.value
+
   if (gameStore.state.roundPhase === 'drawing') {
-    return drawerLastXY.x > -1 && drawerLastXY.y > -1
+    return (
+      drawerLastXY.x >= 0 &&
+      drawerLastXY.y >= 0 &&
+      drawerLastXY.x <= SketchpadRef.value!.clientWidth &&
+      drawerLastXY.y <= SketchpadRef.value!.clientHeight
+    )
   }
   return false
 })
-const brushIconXY = computed(() => {
-  if (gameStore.state.draw)
-    return { top: `${elementY.value - 22}px`, left: `${elementX.value - 2}px` }
-  if (gameStore.state.roundPhase === 'drawing')
-    return { top: `${drawerLastXY.y - 22}px`, left: `${drawerLastXY.x - 2}px` }
-  return { top: `${-1}px`, left: `${-1}px` }
-})
 
-const eventsHandler = {
-  onClear: () => {
-    canvas.realClear()
-  },
-  onUndo: () => {
-    canvas.undo()
-  },
-  onRedo: () => {
-    canvas.redo()
+/* ---------------- raf 动画循环：同步指针位置 ---------------- */
+const animate = () => {
+  const el = BrushCursor.value?.$el as HTMLSpanElement
+  if (!el) return requestAnimationFrame(animate)
+
+  let x = -1,
+    y = -1
+
+  if (gameStore.state.draw && !isOutside.value) {
+    x = localX
+    y = localY
+  } else if (gameStore.state.roundPhase === 'drawing') {
+    x = drawerLastXY.x
+    y = drawerLastXY.y
   }
+
+  if (x >= 0 && y >= 0) {
+    el.style.transform = `translate(${x - 2}px, ${y - 22}px)`
+  }
+
+  requestAnimationFrame(animate)
+}
+
+/* ---------------- 画布事件 ---------------- */
+const eventsHandler = {
+  onClear: () => canvas.realClear(),
+  onUndo: () => canvas.undo(),
+  onRedo: () => canvas.redo()
 }
 useEventBus('sketchpad:undo', eventsHandler.onUndo)
 useEventBus('sketchpad:redo', eventsHandler.onRedo)
 useEventBus('sketchpad:clear', eventsHandler.onClear)
 
-onMounted(() => {
-  // 创建 canvas 实例
+/* ---------------- 挂载：初始化canvas ---------------- */
+onMounted(async () => {
   canvas = new SketchpadCanvas(SketchpadCanvasRef.value!, {
     width: SketchpadRef.value?.clientWidth,
     height: SketchpadRef.value?.clientHeight,
-    isDrawingMode: false, // 默认禁止操作
+    isDrawingMode: false,
     selection: false,
     skipTargetFind: true
   })
 
-  // 监听 canvas 绘画事件
-  canvas.on('cache:flush', (points) => {
+  // 本地绘制 → 上报到 ws
+  canvas.on('stream:points', (points) => {
     sketchpadStore.draw(points)
   })
 
-  const updateCanvasBrushOptions = (bo: { color: string; width: number }) => {
-    if (canvas?.freeDrawingBrush) {
-      canvas.freeDrawingBrush.width = sketchpadStore.currentBrushObjetc?.widths[bo.width] || 0
-
-      if (sketchpadStore.currentBrush !== 'eraser') {
-        canvas.freeDrawingBrush.color = bo.color
-      } else {
-        canvas.freeDrawingBrush.color = '#fff' // 橡皮擦模式下，设置为画板的背景色，其实这里设不设也无所谓
-      }
-    }
-  }
-
+  /* ----- 初始化画笔实例 ----- */
   const brushes = {
     pencil: new PencilBrush(canvas),
     eraser: new EraserBrush(canvas)
   }
 
-  watch(
-    () => sketchpadStore.currentBrush,
-    (newBrushName) => {
-      if (canvas) {
-        const brush = brushes[newBrushName]
-        if (brush) {
-          canvas.freeDrawingBrush = brush
-        }
+  /* ----- 画笔切换 ----- */
+  const updateBrush = () => {
+    const brush = brushes[sketchpadStore.currentBrush]
+    if (brush) canvas.freeDrawingBrush = brush
 
-        updateCanvasBrushOptions(sketchpadStore.brushOptions)
-      }
-    },
-    {
-      immediate: true
-    }
-  )
+    const bo = sketchpadStore.brushOptions
 
-  watch(
-    () => sketchpadStore.brushOptions,
-    (newValue) => {
-      updateCanvasBrushOptions(newValue)
-    },
-    { immediate: true, deep: true }
-  )
+    if (!canvas.freeDrawingBrush) return
+    canvas.freeDrawingBrush.width = sketchpadStore.currentBrushObjetc?.widths[bo.width] || 0
 
-  // 监听 draw 状态，判断是否可绘画
-  // watch(
-  //   () => gameStore.state.draw,
-  //   (newState) => (canvas.isDrawingMode = newState),
-  //   { immediate: true }
-  // )
+    canvas.freeDrawingBrush.color = sketchpadStore.currentBrush !== 'eraser' ? bo.color : '#fff'
+  }
+
+  watch(() => sketchpadStore.currentBrush, updateBrush, { immediate: true })
+  watch(() => sketchpadStore.brushOptions, updateBrush, {
+    immediate: true,
+    deep: true
+  })
+
+  await nextTick()
+  requestAnimationFrame(animate)
 })
 
-// 绘画消息
+/* ---------------- Sketchpad 指针监听 ---------------- */
+useEventListener(SketchpadRef, 'pointerenter', onPointerEnter)
+useEventListener(SketchpadRef, 'pointermove', onPointerMove)
+useEventListener(SketchpadRef, 'pointerleave', onPointerLeave)
+
+/* ---------------- ws 绘画回放 ---------------- */
 useEventBus('sketchpad:draw', ({ points }) => {
-  if (!canvas || !canvas.freeDrawingBrush) return
-  const canvasBrush = canvas.freeDrawingBrush as unknown as PencilBrush
-  // ws 转发来的坐标是纯 xy，这里要把 xy 转为 fabric.js 的 Point 对象
-  const _points = points.map((p) => {
-    return {
-      ...p,
-      point: new Point(p.point)
-    }
-  })
-  // 遍历坐标点，绘制
-  _points.forEach((p) => {
+  if (!canvas?.freeDrawingBrush) return
+
+  const b = canvas.freeDrawingBrush as PencilBrush
+  for (const p of points) {
+    const point = new Point(p.point)
+    drawerLastXY.x = point.x
+    drawerLastXY.y = point.y
+
     switch (p.action) {
       case 'down':
-        canvasBrush.onMouseDown(p.point)
+        b.onMouseDown(point)
         break
       case 'move':
-        canvasBrush.onMouseMove(p.point)
+        b.onMouseMove(point)
         break
       case 'up':
-        canvasBrush.onMouseUp()
+        b.onMouseUp()
         break
     }
-
-    drawerLastXY.x = p.point.x
-    drawerLastXY.y = p.point.y
-  })
+  }
 })
-// 新回合开始，清除画板画作
+
+/* ---------------- 游戏阶段事件 ---------------- */
 useEventBus('game:event:round:prepare', () => {
-  // 短暂开启 isDrawingMode，否则 clear 会不生效
   canvas.isDrawingMode = true
-  canvas?.realClear()
+  canvas.realClear()
   canvas.isDrawingMode = false
 })
+
 useEventBus('game:event:drawing:start', () => {
   if (gameStore.isMyTurn) canvas.isDrawingMode = true
 })
-// 进入互动阶段，此时重置画板的状态，但仍然保留画作直至下一回合开始
+
 useEventBus('game:event:interaction:start', () => {
-  canvas.reset() // 重置缓存状态
+  canvas.reset()
   canvas.isDrawingMode = false
   drawerLastXY.x = -1
   drawerLastXY.y = -1
