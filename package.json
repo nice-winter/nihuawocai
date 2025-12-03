@@ -51,12 +51,12 @@
     "@iconify-json/material-symbols": "^1.2.48",
     "@iconify-json/mdi": "^1.2.3",
     "@iconify-json/ph": "^1.2.2",
-    "@iconify-json/simple-icons": "^1.2.60",
+    "@iconify-json/simple-icons": "^1.2.61",
     "@iconify-json/streamline-plump-color": "^1.2.2",
     "@iconify-json/tabler": "^1.2.23",
     "@types/howler": "^2.2.12",
     "eslint": "^9.39.1",
-    "prettier": "^3.7.3",
+    "prettier": "^3.7.4",
     "typescript": "~5.9.3"
   }
 }
