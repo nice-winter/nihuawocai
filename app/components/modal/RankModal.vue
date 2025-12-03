@@ -8,14 +8,14 @@
       <div ref="modalRef" class="bg-texture rounded-md shadow-hard flex flex-col" tabindex="0">
         <div class="">
           <div class="flex flex-col text-[#804B19] text-light select-none">
-            <div class="flex justify-between px-3 py-1.5 text-[13px]">
+            <div class="flex justify-between px-3 py-1.5 text-sm2">
               <span />
               <span
                 >倒计时：<span class="text-(--game-red)">{{ t }}</span></span
               >
             </div>
 
-            <ul class="text-[13px]">
+            <ul class="text-sm2">
               <li
                 v-for="(p, index) in r"
                 :key="p.player.id"

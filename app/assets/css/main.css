@@ -1,6 +1,10 @@
 @import 'tailwindcss';
 @import '@nuxt/ui';
 
+@theme {
+  --text-sm2: 13px;
+}
+
 :root {
   --game-red: #e20032;
   --game-blue: #3e96ec;

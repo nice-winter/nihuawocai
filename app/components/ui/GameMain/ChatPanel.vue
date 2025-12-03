@@ -57,7 +57,7 @@
         </template>
       </UInput>
 
-      <UiLinkButton type="button" class="text-[13px] ml-2" @click="sendChatMessage"
+      <UiLinkButton type="button" class="text-sm2 ml-2" @click="sendChatMessage"
         >发 送</UiLinkButton
       >
     </div>

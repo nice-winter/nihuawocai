@@ -15,7 +15,7 @@
         v-show="sketchpadStore.currentBrush === 'eraser'"
         class="absolute z-114 top-0 left-0 size-full flex justify-center items-center bg-white/65 select-none"
       >
-        <span class="text-[13px] text-light">当前正在使用橡皮擦</span>
+        <span class="text-sm2 text-light">当前正在使用橡皮擦</span>
       </div>
     </div>
 

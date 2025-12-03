@@ -13,7 +13,7 @@
         tabindex="0"
         @keydown.esc="onCancel"
       >
-        <p class="text-[13px] text-center select-none">请输入房间密码</p>
+        <p class="text-sm2 text-center select-none">请输入房间密码</p>
         <UInput
           ref="passwordInputRef"
           v-model="password"

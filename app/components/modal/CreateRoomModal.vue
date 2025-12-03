@@ -13,10 +13,10 @@
         tabindex="0"
         @keydown.esc="onCancel"
       >
-        <p class="text-[13px] font-bold text-center select-none">房间设置</p>
+        <p class="text-sm2 font-bold text-center select-none">房间设置</p>
 
         <div class="flex gap-4 items-center">
-          <span class="text-[13px]">玩家座位数：</span>
+          <span class="text-sm2">玩家座位数：</span>
           <UInputNumber
             v-model="options.opens"
             :min="0"
@@ -27,7 +27,7 @@
         </div>
 
         <div class="flex gap-4 items-center">
-          <span class="text-[13px]">最多几人旁观：</span>
+          <span class="text-sm2">最多几人旁观：</span>
           <UInputNumber
             v-model="options.maxOnlookers"
             :min="0"
@@ -37,7 +37,7 @@
           />
         </div>
         <div class="flex gap-4 items-center">
-          <span class="text-[13px]">房间初始密码：</span>
+          <span class="text-sm2">房间初始密码：</span>
           <UInput
             ref="passwordInputRef"
             v-model="options.password"

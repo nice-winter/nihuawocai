@@ -17,7 +17,7 @@
 
             <UiGenderIcon :gender="player.gender" />
 
-            <span class="grow text-[13px] max-w-[103.77px] truncate">
+            <span class="grow text-sm2 max-w-[103.77px] truncate">
               {{ player.nickname }}
             </span>
 
@@ -37,9 +37,9 @@
         <div
           class="flex flex-row justify-center items-center gap-9.5 h-8 border-t border-t-white/60"
         >
-          <UiLinkButton class="text-[13px]" type="button" @click="prevPage">上一页</UiLinkButton>
+          <UiLinkButton class="text-sm2" type="button" @click="prevPage">上一页</UiLinkButton>
           <div class="w-0.5 h-4 border-l border-l-[#e6e3e1] bg-white/60" />
-          <UiLinkButton class="text-[13px]" type="button" @click="nextPage">下一页</UiLinkButton>
+          <UiLinkButton class="text-sm2" type="button" @click="nextPage">下一页</UiLinkButton>
         </div>
       </div>
     </template>
