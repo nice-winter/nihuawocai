@@ -1,5 +1,5 @@
 <template>
-  <div v-if="currentRoom" class="flex flex-row h-full">
+  <div v-if="currentRoom" class="flex h-full">
     <div class="flex flex-col w-[74.4%]">
       <UiGameMainRoomWaiting v-if="!currentRoom.playing" :room-info="currentRoom" />
       <UiGameMainRoomPlaying v-else-if="currentRoom.playing" :room-info="currentRoom" />

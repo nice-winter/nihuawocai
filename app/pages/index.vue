@@ -10,7 +10,7 @@
     </div>
 
     <div class="w-full h-10 flex justify-center items-center">
-      <div class="w-[900px] flex flex-row justify-center">
+      <div class="w-[900px] flex justify-center">
         <UIcon name="custom:icon-quota-left" class="size-5 -mt-1" />
 
         <span class="grow text-light px-2 truncate">
@@ -64,9 +64,7 @@
       </template>
 
       <template #footer>
-        <div
-          class="flex justify-between px-tight pt-4.5 text-[12px] text-[#aa7b4c91] select-none"
-        >
+        <div class="flex justify-between px-tight pt-4.5 text-[12px] text-[#aa7b4c91] select-none">
           <div class="flex flex-col justify-center">
             <span>免责声明：本项目为非盈利社区性项目</span>
             <span>无意侵犯其版权，所有权利均归其各自所有者所有</span>

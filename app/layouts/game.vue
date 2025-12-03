@@ -1,5 +1,5 @@
 <template>
-  <div class="w-full flex flex-row justify-center custom-bg">
+  <div class="w-full flex justify-center custom-bg">
     <slot />
   </div>
 </template>

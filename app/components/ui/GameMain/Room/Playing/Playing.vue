@@ -1,6 +1,6 @@
 <template>
   <div id="game-playing" class="relative flex flex-col h-full">
-    <div class="flex flex-row h-16 min-h-16 items-center justify-between px-1">
+    <div class="flex h-16 min-h-16 items-center justify-between px-1">
       <div class="flex flex-col items-center justify-center w-20">
         <UiAvatar
           :player="drawingPlayer"
@@ -59,7 +59,7 @@
       <UiThrower ref="throwerRef" :container="sketchpadContainerRef" />
     </div>
 
-    <div class="grow basis-0 flex flex-row px-tight pb-1.5 select-none">
+    <div class="grow basis-0 flex px-tight pb-1.5 select-none">
       <template v-for="player in _players" :key="player.id">
         <UiGameMainRoomBubble :id="player.id">
           <div class="flex flex-col items-center justify-center gap-1 w-[91.7px]">
