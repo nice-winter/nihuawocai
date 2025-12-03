@@ -1,5 +1,5 @@
 <template>
-  <div class="p-[0.785rem] w-1/2 h-1/3">
+  <div class="p-tight w-1/2 h-1/3">
     <div v-if="ownerPlayer" class="flex flex-col gap-[0.7rem] select-none">
       <div class="h-16 flex gap-[0.7rem]">
         <UiAvatar class="size-16" :player="ownerPlayer" :verified-icon="{ show: true }" />

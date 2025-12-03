@@ -6,11 +6,11 @@
     </div>
 
     <div class="grow flex flex-col bg-[#f1d0ae42] border-l-2 border-white/60">
-      <div class="relative p-[.785rem] h-16">
+      <div class="relative p-tight h-16">
         <UiLinkButton
           type="button"
           :icon="`ph:arrow-u-up-left-bold`"
-          class="absolute top-5.5 right-[.785rem] text-sm2"
+          class="absolute top-5.5 right-tight text-sm2"
           @click="leave"
         >
           离开房间

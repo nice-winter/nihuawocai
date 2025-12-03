@@ -25,7 +25,7 @@
       <template #header>
         <div
           v-if="userSession.loggedIn.value && userSession.user.value"
-          class="flex justify-between px-[.785rem] text-sm2 text-(--game-font-color) select-none"
+          class="flex justify-between px-tight text-sm2 text-(--game-font-color) select-none"
         >
           <div class="flex gap-5 pt-5">
             <span>{{ userSession.loggedIn.value ? `天秤座` : '' }}</span>
@@ -65,7 +65,7 @@
 
       <template #footer>
         <div
-          class="flex justify-between px-[.785rem] pt-4.5 text-[12px] text-[#aa7b4c91] select-none"
+          class="flex justify-between px-tight pt-4.5 text-[12px] text-[#aa7b4c91] select-none"
         >
           <div class="flex flex-col justify-center">
             <span>免责声明：本项目为非盈利社区性项目</span>

@@ -2,7 +2,7 @@
   <UTabs :items="tabItems" size="xs" class="game-tabs select-none">
     <template #user1>
       <div class="h-56 flex flex-col">
-        <div class="grow flex flex-col gap-2 p-[.785rem] max-w-[227.89px]">
+        <div class="grow flex flex-col gap-2 p-tight max-w-[227.89px]">
           <div
             v-for="player in currentPageItems"
             :key="player.id"
