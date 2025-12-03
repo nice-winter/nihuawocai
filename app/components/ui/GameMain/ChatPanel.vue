@@ -1,7 +1,7 @@
 <template>
   <div class="flex flex-col">
     <div class="relative h-10">
-      <span class="absolute top-2 right-[.785rem] text-(--game-font-color) select-none">
+      <span class="absolute top-2 right-tight text-(--game-font-color) select-none">
         <UIcon name="ph:telegram-logo-fill" class="size-5 align-text-bottom mr-1.5" />
         <span class="text-sm font-cuyuan">聊天信息</span>
       </span>
@@ -9,11 +9,11 @@
 
     <UiGameMainMessageList
       ref="ChatPanelMessageList"
-      class="grow basis-0 px-[0.785rem] min-h-0"
+      class="grow basis-0 px-tight min-h-0"
       :show-new-message-indicator="true"
     />
 
-    <div class="flex items-center p-[0.785rem]">
+    <div class="flex items-center p-tight">
       <UInput
         ref="ChatMessageInputRef"
         v-model="chatMessageInputValue"

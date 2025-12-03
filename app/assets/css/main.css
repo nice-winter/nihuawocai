@@ -2,6 +2,7 @@
 @import '@nuxt/ui';
 
 @theme {
+  --spacing-tight: 0.785rem;
   --text-sm2: 13px;
 }
 

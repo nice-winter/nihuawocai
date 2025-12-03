@@ -1,8 +1,8 @@
 <template>
   <div
-    class="px-[0.785rem] h-[21.05%] border-b-4 border-[#eeddcb] flex flex-row gap-[0.785rem] relative"
+    class="px-tight h-[21.05%] border-b-4 border-[#eeddcb] flex flex-row gap-tight relative"
   >
-    <div class="flex flex-col justify-center gap-[0.785rem] w-36">
+    <div class="flex flex-col justify-center gap-tight w-36">
       <UiGameMainRoomNumber :room-number="roomInfo.roomNumber || 0" />
       <span class="relative inline-flex items-center gap-1 pl-1 align-text-bottom">
         <UCheckbox
@@ -51,7 +51,7 @@
     </div>
 
     <div class="flex flex-col justify-center">
-      <div class="grid grid-cols-2 grid-rows-2 gap-[0.785rem]">
+      <div class="grid grid-cols-2 grid-rows-2 gap-tight">
         <UiButton
           color="green"
           :disabled="broadcastRecord.get(roomInfo.roomNumber)"
@@ -79,11 +79,11 @@
     </div>
   </div>
 
-  <div class="grow grid grid-rows-2 grid-cols-4 p-8 gap-[0.785rem] justify-center">
+  <div class="grow grid grid-rows-2 grid-cols-4 p-8 gap-tight justify-center">
     <div
       v-for="i in 7"
       :key="i"
-      class="relative flex flex-col items-center justify-center gap-[0.785rem] select-none"
+      class="relative flex flex-col items-center justify-center gap-tight select-none"
       :data-seat-number="i"
     >
       <img
@@ -125,7 +125,7 @@
       </p>
     </div>
 
-    <div class="relative flex flex-col items-center justify-center gap-[0.785rem] select-none">
+    <div class="relative flex flex-col items-center justify-center gap-tight select-none">
       <div class="flex items-center justify-center w-[114px] h-[114px] bg-[#ad8665] text-sm">
         <UIcon :name="`fe:disabled`" class="text-[#7A6955] size-14" />
       </div>
