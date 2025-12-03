@@ -25,7 +25,7 @@
       <template #header>
         <div
           v-if="userSession.loggedIn.value && userSession.user.value"
-          class="flex justify-between px-[.785rem] text-[13px] text-(--game-font-color) select-none"
+          class="flex justify-between px-[.785rem] text-sm2 text-(--game-font-color) select-none"
         >
           <div class="flex gap-5 pt-5">
             <span>{{ userSession.loggedIn.value ? `天秤座` : '' }}</span>
@@ -48,7 +48,7 @@
               class="absolute top-4 left-4 z-2 flex items-center gap-2"
             >
               <UiAvatar :player="loggedInPlayer" position="bottom-start" class="size-10" />
-              <span class="max-w-38 text-[13px] text-(--game-primary-color) text-light truncate">{{
+              <span class="max-w-38 text-sm2 text-(--game-primary-color) text-light truncate">{{
                 loggedInPlayer.nickname
               }}</span>
             </div>

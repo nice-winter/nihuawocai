@@ -50,7 +50,7 @@
 
             <li
               v-else-if="item.type === 'chat'"
-              class="py-[0.3rem] first:pt-0 last:pb-0 text-[13px]"
+              class="py-[0.3rem] first:pt-0 last:pb-0 text-sm2"
             >
               <div class="inline-flex float-left">
                 <UiAvatar
@@ -68,7 +68,7 @@
             </li>
 
             <li v-else-if="item.type === 'action'">
-              <span class="text-[13px] text-(--action-text-color)">
+              <span class="text-sm2 text-(--action-text-color)">
                 <span class="text-pink-400">{{ item.sender.nickname }}</span>
                 {{ item.msg }}
               </span>
@@ -94,13 +94,13 @@
                 :label="item.msg"
                 :ui="{
                   border: `border-(--system-text-color)`,
-                  label: `text-[13px] text-(--system-text-color)`
+                  label: `text-sm2 text-(--system-text-color)`
                 }"
               />
             </li>
 
             <li v-else-if="item.type === 'broadcast'" class="py-[0.3rem] first:pt-0 last:pb-0">
-              <span class="text-[13px]">
+              <span class="text-sm2">
                 <UiAvatar class="size-6.5 align-top" :player="item.sender" />
                 <span class="ml-2">{{ item.sender.nickname }}</span>
                 <span class="break-normal wrap-break-word">

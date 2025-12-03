@@ -11,7 +11,7 @@
 
       <div class="w-11 h-full"></div>
 
-      <div class="w-64 flex flex-col items-center justify-center gap-2 text-[13px] p-2 select-none">
+      <div class="w-64 flex flex-col items-center justify-center gap-2 text-sm2 p-2 select-none">
         <span>第 {{ gameStore.state.currentRound }}/{{ gameStore.state.totalRounds }} 回合</span>
 
         <span v-if="gameStore.isMyTurn && gameStore.state.currentWord !== null"
@@ -32,11 +32,11 @@
       </div>
 
       <div class="w-12">
-        <span v-if="isOnlooker" class="text-[13px] text-(--game-normal)">旁观中</span>
+        <span v-if="isOnlooker" class="text-sm2 text-(--game-normal)">旁观中</span>
         <UiLinkButton
           v-if="gameStore.state.draw"
           type="button"
-          class="text-[13px]"
+          class="text-sm2"
           @click="gameStore.giveUp"
           >放 弃</UiLinkButton
         >
@@ -64,7 +64,7 @@
         <UiGameMainRoomBubble :id="player.id">
           <div class="flex flex-col items-center justify-center gap-1 w-[91.7px]">
             <span
-              class="w-full h-7 text-[13px] text-center leading-[13px] flex items-end justify-center"
+              class="w-full h-7 text-sm2 text-center leading-[13px] flex items-end justify-center"
               >{{ player.nickname }}</span
             >
             <UiAvatar
@@ -78,7 +78,7 @@
               }"
               :verified-icon="{ show: true, size: 12, bottom: 2, right: 2 }"
             />
-            <span class="text-[13px] text-[#774A1A]">
+            <span class="text-sm2 text-[#774A1A]">
               {{ gameStore.state.scores[player.id] || 0 }}
             </span>
           </div>

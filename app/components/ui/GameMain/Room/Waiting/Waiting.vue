@@ -41,7 +41,7 @@
     </div>
 
     <div class="w-52 flex flex-col justify-center pr-4">
-      <div class="w-full h-20 text-[13px]">
+      <div class="w-full h-20 text-sm2">
         <UiGameMainMessageList
           ref="RoomEvents"
           class="text-[#c3b4a0]"

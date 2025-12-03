@@ -8,14 +8,14 @@
       <div ref="modalRef" class="bg-texture rounded-md w-90 shadow-hard flex flex-col" tabindex="0">
         <div class="h-40 p-4">
           <div class="flex flex-col gap-4 text-[#804B19] text-light select-none">
-            <div class="flex justify-between text-[13px]">
+            <div class="flex justify-between text-sm2">
               <span>{{ reason }}</span>
               <span
                 >倒计时：<span class="text-(--game-red)">{{ t }}</span></span
               >
             </div>
 
-            <p class="text-[13px] text-center">
+            <p class="text-sm2 text-center">
               答案：<span class="text-lg text-(--game-red) font-bold">【{{ answer }}】</span>
             </p>
 

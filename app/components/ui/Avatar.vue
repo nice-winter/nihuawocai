@@ -44,7 +44,7 @@
             <UAvatar class="game-avatar size-32" :src="player?.avatar_url" />
           </div>
 
-          <span class="h-[19.5px] px-1.5 text-[13px] truncate">
+          <span class="h-[19.5px] px-1.5 text-sm2 truncate">
             <UiGenderIcon :gender="player?.gender" class="align-text-bottom" />
             {{ player?.nickname }}
           </span>

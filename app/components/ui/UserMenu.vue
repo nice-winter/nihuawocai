@@ -1,5 +1,5 @@
 <template>
-  <div class="text-[13px] flex gap-4 select-none">
+  <div class="text-sm2 flex gap-4 select-none">
     <UUser :avatar="{ src: user?.avatar_url }" :name="user?.nickname" />
     <UiLinkButton type="button" class="underline" @click="openUserProfileModal">
       个人资料

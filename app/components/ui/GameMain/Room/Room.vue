@@ -10,7 +10,7 @@
         <UiLinkButton
           type="button"
           :icon="`ph:arrow-u-up-left-bold`"
-          class="absolute top-5.5 right-[.785rem] text-[13px]"
+          class="absolute top-5.5 right-[.785rem] text-sm2"
           @click="leave"
         >
           离开房间

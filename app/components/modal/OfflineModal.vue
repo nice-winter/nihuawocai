@@ -8,11 +8,11 @@
       <div ref="modalRef" class="bg-texture rounded-md w-90 shadow-hard flex flex-col" tabindex="0">
         <div class="h-40 p-4">
           <div class="h-full flex flex-col text-[#804B19] text-light select-none">
-            <div class="flex justify-between text-[13px]">
+            <div class="flex justify-between text-sm2">
               <span>你已离线</span>
             </div>
 
-            <div class="grow flex flex-col justify-center items-center text-[13px]">
+            <div class="grow flex flex-col justify-center items-center text-sm2">
               <p class="text-center">
                 <span>{{ reason }}</span>
               </p>

@@ -16,8 +16,8 @@
           </div>
         </div>
 
-        <span class="text-[13px] text-center truncate text-[#a46000] text-light">虚位以待</span>
-        <span class="text-[13px] text-center truncate text-[#a46000] text-light">0</span>
+        <span class="text-sm2 text-center truncate text-[#a46000] text-light">虚位以待</span>
+        <span class="text-sm2 text-center truncate text-[#a46000] text-light">0</span>
       </div>
     </div>
   </div>
