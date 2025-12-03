@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-row h-full">
+  <div class="flex h-full">
     <UiGameMainLobbyRoomList class="w-[74.4%]" />
 
     <div class="grow flex flex-col bg-[#f1d0ae42] border-l-2 border-white/60">

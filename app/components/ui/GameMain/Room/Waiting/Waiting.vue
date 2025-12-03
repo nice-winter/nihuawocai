@@ -1,7 +1,5 @@
 <template>
-  <div
-    class="px-tight h-[21.05%] border-b-4 border-[#eeddcb] flex flex-row gap-tight relative"
-  >
+  <div class="px-tight h-[21.05%] border-b-4 border-[#eeddcb] flex gap-tight relative">
     <div class="flex flex-col justify-center gap-tight w-36">
       <UiGameMainRoomNumber :room-number="roomInfo.roomNumber || 0" />
       <span class="relative inline-flex items-center gap-1 pl-1 align-text-bottom">
