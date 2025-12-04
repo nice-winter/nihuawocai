@@ -2,7 +2,7 @@
   <UTabs :items="tabItems" size="xs" class="game-tabs select-none">
     <template #user1>
       <div class="h-56 flex flex-col">
-        <div class="grow flex flex-col gap-2 p-tight max-w-[227.89px]">
+        <div class="flex-1 flex flex-col gap-2 p-tight max-w-[227.89px]">
           <div
             v-for="player in currentPageItems"
             :key="player.id"
@@ -17,7 +17,7 @@
 
             <UiGenderIcon :gender="player.gender" />
 
-            <span class="grow text-sm2 max-w-[103.77px] truncate">
+            <span class="flex-1 text-sm2 max-w-[103.77px] truncate">
               {{ player.nickname }}
             </span>
 

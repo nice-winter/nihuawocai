@@ -12,7 +12,7 @@
               <span>你已离线</span>
             </div>
 
-            <div class="grow flex flex-col justify-center items-center text-sm2">
+            <div class="flex-1 flex flex-col justify-center items-center text-sm2">
               <p class="text-center">
                 <span>{{ reason }}</span>
               </p>

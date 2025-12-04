@@ -68,7 +68,7 @@
       </div>
     </div>
 
-    <div class="grow flex flex-col items-center justify-center">
+    <div class="flex-1 flex flex-col items-center justify-center">
       <UiGameMainRoomTimer
         v-if="!roomInfo.locked && canStart"
         ref="Timer"
@@ -77,7 +77,7 @@
     </div>
   </div>
 
-  <div class="grow grid grid-rows-2 grid-cols-4 p-8 gap-tight justify-center">
+  <div class="flex-1 grid grid-rows-2 grid-cols-4 p-8 gap-tight justify-center">
     <div
       v-for="i in 7"
       :key="i"

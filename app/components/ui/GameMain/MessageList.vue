@@ -48,10 +48,7 @@
               {{ item.msg }}
             </li>
 
-            <li
-              v-else-if="item.type === 'chat'"
-              class="py-[0.3rem] first:pt-0 last:pb-0 text-sm2"
-            >
+            <li v-else-if="item.type === 'chat'" class="py-[0.3rem] first:pt-0 last:pb-0 text-sm2">
               <div class="inline-flex float-left">
                 <UiAvatar
                   class="size-6.5 align-top"
@@ -94,7 +91,7 @@
                 :label="item.msg"
                 :ui="{
                   border: `border-(--system-text-color)`,
-                  label: `text-sm2 text-(--system-text-color)`
+                  label: 'text-[13px] text-(--system-text-color)'
                 }"
               />
             </li>

@@ -66,18 +66,18 @@
               <span class="text-base font-bold italic leading-4 min-w-10.5"
                 >LV.{{ levelInfo?.level }}</span
               >
-              <span class="text-xs leading-[15px] grow">{{ levelInfo?.title }}</span>
+              <span class="text-xs leading-[15px] flex-1">{{ levelInfo?.title }}</span>
             </div>
 
             <div class="flex flex-col gap-1">
               <div class="h-3.5 text-xs leading-3.5 inline-flex items-end gap-0.5">
                 <span class="text-wood-700 min-w-[42px]"> 鲜ㅤ花： </span>
-                <span class="grow leading-[13px]">{{ playerProfile?.stats.flower_count }}</span>
+                <span class="flex-1 leading-[13px]">{{ playerProfile?.stats.flower_count }}</span>
               </div>
 
               <div class="h-3.5 text-xs leading-3.5 inline-flex items-end gap-0.5">
                 <span class="text-wood-700 min-w-[42px]"> 盘ㅤ数： </span>
-                <span class="grow leading-[13px]">{{ playerProfile?.stats.total_games }}</span>
+                <span class="flex-1 leading-[13px]">{{ playerProfile?.stats.total_games }}</span>
               </div>
             </div>
           </div>
