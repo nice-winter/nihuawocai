@@ -4,7 +4,7 @@
       <li class="relative size-6 sprites-icon nav-icon hi">
         <span
           v-if="hi > 0"
-          class="absolute -right-1 -bottom-0.5 min-w-4 px-0.5 text-mini text-white text-center bg-bland-blue-500 rounded-xs"
+          class="absolute -right-1 -bottom-0.5 min-w-4 px-0.5 text-mini text-white text-center bg-game-blue-500 rounded-xs"
           >{{ hiCountText }}</span
         >
       </li>

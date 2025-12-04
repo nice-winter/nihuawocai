@@ -11,12 +11,12 @@
             <div class="flex justify-between text-sm2">
               <span>{{ reason }}</span>
               <span
-                >倒计时：<span class="text-bland-red-500">{{ t }}</span></span
+                >倒计时：<span class="text-game-red-500">{{ t }}</span></span
               >
             </div>
 
             <p class="text-sm2 text-center">
-              答案：<span class="text-lg text-bland-red-500 font-bold">【{{ answer }}】</span>
+              答案：<span class="text-lg text-game-red-500 font-bold">【{{ answer }}】</span>
             </p>
 
             <div v-if="showThrowItem && !isThrowed" class="flex items-center justify-between px-20">

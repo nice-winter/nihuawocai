@@ -212,7 +212,7 @@ useEventBus('ui:screenshot', async () => {
     2px 2px 0 #ffffff,
     -1px 1px 0 #ffffff,
     2px 1px 0 #ffffff;
-  color: var(--game-red);
+  color: var(--color-game-red-500);
   padding-top: 20px;
   user-select: none;
 }

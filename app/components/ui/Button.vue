@@ -112,17 +112,17 @@ const classNameColor = computed(() => `game-button-color__${color}`)
   /* 'normal' */
   &.game-button-color__normal {
     > .game-button__icon {
-      color: #7a6955;
+      color: var(--color-game-taupe-500);
     }
   }
   &.game-button-color__normal:hover {
     > .game-button__icon {
-      color: #8d7860;
+      color: var(--color-game-taupe-400);
     }
   }
   &.game-button-color__normal:active {
     > .game-button__icon {
-      color: #6d5e4c;
+      color: var(--color-game-taupe-600);
     }
   }
   &.game-button-color__normal:disabled {
@@ -134,91 +134,91 @@ const classNameColor = computed(() => `game-button-color__${color}`)
   /* 'red' */
   &.game-button-color__red {
     > .game-button__icon {
-      color: #e20032;
+      color: var(--color-game-red-500);
     }
   }
   &.game-button-color__red:hover {
     > .game-button__icon {
-      color: #f40032;
+      color: var(--color-game-red-400);
     }
   }
   &.game-button-color__red:active {
     > .game-button__icon {
-      color: #d2012f;
+      color: var(--color-game-red-600);
     }
   }
   &.game-button-color__red:disabled {
     > .game-button__icon {
-      color: #ff849f;
+      color: var(--color-game-red-300);
     }
   }
 
   /* 'green' */
   &.game-button-color__green {
     > .game-button__icon {
-      color: #5f6f27;
+      color: var(--color-game-green-500);
     }
   }
   &.game-button-color__green:hover {
     > .game-button__icon {
-      color: #6b7d2b;
+      color: var(--color-game-green-400);
     }
   }
   &.game-button-color__green:active {
     > .game-button__icon {
-      color: #4f5d1c;
+      color: var(--color-game-green-600);
     }
   }
   &.game-button-color__green:disabled {
     > .game-button__icon {
-      color: #99a766;
+      color: var(--color-game-green-300);
     }
   }
 
   /* 'blue' */
   &.game-button-color__blue {
     > .game-button__icon {
-      color: #3e96ec;
+      color: var(--color-game-blue-500);
     }
   }
   &.game-button-color__blue:hover {
     > .game-button__icon {
-      color: #49a4ff;
+      color: var(--color-game-blue-400);
     }
   }
   &.game-button-color__blue:active {
     > .game-button__icon {
-      color: #3782ce;
+      color: var(--color-game-blue-600);
     }
   }
   &.game-button-color__blue:disabled {
     > .game-button__icon {
-      color: #6aacee;
+      color: var(--color-game-blue-300);
     }
   }
 
   /* 'playing' */
   &.game-button-color__playing {
-    color: #766746;
+    color: var(--color-wood-800);
     text-shadow: none;
 
     > .game-button__icon {
-      color: #c9bc9c;
+      color: var(--color-game-sand-500);
     }
   }
   &.game-button-color__playing:hover {
     > .game-button__icon {
-      color: #d6c9a7;
+      color: var(--color-game-sand-400);
     }
   }
   &.game-button-color__playing:active {
     > .game-button__icon {
-      color: #c2b598;
+      color: var(--color-game-sand-600);
     }
   }
   &.game-button-color__playing:disabled {
     > .game-button__icon {
-      color: #cfcbbf;
+      color: var(--color-game-sand-300);
     }
   }
 }

@@ -32,7 +32,7 @@
       </div>
 
       <div class="w-12">
-        <span v-if="isOnlooker" class="text-sm2 text-(--game-normal)">旁观中</span>
+        <span v-if="isOnlooker" class="text-sm2 text-text-700">旁观中</span>
         <UiLinkButton
           v-if="gameStore.state.draw"
           type="button"
