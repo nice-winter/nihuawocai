@@ -5,7 +5,7 @@
       class="z-114514 flex items-center justify-center bg-transparent"
       :class="parent ? 'absolute inset-0' : 'fixed inset-0'"
     >
-      <div ref="modalRef" class="bg-texture rounded-md w-90 shadow-hard flex flex-col" tabindex="0">
+      <div ref="modalRef" class="w-90 bg-texture rounded-md shadow-hard flex flex-col" tabindex="0">
         <div class="h-40 p-4">
           <div class="h-full flex flex-col text-wood-700 text-shadow-light select-none">
             <div class="flex justify-between text-sm2">
