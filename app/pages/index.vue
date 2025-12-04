@@ -13,7 +13,7 @@
       <div class="w-[900px] flex justify-center">
         <UIcon name="custom:icon-quota-left" class="size-5 -mt-1" />
 
-        <span class="grow text-shadow-light px-2 truncate">
+        <span class="flex-1 text-shadow-light px-2 truncate">
           <UiTextRender :text="appConfig.announcements[0] || ''" style="--emoji-size: 20px" />
         </span>
 
@@ -87,7 +87,7 @@
       </template>
     </UiGameMainFrame>
 
-    <div class="w-full grow flex justify-center items-center">
+    <div class="w-full flex-1 flex justify-center items-center">
       <UiGameMainRank class="w-[900px]" />
     </div>
 

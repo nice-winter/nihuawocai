@@ -15,7 +15,9 @@
       </div>
     </div>
 
-    <div class="grow flex items-center gap-4 p-tight bg-tint-soft-400 border-t-2 border-t-white/60">
+    <div
+      class="flex-1 flex items-center gap-4 p-tight bg-tint-soft-400 border-t-2 border-t-white/60"
+    >
       <UiButton size="lg" color="red" @click="quickMatch"> 快速开始 </UiButton>
       <div class="px-4 flex gap-2 items-center">
         <UInput

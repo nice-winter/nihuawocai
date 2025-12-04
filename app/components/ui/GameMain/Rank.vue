@@ -6,7 +6,7 @@
       <li class="px-2">人 气</li>
     </ul>
 
-    <div class="grow flex justify-between items-center px-4">
+    <div class="flex-1 flex justify-between items-center px-4">
       <div v-for="i in 6" :key="i" class="w-24 h-full flex flex-col justify-between">
         <div
           class="size-24 flex justify-center items-center bg-tint-dark-400 border-2 border-(--border-color) rounded-md"

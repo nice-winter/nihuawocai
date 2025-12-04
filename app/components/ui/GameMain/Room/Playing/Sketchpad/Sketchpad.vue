@@ -9,7 +9,7 @@
 
     <div
       class="absolute z-2 size-full pointer-events-none"
-      style="box-shadow: rgb(0 0 0 / 40%) 0px 0px 3px 1px inset"
+      style="box-shadow: rgb(0 0 0 / 30%) 0px 0px 3px 1px inset"
     />
 
     <canvas ref="Canvas" class="size-full sketchpad" />

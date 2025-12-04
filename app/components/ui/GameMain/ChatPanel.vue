@@ -9,7 +9,7 @@
 
     <UiGameMainMessageList
       ref="ChatPanelMessageList"
-      class="grow basis-0 px-tight min-h-0"
+      class="flex-1 basis-0 px-tight min-h-0"
       :show-new-message-indicator="true"
     />
 
