@@ -2,6 +2,75 @@
 @import '@nuxt/ui';
 
 @theme {
+  /* ===== 红 ===== */
+  --color-bland-red-500: #e20032;
+  --color-bland-red-400: #ff0038;
+  --color-bland-red-450: #e31839;
+  --color-bland-red-350: #f40032;
+  --color-bland-red-300: #d2012f;
+  --color-bland-red-200: #ff849f;
+
+  /* ===== 绿 ===== */
+  --color-bland-green-700: #4f5d1c;
+  --color-bland-green-600: #5f6f27;
+  --color-bland-green-500: #6b7d2b;
+  --color-bland-green-300: #99a766;
+
+  /* ===== 蓝 ===== */
+  --color-bland-blue-700: #3782ce;
+  --color-bland-blue-600: #3e96ec;
+  --color-bland-blue-500: #00a2ff;
+  --color-bland-blue-450: #49a4ff;
+  --color-bland-blue-300: #6aacee;
+
+  /* ===== 暖棕 ===== */
+  --color-wood-900: #1d2020;
+  --color-wood-800: #766746;
+  --color-wood-700: #804b19;
+  --color-wood-650: #b08149;
+  --color-wood-600: #774a1a;
+  --color-wood-500: #995d11;
+  --color-wood-450: #a46000;
+  --color-wood-400: #9f7c59;
+  --color-wood-350: #ad8665;
+  --color-wood-300: #7a6955;
+  --color-wood-200: #ae9783;
+  --color-wood-100: #c5630e24;
+
+  /* ===== 自然 ===== */
+  --color-surface-900: #c2b598;
+  --color-surface-800: #c9bc9c;
+  --color-surface-700: #d6c9a7;
+  --color-surface-650: #cdb69b;
+  --color-surface-600: #c3b4a0;
+  --color-surface-550: #ddc9a9;
+  --color-surface-500: #ecd3c1;
+  --color-surface-450: #eeddcb;
+  --color-surface-400: #eae0d0;
+  --color-surface-300: #e6e3e1;
+  --color-surface-200: #f7ebdf;
+  --color-surface-150: #efc189;
+
+  /* ===== 棕-透明 ===== */
+  --color-tint-warm-700: #c5630e69;
+  --color-tint-warm-300: #c5630e24;
+
+  --color-tint-dark-500: #5035024d;
+  --color-tint-dark-400: #6233004d;
+
+  --color-tint-soft-400: #f1d0ae42;
+  --color-tint-soft-300: #aa7b4c91;
+
+  --color-tint-white: #ffffff2b;
+
+  /* ===== 文本 ===== */
+  /* --color-text-900: #1d2020;
+  --color-text-800: #4f5d1c;
+  --color-text-700: #7a6955;
+  --color-text-600: #9f7c59;
+  --color-text-500: #ad8665;
+  --color-text-300: #ae9783; */
+
   --spacing-tight: 0.785rem;
   --text-sm2: 13px;
 }
