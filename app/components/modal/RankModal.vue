@@ -11,7 +11,7 @@
             <div class="flex justify-between px-3 py-1.5 text-sm2">
               <span />
               <span
-                >倒计时：<span class="text-bland-red-500">{{ t }}</span></span
+                >倒计时：<span class="text-game-red-500">{{ t }}</span></span
               >
             </div>
 
@@ -27,7 +27,7 @@
                   <UIcon v-if="index === 2" name="emojione:3rd-place-medal" class="size-6" />
 
                   <span class="ml-auto"
-                    ><span class="text-lg text-bland-red-500">{{ p.score }}</span
+                    ><span class="text-lg text-game-red-500">{{ p.score }}</span
                     >分</span
                   >
                 </span>

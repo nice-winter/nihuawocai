@@ -8,8 +8,8 @@
         'select-text': type === 'link',
         'text-text-600': color === 'normal',
         'hover:text-text-900': color === 'normal',
-        'text-bland-red-500': color === 'red',
-        'hover:text-bland-red-400': color === 'red'
+        'text-game-red-500': color === 'red',
+        'hover:text-game-red-400': color === 'red'
       }"
     >
       <slot />

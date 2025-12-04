@@ -94,7 +94,7 @@
 
     <template v-if="mode.includes('seat') && !player">
       <span v-if="open" class="text-sm2">{{ placeholder }}</span>
-      <UIcon v-else :name="`fe:disabled`" class="text-bland-red-500 size-14" />
+      <UIcon v-else :name="`fe:disabled`" class="text-game-red-500 size-14" />
     </template>
   </span>
 </template>

@@ -2,26 +2,65 @@
 @import '@nuxt/ui';
 
 @theme {
-  /* ===== 红 ===== */
-  --color-bland-red-500: #e20032;
-  --color-bland-red-400: #ff0038;
-  --color-bland-red-450: #e31839;
-  --color-bland-red-350: #f40032;
-  --color-bland-red-300: #d2012f;
-  --color-bland-red-200: #ff849f;
+  --color-game-red-50: oklch(0.958 0.021 13.94);
+  --color-game-red-100: oklch(0.911 0.046 14.75);
+  --color-game-red-200: oklch(0.83 0.095 15.29);
+  --color-game-red-300: oklch(0.743 0.157 17.35);
+  --color-game-red-400: oklch(0.665 0.222 20.23);
+  --color-game-red-500: oklch(0.576 0.232 22.25);
+  --color-game-red-600: oklch(0.49 0.198 22.32);
+  --color-game-red-700: oklch(0.4 0.161 22.44);
+  --color-game-red-800: oklch(0.318 0.128 22.44);
+  --color-game-red-900: oklch(0.227 0.092 22.69);
+  --color-game-red-950: oklch(0.185 0.075 21.3);
 
-  /* ===== 绿 ===== */
-  --color-bland-green-700: #4f5d1c;
-  --color-bland-green-600: #5f6f27;
-  --color-bland-green-500: #6b7d2b;
-  --color-bland-green-300: #99a766;
+  --color-game-green-50: oklch(0.938 0.18 120.61);
+  --color-game-green-100: oklch(0.895 0.173 120.56);
+  --color-game-green-200: oklch(0.8 0.154 120.68);
+  --color-game-green-300: oklch(0.699 0.134 120.37);
+  --color-game-green-400: oklch(0.605 0.117 120.75);
+  --color-game-green-500: oklch(0.513 0.099 120.61);
+  --color-game-green-600: oklch(0.436 0.084 120.55);
+  --color-game-green-700: oklch(0.359 0.069 120.38);
+  --color-game-green-800: oklch(0.289 0.056 120.89);
+  --color-game-green-900: oklch(0.214 0.041 121.85);
+  --color-game-green-950: oklch(0.164 0.032 120.89);
 
-  /* ===== 蓝 ===== */
-  --color-bland-blue-700: #3782ce;
-  --color-bland-blue-600: #3e96ec;
-  --color-bland-blue-500: #00a2ff;
-  --color-bland-blue-450: #49a4ff;
-  --color-bland-blue-300: #6aacee;
+  --color-game-blue-50: oklch(0.966 0.014 264.53);
+  --color-game-blue-100: oklch(0.931 0.028 261.49);
+  --color-game-blue-200: oklch(0.862 0.059 260.44);
+  --color-game-blue-300: oklch(0.792 0.093 258.68);
+  --color-game-blue-400: oklch(0.732 0.122 255.13);
+  --color-game-blue-500: oklch(0.661 0.153 250.89);
+  --color-game-blue-600: oklch(0.559 0.13 251.05);
+  --color-game-blue-700: oklch(0.448 0.104 250.96);
+  --color-game-blue-800: oklch(0.346 0.08 250.8);
+  --color-game-blue-900: oklch(0.243 0.055 250.35);
+  --color-game-blue-950: oklch(0.188 0.043 251.66);
+
+  --color-game-taupe-50: oklch(0.958 0.01 67.71);
+  --color-game-taupe-100: oklch(0.906 0.026 67.49);
+  --color-game-taupe-200: oklch(0.812 0.057 71.33);
+  --color-game-taupe-300: oklch(0.717 0.05 71.04);
+  --color-game-taupe-400: oklch(0.623 0.043 70.64);
+  --color-game-taupe-500: oklch(0.531 0.037 71.43);
+  --color-game-taupe-600: oklch(0.448 0.031 70.63);
+  --color-game-taupe-700: oklch(0.371 0.026 71.54);
+  --color-game-taupe-800: oklch(0.295 0.021 73.05);
+  --color-game-taupe-900: oklch(0.217 0.015 76.06);
+  --color-game-taupe-950: oklch(0.176 0.012 73.11);
+
+  --color-game-sand-50: oklch(0.983 0.006 84.48);
+  --color-game-sand-100: oklch(0.956 0.016 86.39);
+  --color-game-sand-200: oklch(0.923 0.031 88.36);
+  --color-game-sand-300: oklch(0.879 0.05 88.07);
+  --color-game-sand-400: oklch(0.836 0.048 88.28);
+  --color-game-sand-500: oklch(0.798 0.046 88.52);
+  --color-game-sand-600: oklch(0.665 0.039 89.47);
+  --color-game-sand-700: oklch(0.533 0.03 87.88);
+  --color-game-sand-800: oklch(0.406 0.023 90.7);
+  --color-game-sand-900: oklch(0.266 0.015 84.52);
+  --color-game-sand-950: oklch(0.206 0.012 84.51);
 
   /* ===== 暖棕 ===== */
   --color-wood-900: #1d2020;
@@ -78,21 +117,12 @@
   --text-shadow-light: 1px 1px 1px #ffffff8f;
   --font-cuyuan: 'JianShouMengWaCuYuan-2';
 
-  --shadow-main: 0 0 4px 2px #b08149;
+  --shadow-main: 0 0 4px 2px var(--color-wood-650);
+  --shadow-hard: 0px 0px 4px 2px #34260a99;
 }
 
 :root {
-  --game-red: #e20032;
-  --game-blue: #3e96ec;
-  --game-green: #5f6f27;
-  --game-normal: #7a6955;
-  --game-font-color: #9f7c59;
-  --game-primary-color: #1d2020;
-  --game-border-color: #ae9783;
-}
-
-:root {
-  --ui-text: var(--game-primary-color);
+  --ui-text: var(--color-text-900);
 }
 
 img {
@@ -134,7 +164,7 @@ div[data-reka-popper-content-wrapper] {
     padding: 4px;
     background-color: #f4e9d6;
     border-radius: 0;
-    box-shadow: 0 0 0 1px #ae9783;
+    box-shadow: 0 0 0 1px var(--color-wood-200);
 
     &:focus-visible {
       box-shadow: 0 0 0 1px #432410;
@@ -158,7 +188,7 @@ div[data-reka-popper-content-wrapper] {
   button {
     border-radius: 0;
     background-color: #f7ede3;
-    box-shadow: 0 0 0 1px #ae9783;
+    box-shadow: 0 0 0 1px var(--color-wood-200);
 
     span[data-state='checked'] {
       color: var(--game-primary-color);
@@ -179,7 +209,7 @@ div[data-reka-popper-content-wrapper] {
   }
 
   [data-state='active'] > span {
-    color: var(--game-font-color);
+    color: var(--color-text-600);
     font-size: 13px;
   }
 
@@ -191,10 +221,6 @@ div[data-reka-popper-content-wrapper] {
   div.bg-primary {
     background-color: #fff;
   }
-}
-
-.shadow-hard {
-  box-shadow: 0px 0px 4px 2px #34260a99;
 }
 
 .bg-texture {
