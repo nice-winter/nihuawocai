@@ -78,7 +78,7 @@
               }"
               :verified-icon="{ show: true, size: 12, bottom: 2, right: 2 }"
             />
-            <span class="text-sm2 text-[#774A1A]">
+            <span class="text-sm2 text-wood-600">
               {{ gameStore.state.scores[player.id] || 0 }}
             </span>
           </div>

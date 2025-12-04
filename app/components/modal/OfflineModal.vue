@@ -7,7 +7,7 @@
     >
       <div ref="modalRef" class="bg-texture rounded-md w-90 shadow-hard flex flex-col" tabindex="0">
         <div class="h-40 p-4">
-          <div class="h-full flex flex-col text-[#804B19] text-light select-none">
+          <div class="h-full flex flex-col text-wood-700 text-shadow-light select-none">
             <div class="flex justify-between text-sm2">
               <span>你已离线</span>
             </div>
@@ -19,7 +19,7 @@
             </div>
           </div>
         </div>
-        <div class="flex justify-center gap-8 p-4 bg-[#c5630e69]">
+        <div class="flex justify-center gap-8 p-4 bg-tint-warm-700">
           <UiButton color="red" @click="refresh">重新连接</UiButton>
         </div>
       </div>

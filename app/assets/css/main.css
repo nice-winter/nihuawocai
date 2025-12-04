@@ -63,16 +63,22 @@
 
   --color-tint-white: #ffffff2b;
 
-  /* ===== 文本 ===== */
-  /* --color-text-900: #1d2020;
-  --color-text-800: #4f5d1c;
+  /* ===== 文本色 ===== */
+  --color-text-900: #1d2020;
+  --color-text-800: #544533;
   --color-text-700: #7a6955;
   --color-text-600: #9f7c59;
   --color-text-500: #ad8665;
-  --color-text-300: #ae9783; */
+  --color-text-300: #ae9783;
 
   --spacing-tight: 0.785rem;
+
   --text-sm2: 13px;
+  --text-mini: 10px;
+  --text-shadow-light: 1px 1px 1px #ffffff8f;
+  --font-cuyuan: 'JianShouMengWaCuYuan-2';
+
+  --shadow-main: 0 0 4px 2px #b08149;
 }
 
 :root {
@@ -96,14 +102,6 @@ img {
 
 div[data-reka-popper-content-wrapper] {
   z-index: 114514 !important;
-}
-
-.font-cuyuan {
-  font-family: 'JianShouMengWaCuYuan-2';
-}
-
-.text-light {
-  text-shadow: 1px 1px 1px #ffffff8f;
 }
 
 .game-popover {

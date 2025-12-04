@@ -22,7 +22,7 @@
       </div>
 
       <div
-        class="flex min-h-[46px]"
+        class="min-h-[46px] flex"
         :class="[openSeatCount >= 7 ? `justify-between` : `gap-[6.666px]`]"
       >
         <template v-for="(i, index) in openSeatCount - 1" :key="playersWithoutOwner[index]?.id">
@@ -32,7 +32,7 @@
             :verified-icon="{ show: true }"
             :player="playersWithoutOwner[index]"
           />
-          <span v-else class="inline-block size-[46px] bg-[#ddc9a9]" />
+          <span v-else class="size-[46px] inline-block bg-surface-550" />
         </template>
       </div>
 

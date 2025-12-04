@@ -1,5 +1,5 @@
 <template>
-  <span class="text-[3.5rem] leading-12 font-black italic text-[#ecd3c1] select-none">
+  <span class="text-[3.5rem] leading-12 font-black italic text-surface-500 select-none">
     {{ displayText }}
   </span>
 </template>

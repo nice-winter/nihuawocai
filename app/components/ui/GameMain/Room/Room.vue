@@ -5,7 +5,7 @@
       <UiGameMainRoomPlaying v-else-if="currentRoom.playing" :room-info="currentRoom" />
     </div>
 
-    <div class="grow flex flex-col bg-[#f1d0ae42] border-l-2 border-white/60">
+    <div class="grow flex flex-col bg-tint-soft-400 border-l-2 border-white/60">
       <div class="relative p-tight h-16">
         <UiLinkButton
           type="button"

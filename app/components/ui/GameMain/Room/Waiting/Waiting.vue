@@ -1,5 +1,5 @@
 <template>
-  <div class="px-tight h-[21.05%] border-b-4 border-[#eeddcb] flex gap-tight relative">
+  <div class="px-tight h-[21.05%] border-b-4 border-surface-450 flex gap-tight relative">
     <div class="flex flex-col justify-center gap-tight w-36">
       <UiGameMainRoomNumber :room-number="roomInfo.roomNumber || 0" />
       <span class="relative inline-flex items-center gap-1 pl-1 align-text-bottom">
@@ -42,7 +42,7 @@
       <div class="w-full h-20 text-sm2">
         <UiGameMainMessageList
           ref="RoomEvents"
-          class="text-[#c3b4a0]"
+          class="text-surface-600"
           style="--action-text-color: #c3b4a0"
         />
       </div>
@@ -102,7 +102,7 @@
         class="absolute top-0 left-10 flex"
       >
         <UIcon name="ph:arrow-bend-left-down-bold" />
-        <span class="mt-[-13px] font-cuyuan text-lg text-(--game-red)">房主</span>
+        <span class="mt-[-13px] font-cuyuan text-lg text-bland-red-500">房主</span>
       </span>
 
       <UiAvatar
@@ -118,14 +118,14 @@
         @sit="onSeatSit"
       />
 
-      <p class="w-full text-sm text-center text-light truncate">
+      <p class="w-full text-sm text-center text-shadow-light truncate">
         {{ roomInfo?.players![i - 1]?.nickname || `ㅤ` }}
       </p>
     </div>
 
     <div class="relative flex flex-col items-center justify-center gap-tight select-none">
-      <div class="flex items-center justify-center w-[114px] h-[114px] bg-[#ad8665] text-sm">
-        <UIcon :name="`fe:disabled`" class="text-[#7A6955] size-14" />
+      <div class="size-[114px] flex items-center justify-center bg-wood-350 text-sm">
+        <UIcon :name="`fe:disabled`" class="size-14 text-wood-300" />
       </div>
       <p class="text-sm text-center">ㅤ</p>
     </div>
