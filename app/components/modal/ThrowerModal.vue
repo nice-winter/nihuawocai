@@ -7,16 +7,16 @@
     >
       <div ref="modalRef" class="bg-texture rounded-md w-90 shadow-hard flex flex-col" tabindex="0">
         <div class="h-40 p-4">
-          <div class="flex flex-col gap-4 text-[#804B19] text-light select-none">
+          <div class="flex flex-col gap-4 text-wood-700 text-shadow-light select-none">
             <div class="flex justify-between text-sm2">
               <span>{{ reason }}</span>
               <span
-                >倒计时：<span class="text-(--game-red)">{{ t }}</span></span
+                >倒计时：<span class="text-bland-red-500">{{ t }}</span></span
               >
             </div>
 
             <p class="text-sm2 text-center">
-              答案：<span class="text-lg text-(--game-red) font-bold">【{{ answer }}】</span>
+              答案：<span class="text-lg text-bland-red-500 font-bold">【{{ answer }}】</span>
             </p>
 
             <div v-if="showThrowItem && !isThrowed" class="flex items-center justify-between px-20">
@@ -43,7 +43,7 @@
             </div>
           </div>
         </div>
-        <div class="flex justify-center gap-8 p-4 bg-[#c5630e69]">
+        <div class="flex justify-center gap-8 p-4 bg-tint-warm-700">
           <UiButton color="red" @click="shared">分享美图</UiButton>
         </div>
       </div>

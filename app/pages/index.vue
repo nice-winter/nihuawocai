@@ -13,7 +13,7 @@
       <div class="w-[900px] flex justify-center">
         <UIcon name="custom:icon-quota-left" class="size-5 -mt-1" />
 
-        <span class="grow text-light px-2 truncate">
+        <span class="grow text-shadow-light px-2 truncate">
           <UiTextRender :text="appConfig.announcements[0] || ''" style="--emoji-size: 20px" />
         </span>
 
@@ -25,7 +25,7 @@
       <template #header>
         <div
           v-if="userSession.loggedIn.value && userSession.user.value"
-          class="flex justify-between px-tight text-sm2 text-(--game-font-color) select-none"
+          class="flex justify-between px-tight text-sm2 text-text-600 select-none"
         >
           <div class="flex gap-5 pt-5">
             <span>{{ userSession.loggedIn.value ? `天秤座` : '' }}</span>
@@ -48,7 +48,7 @@
               class="absolute top-4 left-4 z-2 flex items-center gap-2"
             >
               <UiAvatar :player="loggedInPlayer" position="bottom-start" class="size-10" />
-              <span class="max-w-38 text-sm2 text-(--game-primary-color) text-light truncate">{{
+              <span class="max-w-38 text-sm2 text-text-900 text-shadow-light truncate">{{
                 loggedInPlayer.nickname
               }}</span>
             </div>
@@ -64,7 +64,7 @@
       </template>
 
       <template #footer>
-        <div class="flex justify-between px-tight pt-4.5 text-[12px] text-[#aa7b4c91] select-none">
+        <div class="flex justify-between px-tight pt-4.5 text-xs text-tint-soft-300 select-none">
           <div class="flex flex-col justify-center">
             <span>免责声明：本项目为非盈利社区性项目</span>
             <span>无意侵犯其版权，所有权利均归其各自所有者所有</span>

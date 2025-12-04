@@ -1,26 +1,20 @@
 <template>
-  <span
-    class="inline-flex flex-cow gap-1 cursor-pointer select-none"
-    :class="{
-      'text-(--game-font-color)': color === 'normal',
-      'hover:text-(--game-primary-color)': color === 'normal',
-      'text-[#E20032]': color === 'red',
-      'hover:text-[#ff0038]': color === 'red'
-    }"
-  >
+  <span class="inline-flex flex-cow gap-1 cursor-pointer select-none">
     <ULink
       as="button"
-      class="text-light cursor-pointer transition-none"
+      class="text-shadow-light cursor-pointer transition-none"
       :class="{
         underline: type === 'link',
         'select-text': type === 'link',
-        'hover:text-[#ff0038]': color === 'red'
+        'text-text-600': color === 'normal',
+        'hover:text-text-900': color === 'normal',
+        'text-bland-red-500': color === 'red',
+        'hover:text-bland-red-400': color === 'red'
       }"
     >
       <slot />
+      <UIcon v-if="icon" :name="icon" />
     </ULink>
-
-    <UIcon v-if="icon" :name="icon" />
   </span>
 </template>
 

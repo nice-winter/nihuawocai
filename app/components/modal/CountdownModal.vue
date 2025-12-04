@@ -7,7 +7,7 @@
     >
       <div
         :key="currentValue"
-        class="text-5xl text-(--game-red) font-bold countdown-number select-none"
+        class="text-5xl text-bland-red-500 font-bold countdown-number select-none"
       >
         {{ currentValue }}
       </div>

@@ -32,11 +32,11 @@
           </div>
         </div>
 
-        <div class="w-full h-px bg-[#e6e3e1]" />
+        <div class="w-full h-px bg-surface-300" />
 
         <div class="flex justify-center items-center gap-9.5 h-8 border-t border-t-white/60">
           <UiLinkButton class="text-sm2" type="button" @click="prevPage">上一页</UiLinkButton>
-          <div class="w-0.5 h-4 border-l border-l-[#e6e3e1] bg-white/60" />
+          <div class="w-0.5 h-4 border-l border-l-surface-300 bg-white/60" />
           <UiLinkButton class="text-sm2" type="button" @click="nextPage">下一页</UiLinkButton>
         </div>
       </div>

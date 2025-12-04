@@ -7,11 +7,11 @@
     >
       <div ref="modalRef" class="bg-texture rounded-md shadow-hard flex flex-col" tabindex="0">
         <div class="">
-          <div class="flex flex-col text-[#804B19] text-light select-none">
+          <div class="flex flex-col text-wood-700 text-shadow-light select-none">
             <div class="flex justify-between px-3 py-1.5 text-sm2">
               <span />
               <span
-                >倒计时：<span class="text-(--game-red)">{{ t }}</span></span
+                >倒计时：<span class="text-bland-red-500">{{ t }}</span></span
               >
             </div>
 
@@ -19,7 +19,7 @@
               <li
                 v-for="(p, index) in r"
                 :key="p.player.id"
-                class="flex items-center justify-between gap-3 p-3 odd:bg-[#c5630e24]"
+                class="flex items-center justify-between gap-3 p-3 odd:bg-wood-100"
               >
                 <span class="w-18 flex items-center justify-between text-right">
                   <UIcon v-if="index === 0" name="emojione:1st-place-medal" class="size-6" />
@@ -27,7 +27,7 @@
                   <UIcon v-if="index === 2" name="emojione:3rd-place-medal" class="size-6" />
 
                   <span class="ml-auto"
-                    ><span class="text-lg text-(--game-red)">{{ p.score }}</span
+                    ><span class="text-lg text-bland-red-500">{{ p.score }}</span
                     >分</span
                   >
                 </span>
