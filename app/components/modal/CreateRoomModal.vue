@@ -9,7 +9,7 @@
     >
       <div
         ref="modalRef"
-        class="bg-texture rounded-md p-6 w-80 shadow-hard flex flex-col gap-4 select-none"
+        class="w-80 bg-texture rounded-md p-6 shadow-hard flex flex-col gap-4 select-none"
         tabindex="0"
         @keydown.esc="onCancel"
       >
