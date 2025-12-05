@@ -1,7 +1,7 @@
 <template>
-  <div class="p-tight w-1/2 h-1/3">
-    <div v-if="ownerPlayer" class="flex flex-col gap-[0.7rem] select-none">
-      <div class="h-16 flex gap-[0.7rem]">
+  <li class="w-1/2 h-1/3 p-tight">
+    <div v-if="ownerPlayer" class="h-full flex flex-col justify-between select-none">
+      <div class="w-full h-16 flex gap-[0.7rem]">
         <UiAvatar class="size-16" :player="ownerPlayer" :verified-icon="{ show: true }" />
 
         <div class="relative flex-1">
@@ -36,9 +36,9 @@
         </template>
       </div>
 
-      <div class="pl-[1.5px]">
+      <div class="flex justify-center">
         <UiButton
-          v-show="!roomInfo.playing"
+          v-if="!roomInfo.playing"
           size="xl"
           color="red"
           :disabled="totalPlayerCount >= openSeatCount"
@@ -46,9 +46,8 @@
         >
           加ㅤ入
         </UiButton>
-
         <UiButton
-          v-show="roomInfo.playing"
+          v-else
           size="xl"
           color="playing"
           :disabled="roomInfo.onlookers.length >= roomInfo.options.maxOnlookers"
@@ -58,7 +57,7 @@
         </UiButton>
       </div>
     </div>
-  </div>
+  </li>
 </template>
 
 <script setup lang="ts">

@@ -1,18 +1,19 @@
 <template>
   <div class="flex flex-col">
     <div id="game-rooms" class="h-[87.72%] flex flex-wrap relative">
-      <div class="z-1 flex flex-wrap w-full h-full">
+      <ul class="z-1 size-full flex flex-wrap">
         <UiGameMainLobbyRoomListItem
           v-for="room in roomStore.currentPageRooms"
           :key="room.roomNumber"
           :room-info="room"
-          @join-button-click="tryJoin(room.roomNumber)"
+          @join-button-click="() => tryJoin(room.roomNumber)"
           @look-button-click="() => tryJoin(room.roomNumber)"
         />
-      </div>
-      <div class="flex flex-wrap w-full h-full absolute">
-        <div v-for="i in 6" :key="i + Date.now()" class="w-1/2 custom-border-item" />
-      </div>
+      </ul>
+
+      <ul class="size-full flex flex-wrap absolute -z-2">
+        <li v-for="i in 6" :key="i + Date.now()" class="w-1/2 custom-border-item" />
+      </ul>
     </div>
 
     <div
