@@ -108,7 +108,7 @@
         class="absolute left-10 top-0 flex"
       >
         <UIcon name="ph:arrow-bend-left-down-bold" />
-        <span class="mt-[-13px] font-cuyuan text-lg text-game-red-500"> 房主 </span>
+        <span class="-mt-sm2 font-cuyuan text-lg text-game-red-500"> 房主 </span>
       </span>
 
       <UiAvatar

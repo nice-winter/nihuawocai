@@ -12,7 +12,7 @@
           class="flex size-24 items-center justify-center rounded-md border-2 border-(--border-color) bg-tint-dark-400"
         >
           <div class="flex size-18 items-center justify-center border-2 border-(--border-color)">
-            <span class="text-(--border-color) text-[2rem]">?</span>
+            <span class="text-(--border-color) text-3xl">?</span>
           </div>
         </div>
 
