@@ -1,6 +1,6 @@
 <template>
   <span
-    class="relative inline-flex size-4 items-center justify-center bg-surface-550"
+    class="relative inline-flex items-center justify-center size-4 bg-surface-550"
     :class="{ 'cursor-pointer': !disabled }"
     @click="onClick"
   >
@@ -17,14 +17,14 @@
       <template #anchor>
         <UAvatar
           v-show="player"
-          class="game-avatar size-full cursor-pointer"
+          class="game-avatar cursor-pointer size-full"
           :src="player?.avatar_url"
           @click="onAvatarClick"
           @close="onProfilePopoverClose"
         />
         <img
           v-if="player?.verification.verified && verifiedIcon?.show"
-          class="absolute bottom-0 right-0 size-3"
+          class="absolute right-0 bottom-0 size-3"
           :style="{
             width: `${verifiedIcon.size}px`,
             height: `${verifiedIcon.size}px`,
@@ -38,19 +38,19 @@
       <template #content>
         <div
           v-if="player"
-          class="inline-flex h-75 w-35 select-none flex-col bg-surface-150 bg-texture"
+          class="inline-flex flex-col select-none h-75 w-35 bg-surface-150 bg-texture"
         >
           <div class="relative p-1.5">
             <UAvatar class="game-avatar size-32" :src="player?.avatar_url" />
           </div>
 
-          <span class="h-[19.5px] truncate px-1.5 text-sm2">
+          <span class="truncate px-1.5 h-[19.5px] text-sm2">
             <UiGenderIcon :gender="player?.gender" class="align-text-bottom" />
             {{ player?.nickname }}
           </span>
 
           <span
-            class="flex h-4.5 w-full items-center gap-1.5 truncate px-1.5 text-xs"
+            class="flex items-center truncate gap-1.5 px-1.5 h-4.5 w-full text-xs"
             style="margin: 2px 0 6px 0"
           >
             <template v-if="player?.verification.verified">
@@ -61,25 +61,25 @@
             </template>
           </span>
 
-          <div class="flex flex-col gap-1 bg-tint-warm-700 px-3.5 py-2">
+          <div class="flex flex-col gap-1 px-3.5 py-2 bg-tint-warm-700">
             <div class="inline-flex items-end gap-2">
-              <span class="min-w-10.5 text-base font-bold italic leading-4">
+              <span class="min-w-10.5 leading-4 text-base font-bold italic">
                 LV.{{ levelInfo?.level }}
               </span>
-              <span class="flex-1 text-xs leading-[15px]">
+              <span class="flex-1 leading-[15px] text-xs">
                 {{ levelInfo?.title }}
               </span>
             </div>
 
             <div class="flex flex-col gap-1">
-              <div class="inline-flex h-3.5 items-end gap-0.5 text-xs leading-3.5">
+              <div class="inline-flex items-end gap-0.5 h-3.5 leading-3.5 text-xs">
                 <span class="min-w-[42px] text-wood-700"> 鲜ㅤ花： </span>
                 <span class="flex-1 leading-[13px]">
                   {{ playerProfile?.stats.flower_count }}
                 </span>
               </div>
 
-              <div class="inline-flex h-3.5 items-end gap-0.5 text-xs leading-3.5">
+              <div class="inline-flex items-end gap-0.5 h-3.5 leading-3.5 text-xs">
                 <span class="min-w-[42px] text-wood-700"> 盘ㅤ数： </span>
                 <span class="flex-1 leading-[13px]">
                   {{ playerProfile?.stats.total_games }}
@@ -88,10 +88,10 @@
             </div>
           </div>
 
-          <div class="flex h-12 items-center justify-between px-3.5 py-2.5">
+          <div class="flex items-center justify-between px-3.5 py-2.5 h-12">
             <template v-if="player?.id !== loggedInPlayer?.id">
-              <div class="profile-icon sprites-icon size-7 hi"></div>
-              <div class="profile-icon sprites-icon size-7 friend"></div>
+              <div class="profile-icon sprites-icon hi size-7"></div>
+              <div class="profile-icon sprites-icon friend size-7"></div>
             </template>
           </div>
         </div>
@@ -100,7 +100,7 @@
 
     <template v-if="mode.includes('seat') && !player">
       <span v-if="open" class="text-sm2">{{ placeholder }}</span>
-      <UIcon v-else :name="`fe:disabled`" class="size-14 text-game-red-500" />
+      <UIcon v-else :name="`fe:disabled`" class="text-game-red-500 size-14" />
     </template>
   </span>
 </template>
