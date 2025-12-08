@@ -1,7 +1,7 @@
 <template>
-  <div class="size-16 flex items-center justify-center">
-    <div class="size-11 flex items-center justify-center rounded-full bg-game-red-500 timer">
-      <span class="text-2xl text-white font-bold leading-0 select-none">
+  <div class="flex size-16 items-center justify-center">
+    <div class="timer flex size-11 items-center justify-center rounded-full bg-game-red-500">
+      <span class="select-none text-2xl font-bold leading-0 text-white">
         {{ seconds.toString() }}
       </span>
     </div>

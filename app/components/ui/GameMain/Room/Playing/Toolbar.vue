@@ -1,6 +1,6 @@
 <template>
   <div class="flex flex-col gap-4 px-0.5 bg-tint-white">
-    <div class="relative grid grid-cols-7 grid-rows-2 gap-0 items-center justify-center">
+    <div class="relative grid grid-cols-7 grid-rows-2 items-center justify-center gap-0">
       <span
         v-for="color in sketchpadStore.options.colors"
         :key="color"
@@ -13,9 +13,9 @@
 
       <div
         v-show="sketchpadStore.currentBrush === 'eraser'"
-        class="absolute z-114 top-0 left-0 size-full flex justify-center items-center bg-white/65 select-none"
+        class="absolute z-114 left-0 top-0 flex size-full items-center justify-center bg-white/65 select-none"
       >
-        <span class="text-sm2 text-shadow-light">当前正在使用橡皮擦</span>
+        <span class="text-sm2 text-shadow-light"> 当前正在使用橡皮擦 </span>
       </div>
     </div>
 
@@ -24,7 +24,7 @@
         <span
           v-for="(w, index) in sketchpadStore.options.widths"
           :key="w * index"
-          class="size-8 flex items-center justify-center cursor-pointer"
+          class="flex size-8 items-center justify-center cursor-pointer"
           :class="{
             selected: sketchpadStore.brushOptions.width === index,
             'bg-white': sketchpadStore.brushOptions.width === index
@@ -43,7 +43,7 @@
         <span
           v-for="brush in brushes"
           :key="brush.name"
-          class="size-8 flex items-center justify-center cursor-pointer"
+          class="flex size-8 items-center justify-center cursor-pointer"
           :class="{
             selected: brush.name === sketchpadStore.currentBrush,
             'bg-white': brush.name === sketchpadStore.currentBrush
@@ -51,26 +51,28 @@
           :data-brush="brush"
           @click="onSelectBrush(brush.name)"
         >
-          <UIcon :name="brush.icon" class="size-6" />
+          <UIcon class="size-6" :name="brush.icon" />
         </span>
 
         <span
-          class="size-8 flex items-center justify-center cursor-pointer"
+          class="flex size-8 items-center justify-center cursor-pointer"
           @click="sketchpadStore.undo"
         >
-          <UIcon name="material-symbols:undo-rounded" class="size-6" />
+          <UIcon class="size-6" name="material-symbols:undo-rounded" />
         </span>
+
         <span
-          class="size-8 flex items-center justify-center cursor-pointer"
+          class="flex size-8 items-center justify-center cursor-pointer"
           @click="sketchpadStore.redo"
         >
-          <UIcon name="material-symbols:redo-rounded" class="size-6" />
+          <UIcon class="size-6" name="material-symbols:redo-rounded" />
         </span>
+
         <span
-          class="size-8 flex items-center justify-center cursor-pointer"
+          class="flex size-8 items-center justify-center cursor-pointer"
           @click="sketchpadStore.clear"
         >
-          <UIcon name="material-symbols:delete-outline-rounded" class="size-6" />
+          <UIcon class="size-6" name="material-symbols:delete-outline-rounded" />
         </span>
       </div>
     </div>

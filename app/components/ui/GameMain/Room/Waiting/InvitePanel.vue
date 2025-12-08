@@ -1,12 +1,12 @@
 <template>
   <UTabs :items="tabItems" size="xs" class="game-tabs select-none">
     <template #user1>
-      <div class="h-56 flex flex-col">
-        <div class="flex-1 flex flex-col gap-2 p-tight max-w-[227.89px]">
+      <div class="flex h-56 flex-col">
+        <div class="flex flex-1 flex-col gap-2 max-w-[227.89px] p-tight">
           <div
             v-for="player in currentPageItems"
             :key="player.id"
-            class="flex items-center gap-0.5 w-full"
+            class="flex w-full items-center gap-0.5"
           >
             <UiAvatar
               :player="player"
@@ -17,14 +17,14 @@
 
             <UiGenderIcon :gender="player.gender" />
 
-            <span class="flex-1 text-sm2 max-w-[103.77px] truncate">
+            <span class="flex-1 max-w-[103.77px] truncate text-sm2">
               {{ player.nickname }}
             </span>
 
             <UiButton
               size="sm"
               color="red"
-              :disabled="roomStore.inviteRecord.get(player.id)"
+              :disabled="Boolean(roomStore.inviteRecord.get(player.id))"
               @click="async () => await invite(player.id)"
             >
               {{ !roomStore.inviteRecord.get(player.id) ? '邀请' : '已邀请' }}
@@ -32,15 +32,18 @@
           </div>
         </div>
 
-        <div class="w-full h-px bg-surface-300" />
+        <div class="h-px w-full bg-surface-300" />
 
-        <div class="flex justify-center items-center gap-9.5 h-8 border-t border-t-white/60">
-          <UiLinkButton class="text-sm2" type="button" @click="prevPage">上一页</UiLinkButton>
-          <div class="w-0.5 h-4 border-l border-l-surface-300 bg-white/60" />
-          <UiLinkButton class="text-sm2" type="button" @click="nextPage">下一页</UiLinkButton>
+        <div class="flex h-8 items-center justify-center gap-9.5 border-t border-t-white/60">
+          <UiLinkButton class="text-sm2" type="button" @click="prevPage"> 上一页 </UiLinkButton>
+
+          <div class="h-4 w-0.5 border-l border-l-surface-300 bg-white/60" />
+
+          <UiLinkButton class="text-sm2" type="button" @click="nextPage"> 下一页 </UiLinkButton>
         </div>
       </div>
     </template>
+
     <template #user2>
       <div class="h-56"></div>
     </template>

@@ -1,15 +1,15 @@
 <template>
   <div class="flex flex-col">
     <div class="relative h-10">
-      <span class="absolute top-2 right-tight text-text-600 select-none">
-        <UIcon name="ph:telegram-logo-fill" class="size-5 align-text-bottom mr-1.5" />
-        <span class="text-sm font-cuyuan">聊天信息</span>
+      <span class="absolute right-tight top-2 select-none text-text-600">
+        <UIcon name="ph:telegram-logo-fill" class="mr-1.5 size-5 align-text-bottom" />
+        <span class="font-cuyuan text-sm">聊天信息</span>
       </span>
     </div>
 
     <UiGameMainMessageList
       ref="ChatPanelMessageList"
-      class="flex-1 basis-0 px-tight min-h-0"
+      class="flex-1 basis-0 min-h-0 px-tight"
       :show-new-message-indicator="true"
     />
 
@@ -37,15 +37,18 @@
               <UiScrollBar
                 :auto-hide="false"
                 :delay="1"
-                :style="{ '--scrollbar-color': '#bc966f', '--scrollbar-color-hover': '#cea57c' }"
                 :size="4"
+                :style="{
+                  '--scrollbar-color': '#bc966f',
+                  '--scrollbar-color-hover': '#cea57c'
+                }"
               >
-                <div class="relative max-h-30 bg-texture scroll-auto select-none">
-                  <div class="w-50 grid grid-cols-6 gap-1 p-2">
+                <div class="relative max-h-30 select-none scroll-auto bg-texture">
+                  <div class="grid w-50 grid-cols-6 gap-1 p-2">
                     <div
                       v-for="emoji in emojis"
                       :key="emoji.name"
-                      class="size-6 flex justify-center items-center rounded cursor-pointer hover:bg-tint-dark-500"
+                      class="flex size-6 cursor-pointer items-center justify-center rounded hover:bg-tint-dark-500"
                     >
                       <img :src="emoji.img" class="size-5" @click="selectEmoji(emoji.name)" />
                     </div>
@@ -57,9 +60,9 @@
         </template>
       </UInput>
 
-      <UiLinkButton type="button" class="text-sm2 ml-2" @click="sendChatMessage"
-        >发 送</UiLinkButton
-      >
+      <UiLinkButton type="button" class="ml-2 text-sm2" @click="sendChatMessage">
+        发 送
+      </UiLinkButton>
     </div>
   </div>
 </template>
