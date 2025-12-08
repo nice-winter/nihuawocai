@@ -52,7 +52,7 @@
       <div class="grid grid-cols-2 grid-rows-2 gap-tight">
         <UiButton
           color="green"
-          :disabled="broadcastRecord.get(roomInfo.roomNumber)"
+          :disabled="Boolean(broadcastRecord.get(roomInfo.roomNumber))"
           @click="broadcast"
           >{{ !broadcastRecord.get(roomInfo.roomNumber) ? '广播邀请' : '已广播' }}</UiButton
         >
