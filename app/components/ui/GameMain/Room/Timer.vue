@@ -1,6 +1,6 @@
 <template>
   <div class="size-16 flex items-center justify-center">
-    <div class="size-11 flex items-center justify-center rounded-full bg-game-red-450 timer">
+    <div class="size-11 flex items-center justify-center rounded-full bg-game-red-500 timer">
       <span class="text-2xl text-white font-bold leading-0 select-none">
         {{ seconds.toString() }}
       </span>
@@ -88,6 +88,6 @@ defineExpose({ play, pause })
 .timer {
   box-shadow:
     0 0 0 4px #ffffff,
-    0 0 0 6px #e31839;
+    0 0 0 6px var(--color-red-600);
 }
 </style>
