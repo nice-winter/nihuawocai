@@ -24,7 +24,8 @@ export default defineNuxtConfig({
     '@nuxt/test-utils',
     'nuxt-auth-utils',
     '@pinia/nuxt',
-    '@vueuse/nuxt'
+    '@vueuse/nuxt',
+    '@nuxtjs/i18n'
   ],
 
   // UI 相关
@@ -47,6 +48,26 @@ export default defineNuxtConfig({
       {
         prefix: 'custom',
         dir: './app/assets/icons'
+      }
+    ]
+  },
+
+  // 国际化
+  i18n: {
+    strategy: 'no_prefix',
+    defaultLocale: 'en',
+    locales: [
+      {
+        code: 'en',
+        name: 'English'
+      },
+      {
+        code: 'zh_cn',
+        name: '简体中文'
+      },
+      {
+        code: 'zh_tw',
+        name: '繁體中文'
       }
     ]
   },
