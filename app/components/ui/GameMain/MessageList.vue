@@ -11,7 +11,7 @@
       <div class="relative">
         <div
           v-show="autoScroll && showNewMessageIndicator && newMessageCount > 0"
-          class="absolute bottom-1 right-[0.8rem] flex flex-col"
+          class="absolute bottom-1 right-sm2 flex flex-col"
         >
           <div
             class="h-6 min-w-6 cursor-pointer select-none rounded-md p-1 text-center text-xs text-white"
@@ -48,7 +48,7 @@
               {{ item.msg }}
             </li>
 
-            <li v-else-if="item.type === 'chat'" class="first:pt-0 last:pb-0 py-[0.3rem] text-sm2">
+            <li v-else-if="item.type === 'chat'" class="first:pt-0 last:pb-0 py-1 text-sm2">
               <div class="float-left inline-flex">
                 <UiAvatar
                   class="size-6.5 align-top"
@@ -96,19 +96,16 @@
               />
             </li>
 
-            <li v-else-if="item.type === 'broadcast'" class="first:pt-0 last:pb-0 py-[0.3rem]">
+            <li v-else-if="item.type === 'broadcast'" class="first:pt-0 last:pb-0 py-1">
               <span class="text-sm2">
                 <UiAvatar class="size-6.5 align-top" :player="item.sender" />
                 <span class="ml-2">{{ item.sender.nickname }}</span>
                 <span class="break-normal wrap-break-word">
-                  在{{ item.roomNumber }}号房间喊道：赶快
-                  <UiLinkButton
+                  在{{ item.roomNumber }}号房间喊道：赶快<UiLinkButton
                     color="red"
                     @click="() => joinFromBroadcast(item.roomNumber, item.password)"
-                  >
-                    加入
-                  </UiLinkButton>
-                  我们一起游戏吧！
+                    >加入</UiLinkButton
+                  >我们一起游戏吧！
                 </span>
               </span>
             </li>

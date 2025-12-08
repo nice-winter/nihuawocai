@@ -9,7 +9,7 @@
             <UIcon
               v-show="roomInfo.locked"
               name="ph:lock-simple-fill"
-              class="absolute left-0 top-0 size-4 text-[#f4b12d]"
+              class="absolute left-0 top-0 size-4 text-amber-400"
             />
           </UTooltip>
 

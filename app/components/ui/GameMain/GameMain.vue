@@ -1,12 +1,12 @@
 <template>
   <div id="game-panel" class="relative flex items-center justify-center">
     <div
-      class="custom-foreground-bg relative z-1 h-[640px] w-[900px] overflow-hidden rounded-[14px] border border-surface-400 bg-surface-200 shadow-main"
+      class="custom-foreground-bg relative z-1 h-[640px] w-[900px] overflow-hidden rounded-xl border border-surface-400 bg-surface-200 shadow-main"
     >
       <slot />
     </div>
     <div
-      class="custom-background-bg absolute h-[640px] w-[900px] rotate-[-1.6deg] rounded-[14px] bg-surface-650 shadow-main"
+      class="custom-background-bg absolute h-[640px] w-[900px] rotate-[-1.6deg] rounded-xl bg-surface-650 shadow-main"
     />
   </div>
 </template>

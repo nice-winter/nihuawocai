@@ -36,15 +36,12 @@
       </template>
 
       <template #content>
-        <div
-          v-if="player"
-          class="inline-flex flex-col select-none h-75 w-35 bg-surface-150 bg-texture"
-        >
+        <div v-if="player" class="inline-flex flex-col select-none w-35 bg-surface-150 bg-texture">
           <div class="relative p-1.5">
             <UAvatar class="game-avatar size-32" :src="player?.avatar_url" />
           </div>
 
-          <span class="truncate px-1.5 h-[19.5px] text-sm2">
+          <span class="truncate px-1.5 h-5 text-sm2">
             <UiGenderIcon :gender="player?.gender" class="align-text-bottom" />
             {{ player?.nickname }}
           </span>
@@ -66,22 +63,22 @@
               <span class="min-w-10.5 leading-4 text-base font-bold italic">
                 LV.{{ levelInfo?.level }}
               </span>
-              <span class="flex-1 leading-[15px] text-xs">
+              <span class="flex-1 leading-3.5 text-xs">
                 {{ levelInfo?.title }}
               </span>
             </div>
 
             <div class="flex flex-col gap-1">
               <div class="inline-flex items-end gap-0.5 h-3.5 leading-3.5 text-xs">
-                <span class="min-w-[42px] text-wood-700"> 鲜ㅤ花： </span>
-                <span class="flex-1 leading-[13px]">
+                <span class="min-w-12 text-wood-700"> 鲜ㅤ花： </span>
+                <span class="flex-1 leading-sm2">
                   {{ playerProfile?.stats.flower_count }}
                 </span>
               </div>
 
               <div class="inline-flex items-end gap-0.5 h-3.5 leading-3.5 text-xs">
-                <span class="min-w-[42px] text-wood-700"> 盘ㅤ数： </span>
-                <span class="flex-1 leading-[13px]">
+                <span class="min-w-12 text-wood-700"> 盘ㅤ数： </span>
+                <span class="flex-1 leading-sm2">
                   {{ playerProfile?.stats.total_games }}
                 </span>
               </div>
