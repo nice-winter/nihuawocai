@@ -1,7 +1,8 @@
 <template>
-  <div class="px-tight h-[21.05%] border-b-4 border-surface-450 flex gap-tight relative">
-    <div class="flex flex-col justify-center gap-tight w-36">
+  <div class="relative flex h-[21.05%] gap-tight px-tight border-b-4 border-surface-450">
+    <div class="flex w-36 flex-col justify-center gap-tight">
       <UiGameMainRoomNumber :room-number="roomInfo.roomNumber || 0" />
+
       <span class="relative inline-flex items-center gap-1 pl-1 align-text-bottom">
         <UCheckbox
           v-model="lockedLocal"
@@ -27,9 +28,9 @@
           <UInput
             ref="passwordUInputRef"
             v-model="pendingPassword"
-            class="game-input"
             size="xs"
             maxlength="4"
+            class="game-input"
             @blur="onCommit"
             @keydown.enter.prevent="onCommit"
             @keydown.esc.prevent="onCancel"
@@ -38,8 +39,8 @@
       </span>
     </div>
 
-    <div class="w-52 flex flex-col justify-center pr-4">
-      <div class="w-full h-20 text-sm2">
+    <div class="flex w-52 flex-col justify-center pr-4">
+      <div class="h-20 w-full text-sm2">
         <UiGameMainMessageList
           ref="RoomEvents"
           class="text-surface-600"
@@ -54,21 +55,25 @@
           color="green"
           :disabled="Boolean(broadcastRecord.get(roomInfo.roomNumber))"
           @click="broadcast"
-          >{{ !broadcastRecord.get(roomInfo.roomNumber) ? '广播邀请' : '已广播' }}</UiButton
         >
-        <UiButton color="blue">邀请好友</UiButton>
+          {{ !broadcastRecord.get(roomInfo.roomNumber) ? '广播邀请' : '已广播' }}
+        </UiButton>
+
+        <UiButton color="blue"> 邀请好友 </UiButton>
+
         <div>
-          <UiButton v-if="isCurrentRoomOwner && !roomInfo.locked && canStart">再等一会</UiButton>
+          <UiButton v-if="isCurrentRoomOwner && !roomInfo.locked && canStart"> 再等一会 </UiButton>
         </div>
+
         <div>
-          <UiButton v-if="isCurrentRoomOwner" color="red" :disabled="!canStart" @click="start"
-            >立即开始</UiButton
-          >
+          <UiButton v-if="isCurrentRoomOwner" color="red" :disabled="!canStart" @click="start">
+            立即开始
+          </UiButton>
         </div>
       </div>
     </div>
 
-    <div class="flex-1 flex flex-col items-center justify-center">
+    <div class="flex flex-1 flex-col items-center justify-center">
       <UiGameMainRoomTimer
         v-if="!roomInfo.locked && canStart"
         ref="Timer"
@@ -77,7 +82,7 @@
     </div>
   </div>
 
-  <div class="flex-1 grid grid-rows-2 grid-cols-4 p-8 gap-tight justify-center">
+  <div class="grid flex-1 grid-cols-4 grid-rows-2 justify-center gap-tight p-8">
     <div
       v-for="i in 7"
       :key="i"
@@ -85,32 +90,33 @@
       :data-seat-number="i"
     >
       <img
-        v-show="roomInfo?.players![i - 1]?.id === '76561198413318292'"
+        v-if="roomInfo?.players![i - 1]?.id === '76561198413318292'"
         src="~/assets/cxy.png"
-        class="w-56 absolute top-0 left-0 z-1 pointer-events-none inset-0 origin-center"
+        class="absolute inset-0 z-1 w-56 origin-center pointer-events-none"
         style="transform: scale(1.14); top: 14px; left: -2px"
       />
 
       <img
-        v-show="roomInfo?.players![i - 1]?.id === '76561199014647682'"
+        v-if="roomInfo?.players![i - 1]?.id === '76561199014647682'"
         src="~/assets/ygg1.png"
-        class="w-56 absolute top-0 left-0 z-1 pointer-events-none inset-0 origin-center"
+        class="absolute inset-0 z-1 w-56 origin-center pointer-events-none"
         style="transform: scale(1.2); top: 29px; left: 9px"
       />
+
       <span
         v-if="roomInfo?.players![i - 1]?.id === roomInfo?.owner"
-        class="absolute top-0 left-10 flex"
+        class="absolute left-10 top-0 flex"
       >
         <UIcon name="ph:arrow-bend-left-down-bold" />
-        <span class="mt-[-13px] font-cuyuan text-lg text-game-red-500">房主</span>
+        <span class="mt-[-13px] font-cuyuan text-lg text-game-red-500"> 房主 </span>
       </span>
 
       <UiAvatar
         :id="i"
         :open="roomInfo?.seats![i - 1]"
-        class="size-[114px]"
         :player="roomInfo?.players![i - 1] || undefined"
         :mode="seatMode"
+        class="size-[114px]"
         :disabled="(!isCurrentRoomOwner && !isOnlooker) || (isOnlooker && !roomInfo?.seats![i - 1])"
         :verified-icon="{ show: true, size: 16 }"
         :placeholder="isOnlooker ? '点击坐下' : undefined"
@@ -118,16 +124,17 @@
         @sit="onSeatSit"
       />
 
-      <p class="w-full text-sm text-center text-shadow-light truncate">
+      <p class="w-full truncate text-center text-sm text-shadow-light">
         {{ roomInfo?.players![i - 1]?.nickname || `ㅤ` }}
       </p>
     </div>
 
     <div class="relative flex flex-col items-center justify-center gap-tight select-none">
-      <div class="size-[114px] flex items-center justify-center bg-wood-350 text-sm">
+      <div class="flex size-[114px] items-center justify-center bg-wood-350 text-sm">
         <UIcon :name="`fe:disabled`" class="size-14 text-wood-300" />
       </div>
-      <p class="text-sm text-center">ㅤ</p>
+
+      <p class="text-center text-sm">ㅤ</p>
     </div>
   </div>
 </template>

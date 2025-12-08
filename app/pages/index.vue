@@ -13,7 +13,7 @@
       <div class="w-[900px] flex justify-center">
         <UIcon name="custom:icon-quota-left" class="size-5 -mt-1" />
 
-        <span class="flex-1 text-shadow-light px-2 truncate">
+        <span class="flex-1 px-2 text-shadow-light truncate">
           <UiTextRender :text="appConfig.announcements[0] || ''" style="--emoji-size: 20px" />
         </span>
 

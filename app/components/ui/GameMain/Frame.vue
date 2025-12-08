@@ -1,7 +1,7 @@
 <template>
   <div id="game-frame" class="relative flex flex-col">
-    <div id="header" class="relative flex justify-center items-center h-12">
-      <div class="w-[900px] h-full">
+    <div id="header" class="relative flex h-12 items-center justify-center">
+      <div class="h-full w-[900px]">
         <slot name="header" />
       </div>
     </div>
@@ -10,8 +10,8 @@
       <slot name="main" />
     </div>
 
-    <div id="footer" class="relative flex justify-center items-center h-20">
-      <div class="w-[900px] h-full">
+    <div id="footer" class="relative flex h-20 items-center justify-center">
+      <div class="h-full w-[900px]">
         <slot name="footer" />
       </div>
     </div>

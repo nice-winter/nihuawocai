@@ -1,7 +1,7 @@
 <template>
   <li class="w-1/2 h-1/3 p-tight">
-    <div v-if="ownerPlayer" class="h-full flex flex-col justify-between select-none">
-      <div class="w-full h-16 flex gap-[0.7rem]">
+    <div v-if="ownerPlayer" class="flex h-full flex-col justify-between select-none">
+      <div class="flex h-16 w-full gap-[0.7rem]">
         <UiAvatar class="size-16" :player="ownerPlayer" :verified-icon="{ show: true }" />
 
         <div class="relative flex-1">
@@ -9,11 +9,12 @@
             <UIcon
               v-show="roomInfo.locked"
               name="ph:lock-simple-fill"
-              class="size-4 absolute left-0 top-0 text-[#f4b12d]"
+              class="absolute left-0 top-0 size-4 text-[#f4b12d]"
             />
           </UTooltip>
 
           <UiGameMainRoomNumber :room-number="roomInfo.roomNumber || 0" class="float-right" />
+
           <span class="absolute right-0 bottom-0 max-w-[233px] text-sm leading-3.5 truncate">
             <UiGenderIcon :gender="ownerPlayer.gender" class="align-text-top" />
             {{ ownerPlayer.nickname }}
@@ -22,7 +23,7 @@
       </div>
 
       <div
-        class="min-h-[46px] flex"
+        class="flex min-h-[46px]"
         :class="[openSeatCount >= 7 ? `justify-between` : `gap-[6.666px]`]"
       >
         <template v-for="(i, index) in openSeatCount - 1" :key="playersWithoutOwner[index]?.id">
@@ -32,7 +33,7 @@
             :verified-icon="{ show: true }"
             :player="playersWithoutOwner[index]"
           />
-          <span v-else class="size-[46px] inline-block bg-surface-550" />
+          <span v-else class="inline-block size-[46px] bg-surface-550" />
         </template>
       </div>
 
@@ -46,6 +47,7 @@
         >
           加ㅤ入
         </UiButton>
+
         <UiButton
           v-else
           size="xl"
@@ -68,8 +70,11 @@ const { roomInfo } = defineProps<{ roomInfo: RoomListItemProps }>()
 const playersWithoutOwner = computed(() =>
   roomInfo.players.filter((p) => p && p.id !== roomInfo.owner)
 )
+
 const ownerPlayer = computed(() => roomInfo.players.find((p) => p?.id === roomInfo.owner))
+
 const totalPlayerCount = computed(() => roomInfo.players.filter((p) => p).length)
+
 const openSeatCount = computed(() => roomInfo.seats.filter((s) => s).length)
 
 const emit = defineEmits<{

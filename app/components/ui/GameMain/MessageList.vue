@@ -5,8 +5,8 @@
       v-model:scroll-on-buttom="isScrollOnBottom"
       :auto-hide="false"
       :delay="1"
-      :style="{ '--scrollbar-color': '#bc966f', '--scrollbar-color-hover': '#cea57c' }"
       :size="7"
+      :style="{ '--scrollbar-color': '#bc966f', '--scrollbar-color-hover': '#cea57c' }"
     >
       <div class="relative">
         <div
@@ -14,7 +14,7 @@
           class="absolute bottom-1 right-[0.8rem] flex flex-col"
         >
           <div
-            class="p-1 h-6 min-w-6 text-xs text-center text-white rounded-md select-none cursor-pointer"
+            class="h-6 min-w-6 cursor-pointer select-none rounded-md p-1 text-center text-xs text-white"
             style="background-color: rgb(75 54 32 / 57%); border-bottom-right-radius: unset"
             @click="
               () => {
@@ -27,7 +27,7 @@
           </div>
           <div>
             <span
-              class="size-0 float-right"
+              class="float-right size-0"
               style="border-top: 2px solid rgb(75 54 32 / 57%); border-left: 4px solid transparent"
             />
           </div>
@@ -41,21 +41,21 @@
               :class="[`message-item-${item.type}`]"
               :style="{
                 color: item.style?.color || 'var(--action-text-color)',
-                fontSize: item.style?.fontSize || `13px`,
+                fontSize: item.style?.fontSize || '13px',
                 fontWeight: item.style?.fontWeight || 'normal'
               }"
             >
               {{ item.msg }}
             </li>
 
-            <li v-else-if="item.type === 'chat'" class="py-[0.3rem] first:pt-0 last:pb-0 text-sm2">
-              <div class="inline-flex float-left">
+            <li v-else-if="item.type === 'chat'" class="first:pt-0 last:pb-0 py-[0.3rem] text-sm2">
+              <div class="float-left inline-flex">
                 <UiAvatar
                   class="size-6.5 align-top"
                   :player="item.sender"
                   :verified-icon="{ show: true, size: 12, right: -2, bottom: -2 }"
                 />
-                <span class="ml-2 inline-block leading-6.5"> {{ item.sender.nickname }}：</span>
+                <span class="ml-2 inline-block leading-6.5"> {{ item.sender.nickname }}： </span>
               </div>
               <UiTextRender
                 class="break-normal wrap-break-word leading-6.5"
@@ -77,12 +77,12 @@
               :class="[`message-item-${item.type}`]"
               :style="{
                 color: item.style?.color || 'var(--action-text-color)',
-                fontSize: item.style?.fontSize || `13px`,
+                fontSize: item.style?.fontSize || '13px',
                 fontWeight: item.style?.fontWeight || 'normal'
               }"
             >
-              <span>提示{{ item.index }}：</span
-              ><span class="text-red-600">{{ item.content }}</span>
+              <span>提示{{ item.index }}：</span>
+              <span class="text-red-600">{{ item.content }}</span>
             </li>
 
             <li v-else-if="item.type === 'system'">
@@ -90,22 +90,25 @@
                 class="select-none"
                 :label="item.msg"
                 :ui="{
-                  border: `border-(--system-text-color)`,
-                  label: 'text-[13px] text-(--system-text-color)'
+                  border: 'border-(--system-text-color)',
+                  label: 'text-(--system-text-color) text-[13px]'
                 }"
               />
             </li>
 
-            <li v-else-if="item.type === 'broadcast'" class="py-[0.3rem] first:pt-0 last:pb-0">
+            <li v-else-if="item.type === 'broadcast'" class="first:pt-0 last:pb-0 py-[0.3rem]">
               <span class="text-sm2">
                 <UiAvatar class="size-6.5 align-top" :player="item.sender" />
                 <span class="ml-2">{{ item.sender.nickname }}</span>
                 <span class="break-normal wrap-break-word">
-                  在{{ item.roomNumber }}号房间喊道：赶快<UiLinkButton
+                  在{{ item.roomNumber }}号房间喊道：赶快
+                  <UiLinkButton
                     color="red"
                     @click="() => joinFromBroadcast(item.roomNumber, item.password)"
-                    >加入</UiLinkButton
-                  >我们一起游戏吧！
+                  >
+                    加入
+                  </UiLinkButton>
+                  我们一起游戏吧！
                 </span>
               </span>
             </li>

@@ -1,6 +1,6 @@
 <template>
   <span
-    class="relative inline-flex items-center justify-center size-4 bg-surface-550"
+    class="relative inline-flex size-4 items-center justify-center bg-surface-550"
     :class="{ 'cursor-pointer': !disabled }"
     @click="onClick"
   >
@@ -24,7 +24,7 @@
         />
         <img
           v-if="player?.verification.verified && verifiedIcon?.show"
-          class="absolute right-0 bottom-0 size-3"
+          class="absolute bottom-0 right-0 size-3"
           :style="{
             width: `${verifiedIcon.size}px`,
             height: `${verifiedIcon.size}px`,
@@ -38,54 +38,60 @@
       <template #content>
         <div
           v-if="player"
-          class="w-35 h-75 inline-flex flex-col select-none bg-surface-150 bg-texture"
+          class="inline-flex h-75 w-35 select-none flex-col bg-surface-150 bg-texture"
         >
           <div class="relative p-1.5">
             <UAvatar class="game-avatar size-32" :src="player?.avatar_url" />
           </div>
 
-          <span class="h-[19.5px] px-1.5 text-sm2 truncate">
+          <span class="h-[19.5px] truncate px-1.5 text-sm2">
             <UiGenderIcon :gender="player?.gender" class="align-text-bottom" />
             {{ player?.nickname }}
           </span>
 
           <span
-            class="w-full h-4.5 flex items-center gap-1.5 px-1.5 text-xs truncate"
+            class="flex h-4.5 w-full items-center gap-1.5 truncate px-1.5 text-xs"
             style="margin: 2px 0 6px 0"
           >
             <template v-if="player?.verification.verified">
-              <img class="size-3.5 inline-block align-middle" src="~/assets/icons/verified.png" />
-              <span class="text-wood-500 text-shadow-light truncate">{{
-                player.verification.description
-              }}</span>
+              <img class="inline-block size-3.5 align-middle" src="~/assets/icons/verified.png" />
+              <span class="truncate text-wood-500 text-shadow-light">
+                {{ player.verification.description }}
+              </span>
             </template>
           </span>
 
-          <div class="px-3.5 py-2 flex flex-col gap-1 bg-tint-warm-700">
+          <div class="flex flex-col gap-1 bg-tint-warm-700 px-3.5 py-2">
             <div class="inline-flex items-end gap-2">
-              <span class="text-base font-bold italic leading-4 min-w-10.5"
-                >LV.{{ levelInfo?.level }}</span
-              >
-              <span class="text-xs leading-[15px] flex-1">{{ levelInfo?.title }}</span>
+              <span class="min-w-10.5 text-base font-bold italic leading-4">
+                LV.{{ levelInfo?.level }}
+              </span>
+              <span class="flex-1 text-xs leading-[15px]">
+                {{ levelInfo?.title }}
+              </span>
             </div>
 
             <div class="flex flex-col gap-1">
-              <div class="h-3.5 text-xs leading-3.5 inline-flex items-end gap-0.5">
-                <span class="text-wood-700 min-w-[42px]"> 鲜ㅤ花： </span>
-                <span class="flex-1 leading-[13px]">{{ playerProfile?.stats.flower_count }}</span>
+              <div class="inline-flex h-3.5 items-end gap-0.5 text-xs leading-3.5">
+                <span class="min-w-[42px] text-wood-700"> 鲜ㅤ花： </span>
+                <span class="flex-1 leading-[13px]">
+                  {{ playerProfile?.stats.flower_count }}
+                </span>
               </div>
 
-              <div class="h-3.5 text-xs leading-3.5 inline-flex items-end gap-0.5">
-                <span class="text-wood-700 min-w-[42px]"> 盘ㅤ数： </span>
-                <span class="flex-1 leading-[13px]">{{ playerProfile?.stats.total_games }}</span>
+              <div class="inline-flex h-3.5 items-end gap-0.5 text-xs leading-3.5">
+                <span class="min-w-[42px] text-wood-700"> 盘ㅤ数： </span>
+                <span class="flex-1 leading-[13px]">
+                  {{ playerProfile?.stats.total_games }}
+                </span>
               </div>
             </div>
           </div>
 
-          <div class="h-12 px-3.5 py-2.5 flex items-center justify-between">
+          <div class="flex h-12 items-center justify-between px-3.5 py-2.5">
             <template v-if="player?.id !== loggedInPlayer?.id">
-              <div class="size-7 sprites-icon profile-icon hi"></div>
-              <div class="size-7 sprites-icon profile-icon friend"></div>
+              <div class="profile-icon sprites-icon size-7 hi"></div>
+              <div class="profile-icon sprites-icon size-7 friend"></div>
             </template>
           </div>
         </div>
@@ -94,7 +100,7 @@
 
     <template v-if="mode.includes('seat') && !player">
       <span v-if="open" class="text-sm2">{{ placeholder }}</span>
-      <UIcon v-else :name="`fe:disabled`" class="text-game-red-500 size-14" />
+      <UIcon v-else :name="`fe:disabled`" class="size-14 text-game-red-500" />
     </template>
   </span>
 </template>

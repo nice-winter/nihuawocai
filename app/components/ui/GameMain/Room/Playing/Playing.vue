@@ -1,48 +1,57 @@
 <template>
-  <div id="game-playing" class="relative flex flex-col h-full">
+  <div id="game-playing" class="relative flex h-full flex-col">
     <div class="flex h-16 min-h-16 items-center justify-between px-1">
-      <div class="flex flex-col items-center justify-center w-20">
+      <div class="flex w-20 flex-col items-center justify-center">
         <UiAvatar
           :player="drawingPlayer"
-          class="size-10 rounded-md overflow-hidden"
+          class="size-10 overflow-hidden rounded-md"
           :verified-icon="{ show: true, size: 12 }"
         />
       </div>
 
-      <div class="w-11 h-full"></div>
+      <div class="h-full w-11"></div>
 
-      <div class="w-64 flex flex-col items-center justify-center gap-2 text-sm2 p-2 select-none">
-        <span>第 {{ gameStore.state.currentRound }}/{{ gameStore.state.totalRounds }} 回合</span>
+      <div class="flex w-64 flex-col items-center justify-center gap-2 p-2 text-sm2 select-none">
+        <span> 第 {{ gameStore.state.currentRound }}/{{ gameStore.state.totalRounds }} 回合 </span>
 
-        <span v-if="gameStore.isMyTurn && gameStore.state.currentWord !== null"
-          >题目是：<span class="text-red-600">{{ gameStore.state.currentWord }}</span></span
-        >
-        <span v-else-if="gameStore.state.prompts.length" class="w-full text-center truncate"
-          >提示：
+        <span v-if="gameStore.isMyTurn && gameStore.state.currentWord !== null">
+          题目是：
+          <span class="text-red-600">
+            {{ gameStore.state.currentWord }}
+          </span>
+        </span>
+
+        <span v-else-if="gameStore.state.prompts.length" class="w-full text-center truncate">
+          提示：
           <template v-for="(prompt, index) in gameStore.state.prompts" :key="index">
             <span class="text-red-600">{{ prompt }}</span>
             <span v-if="index < gameStore.state.prompts.length - 1">，</span>
           </template>
         </span>
+
         <span v-else>
           由
-          <span class="text-red-600"> {{ drawingPlayer?.nickname }} </span>
+          <span class="text-red-600">
+            {{ drawingPlayer?.nickname }}
+          </span>
           作画
         </span>
       </div>
 
       <div class="w-12">
-        <span v-if="isOnlooker" class="text-sm2 text-text-700">旁观中</span>
+        <span v-if="isOnlooker" class="text-sm2 text-text-700"> 旁观中 </span>
+
         <UiLinkButton
           v-if="gameStore.state.draw"
           type="button"
           class="text-sm2"
           @click="gameStore.giveUp"
-          >放 弃</UiLinkButton
         >
+          放 弃
+        </UiLinkButton>
       </div>
 
-      <div class="flex flex-col items-center justify-center w-20">
+      <div class="flex w-20 flex-col items-center justify-center">
         <UiGameMainRoomTimer
           v-show="
             gameStore.state.roundPhase === 'drawing' &&
@@ -59,17 +68,19 @@
       <UiThrower ref="throwerRef" :container="sketchpadContainerRef" />
     </div>
 
-    <div class="flex-1 basis-0 flex px-tight pb-1.5 select-none">
+    <div class="flex flex-1 basis-0 px-tight pb-1.5 select-none">
       <template v-for="player in _players" :key="player.id">
         <UiGameMainRoomBubble :id="player.id">
-          <div class="flex flex-col items-center justify-center gap-1 w-[91.7px]">
+          <div class="flex w-[91.7px] flex-col items-center justify-center gap-1">
             <span
-              class="w-full h-7 text-sm2 text-center leading-[13px] flex items-end justify-center"
-              >{{ player.nickname }}</span
+              class="flex h-7 w-full items-end justify-center text-center text-sm2 leading-[13px]"
             >
+              {{ player.nickname }}
+            </span>
+
             <UiAvatar
               :player="player"
-              class="size-18 rounded-lg overflow-hidden"
+              class="size-18 overflow-hidden rounded-lg"
               :class="{
                 bingo: gameStore.state.bingoPlayers.includes(player.id),
                 drawing: player.id === gameStore.state.drawer,
@@ -78,6 +89,7 @@
               }"
               :verified-icon="{ show: true, size: 12, bottom: 2, right: 2 }"
             />
+
             <span class="text-sm2 text-wood-600">
               {{ gameStore.state.scores[player.id] || 0 }}
             </span>
