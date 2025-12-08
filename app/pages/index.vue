@@ -138,9 +138,9 @@ const { isScrolling } = useScroll(window)
 
 const GameAppRef = useTemplateRef('GameApp')
 
-useHead({
-  title: appConfig.value.name
-})
+// useHead({
+//   title: appConfig.value.name
+// })
 
 const stateText = computed(() => {
   if (userSession.loggedIn.value) {
