@@ -9,14 +9,24 @@
   },
   "packageManager": "pnpm@10.25.0+sha512.5e82639027af37cf832061bcc6d639c219634488e0f2baebe785028a793de7b525ffcd3f7ff574f5e9860654e098fe852ba8ac5dd5cefe1767d23a020a92f501",
   "scripts": {
+    "prepare": "husky",
+    "postinstall": "nuxt prepare",
     "build": "nuxt build",
     "dev": "nuxt dev",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
-    "postinstall": "nuxt prepare",
     "lint": "eslint .",
     "lint:fix": "eslint --fix .",
     "format": "prettier --write ."
+  },
+  "lint-staged": {
+    "*.{htm?(l),css,scss,sass,less,js?(x),json,md}": [
+      "prettier --write"
+    ],
+    "*.ts?(x),vue": [
+      "eslint",
+      "prettier --write"
+    ]
   },
   "dependencies": {
     "@nuxt/eslint": "1.12.1",
@@ -60,6 +70,8 @@
     "@iconify-json/tabler": "^1.2.23",
     "@types/howler": "^2.2.12",
     "eslint": "^9.39.1",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.2.7",
     "prettier": "^3.7.4",
     "typescript": "~5.9.3"
   }
