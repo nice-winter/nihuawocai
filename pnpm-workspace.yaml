@@ -1,12 +1,14 @@
-onlyBuiltDependencies:
+ignoredBuiltDependencies:
   - '@parcel/watcher'
+  - esbuild
+  - unrs-resolver
+  - vue-demi
+
+onlyBuiltDependencies:
   - '@tailwindcss/oxide'
   - better-sqlite3
   - canvas
-  - esbuild
   - sharp
-  - unrs-resolver
-  - vue-demi
 
 patchedDependencies:
   fabric: patches/fabric.patch
