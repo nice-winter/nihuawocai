@@ -1,6 +1,6 @@
 <template>
   <div v-if="currentRoom" class="flex h-full">
-    <div class="flex w-[74.4%] flex-col">
+    <div class="flex w-main-w-left flex-col">
       <UiGameMainRoomWaiting v-if="!currentRoom.playing" :room-info="currentRoom" />
       <UiGameMainRoomPlaying v-else-if="currentRoom.playing" :room-info="currentRoom" />
     </div>
@@ -26,7 +26,7 @@
 
       <UiGameMainChatPanel
         ref="ChatPanelRef"
-        class="flex-1 max-w-[227.89px]"
+        class="flex-1 max-w-main-w-right-max"
         :style="{ '--action-text-color': '#7f7f7f', '--system-text-color': '#d4bea9' }"
       />
     </div>

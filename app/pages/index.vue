@@ -1,7 +1,7 @@
 <template>
   <div
     ref="GameApp"
-    class="w-5xl min-w-5xl min-h-[1151px] flex flex-col custom-bg bg-top bg-size-[1024px]"
+    class="w-5xl min-w-5xl min-h-app-h flex flex-col custom-bg bg-top bg-size-[1024px]"
   >
     <div class="w-full h-40 flex relative">
       <div class="absolute right-23 top-6 flex gap-4 text-sm">
@@ -10,7 +10,7 @@
     </div>
 
     <div class="w-full h-10 flex justify-center items-center">
-      <div class="w-[900px] flex justify-center">
+      <div class="w-main-w flex justify-center">
         <UIcon name="custom:icon-quota-left" class="size-5 -mt-1" />
 
         <span class="flex-1 px-2 text-shadow-light truncate">
@@ -88,7 +88,7 @@
     </UiGameMainFrame>
 
     <div class="w-full flex-1 flex justify-center items-center">
-      <UiGameMainRank class="w-[900px]" />
+      <UiGameMainRank class="w-main-w" />
     </div>
 
     <UModal :open="!userSession.loggedIn.value" :dismissible="false" class="w-sm">

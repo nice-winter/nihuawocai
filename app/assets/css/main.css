@@ -2,6 +2,7 @@
 @import '@nuxt/ui';
 
 @theme {
+  /* ===== Game Colors ===== */
   --color-game-red-50: oklch(0.958 0.021 13.94);
   --color-game-red-100: oklch(0.911 0.046 14.75);
   --color-game-red-200: oklch(0.83 0.095 15.29);
@@ -62,7 +63,7 @@
   --color-game-sand-900: oklch(0.266 0.015 84.52);
   --color-game-sand-950: oklch(0.206 0.012 84.51);
 
-  /* ===== 暖棕 ===== */
+  /* ===== Wood Colors (暖棕) ===== */
   --color-wood-900: #1d2020;
   --color-wood-800: #766746;
   --color-wood-700: #804b19;
@@ -76,7 +77,7 @@
   --color-wood-200: #ae9783;
   --color-wood-100: #c5630e24;
 
-  /* ===== 自然 ===== */
+  /* ===== Surface Colors (自然) ===== */
   --color-surface-900: #c2b598;
   --color-surface-800: #c9bc9c;
   --color-surface-700: #d6c9a7;
@@ -90,19 +91,16 @@
   --color-surface-200: #f7ebdf;
   --color-surface-150: #efc189;
 
-  /* ===== 棕-透明 ===== */
+  /* ===== Tint Colors (透明) ===== */
   --color-tint-warm-700: #c5630e69;
   --color-tint-warm-300: #c5630e24;
-
   --color-tint-dark-500: #5035024d;
   --color-tint-dark-400: #6233004d;
-
   --color-tint-soft-400: #f1d0ae42;
   --color-tint-soft-300: #aa7b4c91;
-
   --color-tint-white: #ffffff2b;
 
-  /* ===== 文本色 ===== */
+  /* ===== Text Colors (文本) ===== */
   --color-text-900: #1d2020;
   --color-text-800: #544533;
   --color-text-700: #7a6955;
@@ -110,18 +108,32 @@
   --color-text-500: #ad8665;
   --color-text-300: #ae9783;
 
+  /* ===== Spacing ===== */
+  --spacing-app-w: 1024px;
+  --spacing-app-h: 1151px;
+
+  --spacing-main-w: 900px;
+  --spacing-main-h: 640px;
+
+  --spacing-main-w-left: 74.4%;
+  --spacing-main-w-right: 25.6%;
+  --spacing-main-w-right-max: 227.88px;
+
   --spacing-tight: 0.785rem;
   --spacing-sm2: 13px;
 
+  /* ===== Typography ===== */
   --text-sm2: 13px;
   --text-mini: 10px;
   --text-shadow-light: 1px 1px 1px #ffffff8f;
   --font-cuyuan: 'JianShouMengWaCuYuan-2';
 
+  /* ===== Shadows ===== */
   --shadow-main: 0 0 4px 2px var(--color-wood-650);
   --shadow-hard: 0px 0px 4px 2px #34260a99;
 }
 
+/* ===== Global Styles ===== */
 :root {
   --ui-text: var(--color-text-900);
 }
@@ -135,19 +147,11 @@ div[data-reka-popper-content-wrapper] {
   z-index: 114514 !important;
 }
 
-.game-popover {
-  overflow: hidden;
-  box-shadow: 0px 0px 4px 2px #34260a99;
-}
-
-.game-tooltip {
-  overflow: hidden;
-  box-shadow: 0px 0px 2px 1px #3c2c0c53;
-  border: 1px solid #412511;
-  border-radius: 2px;
-  background-color: #dfcebc;
-  padding: 4px;
-  color: var(--game-primary-color);
+/* ===== Component Styles ===== */
+.bg-texture {
+  background-image: url(~/assets/texture.webp);
+  background-repeat: repeat;
+  background-size: 46px;
 }
 
 .game-avatar {
@@ -157,6 +161,19 @@ div[data-reka-popper-content-wrapper] {
   img {
     user-select: none;
     -webkit-user-drag: none;
+  }
+}
+
+.game-checkbox {
+  button {
+    border-radius: 0;
+    background-color: #f7ede3;
+    box-shadow: 0 0 0 1px var(--color-wood-200);
+
+    span[data-state='checked'] {
+      color: var(--game-primary-color);
+      background-color: unset;
+    }
   }
 }
 
@@ -185,17 +202,9 @@ div[data-reka-popper-content-wrapper] {
   }
 }
 
-.game-checkbox {
-  button {
-    border-radius: 0;
-    background-color: #f7ede3;
-    box-shadow: 0 0 0 1px var(--color-wood-200);
-
-    span[data-state='checked'] {
-      color: var(--game-primary-color);
-      background-color: unset;
-    }
-  }
+.game-popover {
+  overflow: hidden;
+  box-shadow: 0px 0px 4px 2px #34260a99;
 }
 
 .game-tabs {
@@ -224,10 +233,14 @@ div[data-reka-popper-content-wrapper] {
   }
 }
 
-.bg-texture {
-  background-image: url(~/assets/texture.webp);
-  background-repeat: repeat;
-  background-size: 46px;
+.game-tooltip {
+  overflow: hidden;
+  box-shadow: 0px 0px 2px 1px #3c2c0c53;
+  border: 1px solid #412511;
+  border-radius: 2px;
+  background-color: #dfcebc;
+  padding: 4px;
+  color: var(--game-primary-color);
 }
 
 .sprites-icon {
