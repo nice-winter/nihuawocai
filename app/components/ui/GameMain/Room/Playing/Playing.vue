@@ -72,9 +72,7 @@
       <template v-for="player in _players" :key="player.id">
         <UiGameMainRoomBubble :id="player.id">
           <div class="flex w-[91.7px] flex-col items-center justify-center gap-1">
-            <span
-              class="flex h-7 w-full items-end justify-center text-center text-sm2 leading-[13px]"
-            >
+            <span class="flex h-7 w-full items-end justify-center text-center text-sm2 leading-sm2">
               {{ player.nickname }}
             </span>
 
