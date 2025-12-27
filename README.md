@@ -13,7 +13,7 @@
 > [!NOTE]
 > 免责声明：本项目为非盈利社区性项目，无意侵犯其版权，所有权利均归其各自所有者所有。
 
-新浪微博小游戏“你画我猜”的复刻版，俗称“渣浪画猜”、“旧版画猜”。
+新浪微博小游戏“你画我猜”的复刻版，俗称“**渣浪画猜**”、“**旧版画猜**”。
 
 ## 作者的碎碎念
 
@@ -23,11 +23,19 @@
 
 十年间，世事更迭，生活改变了许多，但我始终无法将它从记忆中放下。于是，我萌生了将这款游戏重新复刻出来的想法……
 
-谨以此作，献给那段再也无法回头的青春，以及曾经在其中相遇的我们。
+_——谨以此作，献给那段再也无法回头的青春，以及曾经在其中相遇的我们。_
 
 ## 游戏截图
 
 [![](https://github.com/user-attachments/assets/7859d5f6-f455-4136-8a10-2ccd53f832e3)](#)
+[![](https://github.com/user-attachments/assets/c5701f5c-4b8c-439e-b89d-d80716f6c5c1)](#)
+[![](https://github.com/user-attachments/assets/69226827-598d-4261-b99e-0e75e1d2e62d)](#)
+[![](https://github.com/user-attachments/assets/8566c3ef-8804-4845-a648-8931dbf55f39)](#)
+[![](https://github.com/user-attachments/assets/db78508e-0159-45ad-8825-779d90f3f0fc)](#)
+
+## WIKI
+
+关于此项目的详细信息、开发、调试、部署等内容，请参阅 [WIKI](#)。
 
 ## License
 
