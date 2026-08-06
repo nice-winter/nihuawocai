@@ -41,7 +41,7 @@
     "@unhead/vue": "^2.0.19",
     "@vueuse/nuxt": "14.1.0",
     "@zumer/snapdom": "^2.0.1",
-    "better-sqlite3": "^12.5.0",
+    "better-sqlite3": "^13.0.1",
     "cbor2": "^2.0.1",
     "consola": "^3.4.2",
     "db0": "^0.3.4",
