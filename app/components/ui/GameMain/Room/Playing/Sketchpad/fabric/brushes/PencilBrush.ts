@@ -1,6 +1,6 @@
 import { BaseBrush, Path, Shadow } from 'fabric'
 import type { TSimplePathData, ModifierKey, TEvent, Point, Canvas } from 'fabric'
-import { getSmoothPathFromPoints, joinPath } from 'fabric/util'
+import { getSmoothPathFromPoints, joinPath } from 'fabric/util/path'
 
 /**
  * @private
