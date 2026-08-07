@@ -2,10 +2,6 @@ import { createDatabase } from 'db0'
 import dbDriver from 'unstorage/drivers/db0'
 import fsDriver from 'unstorage/drivers/fs'
 import sqlite from 'db0/connectors/node-sqlite'
-import { consola } from 'consola'
-import { colors } from 'consola/utils'
-
-const logger = consola.withTag('Storage')
 
 export default defineNitroPlugin(() => {
   const databaseName = 'database'
@@ -42,7 +38,9 @@ export default defineNitroPlugin(() => {
     storage.mount(t, pickDriver(t))
   })
 
-  logger.success(`储存层初始化完成。`)
-  logger.info(`数据表：`, tables.map((t) => colors.blueBright(t)).join(', '))
-  logger.info(`挂载模式：`, colors.yellow(import.meta.dev ? 'DEV' : 'PROD'))
+  registerBannerItem({
+    icon: '💾',
+    label: '储存层就绪',
+    detail: `${import.meta.dev ? 'fs' : 'sqlite'}  ·  ${tables.length} 张表`
+  })
 })
