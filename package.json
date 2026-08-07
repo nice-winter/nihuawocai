@@ -68,10 +68,12 @@
     "@iconify-json/simple-icons": "^1.2.63",
     "@iconify-json/streamline-plump-color": "^1.2.2",
     "@iconify-json/tabler": "^1.2.24",
+    "@playwright/test": "^1.62.1",
     "@types/howler": "^2.2.12",
     "eslint": "^9.39.2",
     "husky": "^9.1.7",
     "lint-staged": "^16.2.7",
+    "playwright": "^1.62.1",
     "prettier": "^3.7.4",
     "typescript": "~5.9.3"
   }
