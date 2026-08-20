@@ -15,7 +15,11 @@ useHead({
   }
 })
 
-await pull()
+try {
+  await pull()
+} catch (e) {
+  console.warn('[app-config] 拉取远程配置失败，使用默认配置', e)
+}
 </script>
 
 <template>

@@ -75,9 +75,11 @@ export default defineNuxtConfig({
   // Vite 配置
   vite: {
     server: {
-      hmr: {
+      ws: {
         path: 'hmr/'
-      }
+      },
+      // 允许反代域名访问（Vite 6+ 默认只允许 .localhost）
+      allowedHosts: ['dev.907322.xyz']
     }
   },
 
