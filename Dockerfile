@@ -11,6 +11,8 @@ ENV CI=${CI}
 ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
 
+RUN apk add --no-cache python3 make g++
+
 RUN [ "$CI" != "true" ] && \
   npm config set registry https://registry.npmmirror.com || true
 
