@@ -1,8 +1,8 @@
-FROM node:24.11-alpine AS base
+FROM node:24.19-alpine AS base
 
 ARG CI
 
-RUN apk add --no-cache libc6-compat
+RUN apk update && apk add --no-cache libc6-compat python3 make g++
 
 
 FROM base AS base-with-pnpm
