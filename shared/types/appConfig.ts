@@ -2,40 +2,69 @@ import type { LevelInfo } from '~~/shared/types/level'
 import type { Gender } from '~~/shared/types/gender'
 
 export interface AppConfig {
+  /** 应用名称 */
   name: string
+  /** 公告列表 */
   announcements: string[]
+  /** 性别选项列表 */
   genders: Gender[]
   game: {
+    /** 等级信息列表 */
     levels: LevelInfo[]
+    /** 大厅相关设置 */
     lobby: {
+      /** 每分钟聊天消息限制条数，0 为不限制 @default 0 */
       perMinuteChatCount: number
+      /** 时间相关设置 */
       time: {
+        /** 聊天消息发送间隔时间（秒） @default 5 */
         chatIntervalTimeSecond: number
       }
     }
+    /** 房间相关设置 */
     room: {
+      /** 房间横幅广告列表 */
       banners: {
+        /** 横幅图片地址 */
         imgUrl: string
+        /** 横幅描述文本 */
         description: string
+        /** 横幅跳转链接 */
         url: string
       }[]
+      /** 房间功能开关 */
       feature: {
+        /** 是否启用踢人功能 @default true */
         kick: boolean
+        /** 是否启用广播功能 @default true */
         broadcast: boolean
+        /** 邀请功能设置 */
         invite: {
+          /** 是否允许邀请空闲玩家 @default true */
           idle: boolean
+          /** 是否允许邀请同城玩家 @default false */
           sameCity: boolean
         }
       }
+      /** 每轮最大广播次数，0 为不限制 @default 0 */
       maxBroadcastCount: number
+      /** 每分钟聊天消息限制条数，0 为不限制 @default 0 */
       perMinuteChatCount: number
+      /** 房间密码最大长度 @default 4 */
       passwordMaxLengh: number
+      /** 时间相关设置 */
       time: {
+        /** 广播消息发送间隔时间（秒） @default 300 */
         broadcastIntervalTimeSecond: number
+        /** 聊天消息发送间隔时间（秒） @default 1 */
         chatIntervalTimeSecond: number
+        /** 游戏开始前的准备等待时间（秒） @default 30 */
         preStartTimeSecond: number
+        /** 最大准备等待时间（秒） @default 60 */
         maxPreStartTimeSecond: number
+        /** 邀请有效时间（秒） @default 15 */
         invitationValidTimeSecond: number
+        /** 挂机判定超时时间（秒） @default 300 */
         afkTimeSecond: number
       }
       /** 轮相关设置 */
@@ -58,7 +87,7 @@ export interface AppConfig {
           roundBingoTimeSecond: number
           /** 小回合结束时的互动的等待时间 @default 5 */
           roundEndWaitTimeSecond: number
-          /** 轮（整局游戏）的等待（结算面板显示）时间 @default 8 */
+          /** 最终结算面板的显示时间 @default 8 */
           cycleEndWaitTimeSecond: number
         }
         /** 回合计分规则 */
