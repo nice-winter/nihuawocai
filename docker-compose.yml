@@ -8,18 +8,22 @@ services:
       NODE_ENV: production
     env_file:
       - ./.env
-    restart: always
+    restart: unless-stopped
     build:
       context: .
       dockerfile: ./Dockerfile
       args:
         CI: ${CI:-false}
-      tags:
-        - '${REPOSITORY:-${COMPOSE_PROJECT_NAME}}/nitro:latest'
+    healthcheck:
+      test: ['CMD', 'wget', '-qO-', 'http://localhost:3000/']
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
     networks:
       - app-network
     ports:
-      - 3000:3000
+      - '${NITRO_PORT:-3000}:3000'
     volumes:
       - 'data:./app/.data'
       - 'logs:./app/.logs'
