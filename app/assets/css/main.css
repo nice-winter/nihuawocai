@@ -127,6 +127,9 @@
   --text-mini: 10px;
   --text-shadow-light: 1px 1px 1px #ffffff8f;
   --font-cuyuan: 'JianShouMengWaCuYuan-2';
+  --font-sans:
+    'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', 'Noto Sans',
+    Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
 
   /* ===== Shadows ===== */
   --shadow-main: 0 0 4px 2px var(--color-wood-650);

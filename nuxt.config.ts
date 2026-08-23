@@ -38,7 +38,14 @@ export default defineNuxtConfig({
 
   // 字体
   fonts: {
-    provider: 'local'
+    provider: 'local',
+    families: [
+      {
+        name: 'Inter',
+        provider: 'google',
+        weights: [400, 500, 600, 700]
+      }
+    ]
   },
 
   // 图标
