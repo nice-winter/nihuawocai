@@ -19,6 +19,8 @@ RUN npm install -g pnpm
 
 FROM base-with-pnpm AS builder
 
+RUN apk add --no-cache pkgconf pixman-dev cairo-dev pango-dev jpeg-dev
+
 WORKDIR /app
 
 COPY . .
