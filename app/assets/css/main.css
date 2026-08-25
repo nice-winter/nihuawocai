@@ -189,6 +189,7 @@ div[data-reka-popper-content-wrapper] {
 
     &:focus-visible {
       box-shadow: 0 0 0 1px #432410;
+      outline: none;
     }
 
     &::placeholder {
