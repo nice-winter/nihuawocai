@@ -1,17 +1,15 @@
 <template>
-  <BaseModal ref="baseModal" :parent="parent">
+  <UiBaseModal ref="baseModal" :parent="parent">
     <div
       :key="t"
       class="text-5xl text-game-red-500 font-bold countdown-number select-none"
     >
       {{ t }}
     </div>
-  </BaseModal>
+  </UiBaseModal>
 </template>
 
 <script setup lang="ts">
-import BaseModal from '@/components/ui/BaseModal.vue'
-
 interface Props {
   parent?: Element
   seconds?: number

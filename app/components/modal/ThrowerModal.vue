@@ -1,5 +1,5 @@
 <template>
-  <BaseModal ref="baseModal" :parent="parent">
+  <UiBaseModal ref="baseModal" :parent="parent">
     <div ref="modalRef" class="bg-texture rounded-md w-90 shadow-hard flex flex-col" tabindex="0">
       <div class="h-40 p-4">
         <div class="flex flex-col gap-4 text-wood-700 text-shadow-light select-none">
@@ -42,12 +42,10 @@
         <UiButton color="red" @click="shared">分享美图</UiButton>
       </div>
     </div>
-  </BaseModal>
+  </UiBaseModal>
 </template>
 
 <script setup lang="ts">
-import BaseModal from '@/components/ui/BaseModal.vue'
-
 export interface ThrowerModalProps {
   answer?: string
   /** 结束原因（原始枚举或已转换的展示文本） */

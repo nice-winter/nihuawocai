@@ -1,5 +1,5 @@
 <template>
-  <BaseModal ref="baseModal" :parent="parent" close-on-esc="reject" close-on-mask="reject">
+  <UiBaseModal ref="baseModal" :parent="parent" close-on-esc="reject" close-on-mask="reject">
     <template #default="{ close }">
       <div
         class="w-80 bg-texture rounded-md p-6 shadow-hard flex flex-col gap-4 select-none"
@@ -44,12 +44,10 @@
         </div>
       </div>
     </template>
-  </BaseModal>
+  </UiBaseModal>
 </template>
 
 <script setup lang="ts">
-import BaseModal from '@/components/ui/BaseModal.vue'
-
 export interface CreateRoomModalResult {
   opens: number
   password: string

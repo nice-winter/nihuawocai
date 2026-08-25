@@ -1,5 +1,5 @@
 <template>
-  <BaseModal ref="baseModal" :parent="parent">
+  <UiBaseModal ref="baseModal" :parent="parent">
     <div ref="modalRef" class="bg-texture rounded-md shadow-hard flex flex-col" tabindex="0">
       <div class="">
         <div class="flex flex-col text-wood-700 text-shadow-light select-none">
@@ -54,12 +54,10 @@
         </div>
       </div>
     </div>
-  </BaseModal>
+  </UiBaseModal>
 </template>
 
 <script setup lang="ts">
-import BaseModal from '@/components/ui/BaseModal.vue'
-
 export interface RankItem {
   score: number
   flower: number
