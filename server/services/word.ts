@@ -195,7 +195,7 @@ export const useWordManager = () => {
 
     // 策略：先随机选一个库，再从库里随机选一个词
     // (这种策略比起“把所有词合并再随机”性能更好，不需要加载所有数据)
-    const randomLibId = targetLibIds[Math.floor(Math.random() * targetLibIds.length)]
+    const randomLibId = targetLibIds[Math.floor(Math.random() * targetLibIds.length)]!
     const lib = await getLibraryById(randomLibId)
 
     if (!lib || lib.words.length === 0) {
@@ -208,7 +208,7 @@ export const useWordManager = () => {
       return null
     }
 
-    const randomWord = lib.words[Math.floor(Math.random() * lib.words.length)]
+    const randomWord = lib.words[Math.floor(Math.random() * lib.words.length)]!
     return randomWord
   }
 
