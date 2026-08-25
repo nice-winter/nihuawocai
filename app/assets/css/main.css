@@ -248,7 +248,7 @@ div[data-reka-popper-content-wrapper] {
 }
 
 .sprites-icon {
-  background-image: url('~/assets/icons/navicon-sprites.webp');
+  background-image: url('~/assets/icons/navicons/navicon-sprites.webp');
   background-size: 100% auto;
   background-repeat: no-repeat;
   background-color: transparent;
