@@ -1,17 +1,9 @@
 <template>
-  <Teleport :to="targetEl">
-    <div
-      v-if="visible"
-      class="z-114514 flex items-center justify-center bg-transparent"
-      :class="parent ? 'absolute inset-0' : 'fixed inset-0'"
-      @mousedown="onMaskDown"
-      @mouseup="onMaskUp"
-    >
+  <BaseModal ref="baseModal" :parent="parent" close-on-esc="reject" close-on-mask="reject">
+    <template #default="{ close }">
       <div
-        ref="modalRef"
         class="bg-texture rounded-md p-6 w-80 shadow-hard flex flex-col gap-4"
         tabindex="0"
-        @keydown.esc="onCancel"
       >
         <p class="text-sm2 text-center select-none">请输入房间密码</p>
         <UInput
@@ -25,42 +17,29 @@
         />
         <div class="flex justify-center gap-8 mt-2">
           <UiButton size="sm" color="red" @click="onConfirm">加入</UiButton>
-          <UiButton size="sm" @click="onCancel">取消</UiButton>
+          <UiButton size="sm" @click="close()">取消</UiButton>
         </div>
       </div>
-    </div>
-  </Teleport>
+    </template>
+  </BaseModal>
 </template>
 
 <script setup lang="ts">
-export interface PasswordModalProps {
+interface Props {
   parent?: Element
 }
-const { parent = '' } = defineProps<PasswordModalProps>()
 
-const visible = ref(false)
-const password = ref('')
-const resolveFn = ref<((value: string) => void) | null>(null)
-const rejectFn = ref<(() => void) | null>(null)
-const pressedOnMask = ref(false)
+const { parent } = defineProps<Props>()
+
+const baseModal = useTemplateRef('baseModal')
 const passwordInputRef = useTemplateRef('passwordInputRef')
-const modalRef = ref<HTMLDivElement | null>(null)
-const targetEl = computed(() => parent ?? document.body)
+
+const password = ref('')
 
 const open = (): Promise<string> => {
   password.value = ''
-  visible.value = true
-
   nextTick(() => passwordInputRef.value?.inputRef?.focus())
-
-  return new Promise<string>((resolve, reject) => {
-    resolveFn.value = resolve
-    rejectFn.value = reject
-  })
-}
-
-const close = () => {
-  visible.value = false
+  return baseModal.value!.open()
 }
 
 const onConfirm = () => {
@@ -68,41 +47,8 @@ const onConfirm = () => {
     nextTick(() => passwordInputRef.value?.inputRef?.focus())
     return
   }
-  resolveFn.value?.(password.value)
-  close()
+  baseModal.value?.close(password.value)
 }
-
-const onCancel = () => {
-  rejectFn.value?.()
-  close()
-}
-
-const handleGlobalEsc = (e: KeyboardEvent) => {
-  if (e.key === 'Escape' && visible.value) {
-    onCancel()
-  }
-}
-
-const onMaskDown = (e: MouseEvent) => {
-  if (e.target === e.currentTarget) {
-    pressedOnMask.value = true
-  }
-}
-const onMaskUp = (e: MouseEvent) => {
-  if (pressedOnMask.value && e.target === e.currentTarget) {
-    close()
-  }
-  pressedOnMask.value = false
-}
-
-onMounted(() => {
-  document.addEventListener('keydown', handleGlobalEsc)
-})
-onBeforeUnmount(() => {
-  document.removeEventListener('keydown', handleGlobalEsc)
-})
 
 defineExpose({ open })
 </script>
-
-<style scoped></style>

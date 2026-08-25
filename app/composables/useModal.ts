@@ -75,11 +75,7 @@ export const useModal = <T>(component: Component, options: { parent?: string | E
     const internalOpen = mount(parentEl, props)
 
     try {
-      const result = await internalOpen()
-      return result
-      // eslint-disable-next-line no-useless-catch
-    } catch (e) {
-      throw e
+      return await internalOpen()
     } finally {
       unmount()
     }
