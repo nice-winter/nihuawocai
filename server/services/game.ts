@@ -247,12 +247,13 @@ const enterSettlementPhase = (roomNumber: number, st: GameState) => {
   //   更新玩家统计信息
   const ids = Object.keys(finalScores)
   ids.forEach((id) => {
+    const items = finalItemCounts[id]
     updatePlayerStats(id, {
       total_games: 1,
       score: finalScores[id],
-      flower_count: finalItemCounts[id].flower,
-      egg_count: finalItemCounts[id].egg,
-      slipper_count: finalItemCounts[id].slipper
+      flower_count: items?.flower ?? 0,
+      egg_count: items?.egg ?? 0,
+      slipper_count: items?.slipper ?? 0
     })
   })
   // ------------------
@@ -311,7 +312,7 @@ const startRound = async (roomNumber: number) => {
   st.roundGiftSenders.clear() // 重置送道具记录
 
   // 确定画手
-  const drawerId = st.drawerQueue[st.currentRoundIndex % st.drawerQueue.length]
+  const drawerId = st.drawerQueue[st.currentRoundIndex % st.drawerQueue.length] ?? null
   st.drawer = drawerId
 
   // 如果算出来的画手不在了，直接开启新回合
@@ -429,7 +430,7 @@ const handleDrawingTick = (roomNumber: number, st: GameState, now: number) => {
   const promptTimes = st.config.cycle.time.roundPromptTimeSecond
   if (st.revealedPrompts < promptTimes.length) {
     if (st.bingoPlayers.length > 0) return // 如果已有玩家猜对，则后续不再弹出提示词
-    const nextPromptTime = promptTimes[st.revealedPrompts]
+    const nextPromptTime = promptTimes[st.revealedPrompts]!
     if (elapsedSeconds >= nextPromptTime) {
       const promptIndex = st.revealedPrompts
       let promptContent = ''

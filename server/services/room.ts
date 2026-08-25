@@ -802,7 +802,7 @@ const quickMatch = async (id: string) => {
   }
 
   // 2. 随机选房
-  const room = candidates[Math.floor(Math.random() * candidates.length)]
+  const room = candidates[Math.floor(Math.random() * candidates.length)]!
 
   // 3. 加入房间
   try {
