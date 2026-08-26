@@ -1,6 +1,6 @@
 <template>
   <UiBaseModal ref="baseModal" :parent="parent" close-on-esc="reject" close-on-mask="reject">
-    <template #default="{ close }">
+    <template #default>
       <div
         class="bg-texture rounded-md p-6 w-80 shadow-hard flex flex-col gap-4"
         tabindex="0"
@@ -17,7 +17,7 @@
         />
         <div class="flex justify-center gap-8 mt-2">
           <UiButton size="sm" color="red" @click="onConfirm">加入</UiButton>
-          <UiButton size="sm" @click="close()">取消</UiButton>
+          <UiButton size="sm" @click="baseModal?.cancel()">取消</UiButton>
         </div>
       </div>
     </template>
