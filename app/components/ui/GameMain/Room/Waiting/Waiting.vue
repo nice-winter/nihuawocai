@@ -24,7 +24,7 @@
           {{ displayText }}
         </span>
 
-        <span v-if="editing" class="absolute left-[58px] w-16">
+        <span v-if="editing" class="absolute left-14.5 w-16">
           <UInput
             ref="passwordUInputRef"
             v-model="pendingPassword"
@@ -90,14 +90,14 @@
       :data-seat-number="i"
     >
       <img
-        v-if="roomInfo?.players![i - 1]?.id === '76561198413318292'"
+        v-if="roomInfo?.players![i - 1]?.id === '28332824'"
         src="~/assets/cxy.png"
         class="absolute inset-0 z-1 w-56 origin-center pointer-events-none"
         style="transform: scale(1.14); top: 14px; left: -2px"
       />
 
       <img
-        v-if="roomInfo?.players![i - 1]?.id === '76561199014647682'"
+        v-if="roomInfo?.players![i - 1]?.id === '76561198413318292'"
         src="~/assets/ygg1.png"
         class="absolute inset-0 z-1 w-56 origin-center pointer-events-none"
         style="transform: scale(1.2); top: 29px; left: 9px"
@@ -116,7 +116,7 @@
         :open="roomInfo?.seats![i - 1]"
         :player="roomInfo?.players![i - 1] || undefined"
         :mode="seatMode"
-        class="size-[114px]"
+        class="size-28.5"
         :disabled="(!isCurrentRoomOwner && !isOnlooker) || (isOnlooker && !roomInfo?.seats![i - 1])"
         :verified-icon="{ show: true, size: 16 }"
         :placeholder="isOnlooker ? '点击坐下' : undefined"
@@ -130,7 +130,7 @@
     </div>
 
     <div class="relative flex flex-col items-center justify-center gap-tight select-none">
-      <div class="flex size-[114px] items-center justify-center bg-wood-350 text-sm">
+      <div class="flex size-28.5 items-center justify-center bg-wood-350 text-sm">
         <UIcon :name="`fe:disabled`" class="size-14 text-wood-300" />
       </div>
 
