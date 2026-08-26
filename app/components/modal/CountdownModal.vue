@@ -1,7 +1,7 @@
 <template>
   <UiBaseModal ref="baseModal" :parent="parent">
     <div
-      :key="t"
+      ref="numberEl"
       class="text-5xl text-game-red-500 font-bold countdown-number select-none"
     >
       {{ t }}
@@ -13,29 +13,37 @@
 interface Props {
   parent?: Element
   seconds?: number
+  initialValue?: number
 }
 
-const { parent, seconds = 5 } = defineProps<Props>()
+const { parent, seconds = 5, initialValue } = defineProps<Props>()
 
 const baseModal = useTemplateRef('baseModal')
+const numberEl = useTemplateRef<HTMLElement>('numberEl')
 
-const { t, start } = useCountdown(seconds, () => baseModal.value?.close())
+const actualSeconds = initialValue ?? seconds
+
+const { t, start } = useCountdown(actualSeconds, () => baseModal.value?.close())
+
+const playAnimation = () => {
+  const el = numberEl.value
+  if (el) {
+    el.getAnimations().forEach((anim) => anim.cancel())
+    el.animate(
+      [
+        { transform: 'scale(2)', opacity: 0.4, offset: 0 },
+        { transform: 'scale(1)', opacity: 1, offset: 1 }
+      ],
+      { duration: 300, easing: 'ease-out', fill: 'forwards' }
+    )
+  }
+}
+
+watch(t, playAnimation)
 
 const open = (): Promise<void> => {
   start()
-  nextTick(() => {
-    const el = document.querySelector('.countdown-number') as HTMLElement
-    if (el) {
-      el.getAnimations().forEach((anim) => anim.cancel())
-      el.animate(
-        [
-          { transform: 'scale(2)', opacity: 0.4, offset: 0 },
-          { transform: 'scale(1)', opacity: 1, offset: 1 }
-        ],
-        { duration: 300, easing: 'ease-out', fill: 'forwards' }
-      )
-    }
-  })
+  nextTick(playAnimation)
   return baseModal.value!.open()
 }
 
