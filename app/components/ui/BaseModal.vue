@@ -13,7 +13,7 @@
   </Teleport>
 </template>
 
-<script setup lang="ts" generic="T = void">
+<script setup lang="ts">
 export interface BaseModalProps {
   parent?: Element
   closeOnEsc?: boolean | 'reject'
@@ -23,7 +23,7 @@ export interface BaseModalProps {
 const { parent, closeOnEsc = false, closeOnMask = false } = defineProps<BaseModalProps>()
 
 const visible = ref(false)
-const resolveFn = ref<((value: T) => void) | null>(null)
+const resolveFn = ref<((value: any) => void) | null>(null)
 const rejectFn = ref<(() => void) | null>(null)
 const pressedOnMask = ref(false)
 const targetEl = computed(() => parent ?? document.body)
@@ -31,9 +31,9 @@ const targetEl = computed(() => parent ?? document.body)
 const canClose = (behavior: boolean | 'reject'): boolean => behavior === true || behavior === 'reject'
 const shouldReject = (behavior: boolean | 'reject'): boolean => behavior === 'reject'
 
-const close = (value?: T) => {
+const close = (value?: any) => {
   visible.value = false
-  resolveFn.value?.(value as T)
+  resolveFn.value?.(value)
 }
 
 const cancel = () => {
@@ -60,9 +60,9 @@ const onMaskUp = (e: MouseEvent) => {
   shouldReject(closeOnMask) ? cancel() : close()
 }
 
-const open = (): Promise<T> => {
+const open = (): Promise<any> => {
   visible.value = true
-  return new Promise<T>((resolve, reject) => {
+  return new Promise<any>((resolve, reject) => {
     resolveFn.value = resolve
     rejectFn.value = reject
   })
@@ -70,5 +70,5 @@ const open = (): Promise<T> => {
 
 onUnmounted(() => rejectFn.value?.())
 
-defineExpose({ open, close })
+defineExpose({ open, close, cancel })
 </script>
