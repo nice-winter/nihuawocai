@@ -1,43 +1,263 @@
-<!-- https://github.com/barelyhuman/snips/blob/dev/pages/css-loader.md -->
-<div class="loader"></div>
+<!-- 你画我猜 - SPA Loading Page -->
+<div class="loading-container">
+  <div class="canvas-wrapper">
+    <div class="canvas">
+      <div class="grid-bg"></div>
+      <svg class="drawing" viewBox="0 0 120 120" fill="none">
+        <!-- 笑脸轮廓 - 用虚线模拟正在画的感觉 -->
+        <circle class="face stroke-1" cx="60" cy="60" r="36" />
+        <!-- 左眼 -->
+        <circle class="eye stroke-2" cx="46" cy="50" r="4" />
+        <!-- 右眼 -->
+        <circle class="eye stroke-2" cx="74" cy="50" r="4" />
+        <!-- 嘴巴 -->
+        <path class="mouth stroke-3" d="M 44 72 Q 60 88 76 72" />
+      </svg>
+      <div class="pencil">
+        <div class="pencil-body"></div>
+        <div class="pencil-tip"></div>
+      </div>
+    </div>
+  </div>
+  <div class="text-group">
+    <span class="loading-text">灵感加载中</span>
+    <span class="dots">
+      <span class="dot">.</span>
+      <span class="dot">.</span>
+      <span class="dot">.</span>
+    </span>
+  </div>
+</div>
+
 <style>
-  .loader {
-    display: block;
-    position: fixed;
-    z-index: 1031;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 18px;
-    height: 18px;
+  * {
+    margin: 0;
+    padding: 0;
     box-sizing: border-box;
-    border: solid 2px transparent;
-    border-top-color: #000;
-    border-left-color: #000;
-    border-bottom-color: #efefef;
-    border-right-color: #efefef;
-    border-radius: 50%;
-    -webkit-animation: loader 400ms linear infinite;
-    animation: loader 400ms linear infinite;
   }
 
-  @-webkit-keyframes loader {
-    0% {
-      -webkit-transform: translate(-50%, -50%) rotate(0deg);
-    }
+  :root {
+    --bg: #faebd7;
+    --line: #eae0d0ba;
+    --ink: #8b7355;
+    --ink-light: #b8a088;
+    --pencil-body: #f5c542;
+    --pencil-tip: #5c4033;
+    --pencil-metal: #c0a060;
+  }
 
-    100% {
-      -webkit-transform: translate(-50%, -50%) rotate(360deg);
+  body {
+    background-color: var(--bg);
+    background-image:
+      linear-gradient(var(--line) 1px, transparent 1px),
+      linear-gradient(90deg, var(--line) 1px, transparent 1px);
+    background-size: 24px 24px;
+    overflow: hidden;
+  }
+
+  .loading-container {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1.8rem;
+    font-family: 'Georgia', 'Noto Serif SC', serif;
+  }
+
+  /* 画布卡片 */
+  .canvas-wrapper {
+    position: relative;
+    width: 180px;
+    height: 180px;
+    filter: drop-shadow(0 6px 20px rgba(139, 115, 85, 0.15));
+  }
+
+  .canvas {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    background: #fffdf8;
+    border-radius: 14px;
+    border: 1.5px solid var(--line);
+    overflow: hidden;
+  }
+
+  /* 画布内的网格 */
+  /* .grid-bg {
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(var(--line) 1px, transparent 1px),
+      linear-gradient(90deg, var(--line) 1px, transparent 1px);
+    background-size: 18px 18px;
+    opacity: 0.5;
+  } */
+
+  /* SVG 绘画 */
+  .drawing {
+    position: absolute;
+    inset: 20px;
+    z-index: 2;
+  }
+
+  /* 通用笔触样式 */
+  .face,
+  .eye,
+  .mouth {
+    stroke: var(--ink);
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    fill: none;
+  }
+
+  .face {
+    stroke-width: 2.5;
+    stroke-dasharray: 227;
+    stroke-dashoffset: 227;
+    animation: draw-line 2s ease-in-out 0.2s forwards;
+  }
+
+  .eye {
+    stroke-width: 2;
+    stroke-dasharray: 26;
+    stroke-dashoffset: 26;
+    fill: var(--ink);
+    fill-opacity: 0;
+    animation: draw-dot 0.4s ease-out forwards;
+  }
+
+  .eye:first-of-type {
+    animation-delay: 1.4s;
+  }
+
+  .eye:nth-of-type(2) {
+    animation-delay: 1.6s;
+  }
+
+  .mouth {
+    stroke-width: 2.5;
+    stroke-dasharray: 52;
+    stroke-dashoffset: 52;
+    animation: draw-line 0.6s ease-in-out 1.8s forwards;
+  }
+
+  @keyframes draw-line {
+    to {
+      stroke-dashoffset: 0;
     }
   }
 
-  @keyframes loader {
-    0% {
-      transform: translate(-50%, -50%) rotate(0deg);
+  @keyframes draw-dot {
+    to {
+      stroke-dashoffset: 0;
+      fill-opacity: 1;
     }
+  }
 
+  /* 铅笔 */
+  .pencil {
+    position: absolute;
+    z-index: 10;
+    animation: pencil-move 3s ease-in-out infinite;
+    transform-origin: bottom center;
+  }
+
+  .pencil-body {
+    width: 6px;
+    height: 40px;
+    background: linear-gradient(
+      to bottom,
+      var(--pencil-body) 0%,
+      var(--pencil-body) 68%,
+      var(--pencil-metal) 68%,
+      var(--pencil-metal) 75%,
+      var(--pencil-tip) 75%
+    );
+    border-radius: 1px 1px 0 0;
+  }
+
+  .pencil-tip {
+    width: 0;
+    height: 0;
+    border-left: 3px solid transparent;
+    border-right: 3px solid transparent;
+    border-top: 8px solid var(--pencil-tip);
+    margin: 0 auto;
+  }
+
+  @keyframes pencil-move {
+    0% {
+      top: 18%;
+      left: 22%;
+      transform: rotate(-30deg);
+    }
+    25% {
+      top: 22%;
+      left: 68%;
+      transform: rotate(5deg);
+    }
+    50% {
+      top: 48%;
+      left: 72%;
+      transform: rotate(15deg);
+    }
+    75% {
+      top: 58%;
+      left: 28%;
+      transform: rotate(-15deg);
+    }
     100% {
-      transform: translate(-50%, -50%) rotate(360deg);
+      top: 18%;
+      left: 22%;
+      transform: rotate(-30deg);
+    }
+  }
+
+  /* 文字 */
+  .text-group {
+    display: flex;
+    align-items: baseline;
+    gap: 0;
+  }
+
+  .loading-text {
+    font-size: 1rem;
+    font-weight: 400;
+    color: var(--ink-light);
+    letter-spacing: 0.15em;
+  }
+
+  .dots {
+    display: inline-flex;
+  }
+
+  .dot {
+    font-size: 1rem;
+    color: var(--ink-light);
+    animation: dot-blink 1.4s ease-in-out infinite;
+  }
+
+  .dot:nth-child(2) {
+    animation-delay: 0.2s;
+  }
+
+  .dot:nth-child(3) {
+    animation-delay: 0.4s;
+  }
+
+  @keyframes dot-blink {
+    0%,
+    20% {
+      opacity: 0;
+    }
+    40% {
+      opacity: 1;
+    }
+    60%,
+    100% {
+      opacity: 0;
     }
   }
 </style>
