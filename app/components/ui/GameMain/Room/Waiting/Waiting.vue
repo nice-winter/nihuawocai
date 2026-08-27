@@ -215,39 +215,9 @@ watch(
   }
 )
 
-// 当锁状态由房主改变时的副作用：若开锁且没有密码，生成随机并进入编辑；若取消则提交空密码
-watch(
-  () => lockedLocal.value,
-  (checked) => {
-    if (!isCurrentRoomOwner.value) return
-
-    // 用户点勾选：进入编辑并生成随机（如果没有现有密码）
-    if (checked) {
-      if (!pendingPassword.value) {
-        pendingPassword.value = shortHash().substring(0, 4)
-      }
-      // 自动进入编辑状态以便用户确认/修改
-      editing.value = true
-      nextTick(() => {
-        passwordUInputRef.value?.inputRef?.focus()
-        passwordUInputRef.value?.inputRef?.select()
-      })
-    } else {
-      // 取消上锁 -> 直接提交空密码
-      pendingPassword.value = ''
-      // 立即通知后端/状态
-      changeRoomPassword(roomInfo.roomNumber, '')
-      editing.value = false
-    }
-  }
-)
-
-// 开始编辑（点击密码文字）
-const startEdit = () => {
-  if (!isCurrentRoomOwner.value) return
-  if (!lockedLocal.value) {
-    // 如果之前没锁，先置为锁定并生成随机密码
-    lockedLocal.value = true
+// 进入编辑模式：生成随机密码（如果没有）+ 聚焦输入框
+const enterEditMode = () => {
+  if (!pendingPassword.value) {
     pendingPassword.value = shortHash().substring(0, 4)
   }
   editing.value = true
@@ -257,24 +227,47 @@ const startEdit = () => {
   })
 }
 
+// 当锁状态由房主改变时的副作用：若开锁且没有密码，生成随机并进入编辑；若取消则提交空密码
+watch(
+  () => lockedLocal.value,
+  (checked) => {
+    if (!isCurrentRoomOwner.value) return
+
+    if (checked) {
+      enterEditMode()
+    } else {
+      // 取消上锁 -> 仅当之前有密码时才通知后端
+      pendingPassword.value = ''
+      editing.value = false
+      if (originalPassword.value) {
+        changeRoomPassword(roomInfo.roomNumber, '')
+      }
+    }
+  }
+)
+
+// 开始编辑（点击密码文字）
+const startEdit = () => {
+  if (!isCurrentRoomOwner.value) return
+  if (!lockedLocal.value) {
+    lockedLocal.value = true // 触发 watcher -> enterEditMode
+  } else {
+    enterEditMode()
+  }
+}
+
 // 确认（blur 或 Enter）
 const onCommit = () => {
   if (!editing.value) return
-  // 隐藏编辑态
   editing.value = false
 
-  // 如果输入为空 => 视为取消上锁
   const val = (pendingPassword.value || '').trim()
   if (!val) {
+    // 空密码 => 取消上锁，由 watcher 统一调用 changeRoomPassword
     lockedLocal.value = false
-    return
-  } else if (val === roomInfo.options.password) {
-    return
-  } else {
-    // 有值：提交密码
+  } else if (val !== roomInfo.options.password) {
+    // 有值且与原密码不同 => 提交
     changeRoomPassword(roomInfo.roomNumber, val)
-    // 同步 original（服务端回来的 roomInfo 应该最终覆盖，但我们先乐观更新 pending）
-    // 保持 lockedLocal true
     lockedLocal.value = true
   }
 }
