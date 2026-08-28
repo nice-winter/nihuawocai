@@ -18,8 +18,8 @@ export default defineWsHandlers({
     return res
   },
   'game:interaction:gift': async ({ msg, user }) => {
-    const { item_type, count } = msg as WebsocketMessage<{
-      item_type: 'flower' | 'egg' | 'slipper'
+    const { item_type } = msg as WebsocketMessage<{
+      item_type: ItemType
       count: number
     }>
 

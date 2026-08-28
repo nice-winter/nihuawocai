@@ -22,34 +22,11 @@ import { useWordManager, type WordItem } from './word'
 import { nanoid } from 'nanoid'
 
 // ----------------------------------------------------------------
-//                          类型定义
+//                          类型定义 (从 shared/types/game 导入)
 // ----------------------------------------------------------------
 
-export type GamePhase =
-  | 'game_start' // 游戏初始化
-  | 'game_round' // 游戏进行回合中
-  | 'game_settlement' // 最终结算 (展示积分结算榜)
-  | 'game_end' // 游戏完全结束 (清理资源)
-
-export type RoundPhase =
-  | 'round_prepare' // 准备/倒计时
-  | 'drawing' // 绘画中
-  | 'interaction' // 互动 (答案展示/送花)
-  | 'round_end' // 回合结束
-
-export interface ItemCounts {
-  flower: number
-  egg: number
-  slipper: number
-}
-
-export interface GiftRecord {
-  from: string // 送道具者 ID
-  to: string // 接收者 ID
-  itemType: 'flower' | 'egg' | 'slipper'
-  count: number
-  timestamp: number // 赠送时间
-}
+// GamePhase, RoundPhase, ItemCounts, GiftRecord, InteractionReason, ItemType, ScoreDelta
+// 已统一定义在 shared/types/game.ts，通过 Nuxt 自动导入可用
 
 export interface GameState {
   // 游戏场次唯一 ID
@@ -457,7 +434,7 @@ const handleDrawingTick = (roomNumber: number, st: GameState, now: number) => {
 const enterInteractionPhase = (
   roomNumber: number,
   st: GameState,
-  reason: 'give_up' | 'bingo_all' | 'timeout' | 'afk' | 'force' | 'leave' = 'timeout'
+  reason: InteractionReason = 'timeout'
 ) => {
   st.roundPhase = 'interaction'
   const waitSeconds = st.config.cycle.time.roundEndWaitTimeSecond
@@ -661,7 +638,7 @@ const handleGuess = (roomNumber: number, id: string, guessContent: string): bool
 /**
  * 赠送道具
  */
-const handleGift = (id: string, itemType: 'flower' | 'egg' | 'slipper') => {
+const handleGift = (id: string, itemType: ItemType) => {
   const player = getPlayer(id)
   if (!player || !checkPlayerIsInRoom(id)) throw new Error('你已离线或当前不在房间内')
 

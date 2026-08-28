@@ -3,16 +3,12 @@ export const useChatStore = defineStore('chat', () => {
 
   wsEventBus.on('ws:message', (msg) => {
     if (msg.type === 'chat:event:say') {
-      const { chatmsg, sender, timestamp } = msg as WebsocketMessage<{
-        chatmsg: string
-        sender: Player
-        timestamp: number
-      }>
+      const event = msg as ServerMessage<'chat:event:say'>
 
       eventBus.emit('chat:event:say', {
-        chatmsg,
-        sender,
-        timestamp
+        chatmsg: event.chatmsg,
+        sender: event.sender,
+        timestamp: event.timestamp
       })
     }
   })

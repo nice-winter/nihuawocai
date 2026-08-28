@@ -173,12 +173,9 @@ export const useSketchpadStore = defineStore('sketchpad', () => {
   }
 
   wsEventBus.on('ws:message', (msg) => {
-    if (msg.type.startsWith('game:event:sketchpad')) {
-      const { command, payload } = msg as WebsocketMessage<{
-        command: 'pencil_switch' | 'pencil_options_update' | 'draw' | 'undo' | 'redo' | 'clear'
-        payload: unknown
-      }>
-      handleSketchpadEvents(command, payload)
+    if (msg.type === 'game:event:sketchpad') {
+      const event = msg as ServerMessage<'game:event:sketchpad'>
+      handleSketchpadEvents(event.command, event.payload)
     }
   })
 

@@ -70,8 +70,8 @@ type Events = {
     seconds: number
   }
   'game:event:state': {
-    game_phase: GameState['gamePhase']
-    round_phase: GameState['roundPhase']
+    game_phase: GamePhase
+    round_phase: RoundPhase
     round_index: number
     total_rounds: number
     drawer: string | null

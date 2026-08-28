@@ -5,20 +5,6 @@ import { usePlayerStore } from './player'
 //                          类型定义
 // ----------------------------------------------------------------
 
-export interface ItemCounts {
-  flower: number
-  egg: number
-  slipper: number
-}
-
-export interface GiftRecord {
-  from: string
-  to: string
-  itemType: 'flower' | 'egg' | 'slipper'
-  count: number
-  timestamp: number
-}
-
 // 结算数据结构
 export interface SettlementData {
   scores: Record<string, number>
@@ -28,8 +14,8 @@ export interface SettlementData {
 }
 
 export interface GameState {
-  gamePhase: 'game_start' | 'game_round' | 'game_settlement' | 'game_end'
-  roundPhase: 'round_prepare' | 'drawing' | 'interaction' | 'round_end'
+  gamePhase: GamePhase
+  roundPhase: RoundPhase
   currentRound: number
   totalRounds: number
   drawer: string | null
@@ -89,20 +75,18 @@ export const useGameStore = defineStore('game', () => {
 
   wsEventBus.on('ws:message', (msg) => {
     if (msg.type.startsWith('game:')) {
-      handleGameEvents(msg)
+      handleGameEvents(msg as ServerEvent)
     }
   })
 
-  const handleGameEvents = (msg: WebsocketMessage<unknown>) => {
+  const handleGameEvents = (msg: ServerEvent) => {
     switch (msg.type) {
       // ==============================
       //       核心生命周期事件
       // ==============================
 
       case 'game:event:start': {
-        const { payload } = msg as WebsocketMessage<{
-          payload: { total_rounds: number }
-        }>
+        const { payload } = msg
 
         state.gamePhase = 'game_start'
         state.totalRounds = payload.total_rounds
@@ -115,14 +99,7 @@ export const useGameStore = defineStore('game', () => {
       }
 
       case 'game:event:settlement': {
-        const { payload } = msg as WebsocketMessage<{
-          payload: {
-            scores: Record<string, number>
-            item_counts: Record<string, ItemCounts>
-            gift_history: GiftRecord[]
-            seconds: number
-          }
-        }>
+        const { payload } = msg
 
         state.gamePhase = 'game_settlement'
         state.settlementData = {
@@ -152,19 +129,7 @@ export const useGameStore = defineStore('game', () => {
 
       case 'game:event:state': {
         // 全量状态同步
-        const { payload } = msg as WebsocketMessage<{
-          payload: {
-            game_phase: GameState['gamePhase']
-            round_phase: GameState['roundPhase']
-            round_index: number
-            total_rounds: number
-            drawer: string | null
-            remaining_seconds: number
-            bingo_players: string[]
-            scores: Record<string, number>
-            item_counts: Record<string, ItemCounts>
-          }
-        }>
+        const { payload } = msg
 
         state.gamePhase = payload.game_phase
         state.roundPhase = payload.round_phase
@@ -179,11 +144,7 @@ export const useGameStore = defineStore('game', () => {
       }
 
       case 'game:event:notice': {
-        const { payload } = msg as WebsocketMessage<{
-          payload: {
-            message: string
-          }
-        }>
+        const { payload } = msg
         // !!! ⚡ UI 广播点 ⚡ !!!
         // Toast.info(payload.message)
         break
@@ -194,13 +155,7 @@ export const useGameStore = defineStore('game', () => {
       // ==============================
 
       case 'game:event:round:prepare': {
-        const { payload } = msg as WebsocketMessage<{
-          payload: {
-            round_index: number
-            drawer: string
-            seconds: number
-          }
-        }>
+        const { payload } = msg
 
         resetRoundState()
         state.gamePhase = 'game_round'
@@ -219,12 +174,7 @@ export const useGameStore = defineStore('game', () => {
       }
 
       case 'game:event:drawing:start': {
-        const { payload } = msg as WebsocketMessage<{
-          payload: {
-            drawer: string
-            seconds: number
-          }
-        }>
+        const { payload } = msg
 
         state.roundPhase = 'drawing'
         state.timeLeft = payload.seconds
@@ -240,14 +190,7 @@ export const useGameStore = defineStore('game', () => {
       }
 
       case 'game:event:interaction:start': {
-        const { payload } = msg as WebsocketMessage<{
-          payload: {
-            answer?: string
-            bingo_players: string[]
-            seconds: number
-            reason: 'give_up' | 'bingo_all' | 'timeout' | 'afk' | 'force' | 'leave'
-          }
-        }>
+        const { payload } = msg
 
         state.roundPhase = 'interaction'
         state.timeLeft = payload.seconds
@@ -270,12 +213,7 @@ export const useGameStore = defineStore('game', () => {
       }
 
       case 'game:event:round:end': {
-        const { payload } = msg as WebsocketMessage<{
-          payload: {
-            round: number
-            scores: Record<string, number>
-          }
-        }>
+        const { payload } = msg
 
         state.roundPhase = 'round_end'
         state.scores = payload.scores
@@ -287,24 +225,14 @@ export const useGameStore = defineStore('game', () => {
       // ==============================
 
       case 'game:event:word': {
-        const { payload } = msg as WebsocketMessage<{
-          payload: {
-            word: string
-            category: string
-          }
-        }>
+        const { payload } = msg
 
         state.currentWord = payload.word
         break
       }
 
       case 'game:event:prompt': {
-        const { payload } = msg as WebsocketMessage<{
-          payload: {
-            content: string
-            index: number
-          }
-        }>
+        const { payload } = msg
 
         state.prompts.push(payload.content)
 
@@ -317,19 +245,7 @@ export const useGameStore = defineStore('game', () => {
       }
 
       case 'game:event:guess:bingo': {
-        const { payload } = msg as WebsocketMessage<{
-          payload: {
-            id: string
-            score_delta: {
-              drawerId: string
-              drawerGain: number
-              guesserId: string
-              guesserGain: number
-            }
-            bingo_players: string[]
-            scores: Record<string, number>
-          }
-        }>
+        const { payload } = msg
 
         state.bingoPlayers = payload.bingo_players
         state.scores = payload.scores
@@ -345,12 +261,7 @@ export const useGameStore = defineStore('game', () => {
       }
 
       case 'game:event:timer:update': {
-        const { payload } = msg as WebsocketMessage<{
-          payload: {
-            seconds: number
-            reason: string
-          }
-        }>
+        const { payload } = msg
 
         state.timeLeft = payload.seconds
 
@@ -363,14 +274,7 @@ export const useGameStore = defineStore('game', () => {
       }
 
       case 'game:event:interaction:gift': {
-        const { payload } = msg as WebsocketMessage<{
-          payload: {
-            from: string
-            to: string
-            item_type: 'flower' | 'egg' | 'slipper'
-            count: number
-          }
-        }>
+        const { payload } = msg
 
         if (!state.itemCounts[payload.to]) {
           state.itemCounts[payload.to] = { flower: 0, egg: 0, slipper: 0 }
@@ -398,7 +302,7 @@ export const useGameStore = defineStore('game', () => {
     })
   }
 
-  const sendGift = async (itemType: 'flower' | 'egg' | 'slipper') => {
+  const sendGift = async (itemType: ItemType) => {
     return await send({
       type: 'game:interaction:gift',
       item_type: itemType,
