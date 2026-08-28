@@ -70,7 +70,7 @@
     "@iconify-json/tabler": "^1.2.38",
     "@playwright/test": "^1.62.1",
     "@types/howler": "^2.2.12",
-    "eslint": "^10.8.0",
+    "eslint": "^9.0.0",
     "husky": "^9.1.7",
     "lint-staged": "^17.3.0",
     "playwright": "^1.62.1",
