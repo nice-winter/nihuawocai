@@ -11,11 +11,11 @@
     </UTooltip>
 
     <UTooltip :delay-duration="0" text="背包" :disable-closing-trigger="true">
-      <li class="size-6 sprites-icon nav-icon package"></li>
+      <li class="size-6 sprites-icon nav-icon package"/>
     </UTooltip>
 
     <UTooltip :delay-duration="0" text="截屏" :disable-closing-trigger="false">
-      <li class="size-6 sprites-icon nav-icon camera" @click="screenshot"></li>
+      <li class="size-6 sprites-icon nav-icon camera" @click="screenshot"/>
     </UTooltip>
 
     <UTooltip
@@ -27,15 +27,15 @@
         class="size-6 sprites-icon nav-icon"
         :class="settingStore.settings.sound ? 'sound-enabled' : 'sound-disabled'"
         @click="settingStore.switchSound"
-      ></li>
+      />
     </UTooltip>
 
     <UTooltip :delay-duration="0" text="帮助" :disable-closing-trigger="true">
-      <li class="size-6 sprites-icon nav-icon help" @click="openWiki"></li>
+      <li class="size-6 sprites-icon nav-icon help" @click="openWiki"/>
     </UTooltip>
 
     <UTooltip :delay-duration="0" text="GitHub" :disable-closing-trigger="true">
-      <li class="size-6 sprites-icon nav-icon github" @click="openRepo"></li>
+      <li class="size-6 sprites-icon nav-icon github" @click="openRepo"/>
     </UTooltip>
   </ul>
 </template>

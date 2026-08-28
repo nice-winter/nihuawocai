@@ -9,7 +9,7 @@
         />
       </div>
 
-      <div class="h-full w-11"></div>
+      <div class="h-full w-11"/>
 
       <div class="flex w-64 flex-col items-center justify-center gap-2 p-2 text-sm2 select-none">
         <span> 第 {{ gameStore.state.currentRound }}/{{ gameStore.state.totalRounds }} 回合 </span>

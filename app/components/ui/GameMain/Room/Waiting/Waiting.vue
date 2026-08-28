@@ -94,14 +94,14 @@
         src="~/assets/cxy.png"
         class="absolute inset-0 z-1 w-56 origin-center pointer-events-none"
         style="transform: scale(1.14); top: 14px; left: -2px"
-      />
+      >
 
       <img
         v-if="roomInfo?.players![i - 1]?.id === '76561198413318292'"
         src="~/assets/ygg1.png"
         class="absolute inset-0 z-1 w-56 origin-center pointer-events-none"
         style="transform: scale(1.2); top: 29px; left: 9px"
-      />
+      >
 
       <span
         v-if="roomInfo?.players![i - 1]?.id === roomInfo?.owner"

@@ -32,7 +32,7 @@
             bottom: `${verifiedIcon.bottom}px`
           }"
           src="~/assets/icons/verified.png"
-        />
+        >
       </template>
 
       <template #content>
@@ -51,7 +51,7 @@
             style="margin: 2px 0 6px 0"
           >
             <template v-if="player?.verification.verified">
-              <img class="inline-block size-3.5 align-middle" src="~/assets/icons/verified.png" />
+              <img class="inline-block size-3.5 align-middle" src="~/assets/icons/verified.png" >
               <span class="truncate text-wood-500 text-shadow-light">
                 {{ player.verification.description }}
               </span>
@@ -87,8 +87,8 @@
 
           <div class="flex items-center justify-between px-3.5 py-2.5 h-12">
             <template v-if="player?.id !== loggedInPlayer?.id">
-              <div class="profile-icon sprites-icon hi size-7"></div>
-              <div class="profile-icon sprites-icon friend size-7"></div>
+              <div class="profile-icon sprites-icon hi size-7"/>
+              <div class="profile-icon sprites-icon friend size-7"/>
             </template>
           </div>
         </div>

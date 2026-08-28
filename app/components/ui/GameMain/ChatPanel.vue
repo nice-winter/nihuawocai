@@ -31,7 +31,7 @@
               alignOffset: -36
             }"
           >
-            <img class="size-5 cursor-pointer" :src="'_nuxt/assets/faces/qq/14/png/14.png'" />
+            <img class="size-5 cursor-pointer" :src="'_nuxt/assets/faces/qq/14/png/14.png'" >
 
             <template #content>
               <UiScrollBar
@@ -50,7 +50,7 @@
                       :key="emoji.name"
                       class="flex size-6 cursor-pointer items-center justify-center rounded hover:bg-tint-dark-500"
                     >
-                      <img :src="emoji.img" class="size-5" @click="selectEmoji(emoji.name)" />
+                      <img :src="emoji.img" class="size-5" @click="selectEmoji(emoji.name)" >
                     </div>
                   </div>
                 </div>

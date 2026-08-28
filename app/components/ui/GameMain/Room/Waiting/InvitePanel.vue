@@ -45,7 +45,7 @@
     </template>
 
     <template #user2>
-      <div class="h-56"></div>
+      <div class="h-56"/>
     </template>
   </UTabs>
 </template>
