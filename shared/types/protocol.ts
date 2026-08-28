@@ -1,14 +1,24 @@
 /**
  * WebSocket 事件协议映射
  *
- * 约定：
- * - ServerEventMap: 服务端 → 客户端的事件（不含 `type` 和 `from`，由框架补充）
- * - ClientEventMap: 客户端 → 服务端的消息体（不含 `type`，由框架补充）
+ * 本文件定义了前后端 WebSocket 通信的完整类型契约，是唯一的类型来源。
  *
- * 使用方式：
- *   import type { ServerMessage, ServerEvent } from '~~/shared/types/ws'
- *   const msg: ServerEvent = ...
- *   if (msg.type === 'game:event:start') msg.payload.total_rounds // ✅ 自动窄化
+ * 三个核心映射：
+ * - ServerEventMap:  服务端 → 客户端的事件推送（广播/定向）
+ * - ClientEventMap:  客户端 → 服务端的请求消息体
+ * - ClientResponseMap: 客户端请求 → 服务端响应的类型映射
+ *
+ * 约定：
+ * - 所有 key 使用 `模块:动作:子动作` 命名（如 `game:event:start`）
+ * - ServerEventMap 的 value 不含 `type` 字段，由消息框架自动附加
+ * - ClientEventMap 的 value 不含 `type` 字段，由 send() 调用时附加
+ *
+ * 添加新事件的步骤：
+ * 1. 在 ServerEventMap 或 ClientEventMap 中添加条目
+ * 2. 后端 handler/service 中发送/返回对应结构
+ * 3. 前端 store 中用 ServerEvent 窄化或 ClientResponse 取响应
+ *
+ * @see shared/types/ws.ts — ServerMessage, ServerEvent, ClientResponse 等辅助类型
  */
 
 import type { GamePhase, RoundPhase, InteractionReason, ItemType, ItemCounts, GiftRecord, ScoreDelta } from './game'
@@ -19,6 +29,23 @@ import type { Room, RoomInfo } from './room'
 //                     Server → Client 事件
 // ================================================================
 
+/**
+ * 服务端推送事件映射
+ *
+ * key: 事件名（`模块:event:动作` 格式）
+ * value: 事件携带的数据结构（不含 type，由框架补充）
+ *
+ * 两种数据结构约定：
+ * - 带 `payload` 的：游戏事件，如 `{ payload: { total_rounds } }`
+ * - 不带 `payload` 的：房间/玩家事件，字段直接平铺在消息上，如 `{ from, room, seat, player }`
+ *
+ * @example
+ * // 前端接收并自动窄化
+ * const event = msg as ServerEvent
+ * if (event.type === 'game:event:start') {
+ *   event.payload.total_rounds // ✅
+ * }
+ */
 export interface ServerEventMap {
   // --- 基础协议 ---
   ping: Record<string, never>
@@ -231,6 +258,16 @@ export interface ServerEventMap {
 //                     Client → Server 消息
 // ================================================================
 
+/**
+ * 客户端发送消息映射
+ *
+ * key: 消息名（`模块:动作` 格式，不带 `event`）
+ * value: 消息体结构（不含 type，由 send() 调用时附加）
+ *
+ * @example
+ * await send({ type: 'room:join', roomNumber: 1234, password: 'xxx' })
+ * await send({ type: 'game:interaction:gift', item_type: 'flower', count: 1 })
+ */
 export interface ClientEventMap {
   // --- 房间操作 ---
   'room:create': {
@@ -265,7 +302,23 @@ export interface ClientEventMap {
 //              Client → Server 请求-响应 (Response)
 // ================================================================
 
-/** 客户端请求 → 服务端响应的类型映射 */
+/**
+ * 客户端请求 → 服务端响应类型映射
+ *
+ * key: 请求名（与 ClientEventMap 对应）
+ * value: 服务端返回的数据结构（不含 _reply/_rid/_t/successful 等传输字段，由 WS_RECV 补充）
+ *
+ * 工作原理：
+ * 1. 客户端 send({ type }) 发起请求
+ * 2. 服务端 handler 返回数据对象
+ * 3. 框架自动包装为 { type, ...data, successful, _reply, _rid, _t } 回传
+ * 4. 客户端用 as ClientResponse<'xxx'> 取到类型安全的响应
+ *
+ * @example
+ * const res = await send({ type: 'room:list_pull' }) as ClientResponse<'room:list_pull'>
+ * res.room_list   // ✅ RoomInfo[]
+ * res.successful  // ✅ boolean (来自 WS_RECV)
+ */
 export interface ClientResponseMap {
   'room:list_pull': {
     room_list: RoomInfo[]
