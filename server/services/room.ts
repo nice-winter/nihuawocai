@@ -808,7 +808,7 @@ const quickMatch = async (id: string) => {
   try {
     await joinRoom(room.roomNumber, id)
   } catch (err) {
-    throw new Error(`加入房间失败：${(err as Error).message}`)
+    throw new Error(`加入房间失败：${(err as Error).message}`, { cause: err })
   }
 
   return room.roomNumber

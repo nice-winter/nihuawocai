@@ -17,13 +17,7 @@ export const useBubble = (parentTarget: ParentTarget) => {
   onMounted(() => {
     bubbleRegistry.setAppContext(instance.appContext)
 
-    let element: HTMLElement | string | null | undefined = null
-
-    if (isRef(parentTarget)) {
-      element = parentTarget.value
-    } else {
-      element = parentTarget
-    }
+    const element = isRef(parentTarget) ? parentTarget.value : parentTarget
 
     if (element) {
       bubbleRegistry.setParent(element)

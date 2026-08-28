@@ -23,7 +23,7 @@ export interface BaseModalProps {
 const { parent, closeOnEsc = false, closeOnMask = false } = defineProps<BaseModalProps>()
 
 const visible = ref(false)
-const resolveFn = ref<((value: any) => void) | null>(null)
+const resolveFn = ref<((value: unknown) => void) | null>(null)
 const rejectFn = ref<(() => void) | null>(null)
 const pressedOnMask = ref(false)
 const targetEl = computed(() => parent ?? document.body)
@@ -31,7 +31,7 @@ const targetEl = computed(() => parent ?? document.body)
 const canClose = (behavior: boolean | 'reject'): boolean => behavior === true || behavior === 'reject'
 const shouldReject = (behavior: boolean | 'reject'): boolean => behavior === 'reject'
 
-const close = (value?: any) => {
+const close = (value?: unknown) => {
   visible.value = false
   resolveFn.value?.(value)
 }
@@ -43,7 +43,8 @@ const cancel = () => {
 
 const onEsc = () => {
   if (!visible.value || !canClose(closeOnEsc)) return
-  shouldReject(closeOnEsc) ? cancel() : close()
+  if (shouldReject(closeOnEsc)) cancel()
+  else close()
 }
 
 const onMaskDown = (e: MouseEvent) => {
@@ -57,13 +58,14 @@ const onMaskUp = (e: MouseEvent) => {
   }
   pressedOnMask.value = false
   if (!canClose(closeOnMask)) return
-  shouldReject(closeOnMask) ? cancel() : close()
+  if (shouldReject(closeOnMask)) cancel()
+  else close()
 }
 
-const open = (): Promise<any> => {
+const open = <T = void>(): Promise<T> => {
   visible.value = true
-  return new Promise<any>((resolve, reject) => {
-    resolveFn.value = resolve
+  return new Promise<T>((resolve, reject) => {
+    resolveFn.value = resolve as (value: unknown) => void
     rejectFn.value = reject
   })
 }

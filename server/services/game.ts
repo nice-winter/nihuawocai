@@ -433,13 +433,9 @@ const handleDrawingTick = (roomNumber: number, st: GameState, now: number) => {
     const nextPromptTime = promptTimes[st.revealedPrompts]!
     if (elapsedSeconds >= nextPromptTime) {
       const promptIndex = st.revealedPrompts
-      let promptContent = ''
-      if (promptIndex === 0) {
-        promptContent = `${st.currentWord!.word.length}个字`
-      } else {
-        const wordPromptIdx = promptIndex - 1
-        promptContent = st.currentWord!.prompts[wordPromptIdx] || '没有提示了'
-      }
+      const promptContent = promptIndex === 0
+        ? `${st.currentWord!.word.length}个字`
+        : st.currentWord!.prompts[promptIndex - 1] || '没有提示了'
 
       sendToRoom(
         {
