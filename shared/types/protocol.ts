@@ -270,7 +270,19 @@ export interface ClientResponseMap {
   'room:list_pull': {
     room_list: RoomInfo[]
   }
+  'room:invite': {
+    from: Player
+    to: Player
+    roomNumber: number
+    password: string
+    duration: number
+    expAt: number
+  }
   'player:lobby_players_pull': {
     lobby_players: Player[]
+  }
+  'player:get_profile': {
+    id: string
+    profile: Player
   }
 }

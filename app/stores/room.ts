@@ -394,14 +394,7 @@ export const useRoomStore = defineStore('room', () => {
     })
 
     if (typeof (msg as WebsocketMessage<WS_RECV>).successful === 'undefined') return
-    const { to, expAt } = msg as unknown as WebsocketMessage<{
-      from: Player
-      to: Player
-      roomNumber: number
-      password: string
-      duration: number
-      expAt: number
-    }>
+    const { to, expAt } = msg as ClientResponse<'room:invite'>
 
     inviteRecord.set(to.id, expAt)
 

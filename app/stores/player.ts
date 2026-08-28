@@ -67,7 +67,7 @@ export const usePlayerStore = defineStore('player', () => {
     const { id, profile } = (await send({
       type: 'player:get_profile',
       id: playerId
-    })) as WebsocketMessage<{ id: string; profile: Player }>
+    })) as ClientResponse<'player:get_profile'>
 
     return { id, profile }
   }
