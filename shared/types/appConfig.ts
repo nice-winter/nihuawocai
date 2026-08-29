@@ -2,6 +2,13 @@ import type { LevelInfo } from '~~/shared/types/level'
 import type { Gender } from '~~/shared/types/gender'
 
 export interface AppConfig {
+  /** 后台管理配置 */
+  admin: {
+    /** 超级管理员用户 ID（只有一个，拥有所有权限） */
+    superAdminId: string
+    /** 管理员用户 ID 列表（权限一致，可被超级管理员管理） */
+    adminIds: string[]
+  }
   /** 应用名称 */
   name: string
   /** 公告列表 */
