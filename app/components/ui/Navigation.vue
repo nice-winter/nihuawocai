@@ -1,6 +1,6 @@
 <template>
   <ul class="h-6 flex gap-3 items-center">
-    <UTooltip :delay-duration="0" text="消息" :disable-closing-trigger="true">
+    <UTooltip :delay-duration="0" text="消息" :disable-closing-trigger="true" :ui="{ content: 'game-tooltip' }">
       <li class="relative size-6 sprites-icon nav-icon hi">
         <span
           v-if="hi > 0"
@@ -10,11 +10,11 @@
       </li>
     </UTooltip>
 
-    <UTooltip :delay-duration="0" text="背包" :disable-closing-trigger="true">
+    <UTooltip :delay-duration="0" text="背包" :disable-closing-trigger="true" :ui="{ content: 'game-tooltip' }">
       <li class="size-6 sprites-icon nav-icon package"/>
     </UTooltip>
 
-    <UTooltip :delay-duration="0" text="截屏" :disable-closing-trigger="false">
+    <UTooltip :delay-duration="0" text="截屏" :disable-closing-trigger="false" :ui="{ content: 'game-tooltip' }">
       <li class="size-6 sprites-icon nav-icon camera" @click="screenshot"/>
     </UTooltip>
 
@@ -22,6 +22,7 @@
       :delay-duration="0"
       :text="`音效：${settingStore.settings.sound ? '开启' : '关闭'}`"
       :disable-closing-trigger="true"
+      :ui="{ content: 'game-tooltip' }"
     >
       <li
         class="size-6 sprites-icon nav-icon"
@@ -30,11 +31,11 @@
       />
     </UTooltip>
 
-    <UTooltip :delay-duration="0" text="帮助" :disable-closing-trigger="true">
+    <UTooltip :delay-duration="0" text="帮助" :disable-closing-trigger="true" :ui="{ content: 'game-tooltip' }">
       <li class="size-6 sprites-icon nav-icon help" @click="openWiki"/>
     </UTooltip>
 
-    <UTooltip :delay-duration="0" text="GitHub" :disable-closing-trigger="true">
+    <UTooltip :delay-duration="0" text="GitHub" :disable-closing-trigger="true" :ui="{ content: 'game-tooltip' }">
       <li class="size-6 sprites-icon nav-icon github" @click="openRepo"/>
     </UTooltip>
   </ul>

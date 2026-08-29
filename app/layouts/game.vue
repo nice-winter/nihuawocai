@@ -16,4 +16,9 @@
     linear-gradient(90deg, var(--line-color) 1px, transparent 1px);
   background-size: var(--size) var(--size);
 }
+
+/* 游戏内文本色覆盖 @nuxt/ui 默认色 */
+:deep(*) {
+  --ui-text: var(--color-text-900);
+}
 </style>

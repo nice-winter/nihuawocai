@@ -13,6 +13,7 @@
         collisionBoundary: panelDom,
         prioritizePosition: true
       }"
+      :ui="{ content: 'game-popover' }"
     >
       <template #anchor>
         <UAvatar

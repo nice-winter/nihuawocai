@@ -30,6 +30,7 @@
               sideOffset: 12,
               alignOffset: -36
             }"
+            :ui="{ content: 'game-popover' }"
           >
             <img class="size-5 cursor-pointer" :src="'_nuxt/assets/faces/qq/14/png/14.png'" >
 

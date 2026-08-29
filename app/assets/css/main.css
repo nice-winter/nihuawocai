@@ -137,10 +137,6 @@
 }
 
 /* ===== Global Styles ===== */
-:root {
-  --ui-text: var(--color-text-900);
-}
-
 img {
   user-select: none;
   -webkit-user-drag: none;

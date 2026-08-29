@@ -3,16 +3,6 @@ export default defineAppConfig({
   ui: {
     colors: {
       primary: 'blue'
-    },
-    popover: {
-      slots: {
-        content: 'game-popover'
-      }
-    },
-    tooltip: {
-      slots: {
-        content: 'game-tooltip'
-      }
     }
   }
 })
