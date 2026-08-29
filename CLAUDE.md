@@ -12,34 +12,20 @@
 <type>(<scope>): <subject>
 ```
 
-**Type：**
-
-- `feat`: 新功能
-- `fix`: 修复 bug
-- `refactor`: 重构（不影响功能）
-- `style`: 样式/代码格式
-- `chore`: 构建/工具/配置
-- `perf`: 性能优化
-- `docs`: 文档
-- `test`: 测试
+**Type：** `feat` / `fix` / `refactor` / `style` / `chore` / `perf` / `docs` / `test`
 
 **Scope 清单：**
 
-- `ui`: 通用 UI 组件 (app/components/ui)
-- `modal`: 弹窗相关 (app/components/modal)
-- `ws`: WebSocket 相关 (server/ws)
-- `store`: Pinia 状态管理 (app/stores)
-- `composable`: 组合式函数 (app/composables)
-- `page`: 页面路由 (app/pages)
-- `api`: API 接口 (server/api)
-- `service`: 业务服务 (server/services)
-- `i18n`: 国际化
-- `config`: 配置文件
-- `deps`: 依赖更新
-- `docker`: Docker 相关
-- `types`: 类型定义
-- `style`: 样式/动画
-- `assets`: 静态资源
+| Scope        | 说明           | Scope     | 说明        |
+| ------------ | -------------- | --------- | ----------- |
+| `ui`         | 通用 UI 组件   | `api`     | API 接口    |
+| `modal`      | 弹窗相关       | `service` | 业务服务    |
+| `ws`         | WebSocket 相关 | `i18n`    | 国际化      |
+| `store`      | Pinia 状态管理 | `config`  | 配置文件    |
+| `composable` | 组合式函数     | `deps`    | 依赖更新    |
+| `page`       | 页面路由       | `docker`  | Docker 相关 |
+| `types`      | 类型定义       | `style`   | 样式/动画   |
+| `assets`     | 静态资源       |           |             |
 
 **规则：**
 
@@ -47,9 +33,16 @@
 2. 如果改动跨多个模块，可以省略 scope 或用主要改动模块
 3. subject 用中文，简洁明了，不超过 50 字
 
-## TypeScript 类型
+## TypeScript
 
-- 类型问题尽量用简单方式去处理，不要将类型推导链搞得过于复杂。
-- 能让 Vue 自动推断的就不要手动标注（如 `useTemplateRef` 不带泛型参数）。
-- 优先用运行时可行的方案，而非在类型体操上死磕。
-- `shared/utils/mockdata.ts` 的类型错误暂时忽略（缺少 `id`, `config`, `options` 等字段），后续统一处理 mock 数据。
+- 类型问题尽量用简单方式去处理，不要将类型推导链搞得过于复杂
+- 能让 Vue 自动推断的就不要手动标注（如 `useTemplateRef` 不带泛型参数）
+- 优先用运行时可行的方案，而非在类型体操上死磕
+- `shared/utils/mockdata.ts` 的类型错误暂时忽略，后续统一处理 mock 数据
+
+## 项目架构参考
+
+需要理解项目架构时，查阅以下文档：
+
+- **Shared 类型结构** → [docs/shared-types.md](docs/shared-types.md)
+- **服务端架构** → [docs/server-architecture.md](docs/server-architecture.md)
