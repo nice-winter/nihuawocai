@@ -29,27 +29,24 @@ export const usePlayerStore = defineStore('player', () => {
   }
 
   wsEventBus.on('ws:message', (msg) => {
-    if (msg.type === 'player:event:logged_in') {
-      const { player_info } = msg as WebsocketMessage<{ player_info: LoggedInPlayer }>
-      loggedInPlayer.value = player_info
-    }
+    if (!msg.type.startsWith('player:')) return
 
-    if (msg.type === 'player:event:state_update') {
-      const { id, state } = msg as WebsocketMessage<PlayerState>
-      if (loggedInPlayer.value && id === loggedInPlayer.value.id) {
-        loggedInPlayer.value.state = state
-      }
-    }
-
-    // 大厅空闲玩家相关
-    if (msg.type === 'player:event:lobby_players_add') {
-      const { player } = msg as WebsocketMessage<{ player: Player }>
-      lobbyPlayers.set(player.id, player)
-    }
-
-    if (msg.type === 'player:event:lobby_players_remove') {
-      const { player } = msg as WebsocketMessage<{ player: Player }>
-      lobbyPlayers.delete(player.id)
+    const event = msg as ServerEvent
+    switch (event.type) {
+      case 'player:event:logged_in':
+        loggedInPlayer.value = event.player_info
+        break
+      case 'player:event:state_update':
+        if (loggedInPlayer.value && event.id === loggedInPlayer.value.id) {
+          loggedInPlayer.value.state = event.state
+        }
+        break
+      case 'player:event:lobby_players_add':
+        lobbyPlayers.set(event.player.id, event.player)
+        break
+      case 'player:event:lobby_players_remove':
+        lobbyPlayers.delete(event.player.id)
+        break
     }
   })
 
@@ -60,7 +57,7 @@ export const usePlayerStore = defineStore('player', () => {
   const getLobbyPlayers = async () => {
     const { lobby_players } = (await send({
       type: 'player:lobby_players_pull'
-    })) as WebsocketMessage<{ lobby_players: Player[] }>
+    })) as ClientResponse<'player:lobby_players_pull'>
 
     lobbyPlayers.clear()
     lobby_players.forEach((p) => lobbyPlayers.set(p.id, p))
@@ -70,7 +67,7 @@ export const usePlayerStore = defineStore('player', () => {
     const { id, profile } = (await send({
       type: 'player:get_profile',
       id: playerId
-    })) as WebsocketMessage<{ id: string; profile: Player }>
+    })) as ClientResponse<'player:get_profile'>
 
     return { id, profile }
   }
