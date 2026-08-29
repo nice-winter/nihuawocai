@@ -18,7 +18,7 @@
 }
 
 /* 游戏内文本色覆盖 @nuxt/ui 默认色 */
-:deep(*) {
+:global(:root) {
   --ui-text: var(--color-text-900);
 }
 </style>
