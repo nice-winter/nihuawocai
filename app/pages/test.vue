@@ -24,6 +24,9 @@
       <UButton @click="() => flower(114514)">送花114514朵</UButton>
     </div>
     <div class="flex gap-4">
+      <UButton @click="() => slipper()">扔拖鞋</UButton>
+    </div>
+    <div class="flex gap-4">
       <UButton @click="() => countdown()">倒计时</UButton>
     </div>
     <div class="flex gap-4">
@@ -44,6 +47,10 @@ const { playSound } = useSound()
 
 const flower = (count?: number) => {
   throwerRef.value?.throwFlower(count)
+}
+
+const slipper = () => {
+  throwerRef.value?.throwSlipper()
 }
 
 const text = `wkmsadkw<a href="111">222</a>啊啊啊{:30:}啊啊啊啊啊啊啊啊啊啊{:💩:}{:19:}？`

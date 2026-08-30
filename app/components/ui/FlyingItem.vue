@@ -11,9 +11,10 @@ interface Props {
   duration: number
   width: number
   height: number
+  zIndex?: number
 }
 
-const { id, svg, keyframes, duration, width, height } = defineProps<Props>()
+const { id, svg, keyframes, duration, width, height, zIndex = 10 } = defineProps<Props>()
 
 const emit = defineEmits<{
   (e: 'done', id: number): void
@@ -36,7 +37,8 @@ onMounted(() => {
     class="flying-item"
     :style="{
       width: width + 'px',
-      height: height + 'px'
+      height: height + 'px',
+      zIndex: zIndex
     }"
     v-html="svg"
   />
