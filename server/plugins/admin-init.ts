@@ -5,6 +5,9 @@ import { generateInitSecret } from '~~/server/utils/admin'
 export default defineNitroPlugin(async () => {
   const logger = consola.withTag('Admin Init')
 
+  // 延迟执行，确保存储已加载
+  await new Promise((resolve) => setTimeout(resolve, 1000))
+
   try {
     const appConfig = await getAppConfig()
 
@@ -18,7 +21,6 @@ export default defineNitroPlugin(async () => {
     if (!appConfig.admin?.superAdminId) {
       const secret = generateInitSecret()
 
-      // 使用 consola.box 输出 secret（如果可用），否则使用普通输出
       logger.log('')
       logger.log('┌─────────────────────────────────────────────────────┐')
       logger.log('│  🔐 Admin Init Secret                               │')
@@ -26,10 +28,6 @@ export default defineNitroPlugin(async () => {
       logger.log('│  访问 /admin 进行超级管理员初始化                  │')
       logger.log('└─────────────────────────────────────────────────────┘')
       logger.log('')
-
-      // TODO: 预留 secret 过期机制
-      // 可以在这里设置定时器，在一定时间后自动清除 secret
-      // setTimeout(() => { clearInitSecret() }, EXPIRE_TIME)
     } else {
       logger.info('超级管理员已设置，跳过初始化')
     }
