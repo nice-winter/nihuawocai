@@ -86,16 +86,22 @@ const inviteRecord = new Map<string, { expAt: number }>()
 const broadcastRecord = new Map<number, { expAt: number }>()
 
 // ---------------------- Player Events ----------------------
-// playerEventBus.on('player:connect', ({ player }) => {
-//   // @TODO: 暂时没用上
-// })
+// 延迟初始化事件监听，避免循环依赖
+const initPlayerEvents = () => {
+  // playerEventBus.on('player:connect', ({ player }) => {
+  //   // @TODO: 暂时没用上
+  // })
 
-// 玩家离线时，从他所在的房间中移除他
-playerEventBus.on('player:beforeDisconnect', ({ player }) => {
-  if (checkPlayerIsInRoom(player.id)) {
-    removeRoomPlayer(player.state.roomNumber!, player.id)
-  }
-})
+  // 玩家离线时，从他所在的房间中移除他
+  playerEventBus.on('player:beforeDisconnect', ({ player }) => {
+    if (checkPlayerIsInRoom(player.id)) {
+      removeRoomPlayer(player.state.roomNumber!, player.id)
+    }
+  })
+}
+
+// 延迟执行，确保所有模块都已加载
+setTimeout(initPlayerEvents, 0)
 
 // ------------------------ Actions ------------------------
 /**
