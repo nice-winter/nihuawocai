@@ -39,13 +39,7 @@ const timeAgo = formatTimeAgo(new Date(2021, 0, 1)) // string
 ```ts
 export type UseTimeAgoFormatter<T = number> = (value: T, isPast: boolean) => string
 export type UseTimeAgoUnitNamesDefault =
-  | 'second'
-  | 'minute'
-  | 'hour'
-  | 'day'
-  | 'week'
-  | 'month'
-  | 'year'
+  'second' | 'minute' | 'hour' | 'day' | 'week' | 'month' | 'year'
 export interface UseTimeAgoMessagesBuiltIn {
   justNow: string
   past: string | UseTimeAgoFormatter<string>

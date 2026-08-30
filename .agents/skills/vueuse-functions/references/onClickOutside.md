@@ -90,14 +90,7 @@ onClickOutside(target, handler, { detectIframe: true })
 
 ```vue
 <template>
-  <OnClickOutside
-    :options="{
-      ignore: [
-        /* ... */
-      ]
-    }"
-    @trigger="count++"
-  >
+  <OnClickOutside :options="{ ignore: [/* ... */] }" @trigger="count++">
     <div>Click Outside of Me</div>
   </OnClickOutside>
 </template>

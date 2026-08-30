@@ -67,8 +67,7 @@ export type UseTitleOptionsBase = {
    * @returns restored title
    */
   restoreOnUnmount?:
-    | false
-    | ((originalTitle: string, currentTitle: string) => string | null | undefined)
+    false | ((originalTitle: string, currentTitle: string) => string | null | undefined)
 } & (
   | {
       /**

@@ -22,7 +22,7 @@ This skill is a decision-and-implementation guide for VueUse composables in Vue.
   - `AUTO`: Use automatically when applicable.
   - `EXTERNAL`: Use only if the user already installed the required external dependency; otherwise reconsider, and ask to install only if truly needed.
   - `EXPLICIT_ONLY`: Use only when explicitly requested by the user.
-    > _NOTE_ User instructions in the prompt or `AGENTS.md` may override a function’s default `Invocation` rule.
+  > _NOTE_ User instructions in the prompt or `AGENTS.md` may override a function’s default `Invocation` rule.
 
 ## Functions
 

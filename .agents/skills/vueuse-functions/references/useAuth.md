@@ -15,9 +15,7 @@ import { useAuth } from '@vueuse/firebase/useAuth'
 import { initializeApp } from 'firebase/app'
 import { getAuth, GoogleAuthProvider, signInWithPopup } from 'firebase/auth'
 
-const app = initializeApp({
-  /* config */
-})
+const app = initializeApp({/* config */})
 const auth = getAuth(app)
 const { isAuthenticated, user } = useAuth(auth)
 
