@@ -36,5 +36,8 @@ jobs:
       - name: Build
         run: pnpm build
 
-      - name: Test
-        run: echo "Tests passed (placeholder)"
+      - name: Unit Test
+        run: pnpm vitest run --project unit
+
+      - name: Nuxt Test
+        run: pnpm vitest run --project nuxt
