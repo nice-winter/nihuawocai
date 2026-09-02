@@ -11,10 +11,7 @@
 <p align="center">
   <a href="https://github.com/nice-winter/nihuawocai/actions/workflows/ci.yml"><img src="https://github.com/nice-winter/nihuawocai/actions/workflows/ci.yml/badge.svg" alt="CI" /></a>
   <img src="https://img.shields.io/badge/Nuxt-4-00DC82?logo=nuxt&logoColor=white" alt="Nuxt 4" />
-  <img src="https://img.shields.io/badge/Vue-3-4FC08D?logo=vue.js&logoColor=white" alt="Vue 3" />
-  <img src="https://img.shields.io/badge/TypeScript-6-3178C6?logo=typescript&logoColor=white" alt="TypeScript" />
-  <img src="https://img.shields.io/badge/pnpm-11-F69220?logo=pnpm&logoColor=white" alt="pnpm" />
-  <img src="https://img.shields.io/badge/Fabric.js-7-CC2936?logo=data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZmlsbD0iI0ZGRiIgZD0iTTEyIDJMMiA3bDEwIDUgMTAtNUwyIDd6Ii8+PC9zdmc+" alt="Fabric.js" />
+  <img src="https://img.shields.io/badge/@nuxt/ui-3-00DC82?logo=nuxt&logoColor=white" alt="@nuxt/ui" />
   <a href="LICENSE"><img src="https://img.shields.io/github/license/nice-winter/nihuawocai" alt="License" /></a>
 </p>
 
@@ -26,12 +23,36 @@
 
 ## ✨ 功能特性
 
-- 🎨 **实时对战** — 多人在线同房竞技，一人作画众人猜
-- 🖌️ **画板工具** — 丰富的画笔、颜色、橡皮擦等绘图工具
-- 🏠 **房间系统** — 创建/加入房间，支持自定义游戏规则
-- 💬 **实时聊天** — WebSocket 驱动的即时消息，猜词互动零延迟
-- 🌍 **国际化** — 内置 i18n 支持，轻松切换多语言
-- 📱 **响应式** — 适配桌面端与移动端
+本项目为新浪微博小游戏「你画我猜」的社区复刻版，以下为原版功能对标情况：
+
+| 分类     | 原版功能           | 实现状态      | 与原版差异                                       |
+| -------- | ------------------ | ------------- | ------------------------------------------------ |
+| **系统** | 星座区服           | 🔨 开发中     | —                                                |
+|          | Hi私信             | 🔨 开发中     | —                                                |
+|          | 好友               | 🔨 开发中     | —                                                |
+|          | 背包               | 🔨 开发中     | —                                                |
+|          | 排行榜             | 🔨 开发中     | —                                                |
+|          | 资料卡             | ✅ 已实现     | 会显示玩家认证说明                               |
+|          | 截屏分享           | ⚠️ 已部分实现 | 仅支持保存为 PNG 图片到本地，暂无在线分享功能    |
+|          | 词库               | ✅ 已实现     | 支持玩家创建自定义词库                           |
+|          | 聊天表情           | ✅ 已实现     | 因历史资料丢失，使用 QQ 小黄脸表情替代           |
+|          | 换词卡/加时卡      | 🔨 开发中     | —                                                |
+| **大厅** | 房间列表           | ✅ 已实现     | —                                                |
+|          | 大厅聊天           | ✅ 已实现     | —                                                |
+|          | 喇叭               | ❌ 暂无计划   | —                                                |
+| **房间** | 创建房间           | ✅ 已实现     | 允许更详细的房间设置（可自定义词库，计分规则等） |
+|          | 密码               | ✅ 已实现     | 允许设置复杂字符密码                             |
+|          | 邀请空闲玩家       | ✅ 已实现     | —                                                |
+|          | 广播               | ✅ 已实现     | —                                                |
+|          | 头像框             | ✅ 已实现     | —                                                |
+|          | 旁观               | ⚠️ 已部分实现 | 可自定义旁观人数上限                             |
+| **画板** | 基础画板           | ✅ 已实现     | —                                                |
+|          | 撤销/重做/一键清除 | ✅ 已实现     | —                                                |
+|          | 笔触               | ⚠️ 已部分实现 | 压感、真丝等原版高级笔触尚未实现                 |
+|          | 画笔皮肤           | 🔨 开发中     | —                                                |
+|          | 互动道具           | ⚠️ 已部分实现 | 鸡蛋道具尚未完成                                 |
+
+> **状态说明：** ✅ 已实现 · 🔨 开发中 · ⚠️ 已部分实现 · ❌ 暂无计划
 
 ## 📸 游戏截图
 
@@ -51,40 +72,55 @@
 
 ## 🛠️ 技术栈
 
-| 层级         | 技术                                                                     |
-| ------------ | ------------------------------------------------------------------------ |
-| **框架**     | [Nuxt 4](https://nuxt.com) · [Vue 3](https://vuejs.org)                  |
-| **语言**     | [TypeScript](https://www.typescriptlang.org)                             |
-| **状态管理** | [Pinia](https://pinia.vuejs.org)                                         |
-| **画布**     | [Fabric.js](http://fabricjs.com)                                         |
-| **实时通信** | WebSocket (Nitro 原生支持)                                               |
-| **样式**     | [Nuxt UI](https://ui.nuxt.com) · [Tailwind CSS](https://tailwindcss.com) |
-| **国际化**   | [@nuxtjs/i18n](https://i18n.nuxtjs.org)                                  |
-| **数据库**   | [better-sqlite3](https://github.com/WiseLibs/better-sqlite3)             |
-| **包管理**   | [pnpm](https://pnpm.io)                                                  |
-| **容器化**   | Docker · Docker Compose                                                  |
-| **代码规范** | ESLint · Prettier · Husky + lint-staged                                  |
+| 层级         | 技术                                                                                    |
+| ------------ | --------------------------------------------------------------------------------------- |
+| **框架**     | [Nuxt 4](https://nuxt.com) · [Vue 3](https://vuejs.org)                                 |
+| **语言**     | [TypeScript](https://www.typescriptlang.org)                                            |
+| **状态管理** | [Pinia](https://pinia.vuejs.org)                                                        |
+| **画布**     | [Fabric.js](http://fabricjs.com)                                                        |
+| **实时通信** | WebSocket (Nitro 原生支持)                                                              |
+| **样式**     | [Nuxt UI](https://ui.nuxt.com) · Tailwind CSS                                           |
+| **国际化**   | [@nuxtjs/i18n](https://i18n.nuxtjs.org)                                                 |
+| **存储**     | [db0](https://github.com/unjs/db0) · [unstorage](https://unstorage.io) · better-sqlite3 |
+| **数据验证** | [Zod](https://zod.dev)                                                                  |
+| **音效**     | [Howler.js](https://howlerjs.com)                                                       |
+| **截屏**     | [@zumer/snapdom](https://github.com/nice-winter/nihuawocai)                             |
+| **包管理**   | [pnpm](https://pnpm.io)                                                                 |
+| **容器化**   | Docker · Docker Compose                                                                 |
+| **测试**     | [Vitest](https://vitest.dev) · [Playwright](https://playwright.dev)                     |
+| **代码规范** | ESLint · Prettier · Husky + lint-staged                                                 |
 
 ## 📁 项目结构
 
 ```
 nihuawocai/
 ├── app/                  # 前端应用
+│   ├── animations/       # 动画
+│   ├── assets/           # 静态资源（图标、音效、字体、样式）
 │   ├── components/       # Vue 组件
 │   ├── composables/      # 组合式函数
 │   ├── layouts/          # 布局组件
+│   ├── middleware/       # 中间件
 │   ├── pages/            # 页面路由
 │   ├── stores/           # Pinia 状态管理
 │   └── workers/          # Web Workers
 ├── server/               # 后端服务 (Nitro)
 │   ├── api/              # API 接口
-│   ├── ws/               # WebSocket 处理
+│   ├── middleware/       # 中间件
+│   ├── plugins/          # 插件
+│   ├── routes/           # 路由
 │   ├── services/         # 业务服务层
-│   └── utils/            # 工具函数
-├── shared/               # 前后端共享类型
+│   ├── utils/            # 工具函数
+│   └── ws/               # WebSocket 处理
+├── shared/               # 前后端共享
+│   ├── types/            # 共享类型
+│   └── utils/            # 共享工具函数
 ├── docs/                 # 项目文档
 ├── i18n/                 # 国际化资源
-└── public/               # 静态资源
+│   └── locales/          # 语言包
+├── public/               # 静态资源
+├── test/                 # 测试
+└── tools/                # 工具脚本
 ```
 
 ## 🚀 快速开始
@@ -110,6 +146,8 @@ pnpm dev
 
 访问 `http://localhost:3000` 即可。
 
+> **开发模式说明：** 为便于调试，开发环境下的存储层会使用 `unstorage` 的文件系统驱动（数据保存在 `.data/` 目录），生产环境则使用 SQLite。
+
 ### Docker 部署
 
 ```bash
@@ -121,18 +159,6 @@ docker compose up -d
 
 - **[Shared 类型结构](docs/shared-types.md)** — 前后端共享的 TypeScript 类型定义
 - **[服务端架构](docs/server-architecture.md)** — 服务端技术架构与设计说明
-
-## 🤝 参与贡献
-
-欢迎提交 Issue 和 Pull Request！
-
-1. Fork 本仓库
-2. 创建特性分支：`git checkout -b feat/my-feature`
-3. 提交改动：`git commit -m 'feat(scope): 添加某个功能'`
-4. 推送分支：`git push origin feat/my-feature`
-5. 提交 Pull Request
-
-> 提交前请确保通过 `pnpm lint` 检查。
 
 ## 💬 作者的碎碎念
 
