@@ -13,16 +13,20 @@ const data = ref([
   { name: 'Bob', email: 'bob@example.com', role: 'Editor' }
 ])
 
-const columns: TableColumn<typeof data.value[number]>[] = [{
-  accessorKey: 'name',
-  header: 'Name'
-}, {
-  accessorKey: 'email',
-  header: 'Email'
-}, {
-  accessorKey: 'role',
-  header: 'Role'
-}]
+const columns: TableColumn<(typeof data.value)[number]>[] = [
+  {
+    accessorKey: 'name',
+    header: 'Name'
+  },
+  {
+    accessorKey: 'email',
+    header: 'Email'
+  },
+  {
+    accessorKey: 'role',
+    header: 'Role'
+  }
+]
 </script>
 
 <template>
@@ -53,8 +57,9 @@ const columns: TableColumn[] = [
 ]
 
 const filteredRows = computed(() => {
-  return rows.value.filter(row => {
-    const matchesSearch = !search.value || row.name.toLowerCase().includes(search.value.toLowerCase())
+  return rows.value.filter((row) => {
+    const matchesSearch =
+      !search.value || row.name.toLowerCase().includes(search.value.toLowerCase())
     const matchesRole = roleFilter.value === 'All' || row.role === roleFilter.value
     return matchesSearch && matchesRole
   })
@@ -79,14 +84,25 @@ const filteredRows = computed(() => {
     <template #body>
       <UTable :data="filteredRows" :columns="columns">
         <template #status-cell="{ row }">
-          <UBadge :color="row.original.status === 'Active' ? 'success' : 'neutral'" :label="row.original.status" variant="subtle" />
+          <UBadge
+            :color="row.original.status === 'Active' ? 'success' : 'neutral'"
+            :label="row.original.status"
+            variant="subtle"
+          />
         </template>
 
         <template #actions-cell="{ row }">
           <UDropdownMenu
             :items="[
               [{ label: 'Edit', icon: 'i-lucide-pencil', onSelect: () => edit(row.original) }],
-              [{ label: 'Delete', icon: 'i-lucide-trash', color: 'error', onSelect: () => remove(row.original) }]
+              [
+                {
+                  label: 'Delete',
+                  icon: 'i-lucide-trash',
+                  color: 'error',
+                  onSelect: () => remove(row.original)
+                }
+              ]
             ]"
           >
             <UButton icon="i-lucide-ellipsis" color="neutral" variant="ghost" />
@@ -125,20 +141,26 @@ import { h } from 'vue'
 
 const UCheckbox = resolveComponent('UCheckbox')
 
-const columns: TableColumn[] = [{
-  id: 'select',
-  header: ({ table }) => h(UCheckbox, {
-    'modelValue': table.getIsSomePageRowsSelected() ? 'indeterminate' : table.getIsAllPageRowsSelected(),
-    'onUpdate:modelValue': (value: boolean | 'indeterminate') => table.toggleAllPageRowsSelected(!!value),
-    'aria-label': 'Select all'
-  }),
-  cell: ({ row }) => h(UCheckbox, {
-    'modelValue': row.getIsSelected(),
-    'onUpdate:modelValue': (value: boolean | 'indeterminate') => row.toggleSelected(!!value),
-    'aria-label': 'Select row'
-  })
-},
-// ... other columns
+const columns: TableColumn[] = [
+  {
+    id: 'select',
+    header: ({ table }) =>
+      h(UCheckbox, {
+        modelValue: table.getIsSomePageRowsSelected()
+          ? 'indeterminate'
+          : table.getIsAllPageRowsSelected(),
+        'onUpdate:modelValue': (value: boolean | 'indeterminate') =>
+          table.toggleAllPageRowsSelected(!!value),
+        'aria-label': 'Select all'
+      }),
+    cell: ({ row }) =>
+      h(UCheckbox, {
+        modelValue: row.getIsSelected(),
+        'onUpdate:modelValue': (value: boolean | 'indeterminate') => row.toggleSelected(!!value),
+        'aria-label': 'Select row'
+      })
+  }
+  // ... other columns
 ]
 ```
 

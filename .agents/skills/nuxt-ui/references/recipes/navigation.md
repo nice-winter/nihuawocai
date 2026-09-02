@@ -30,6 +30,7 @@ Patterns for headers, sidebars, breadcrumbs, and tab navigation.
 ## Sidebar navigation (dashboard)
 
 See [dashboard layout](../layouts/dashboard.md) for the full sidebar pattern with `UDashboardSidebar` + `UNavigationMenu`. Key points:
+
 - Pass `:collapsed="collapsed"` to `UNavigationMenu` inside collapsible sidebars
 - Use `NavigationMenuItem[][]` (nested arrays) for separate nav groups
 - Use `#footer` slot for user menu with `UDropdownMenu`
@@ -58,19 +59,23 @@ const breadcrumbs = computed(() => {
 
 ```vue
 <script setup lang="ts">
-const items = [{
-  label: 'Overview',
-  icon: 'i-lucide-layout-dashboard',
-  slot: 'overview' as const
-}, {
-  label: 'Activity',
-  icon: 'i-lucide-activity',
-  slot: 'activity' as const
-}, {
-  label: 'Members',
-  icon: 'i-lucide-users',
-  slot: 'members' as const
-}]
+const items = [
+  {
+    label: 'Overview',
+    icon: 'i-lucide-layout-dashboard',
+    slot: 'overview' as const
+  },
+  {
+    label: 'Activity',
+    icon: 'i-lucide-activity',
+    slot: 'activity' as const
+  },
+  {
+    label: 'Members',
+    icon: 'i-lucide-users',
+    slot: 'members' as const
+  }
+]
 </script>
 
 <template>
@@ -87,4 +92,3 @@ const items = [{
   </UTabs>
 </template>
 ```
-

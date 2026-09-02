@@ -19,15 +19,6 @@
     "lint:fix": "eslint --fix .",
     "format": "prettier --write ."
   },
-  "lint-staged": {
-    "*.{htm?(l),css,scss,sass,less,js?(x),json,md}": [
-      "prettier --write"
-    ],
-    "*.ts?(x),vue": [
-      "eslint",
-      "prettier --write"
-    ]
-  },
   "dependencies": {
     "@nuxt/eslint": "1.17.0",
     "@nuxt/fonts": "0.14.0",

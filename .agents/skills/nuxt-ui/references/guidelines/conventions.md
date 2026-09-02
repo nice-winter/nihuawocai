@@ -10,9 +10,9 @@ Nuxt UI automatically registers `@nuxt/icon`, `@nuxt/fonts`, and `@nuxtjs/color-
 // nuxt.config.ts
 export default defineNuxtConfig({
   modules: ['@nuxt/ui'],
-  icon: { /* @nuxt/icon options */ },
-  fonts: { /* @nuxt/fonts options */ },
-  colorMode: { /* @nuxtjs/color-mode options */ }
+  icon: {/* @nuxt/icon options */},
+  fonts: {/* @nuxt/fonts options */},
+  colorMode: {/* @nuxtjs/color-mode options */}
 })
 ```
 
@@ -33,8 +33,8 @@ Add `@source` in your CSS so Tailwind generates classes used in markdown/MDC:
 
 ```css
 /* app/assets/css/main.css */
-@import "tailwindcss";
-@import "@nuxt/ui";
+@import 'tailwindcss';
+@import '@nuxt/ui';
 
 @source "../../../content/**/*";
 ```
@@ -66,6 +66,7 @@ Recommended `.vscode/settings.json` for Tailwind IntelliSense autocomplete with 
 ## UApp wrapper
 
 Always wrap your app in `UApp` — it provides:
+
 - Toast container (`useToast`)
 - Tooltip provider
 - Programmatic overlay context (`useOverlay`)
@@ -100,10 +101,12 @@ Custom local collections (Nuxt only):
 // nuxt.config.ts
 export default defineNuxtConfig({
   icon: {
-    customCollections: [{
-      prefix: 'custom',
-      dir: './app/assets/icons'
-    }]
+    customCollections: [
+      {
+        prefix: 'custom',
+        dir: './app/assets/icons'
+      }
+    ]
   }
 })
 ```
@@ -133,17 +136,17 @@ export default defineAppConfig({
 
 Most components follow consistent slot naming:
 
-| Slot | Used by | Purpose |
-|---|---|---|
-| `#header` | Card, Modal, Slideover, DashboardPanel | Top section |
-| `#body` | DashboardPanel | Scrollable content area |
-| `#footer` | Card, Modal, Slideover, DashboardPanel | Bottom section |
-| `#left` | Page, DashboardNavbar | Left sidebar or content |
-| `#right` | Page, DashboardNavbar, Header | Right sidebar or content |
-| `#leading` | Input, Button, Alert | Before main content (icon area) |
-| `#trailing` | Input, Button | After main content (icon area) |
-| `#content` | Modal, Slideover, Popover, Tooltip | Full content override |
-| `#default` | Most components | Main content area |
+| Slot        | Used by                                | Purpose                         |
+| ----------- | -------------------------------------- | ------------------------------- |
+| `#header`   | Card, Modal, Slideover, DashboardPanel | Top section                     |
+| `#body`     | DashboardPanel                         | Scrollable content area         |
+| `#footer`   | Card, Modal, Slideover, DashboardPanel | Bottom section                  |
+| `#left`     | Page, DashboardNavbar                  | Left sidebar or content         |
+| `#right`    | Page, DashboardNavbar, Header          | Right sidebar or content        |
+| `#leading`  | Input, Button, Alert                   | Before main content (icon area) |
+| `#trailing` | Input, Button                          | After main content (icon area)  |
+| `#content`  | Modal, Slideover, Popover, Tooltip     | Full content override           |
+| `#default`  | Most components                        | Main content area               |
 
 ## Items arrays
 
@@ -166,9 +169,7 @@ const items = [
     { label: 'Edit', icon: 'i-lucide-pencil' },
     { label: 'Duplicate', icon: 'i-lucide-copy' }
   ],
-  [
-    { label: 'Delete', icon: 'i-lucide-trash', color: 'error' }
-  ]
+  [{ label: 'Delete', icon: 'i-lucide-trash', color: 'error' }]
 ]
 ```
 
@@ -202,7 +203,9 @@ Programmatic modals, slideovers, drawers — no template `v-model` needed. See [
 const overlay = useOverlay()
 const modal = overlay.create(MyComponent)
 const instance = modal.open({ title: 'Confirm?' })
-if (await instance.result) { /* confirmed */ }
+if (await instance.result) {
+  /* confirmed */
+}
 ```
 
 ### defineShortcuts
@@ -323,6 +326,7 @@ Each locale has a `dir` property (`'ltr'` or `'rtl'`). `UApp` uses it to set dir
 ## Color mode
 
 Nuxt UI registers `@nuxtjs/color-mode` automatically. Built-in components for switching:
+
 - `UColorModeButton` — single button toggle (light/dark)
 - `UColorModeSwitch` — toggle switch
 - `UColorModeSelect` — dropdown with system/light/dark options
@@ -337,7 +341,9 @@ const colorMode = useColorMode()
 
 const isDark = computed({
   get: () => colorMode.value === 'dark',
-  set: (v) => { colorMode.preference = v ? 'dark' : 'light' }
+  set: (v) => {
+    colorMode.preference = v ? 'dark' : 'light'
+  }
 })
 </script>
 

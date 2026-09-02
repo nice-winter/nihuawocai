@@ -17,7 +17,12 @@ function confirmDelete() {
 <template>
   <UButton label="Delete" color="error" variant="soft" @click="isOpen = true" />
 
-  <UModal v-model:open="isOpen" title="Delete item" description="This action cannot be undone. Are you sure?" :ui="{ footer: 'justify-end' }">
+  <UModal
+    v-model:open="isOpen"
+    title="Delete item"
+    description="This action cannot be undone. Are you sure?"
+    :ui="{ footer: 'justify-end' }"
+  >
     <template #footer="{ close }">
       <UButton label="Cancel" color="neutral" variant="outline" @click="close" />
       <UButton label="Delete" color="error" @click="confirmDelete" />
@@ -43,7 +48,11 @@ const emit = defineEmits<{
 </script>
 
 <template>
-  <UModal :close="{ onClick: () => emit('close', false) }" :title="title" :description="description">
+  <UModal
+    :close="{ onClick: () => emit('close', false) }"
+    :title="title"
+    :description="description"
+  >
     <template #footer>
       <UButton label="Cancel" color="neutral" variant="outline" @click="emit('close', false)" />
       <UButton label="Confirm" color="error" @click="emit('close', true)" />
@@ -121,30 +130,50 @@ function onSave() {
 const isOpen = ref(false)
 
 defineShortcuts({
-  meta_k: () => { isOpen.value = true }
+  meta_k: () => {
+    isOpen.value = true
+  }
 })
 
-const groups = [{
-  id: 'actions',
-  label: 'Actions',
-  items: [
-    { label: 'New file', icon: 'i-lucide-file-plus', kbds: ['meta', 'n'], onSelect: () => newFile() },
-    { label: 'New folder', icon: 'i-lucide-folder-plus', onSelect: () => newFolder() }
-  ]
-}, {
-  id: 'navigation',
-  label: 'Navigation',
-  items: [
-    { label: 'Dashboard', icon: 'i-lucide-house', to: '/dashboard' },
-    { label: 'Settings', icon: 'i-lucide-settings', to: '/settings' }
-  ]
-}]
+const groups = [
+  {
+    id: 'actions',
+    label: 'Actions',
+    items: [
+      {
+        label: 'New file',
+        icon: 'i-lucide-file-plus',
+        kbds: ['meta', 'n'],
+        onSelect: () => newFile()
+      },
+      { label: 'New folder', icon: 'i-lucide-folder-plus', onSelect: () => newFolder() }
+    ]
+  },
+  {
+    id: 'navigation',
+    label: 'Navigation',
+    items: [
+      { label: 'Dashboard', icon: 'i-lucide-house', to: '/dashboard' },
+      { label: 'Settings', icon: 'i-lucide-settings', to: '/settings' }
+    ]
+  }
+]
 </script>
 
 <template>
-  <UButton label="Search..." icon="i-lucide-search" color="neutral" variant="outline" @click="isOpen = true" />
+  <UButton
+    label="Search..."
+    icon="i-lucide-search"
+    color="neutral"
+    variant="outline"
+    @click="isOpen = true"
+  />
 
-  <UCommandPalette v-model:open="isOpen" :groups="groups" placeholder="Type a command or search..." />
+  <UCommandPalette
+    v-model:open="isOpen"
+    :groups="groups"
+    placeholder="Type a command or search..."
+  />
 </template>
 ```
 
@@ -170,4 +199,3 @@ const isOpen = ref(false)
   </UDrawer>
 </template>
 ```
-

@@ -30,10 +30,7 @@ pnpm add ai @ai-sdk/gateway @ai-sdk/vue @comark/vue
 
 ```ts [nuxt.config.ts]
 export default defineNuxtConfig({
-  modules: [
-    '@nuxt/ui',
-    '@comark/nuxt'
-  ]
+  modules: ['@nuxt/ui', '@comark/nuxt']
 })
 ```
 
@@ -60,7 +57,12 @@ html.dark .shiki span {
 Using [Vercel AI Gateway](https://vercel.com/ai-gateway) (recommended):
 
 ```ts [server/api/chat.post.ts]
-import { streamText, convertToModelMessages, toUIMessageStream, createUIMessageStreamResponse } from 'ai'
+import {
+  streamText,
+  convertToModelMessages,
+  toUIMessageStream,
+  createUIMessageStreamResponse
+} from 'ai'
 import { gateway } from '@ai-sdk/gateway'
 
 export default defineEventHandler(async (event) => {
@@ -80,7 +82,12 @@ export default defineEventHandler(async (event) => {
 Or with a direct provider (e.g., `pnpm add @ai-sdk/openai`):
 
 ```ts [server/api/chat.post.ts]
-import { streamText, convertToModelMessages, toUIMessageStream, createUIMessageStreamResponse } from 'ai'
+import {
+  streamText,
+  convertToModelMessages,
+  toUIMessageStream,
+  createUIMessageStreamResponse
+} from 'ai'
 import { openai } from '@ai-sdk/openai'
 
 export default defineEventHandler(async (event) => {
@@ -145,7 +152,10 @@ function onSubmit() {
       <UContainer>
         <UChatMessages :messages="messages" :status="status">
           <template #content="{ message }">
-            <template v-for="(part, index) in message.parts" :key="`${message.id}-${part.type}-${index}`">
+            <template
+              v-for="(part, index) in message.parts"
+              :key="`${message.id}-${part.type}-${index}`"
+            >
               <UChatReasoning
                 v-if="isReasoningUIPart(part)"
                 :text="part.text"

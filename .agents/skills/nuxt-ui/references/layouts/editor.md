@@ -108,11 +108,13 @@ Combine with Dashboard layout for a multi-document editor:
       <template #default="{ collapsed }">
         <UNavigationMenu
           :collapsed="collapsed"
-          :items="documents.map(doc => ({
-            label: doc.title,
-            to: `/editor/${doc.id}`,
-            icon: 'i-lucide-file-text'
-          }))"
+          :items="
+            documents.map((doc) => ({
+              label: doc.title,
+              to: `/editor/${doc.id}`,
+              icon: 'i-lucide-file-text'
+            }))
+          "
           orientation="vertical"
         />
       </template>
