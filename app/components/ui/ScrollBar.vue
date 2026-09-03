@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { h, ref, computed, onMounted, useSlots, withModifiers } from 'vue'
 import type { CSSProperties } from 'vue'
-import { debounce, useResizeObserver, useScroll } from '~/composables/utils'
 
 export interface ScrollBarProps {
   /**
@@ -233,10 +232,12 @@ onMounted(() => {
 })
 
 const {
-  left: scrollingLeft,
-  right: scrollingRight,
-  top: scrollingTop,
-  bottom: scrollingBottom
+  directions: {
+    left: scrollingLeft,
+    right: scrollingRight,
+    top: scrollingTop,
+    bottom: scrollingBottom
+  }
 } = useScroll(containerRef)
 
 useResizeObserver([containerRef, contentRef], updateState)
@@ -262,10 +263,10 @@ function updateState(): void {
   updateScrollBarState()
 }
 
-const debounceYScrollEnd = debounce(yScrollEnd, 100)
-const debounceXScrollEnd = debounce(xScrollEnd, 100)
-const debounceHideYScrollBar = debounce(hideYScrollBar, 100 + delay)
-const debounceHideXScrollBar = debounce(hideXScrollBar, 100 + delay)
+const debounceYScrollEnd = useDebounceFn(yScrollEnd, 100)
+const debounceXScrollEnd = useDebounceFn(xScrollEnd, 100)
+const debounceHideYScrollBar = useDebounceFn(hideYScrollBar, 100 + delay)
+const debounceHideXScrollBar = useDebounceFn(hideXScrollBar, 100 + delay)
 
 function yScrollEnd(e: Event, direction: 'left' | 'right' | 'top' | 'bottom'): void {
   emits('scrollend', e, direction)
@@ -294,12 +295,12 @@ function hideXScrollBar(): void {
   }
 }
 function onScroll(e: Event): void {
-  if (scrollingLeft.value || scrollingRight.value) {
-    let direction: string = ''
-    if (scrollingLeft.value) {
+  if (scrollingLeft || scrollingRight) {
+    let direction: 'left' | 'right' | 'top' | 'bottom' = 'left'
+    if (scrollingLeft) {
       direction = 'left'
     }
-    if (scrollingRight.value) {
+    if (scrollingRight) {
       direction = 'right'
     }
     emits('scroll', e, direction)
@@ -311,12 +312,12 @@ function onScroll(e: Event): void {
       }
     }
   }
-  if (scrollingTop.value || scrollingBottom.value) {
-    let direction: string = ''
-    if (scrollingTop.value) {
+  if (scrollingTop || scrollingBottom) {
+    let direction: 'left' | 'right' | 'top' | 'bottom' = 'top'
+    if (scrollingTop) {
       direction = 'top'
     }
-    if (scrollingBottom.value) {
+    if (scrollingBottom) {
       direction = 'bottom'
     }
     emits('scroll', e, direction)
