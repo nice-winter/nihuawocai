@@ -7,7 +7,7 @@
   "repository": {
     "url": "git+https://github.com/nice-winter/nihuawocai.git"
   },
-  "packageManager": "pnpm@11.20.0+sha256.34e198cb1e43237517ecedfd31f9ae26a6c0a3e5366ce58a2d05f4b21fb5f19a",
+  "packageManager": "pnpm@11.25.0",
   "scripts": {
     "prepare": "husky",
     "postinstall": "nuxt prepare",
