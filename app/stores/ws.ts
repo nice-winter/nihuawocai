@@ -67,6 +67,7 @@ export const useWsStore = defineStore('ws', () => {
           break
 
         case 'DISCONNECTED':
+          status.value = 'CLOSED'
           logger.warn.raw(msg.event)
           handleDisconnected(msg.event)
           break

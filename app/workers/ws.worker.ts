@@ -7,17 +7,18 @@ type WorkerCommand =
   | { type: 'CLOSE'; code?: number; reason?: string }
 
 export type WorkerMessage =
-  | { type: 'STATUS'; status: 'OPEN' | 'CLOSED' | 'CONNECTING' }
+  | { type: 'STATUS'; status: 'OPEN' | 'CONNECTING' }
   | { type: 'MESSAGE'; data: unknown }
   | { type: 'ERROR'; error: unknown }
   | { type: 'DISCONNECTED'; event: { code: number; reason: string } }
 
-type Idle = {
-  timer: number | null
-  i: number
-}
+// --- 心跳配置 ---
 
-const PING_MESSAGE_ENCODED = () => {
+const PING_INTERVAL = 30_000 // 30s
+// 类型标注为 number：Worker 环境的 setInterval 返回 number，@types/node 的类型是污染
+let pingTimer: number | null = null
+
+const createPingMessage = () => {
   return encode({
     ...WS_MESSAGE_PING,
     payload: {
@@ -31,23 +32,27 @@ const PING_MESSAGE_ENCODED = () => {
 }
 const PONG_MESSAGE_ENCODED = encode(WS_MESSAGE_PONG)
 
-let ws: WebSocket | null = null
+const sendPing = () => {
+  ws?.send(createPingMessage())
+}
+const startPingTimer = () => {
+  if (!pingTimer) pingTimer = setInterval(sendPing, PING_INTERVAL) as unknown as number
+}
+const stopPingTimer = () => {
+  if (pingTimer) {
+    clearInterval(pingTimer)
+    pingTimer = null
+  }
+}
 
-const idle: Idle = {
-  timer: null,
-  i: 30_000 // 30s
-}
-const _idle = () => {
-  ws?.send(PING_MESSAGE_ENCODED())
-}
-const startIdle = () => {
-  if (!idle.timer) idle.timer = setInterval(_idle, idle.i)
-}
-const stopIdle = () => {
-  if (idle.timer) clearInterval(idle.timer)
-}
+// --- WebSocket 状态 ---
+
+let ws: WebSocket | null = null
+let connectGeneration = 0
 
 const postMsg = (msg: WorkerMessage) => self.postMessage(msg)
+
+// --- 消息处理 ---
 
 self.onmessage = (e: MessageEvent<WorkerCommand>) => {
   const { type } = e.data
@@ -70,19 +75,30 @@ self.onmessage = (e: MessageEvent<WorkerCommand>) => {
   }
 }
 
+// --- WebSocket 初始化 ---
+
 function initWebSocket(url: string) {
-  if (ws) ws.close()
+  if (ws) {
+    ws.onopen = ws.onmessage = ws.onerror = ws.onclose = null
+    ws.close()
+  }
 
   ws = new WebSocket(url)
   ws.binaryType = 'arraybuffer'
+
+  const gen = ++connectGeneration
+
   postMsg({ type: 'STATUS', status: 'CONNECTING' })
 
   ws.onopen = () => {
-    startIdle()
+    if (gen !== connectGeneration) return
+    startPingTimer()
     postMsg({ type: 'STATUS', status: 'OPEN' })
   }
 
   ws.onmessage = (e) => {
+    if (gen !== connectGeneration) return
+
     try {
       const decoded = decode(new Uint8Array(e.data)) as WebsocketMessage<unknown>
 
@@ -100,14 +116,15 @@ function initWebSocket(url: string) {
     }
   }
 
-  ws.onerror = (e) => {
-    stopIdle()
-    postMsg({ type: 'ERROR', error: 'WebSocket error' })
+  ws.onerror = () => {
+    if (gen !== connectGeneration) return
+    stopPingTimer()
+    postMsg({ type: 'ERROR', error: 'WebSocket error occurred' })
   }
 
   ws.onclose = (e) => {
-    stopIdle()
-    postMsg({ type: 'STATUS', status: 'CLOSED' })
+    if (gen !== connectGeneration) return
+    stopPingTimer()
     postMsg({ type: 'DISCONNECTED', event: { code: e.code, reason: e.reason } })
     ws = null
   }
