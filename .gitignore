@@ -25,3 +25,7 @@ logs
 
 # Playwright MCP
 .playwright-mcp/
+
+.flaskenv*
+!.env.project
+!.env.vault

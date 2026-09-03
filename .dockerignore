@@ -37,3 +37,8 @@ plopfile.*
 
 .nuxt
 .output
+
+.env*
+.flaskenv*
+!.env.project
+!.env.vault
