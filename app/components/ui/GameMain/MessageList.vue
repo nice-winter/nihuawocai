@@ -196,22 +196,27 @@ const { copy } = useClipboard({ source: selectText.text })
 const addMessage = (msg: IMessage) => {
   messageList.push(msg)
   if (autoScroll) {
-    if (isScrollOnBottom.value) {
-      scrollToBottom()
-    } else {
-      newMessageCount.value++
-    }
+    // nextTick 等 DOM 渲染，再 rAF 等浏览器 layout + ResizeObserver 更新缓存
+    nextTick(() => {
+      requestAnimationFrame(() => {
+        const userHasScrolled = messageListScrollBarRef.value?.userHasScrolled
+        // 从未主动滚过 → 始终自动滚底（内容从无到有的场景）
+        // 主动滚过且在底部 → 自动滚底
+        // 主动滚过且不在底部 → 提示新消息数
+        if (!userHasScrolled || isScrollOnBottom.value) {
+          scrollToBottom()
+        } else {
+          newMessageCount.value++
+        }
+      })
+    })
   }
 }
 const scrollToBottom = () => {
-  setTimeout(() => {
-    messageListScrollBarRef.value?.scrollTo({ top: 1145141919810 })
-  }, 1)
+  messageListScrollBarRef.value?.scrollToBottom()
 }
 const scrollToTop = () => {
-  setTimeout(() => {
-    messageListScrollBarRef.value?.scrollTo({ top: 0 })
-  }, 1)
+  messageListScrollBarRef.value?.scrollTo({ top: 0 })
 }
 const isScrollOnBottom = ref(false)
 watch(
