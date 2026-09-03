@@ -101,7 +101,7 @@ type Events = {
     answer?: string
     bingo_players: string[]
     seconds: number
-    reason: 'give_up' | 'bingo_all' | 'timeout' | 'afk' | 'force' | 'leave'
+    reason: InteractionReason
   }
   'game:event:round:end': {
     round: number
@@ -119,12 +119,7 @@ type Events = {
   'game:event:guess:bingo': {
     id: string
     player: Player
-    score_delta: {
-      drawerId: string
-      drawerGain: number
-      guesserId: string
-      guesserGain: number
-    }
+    score_delta: ScoreDelta
     bingo_players: string[]
     scores: Record<string, number>
   }
@@ -136,7 +131,7 @@ type Events = {
     from: string
     fromPlayer: Player
     to: string
-    item_type: 'flower' | 'egg' | 'slipper'
+    item_type: ItemType
     count: number
   }
   'game:event:sketchpad:draw': unknown
@@ -147,6 +142,20 @@ export const eventBus = mitt<Events>()
 type EventKeys = keyof Events
 type EventHandler<K extends EventKeys> = (payload: Events[K]) => void
 
+/**
+ * 自动管理事件订阅的组合式函数
+ *
+ * 在组件挂载时订阅，卸载时自动取消，避免内存泄漏。
+ * 内部基于 mitt，事件类型由 Events 映射约束，编译期保证 key 和 payload 匹配。
+ *
+ * @param event - 事件名称（受 Events 类型约束）
+ * @param handler - 事件处理函数，payload 类型自动推导
+ *
+ * @example
+ * useEventBus('game:event:round:prepare', ({ seconds, drawerPlayer }) => {
+ *   // 秒级类型安全，无需手动 on/off
+ * })
+ */
 export function useEventBus<K extends EventKeys>(event: K, handler: EventHandler<K>) {
   onBeforeMount(() => eventBus.on(event, handler))
   onUnmounted(() => eventBus.off(event, handler))
