@@ -65,3 +65,83 @@ UserData → Player (别名) → LoggedInPlayer (Player & PlayerState)
 - **后端 handler**: 返回 `ServerEventMap[key]` 或 `ClientResponseMap[key]`
 - **前端 store**: `msg as ServerEvent` 后 switch/case 自动窄化
 - **前端请求**: `await send({ type }) as ClientResponse<'xxx'>` 取响应
+
+---
+
+## Admin 后台相关类型
+
+> 以下类型定义在 `shared/utils/admin.ts` 中，前后端共享。
+
+### `AdminUser`
+
+管理员用户数据
+
+```typescript
+interface AdminUser {
+  id: string // 用户 ID
+  nickname: string // 昵称
+  avatar: string // 头像 URL
+  provider: string // 登录来源（github/steam/x）
+  role: string // 角色：'super_admin' | 'admin'
+  createdAt: string // 创建时间
+  lastLoginAt: string // 最后登录时间
+}
+```
+
+### `AdminConfig`
+
+后台全局配置（`AppConfig` 的子集）
+
+```typescript
+interface AdminConfig {
+  loginMethods: Record<string, boolean> // 登录方式开关
+  guestMode: boolean // 游客模式开关
+  siteName: string // 站点名称
+  siteDescription: string // 站点描述
+  announcement: {
+    content: string // 公告内容（Markdown）
+    enabled: boolean // 是否启用公告
+  }
+  drawing: {
+    maxLayers: number // 最大图层数
+    maxUndoSteps: number // 最大撤销步数
+    enablePressure: boolean // 是否启用手写笔压感
+    enableEraser: boolean // 是否启用橡皮擦
+  }
+  game: {
+    maxRooms: number // 房间上限
+    maxPlayersPerRoom: number // 每房间最大人数
+    defaultRoundTime: number // 默认回合时长（秒）
+    defaultRounds: number // 默认轮次
+    defaultMaxTurns: number // 默认最大回合数
+  }
+  security: {
+    enableCaptcha: boolean // 是否启用验证码
+    enableIPBlacklist: boolean // 是否启用 IP 黑名单
+    maxLoginAttempts: number // 最大登录尝试次数
+  }
+  maintenance: {
+    enabled: boolean // 维护模式开关
+    message: string // 维护提示语
+  }
+  oauth: Record<string, { enabled: boolean; clientId?: string }> // OAuth 配置
+  admin: {
+    superAdminId?: string // 超级管理员用户 ID
+    admins: string[] // 普通管理员用户 ID 列表
+  }
+}
+```
+
+### `AdminStats`
+
+仪表盘统计数据
+
+```typescript
+interface AdminStats {
+  onlinePlayers: number // 当前在线玩家数
+  activeRooms: number // 活跃房间数
+  totalUsers: number // 总用户数
+  totalWordLibraries: number // 词库数量
+  serverUptime: number // 服务器运行时间（秒）
+}
+```

@@ -46,3 +46,4 @@
 
 - **Shared 类型结构** → [docs/shared-types.md](docs/shared-types.md)
 - **服务端架构** → [docs/server-architecture.md](docs/server-architecture.md)
+- **开发指南（依赖/composables/类型声明）** → [docs/development-guide.md](docs/development-guide.md)

@@ -9,12 +9,35 @@
 ```
 server/
 ├── api/              # REST API 端点
-│   ├── app-config.get.ts   # 获取应用配置
-│   └── app-config.post.ts  # 更新应用配置（需登录）
+│   ├── app-config.get.ts         # 获取应用配置
+│   ├── app-config.post.ts        # 更新应用配置（需登录）
+│   └── admin/                    # 后台管理 API（需管理员权限）
+│       ├── init.post.ts          # 首次超级管理员初始化（需 init secret）
+│       ├── auth-check.get.ts     # 鉴权检查（返回 adminUserId）
+│       ├── config.get.ts         # 获取完整配置
+│       ├── config.put.ts         # 更新配置
+│       ├── debug.get.ts          # 调试信息（限 super_admin）
+│       ├── stats.get.ts          # 仪表盘统计数据
+│       ├── admins/
+│       │   ├── index.get.ts      # 获取管理员列表
+│       │   ├── index.post.ts     # 添加管理员
+│       │   └── [id].delete.ts    # 移除管理员
+│       ├── users/
+│       │   ├── index.get.ts      # 用户列表（分页 + 搜索）
+│       │   └── [id].put.ts       # 更新用户信息/禁用
+│       └── words/
+│           ├── index.get.ts      # 词库列表
+│           ├── index.post.ts     # 创建词库
+│           ├── [id].get.ts       # 词库详情
+│           ├── [id].put.ts       # 更新词库
+│           └── [id].delete.ts    # 删除词库
+├── middleware/       # 服务端中间件
+│   └── admin-auth.ts             # 管理员权限校验（JWT token → adminUserId）
 ├── plugins/          # Nitro 启动插件
 │   ├── storage.ts    # 存储层初始化（SQLite/FS 双驱动）
 │   ├── session.ts    # Session KV（TODO 未完成）
 │   ├── word.ts       # 初始化默认词库
+│   ├── admin-init.ts # 首次启动生成管理员初始化 secret
 │   └── zz-banner.ts  # 启动 banner 打印
 ├── routes/
 │   ├── _ws/server.ts       # WebSocket 入口（defineWebSocketHandler）
@@ -33,6 +56,7 @@ server/
 ├── types/
 │   └── ws.d.ts       # crossws PeerContext 扩展类型
 ├── utils/
+│   ├── admin.ts      # 管理员工具函数（JWT 签发/校验、init secret、角色判断）
 │   └── banner.ts     # Banner 打印工具
 └── ws/               # WebSocket 层
     ├── index.ts      # WS hooks（upgrade/open/message/close/error）+ 心跳
@@ -43,7 +67,7 @@ server/
     │   └── sender.ts     # 发送工具（sendToAll/sendToChannel/sendToUser）
     ├── handlers/     # WS 消息处理器（按领域拆分）
     │   ├── index.ts      # 统一注册所有 handler
-    │   ├── room.ts       # 房间操作（创建/加入/离开/坐下/换位/密码/广播/邀请/开始）
+    │   ├── room.ts       # 房间操作（创建/加入/离开/坐下/换位/密码/广播/邀请/开始/快速匹配）
     │   ├── game.ts       # 游戏操作（画板交互/放弃/送道具）
     │   ├── player.ts     # 玩家操作（获取资料/大厅玩家列表）
     │   └── chat.ts       # 聊天操作（发言）
@@ -125,6 +149,63 @@ server/
 - 默认词库 `default-official` 在启动时自动初始化
 - 抽词策略：先随机选库，再随机选词
 - 每个词包含 `word`（答案）和 `prompts[]`（提示词数组，在绘画阶段渐显）
+
+### 8. Admin 后台管理系统
+
+提供完整的后台管理能力，基于 JWT 无状态鉴权。
+
+**权限模型**：
+
+- `super_admin`（超级管理员）：拥有所有权限，可管理其他管理员
+- `admin`（普通管理员）：可管理用户、词库、配置，不可管理管理员列表
+
+**初始化流程**：
+
+1. 服务端首次启动 → `admin-init.ts` 插件检测 `appConfig.admin.superAdminId` 是否存在
+2. 若不存在 → 生成一次性 `init secret`（32 字节 hex，10 分钟有效），打印到控制台
+3. 管理员访问 `/admin/init` 页面 → 输入 secret + 调用 `POST /api/admin/init` 完成初始化
+4. 初始化后清除 secret，后续不再生成
+
+**鉴权机制**：
+
+- `POST /api/admin/auth` 使用用户 session 签发 JWT token（`nuxt-auth-utils` 的 `signJwt`，8 小时有效）
+- 前端每次请求携带 `Authorization: Bearer <token>`
+- `admin-auth.ts` 中间件验证 token → 解析 userId → 从存储读取角色 → 注入 `event.context.adminUserId`
+- `isAdminUser()` 工具函数判断用户是否为管理员（super_admin 或 admin）
+- `requireSuperAdmin()` 在 handler 中做 super_admin 权限校验
+
+**API 端点**：
+
+| 方法   | 路径                    | 说明                 | 权限            |
+| ------ | ----------------------- | -------------------- | --------------- |
+| POST   | `/api/admin/auth`       | 签发 JWT token       | 已登录用户      |
+| GET    | `/api/admin/auth-check` | 检查鉴权状态         | 需 token        |
+| POST   | `/api/admin/init`       | 首次超级管理员初始化 | 已登录 + secret |
+| GET    | `/api/admin/stats`      | 仪表盘统计           | admin+          |
+| GET    | `/api/admin/config`     | 获取完整配置         | admin+          |
+| PUT    | `/api/admin/config`     | 更新配置             | admin+          |
+| GET    | `/api/admin/debug`      | 调试信息             | super_admin     |
+| GET    | `/api/admin/admins`     | 管理员列表           | admin+          |
+| POST   | `/api/admin/admins`     | 添加管理员           | super_admin     |
+| DELETE | `/api/admin/admins/:id` | 移除管理员           | super_admin     |
+| GET    | `/api/admin/users`      | 用户列表（分页搜索） | admin+          |
+| PUT    | `/api/admin/users/:id`  | 更新用户信息/禁用    | admin+          |
+| GET    | `/api/admin/words`      | 词库列表             | admin+          |
+| POST   | `/api/admin/words`      | 创建词库             | admin+          |
+| GET    | `/api/admin/words/:id`  | 词库详情             | admin+          |
+| PUT    | `/api/admin/words/:id`  | 更新词库             | admin+          |
+| DELETE | `/api/admin/words/:id`  | 删除词库             | admin+          |
+
+**前端页面**（`app/pages/admin/`）：
+
+| 页面         | 说明             |
+| ------------ | ---------------- |
+| `init.vue`   | 首次管理员初始化 |
+| `index.vue`  | 仪表盘主页       |
+| `config.vue` | 系统配置管理     |
+| `users.vue`  | 用户管理         |
+| `words.vue`  | 词库管理         |
+| `admins.vue` | 管理员管理       |
 
 ## WS 消息类型汇总
 
