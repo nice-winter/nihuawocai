@@ -2,7 +2,7 @@
   <UContextMenu :items="contextMenuItems" size="sm" :press-open-delay="1">
     <UiScrollBar
       ref="MessageListScrollBar"
-      v-model:scroll-on-buttom="isScrollOnBottom"
+      v-model:scroll-on-bottom="isScrollOnBottom"
       :auto-hide="false"
       :delay="1"
       :size="7"
