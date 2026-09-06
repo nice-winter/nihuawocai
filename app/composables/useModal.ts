@@ -2,18 +2,17 @@ import {
   h,
   render,
   nextTick,
-  getCurrentInstance,
   type AppContext,
   type Component,
   type VNode
 } from 'vue'
 
 export const useModal = <T>(component: Component, options: { parent?: string | Element } = {}) => {
-  const current = getCurrentInstance()
+  const current = useNuxtApp().vueApp
   if (!current) {
     throw new Error('useModal: useModal() 必须在 setup() 中调用')
   }
-  const appContext: AppContext = current.appContext
+  const appContext: AppContext = current._context
 
   let vnode: VNode | null = null
   let container: HTMLElement | null = null

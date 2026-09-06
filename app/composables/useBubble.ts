@@ -1,4 +1,4 @@
-import { onMounted, onUnmounted, isRef, type Ref, getCurrentInstance } from 'vue'
+import { onMounted, onUnmounted, isRef, type Ref } from 'vue'
 import { bubbleRegistry } from './bubbleRegistry'
 
 type ParentTarget = string | HTMLElement | Ref<HTMLElement | null | undefined>
@@ -8,14 +8,10 @@ type ParentTarget = string | HTMLElement | Ref<HTMLElement | null | undefined>
  * @param parentTarget 用于挂载气泡的父元素。
  */
 export const useBubble = (parentTarget: ParentTarget) => {
-  const instance = getCurrentInstance()
-
-  if (!instance) {
-    throw new Error('useBubble must be called from within a component setup function.')
-  }
+  const instance = useNuxtApp().vueApp
 
   onMounted(() => {
-    bubbleRegistry.setAppContext(instance.appContext)
+    bubbleRegistry.setAppContext(instance._context)
 
     const element = isRef(parentTarget) ? parentTarget.value : parentTarget
 
