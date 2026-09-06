@@ -194,7 +194,7 @@ const columns = [
           </UTable>
 
           <div v-if="users?.total" class="flex justify-center mt-4 pt-4 border-t border-default">
-            <UPagination v-model:page="page" :total="users.total" :page-size="pageSize" :sibling-count="2" />
+            <UPagination v-model:page="page" :total="users.total" :items-per-page="pageSize" :sibling-count="2" />
           </div>
         </UCard>
       </div>

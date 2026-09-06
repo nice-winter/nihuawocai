@@ -181,27 +181,24 @@ const addGender = () => {
           <div class="space-y-4">
             <h4 class="font-medium text-highlighted">功能开关</h4>
             <div class="space-y-3">
-              <div class="flex items-center justify-between p-3 rounded-lg bg-elevated">
-                <div>
-                  <p class="font-medium text-highlighted">踢人功能</p>
-                  <p class="text-sm text-muted">允许房主踢出房间内的玩家</p>
-                </div>
-                <USwitch v-model="editingConfig.game.room.feature.kick" />
-              </div>
-              <div class="flex items-center justify-between p-3 rounded-lg bg-elevated">
-                <div>
-                  <p class="font-medium text-highlighted">广播功能</p>
-                  <p class="text-sm text-muted">允许房间内发送广播消息</p>
-                </div>
-                <USwitch v-model="editingConfig.game.room.feature.broadcast" />
-              </div>
-              <div class="flex items-center justify-between p-3 rounded-lg bg-elevated">
-                <div>
-                  <p class="font-medium text-highlighted">邀请空闲玩家</p>
-                  <p class="text-sm text-muted">允许邀请大厅中的空闲玩家</p>
-                </div>
-                <USwitch v-model="editingConfig.game.room.feature.invite.idle" />
-              </div>
+              <USwitch
+                v-model="editingConfig.game.room.feature.kick"
+                label="踢人功能"
+                description="允许房主踢出房间内的玩家"
+                class="p-3 rounded-lg bg-elevated"
+              />
+              <USwitch
+                v-model="editingConfig.game.room.feature.broadcast"
+                label="广播功能"
+                description="允许房间内发送广播消息"
+                class="p-3 rounded-lg bg-elevated"
+              />
+              <USwitch
+                v-model="editingConfig.game.room.feature.invite.idle"
+                label="邀请空闲玩家"
+                description="允许邀请大厅中的空闲玩家"
+                class="p-3 rounded-lg bg-elevated"
+              />
             </div>
           </div>
         </div>
@@ -294,13 +291,12 @@ const addGender = () => {
 
           <div class="space-y-4">
             <h4 class="font-medium text-highlighted">结算规则</h4>
-            <div class="flex items-center justify-between p-3 rounded-lg bg-elevated">
-              <div>
-                <p class="font-medium text-highlighted">包含离场玩家</p>
-                <p class="text-sm text-muted">最终结算时是否包含中途退出的玩家</p>
-              </div>
-              <USwitch v-model="editingConfig.game.room.cycle.scoreRule.includeLeaversInSettlement" />
-            </div>
+            <USwitch
+              v-model="editingConfig.game.room.cycle.scoreRule.includeLeaversInSettlement"
+              label="包含离场玩家"
+              description="最终结算时是否包含中途退出的玩家"
+              class="p-3 rounded-lg bg-elevated"
+            />
           </div>
         </div>
       </UCard>
