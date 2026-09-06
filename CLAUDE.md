@@ -40,6 +40,18 @@
 - 优先用运行时可行的方案，而非在类型体操上死磕
 - `shared/utils/mockdata.ts` 的类型错误暂时忽略，后续统一处理 mock 数据
 
+## Node.js 开发
+
+编写 Node.js 相关代码时，**优先查阅对应版本的 llms.txt** 再进行编写：
+
+```
+https://nodejs.org/download/release/{node_version}/docs/llms.txt
+```
+
+- 先确认项目使用的 Node.js 版本（查看 `package.json` engines、`.node-version` 或 `Dockerfile`）
+- 用 WebFetch 获取对应版本的 llms.txt，了解可用 API
+- 避免使用当前版本不存在或已废弃的 API
+
 ## 项目架构参考
 
 需要理解项目架构时，查阅以下文档：
