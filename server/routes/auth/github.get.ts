@@ -1,4 +1,8 @@
+import { colors } from 'consola/utils'
 import { createUserData, hasUserData, updateUserData } from '~~/server/services/user'
+import { createLogger } from '~~/server/utils/logger'
+
+const logger = createLogger('Auth')
 
 export default defineOAuthGitHubEventHandler({
   async onSuccess(event, { user, tokens }) {
@@ -25,9 +29,10 @@ export default defineOAuthGitHubEventHandler({
       await createUserData(id, 'github', githubUser.avatar_url, githubUser.name)
     }
 
+    logger.info(`GitHub 登录成功: ${colors.cyan(githubUser.name)}@${id}`)
     return sendRedirect(event, '/')
   },
   async onError(event, error) {
-    //
+    logger.error('GitHub OAuth 失败:', error)
   }
 })

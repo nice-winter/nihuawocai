@@ -8,6 +8,10 @@ export interface AppConfig {
     superAdminId: string
     /** 管理员用户 ID 列表（权限一致，可被超级管理员管理） */
     adminIds: string[]
+    /** 日志等级覆盖（-1=silent, 0=error, 1=warn, 2=info, 3=debug, 4=verbose）
+     *  留空则使用 CONSOLA_LEVEL 环境变量或默认值（dev=3, prod=2）
+     */
+    logLevel?: number | ''
   }
   /** 应用名称 */
   name: string

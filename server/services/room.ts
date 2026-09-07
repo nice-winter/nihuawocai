@@ -1,4 +1,3 @@
-import { consola } from 'consola'
 import { colors } from 'consola/utils'
 import { getAppConfig } from '~~/server/services/app-config'
 import { defu } from 'defu'
@@ -62,7 +61,9 @@ type RoomEventBus = {
   }
 }
 
-const logger = consola.withTag('Room Service')
+import { createLogger } from '~~/server/utils/logger'
+
+const logger = createLogger('RoomService')
 
 // ------------------------- Records -------------------------
 /**
@@ -202,7 +203,7 @@ const createRoom = async (
   })
 
   logger.info(
-    `A new room ${colors.cyan(room.roomNumber)} has been created by`,
+    `房间 ${colors.cyan('#' + room.roomNumber)} 已创建，房主`,
     `${colors.cyan(user.nickname)}@${user.id}`,
     `at ${colors.gray(new Date().toLocaleString())}`
   )
@@ -241,7 +242,7 @@ const destroyRoom = (roomNumber: number) => {
     })
 
     logger.info(
-      `Room ${colors.cyan(room.roomNumber)} has been destroyed at ${colors.gray(
+      `房间 ${colors.cyan('#' + room.roomNumber)} 已销毁，at ${colors.gray(
         new Date().toLocaleString()
       )}`
     )
@@ -456,6 +457,8 @@ const changePassword = (roomNumber: number, password: string, id: string) => {
 
     updateRoom(roomNumber, room)
 
+    logger.debug(`房间密码变更: 房间 ${colors.cyan('#' + roomNumber)}，操作者 ${colors.cyan(id)}，锁定 ${room.locked}`)
+
     // 广播房间锁定状态变更事件
     sendToAllPlayer({
       type: 'room:event:locked_state_change',
@@ -604,6 +607,8 @@ const start = async (id: string, roomNumber?: number) => {
         room.playing = true
         updateRoom(rn, room)
 
+        logger.info(`游戏开始: 房间 ${colors.cyan('#' + rn)}，发起者 ${colors.cyan(id)}`)
+
         const msg = {
           type: 'room:event:stage_update',
           from: rn,
@@ -631,6 +636,8 @@ const end = (roomNumber: number) => {
     if (room.playing) {
       room.playing = false
       updateRoom(roomNumber, room)
+
+      logger.info(`游戏结束: 房间 ${colors.cyan('#' + roomNumber)}`)
 
       const msg = {
         type: 'room:event:stage_update',
@@ -764,6 +771,7 @@ const removeRoomPlayer = async (roomNumber: number, id: string) => {
         })
       } else {
         // 理论上不会发生，保险起见
+        logger.error(`严重异常: 房间 ${colors.cyan('#' + roomNumber)} 找不到有效新房主，数据一致性可能受损`)
         room.owner = ''
       }
     }

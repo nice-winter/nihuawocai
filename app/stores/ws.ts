@@ -14,7 +14,7 @@ type WsEvents = {
 type WsEventKeys = keyof WsEvents
 type WsEventHandler<K extends WsEventKeys> = (payload: WsEvents[K]) => void
 
-const logger = consola.withTag('WebSocket')
+const logger = consola.withTag('WebSocketClient')
 
 export const useWsStore = defineStore('ws', () => {
   const wsEventBus = mitt<WsEvents>()

@@ -1,3 +1,7 @@
+import { createLogger } from '~~/server/utils/logger'
+
+const logger = createLogger('SessionPlugin')
+
 /**
  * @TODO session kv storage
  */
@@ -11,4 +15,6 @@ export default defineNitroPlugin(() => {
   sessionHooks.hook('clear', async (session, event) => {
     //
   })
+
+  logger.debug('Session 存储初始化完成')
 })

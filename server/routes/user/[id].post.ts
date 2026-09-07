@@ -1,7 +1,11 @@
+import { colors } from 'consola/utils'
 import { getUserData, updateUserData } from '~~/server/services/user'
+import { createLogger } from '~~/server/utils/logger'
+
+const logger = createLogger('UserRoute')
 
 export default defineEventHandler(async (event) => {
-  await requireUserSession(event)
+  const session = await requireUserSession(event)
 
   const id = getRouterParam(event, 'id')
   const body = (await readBody(event)) as UserData
@@ -17,6 +21,7 @@ export default defineEventHandler(async (event) => {
     } else {
       userData.gender = body.gender
       await updateUserData(id, userData)
+      logger.debug(`用户资料更新: ${colors.cyan(id)}，操作者 ${colors.cyan(session.user.id)}`)
 
       return {
         statusCode: 200

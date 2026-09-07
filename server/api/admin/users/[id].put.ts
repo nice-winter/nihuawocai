@@ -1,5 +1,9 @@
+import { colors } from 'consola/utils'
 import { getUserData, updateUserData } from '~~/server/services/user'
 import type { UserData } from '~~/shared/types/userData'
+import { createLogger } from '~~/server/utils/logger'
+
+const logger = createLogger('AdminUser')
 
 /**
  * 编辑用户信息接口
@@ -44,6 +48,11 @@ export default defineEventHandler(async (event) => {
 
   // 更新用户数据
   await updateUserData(userId, updateData)
+
+  logger.info(
+    `用户信息修改: ${colors.cyan(userId)}，管理员 ${colors.cyan(event.context.adminUserId)}`,
+    `字段 ${colors.yellow(Object.keys(updateData).join(', '))}`
+  )
 
   // 返回更新后的用户数据
   return await getUserData(userId)

@@ -1,4 +1,8 @@
+import { colors } from 'consola/utils'
 import { useWordManager } from '~~/server/services/word'
+import { createLogger } from '~~/server/utils/logger'
+
+const logger = createLogger('AdminWord')
 
 /**
  * 删除词库接口
@@ -35,5 +39,6 @@ export default defineEventHandler(async (event) => {
   // 删除词库
   await wordManager.deleteLibrary(libraryId)
 
+  logger.info(`词库删除: ${colors.cyan(existingLib.name)} (ID: ${libraryId})，管理员 ${colors.cyan(event.context.adminUserId)}`)
   return { message: '词库删除成功' }
 })

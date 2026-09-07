@@ -1,10 +1,10 @@
-import { consola } from 'consola'
 import { defineWsHandlers } from '~~/server/ws/utils'
 import { say } from '~~/server/services/chat'
 import { getLobbyPlayers } from '~~/server/services/player'
 import { getUserData } from '~~/server/services/user'
+import { createLogger } from '~~/server/utils/logger'
 
-const logger = consola.withTag('Player Handler')
+const logger = createLogger('PlayerHandler')
 
 export default defineWsHandlers({
   'player:get_profile': async ({ msg, user }) => {

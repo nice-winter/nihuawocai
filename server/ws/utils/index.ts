@@ -43,7 +43,8 @@ const safeSend = <T>(peer: WsPeer, msg: WebsocketMessage<T>) => {
     try {
       peer.send(encoded)
     } catch (e) {
-      console.warn('[ws]', 'safeSend failed', e)
+      // 使用 console.warn 因为 utils 模块不应依赖 logger（避免循环依赖）
+      console.warn('[ws]', 'safeSend failed', (e as Error).message)
     }
   }
 }

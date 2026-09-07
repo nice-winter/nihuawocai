@@ -1,4 +1,8 @@
+import { colors } from 'consola/utils'
 import { createUserData, hasUserData, updateUserData } from '~~/server/services/user'
+import { createLogger } from '~~/server/utils/logger'
+
+const logger = createLogger('Auth')
 
 export default defineOAuthXEventHandler({
   async onSuccess(event, { user, tokens }) {
@@ -25,7 +29,10 @@ export default defineOAuthXEventHandler({
       await createUserData(xUser.id, 'x', avatar_url, xUser.name)
     }
 
+    logger.info(`X(Twitter) 登录成功: ${colors.cyan(xUser.name)}@${xUser.id}`)
     return sendRedirect(event, '/')
   },
-  async onError(event, error) {}
+  async onError(event, error) {
+    logger.error('X(Twitter) OAuth 失败:', error)
+  }
 })

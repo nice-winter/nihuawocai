@@ -1,5 +1,5 @@
-import consola from 'consola'
 import { nanoid } from 'nanoid'
+import { colors } from 'consola/utils'
 
 // ----------------------------------------------------------------
 //                          类型定义
@@ -31,7 +31,9 @@ export interface WordLibrary extends LibraryMeta {
   words: WordItem[]
 }
 
-const logger = consola.withTag('Word Service')
+import { createLogger } from '~~/server/utils/logger'
+
+const logger = createLogger('WordService')
 
 // ----------------------------------------------------------------
 //                          常量与存储
@@ -119,6 +121,7 @@ export const useWordManager = () => {
 
     await _saveLibrary(newLib)
     await _addToIndex(id)
+    logger.info(`词库创建: ${colors.cyan(meta.name)} (ID: ${id})，作者 ${colors.cyan(meta.authorId)}，${initialWords.length} 个词条`)
     return id
   }
 
@@ -148,6 +151,7 @@ export const useWordManager = () => {
 
     await storage.removeItem(`${STORAGE_KEY_PREFIX}${id}`)
     await _removeFromIndex(id)
+    logger.info(`词库删除: ${id}`)
   }
 
   /**

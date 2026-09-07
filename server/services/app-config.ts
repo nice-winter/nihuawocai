@@ -1,5 +1,6 @@
 import { defaultAppConfig } from '#shared/defaultAppConfig'
 import { defu } from 'defu'
+import { initLogLevel } from '~~/server/utils/logger'
 
 const appStorage = useStorage('app')
 const keyName = 'app_config'
@@ -22,7 +23,10 @@ const getAppConfig = async () => {
     return defaultAppConfig
   }
   // 确保必要的字段存在
-  return ensureConfigFields(appConfig)
+  const config = ensureConfigFields(appConfig)
+  // 同步日志等级
+  initLogLevel(config.admin.logLevel)
+  return config
 }
 
 const setAppConfig = async (appConfig: AppConfig) => {
@@ -71,6 +75,10 @@ const updateAppConfig = async (appConfig: Partial<AppConfig>) => {
   }
 
   await setAppConfig(newAppConfig)
+
+  // 同步日志等级到 consola
+  initLogLevel(newAppConfig.admin.logLevel)
+
   return newAppConfig
 }
 

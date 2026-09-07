@@ -1,9 +1,13 @@
+import { colors } from 'consola/utils'
 import {
   verifyInitSecret,
   clearInitSecret,
   setSuperAdmin
 } from '~~/server/utils/admin'
 import { hasUserData } from '~~/server/services/user'
+import { createLogger } from '~~/server/utils/logger'
+
+const logger = createLogger('AdminInit')
 
 /**
  * 管理员初始化接口
@@ -28,6 +32,7 @@ export default defineEventHandler(async (event) => {
 
   // 验证 secret
   if (!verifyInitSecret(secret)) {
+    logger.warn(`管理员初始化 secret 验证失败，用户 ${colors.cyan(userId)}，尝试 ${colors.yellow(secret.substring(0, 4))}...`)
     throw createError({
       statusCode: 400,
       statusMessage: 'secret 无效或已过期'
@@ -48,6 +53,7 @@ export default defineEventHandler(async (event) => {
   // 清除 secret
   clearInitSecret()
 
+  logger.info(`超级管理员初始化成功: ${colors.cyan(userId)}`)
   return {
     success: true,
     message: '超级管理员初始化成功'
