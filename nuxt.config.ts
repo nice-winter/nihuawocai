@@ -36,7 +36,6 @@ export default defineNuxtConfig({
     }
   },
 
-
   // 图标
   icon: {
     serverBundle: 'local',
