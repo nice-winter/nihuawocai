@@ -1,5 +1,9 @@
+import { colors } from 'consola/utils'
 import { useWordManager } from '~~/server/services/word'
 import type { WordItem } from '~~/server/services/word'
+import { createLogger } from '~~/server/utils/logger'
+
+const logger = createLogger('AdminWord')
 
 /**
  * 创建词库接口
@@ -51,5 +55,6 @@ export default defineEventHandler(async (event) => {
     (words as WordItem[]) || []
   )
 
+  logger.info(`词库创建: ${colors.cyan(name.trim())} (ID: ${id})，管理员 ${colors.cyan(userId)}`)
   return { id, message: '词库创建成功' }
 })

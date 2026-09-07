@@ -1,8 +1,8 @@
-import { consola } from 'consola'
 import { defineWsHandlers } from '~~/server/ws/utils'
 import { say } from '~~/server/services/chat'
+import { createLogger } from '~~/server/utils/logger'
 
-const logger = consola.withTag('Chat Handler')
+const logger = createLogger('ChatHandler')
 
 export default defineWsHandlers({
   'chat:say': async ({ msg, user }) => {

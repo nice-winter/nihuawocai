@@ -1,4 +1,3 @@
-import { consola } from 'consola'
 import { defineWsHandlers } from '~~/server/ws/utils'
 import {
   broadcast,
@@ -22,7 +21,9 @@ import {
   roomInviteSchema
 } from '~~/server/ws/schemas/room'
 
-const _logger = consola.withTag('Room Handler')
+import { createLogger } from '~~/server/utils/logger'
+
+const _logger = createLogger('RoomHandler')
 
 export default defineWsHandlers({
   'room:list_pull': async () => {

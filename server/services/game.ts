@@ -9,7 +9,11 @@
  */
 
 import defu from 'defu'
+import { colors } from 'consola/utils'
 import { getAppConfig } from './app-config'
+import { createLogger } from '~~/server/utils/logger'
+
+const logger = createLogger('GameService')
 import {
   checkPlayerIsInRoom,
   getPlayer,
@@ -148,6 +152,11 @@ const gameStart = async (roomNumber: number, room: Room) => {
 
   GameStateRecord.set(roomNumber, state)
 
+  logger.info(
+    `游戏开始: 房间 ${colors.cyan('#' + roomNumber)}`,
+    `${colors.cyan(String(players.length))} 名玩家，${totalRounds} 轮，游戏ID ${colors.gray(state.id)}`
+  )
+
   sendToRoom(
     {
       type: 'game:event:start',
@@ -258,6 +267,10 @@ const endGame = (roomNumber: number) => {
   if (st) {
     st.gamePhase = 'game_end'
     st.roundPhase = 'round_end'
+    logger.info(
+      `游戏结束: 房间 ${colors.cyan('#' + roomNumber)}，游戏ID ${colors.gray(st.id)}`,
+      `积分 ${JSON.stringify(st.scores)}`
+    )
     sendToRoom({ type: 'game:event:end', from: roomNumber, payload: {} }, roomNumber)
   }
   cleanUpRoom(roomNumber)
@@ -302,6 +315,11 @@ const startRound = async (roomNumber: number) => {
   st.currentWord = await wordManager.pickWord(st.options.libIds)
   const prepareSeconds = st.config.cycle.time.roundStartWaitTimeSecond
   setupTimer(st, prepareSeconds)
+
+  logger.debug(
+    `回合开始: 房间 ${colors.cyan('#' + roomNumber)}`,
+    `第 ${st.currentRoundIndex + 1}/${st.totalRounds} 轮，画手 ${colors.cyan(drawerId!)}，题目 ${colors.green(st.currentWord?.word ?? '')}`
+  )
 
   sendToRoom(
     {
@@ -584,6 +602,7 @@ const handleGuess = (roomNumber: number, id: string, guessContent: string): bool
 
   if (normalizedGuess === normalizedAnswer) {
     st.bingoPlayers.push(id)
+    logger.info(`猜对! 房间 ${colors.cyan('#' + roomNumber)}，玩家 ${colors.cyan(id)}，第 ${st.bingoPlayers.length} 个猜对`)
 
     const scoreDelta = applyScoreOnBingo(st, id)
 
@@ -745,6 +764,7 @@ const handlePlayerLeave = (roomNumber: number, id: string) => {
   // 3. 检查剩余人数
   // 特殊情况：如果走得只剩 0 个人了（比如最后两个一起掉线），直接销毁，否则进入 Settlement 会因为没人而尴尬
   if (st.drawerQueue.length === 0) {
+    logger.info(`游戏因全员离线结束: 房间 ${colors.cyan('#' + roomNumber)}`)
     cleanUpRoom(roomNumber)
     end(roomNumber)
     return
@@ -856,6 +876,7 @@ const forceEndRound = (roomNumber: number) => {
   const st = GameStateRecord.get(roomNumber)
   if (!st) return
   if (st.roundPhase === 'drawing' || st.roundPhase === 'round_prepare') {
+    logger.info(`管理员强制结束回合: 房间 ${colors.cyan('#' + roomNumber)}`)
     sendToRoom(
       {
         type: 'game:event:notice',

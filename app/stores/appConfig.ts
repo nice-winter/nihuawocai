@@ -2,7 +2,7 @@ import { defaultAppConfig } from '#shared/defaultAppConfig'
 import defu from 'defu'
 import { consola } from 'consola/browser'
 
-const logger = consola.withTag('应用配置')
+const logger = consola.withTag('AppConfig')
 
 export const useAppConfigStore = defineStore('appConfig', () => {
   const def = defaultAppConfig

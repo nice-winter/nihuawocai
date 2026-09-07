@@ -1,5 +1,9 @@
 import { shortHash } from '#shared/utils'
 import { defu } from 'defu'
+import { colors } from 'consola/utils'
+import { createLogger } from '~~/server/utils/logger'
+
+const logger = createLogger('UserService')
 
 const userDataStorage = useStorage('user_data')
 
@@ -36,9 +40,11 @@ const createUserData = async (
   }
 
   if (await userDataStorage.hasItem(id)) {
+    logger.warn(`用户创建跳过，已存在: ${colors.cyan(id)}`)
     return false
   } else {
     await userDataStorage.setItem(id, userData)
+    logger.info(`新用户创建: ${colors.cyan(nickname)}@${id} (${colors.gray(authProvider)})`)
   }
 
   return true

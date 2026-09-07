@@ -1,8 +1,8 @@
-import { consola } from 'consola'
 import { colors } from 'consola/utils'
 import { useWordManager } from '~~/server/services/word'
+import { createLogger } from '~~/server/utils/logger'
 
-const logger = consola.withTag('Startup')
+const logger = createLogger('Startup')
 const items: { icon: string; label: string; detail: string }[] = []
 
 /** 计算字符串的终端显示宽度（CJK 字符算 2 列） */

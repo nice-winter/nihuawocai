@@ -3,7 +3,8 @@ import type { AppConfig } from '~~/shared/types/appConfig'
 export const defaultAppConfig: AppConfig = {
   admin: {
     superAdminId: '',  // 首次部署时需要初始化
-    adminIds: []
+    adminIds: [],
+    logLevel: '' // 空 = 不覆盖，使用 CONSOLA_LEVEL 环境变量或默认值
   },
   name: '我画你猜',
   announcements: [

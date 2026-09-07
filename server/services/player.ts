@@ -1,4 +1,3 @@
-import { consola } from 'consola'
 import { colors } from 'consola/utils'
 import mitt from 'mitt'
 import { isOpen, reply, safeSend, type WsPeer } from '~~/server/ws/utils'
@@ -22,7 +21,9 @@ type PlayerEventBus = {
   }
 }
 
-const logger = consola.withTag('Player Service')
+import { createLogger } from '~~/server/utils/logger'
+
+const logger = createLogger('PlayerService')
 
 // ------------------------- Records -------------------------
 /**
@@ -68,6 +69,7 @@ const getPlayer = (id: string) => players.get(id)
 const checkDuplicateLogin = (id: string) => {
   const isLoginedPlayer = getPlayer(id)
   if (isLoginedPlayer) {
+    logger.warn(`重复登录检测: ${colors.cyan(id)}，踢出旧连接`)
     removePlayer(isLoginedPlayer.id) // 重复登录时移除旧玩家状态
     isLoginedPlayer.peer.close(4001, 'Duplicate login')
   }
@@ -114,7 +116,7 @@ const addPlayer = async (user: UserData & { peer: WsPeer }) => {
   players.set(user.id, player)
   await updateUserLastLoginAt(user.id) // 更新玩家最后登录时间
 
-  logger.debug('Added new player:', `${colors.cyan(player.nickname)}@${player.id}`)
+  logger.debug('玩家上线:', `${colors.cyan(player.nickname)}@${player.id}`)
 
   playerEventBus.emit('player:connect', {
     player,
@@ -182,7 +184,7 @@ const updatePlayerState = (id: string, roomNumber?: number, onlooker?: boolean) 
       id
     )
 
-    logger.debug('Player state updated:', `${colors.cyan(player?.nickname)}@${player.id}`)
+    logger.debug('玩家状态更新:', `${colors.cyan(player?.nickname)}@${player.id}`)
   }
 }
 
@@ -203,7 +205,7 @@ const removePlayer = (id: string) => {
       player
     })
 
-    logger.debug('Removed player:', `${colors.cyan(player?.nickname)}@${player.id}`)
+    logger.debug('玩家离线:', `${colors.cyan(player?.nickname)}@${player.id}`)
   }
 }
 

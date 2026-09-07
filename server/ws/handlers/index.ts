@@ -1,4 +1,3 @@
-import { consola } from 'consola'
 import { colors } from 'consola/utils'
 import { wsEventBus } from '~~/server/ws/core/events'
 import playerHandler from './player'
@@ -6,8 +5,9 @@ import roomHandler from './room'
 import chatHandler from './chat'
 import gameHandler from './game'
 import type { WsHandlers } from '~~/server/ws/utils'
+import { createLogger } from '~~/server/utils/logger'
 
-const logger = consola.withTag('Handlers')
+const logger = createLogger('WSHandler')
 
 let INITIALIZED = false
 
@@ -20,9 +20,9 @@ function registerHandlers(handlers: WsHandlers) {
     if (!type || !handler) return // 没有 handler，不处理
 
     logger.debug(
-      'Trigger:',
+      '触发:',
       colors.cyan(type),
-      'From:',
+      '来自:',
       `${colors.cyan(e.user?.nickname || '')}@${e.user?.id}`
     )
 
@@ -46,14 +46,14 @@ function registerHandlers(handlers: WsHandlers) {
       const errorMsg = (err as Error)?.message || String(err)
       e.reply({ ...replyBase, successful: false, message: errorMsg })
 
-      logger.error(colors.red(`[${type}] Error:`), errorMsg)
+      logger.error(colors.red(`[${type}] 错误:`), errorMsg)
     }
   })
 
   INITIALIZED = true
 
   logger.debug(
-    `Registered ${colors.cyan(Object.keys(handlers).length)} handlers:`,
+    `已注册 ${colors.cyan(Object.keys(handlers).length)} 个处理器:`,
     Object.keys(handlers)
       .map((k) => colors.cyan(k))
       .join(', ')

@@ -1,11 +1,12 @@
-import { consola } from 'consola'
+import { colors } from 'consola/utils'
 import { defineHooks } from 'crossws'
 import { wsEventBus } from './core/events'
 import { resolveUserFromPeer } from './core/connection'
 import { safeSend, reply } from './utils'
 import handlers from './handlers'
+import { createLogger } from '~~/server/utils/logger'
 
-const logger = consola.withTag('WS')
+const logger = createLogger('WebSocket')
 
 // 心跳配置
 const HEARTBEAT = {
@@ -25,7 +26,7 @@ export const hooks = defineHooks({
 
     peer.context._hb_timer = setInterval(() => {
       if (peer.context._is_alive === false) {
-        logger.warn(`Peer ${peer.id} heartbeat timed out, terminating.`)
+        logger.warn(`心跳超时，断开连接: ${colors.gray(peer.id)}`)
         peer.terminate()
         return
       }
@@ -65,7 +66,7 @@ export const hooks = defineHooks({
         reply: reply(peer, msg.rid?.substring(0, 36))
       })
     } catch (e) {
-      logger.warn('ws message error', e)
+      logger.warn('消息处理错误:', e)
       reply(peer)({ type: 'error', message: 'Invalid message' })
     }
   },
@@ -78,13 +79,19 @@ export const hooks = defineHooks({
 
     const { userData } = await resolveUserFromPeer(peer)
     wsEventBus.emit('ws:disconnect', { peer, user: userData, ...e })
-    // logger.warn(e)
+    logger.info(
+      `连接关闭: ${colors.cyan(userData?.nickname ?? 'unknown')}@${colors.gray(peer.id)}`,
+      `code=${colors.yellow(String(e?.code ?? ''))} reason=${e?.reason ?? ''}`
+    )
   },
 
   async error(peer, error) {
     const { userData } = await resolveUserFromPeer(peer)
     wsEventBus.emit('ws:error', { peer, user: userData, error })
-    // logger.warn(error)
+    logger.error(
+      `WebSocket 错误: ${colors.cyan(userData?.nickname ?? 'unknown')}@${colors.gray(peer.id)}`,
+      error
+    )
   }
 })
 

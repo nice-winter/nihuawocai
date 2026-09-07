@@ -2,6 +2,9 @@ import { createDatabase } from 'db0'
 import dbDriver from 'unstorage/drivers/db0'
 import fsDriver from 'unstorage/drivers/fs'
 import sqlite from 'db0/connectors/node-sqlite'
+import { createLogger } from '~~/server/utils/logger'
+
+const logger = createLogger('Storage')
 
 export default defineNitroPlugin(() => {
   const databaseName = 'database'
@@ -38,9 +41,12 @@ export default defineNitroPlugin(() => {
     storage.mount(t, pickDriver(t))
   })
 
+  const driverName = import.meta.dev ? 'fs' : 'sqlite'
+  logger.info(`存储层初始化完成: ${driverName}，${tables.length} 张表 (${tables.join(', ')})`)
+
   registerBannerItem({
     icon: '💾',
     label: '储存层就绪',
-    detail: `${import.meta.dev ? 'fs' : 'sqlite'}  ·  ${tables.length} 张表`
+    detail: `${driverName}  ·  ${tables.length} 张表`
   })
 })

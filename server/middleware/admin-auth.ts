@@ -1,4 +1,8 @@
+import { colors } from 'consola/utils'
 import { isAdmin, isSuperAdmin, getAdminList } from '~~/server/utils/admin'
+import { createLogger } from '~~/server/utils/logger'
+
+const logger = createLogger('AdminAuth')
 
 /**
  * 管理员权限验证中间件
@@ -26,6 +30,7 @@ export default defineEventHandler(async (event) => {
   // 检查是否已设置超级管理员
   const { superAdminId } = await getAdminList()
   if (!superAdminId) {
+    logger.error(`管理员接口访问被拒：超级管理员未初始化，用户 ${colors.cyan(userId)}，路径 ${colors.yellow(pathname)}`)
     throw createError({
       statusCode: 500,
       statusMessage: '超级管理员未初始化'
@@ -35,6 +40,7 @@ export default defineEventHandler(async (event) => {
   // 检查是否为管理员
   const adminCheck = await isAdmin(userId)
   if (!adminCheck) {
+    logger.warn(`非管理员访问被拒：${colors.cyan(userId)} → ${colors.yellow(pathname)}`)
     throw createError({
       statusCode: 403,
       statusMessage: '权限不足，需要管理员权限'

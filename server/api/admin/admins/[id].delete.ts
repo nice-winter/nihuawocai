@@ -1,4 +1,8 @@
+import { colors } from 'consola/utils'
 import { removeAdmin, isSuperAdmin } from '~~/server/utils/admin'
+import { createLogger } from '~~/server/utils/logger'
+
+const logger = createLogger('AdminManagement')
 
 /**
  * 移除管理员接口（仅超级管理员可操作）
@@ -33,5 +37,6 @@ export default defineEventHandler(async (event) => {
   // 移除管理员
   await removeAdmin(targetUserId)
 
+  logger.info(`管理员移除: ${colors.cyan(targetUserId)}，操作者 ${colors.cyan(userId)}`)
   return { message: '管理员移除成功' }
 })

@@ -1,8 +1,8 @@
-import { consola } from 'consola'
 import { defineWsHandlers } from '~~/server/ws/utils'
 import { handleGiveUp, handleGift, handleSketchpad } from '~~/server/services/game'
+import { createLogger } from '~~/server/utils/logger'
 
-const logger = consola.withTag('Game Handler')
+const logger = createLogger('GameHandler')
 
 export default defineWsHandlers({
   'game:drawing:give_up': async ({ user }) => {

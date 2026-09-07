@@ -1,4 +1,3 @@
-import { consola } from 'consola'
 import { colors } from 'consola/utils'
 import { getAppConfig } from '~~/server/services/app-config'
 import {
@@ -10,7 +9,9 @@ import {
 } from './player'
 import { handleGuess } from './game'
 
-const logger = consola.withTag('Chat Service')
+import { createLogger } from '~~/server/utils/logger'
+
+const logger = createLogger('ChatService')
 
 // 记录每个玩家下次允许发言的时间戳
 const chatIntervalRecord = new Map<string, number>()

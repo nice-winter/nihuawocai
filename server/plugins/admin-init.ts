@@ -1,9 +1,9 @@
-import { consola } from 'consola'
 import { getAppConfig } from '~~/server/services/app-config'
 import { generateInitSecret } from '~~/server/utils/admin'
+import { createLogger } from '~~/server/utils/logger'
 
 export default defineNitroPlugin(async () => {
-  const logger = consola.withTag('Admin Init')
+  const logger = createLogger('AdminInit')
 
   // 延迟执行，确保存储已加载
   await new Promise((resolve) => setTimeout(resolve, 1000))
