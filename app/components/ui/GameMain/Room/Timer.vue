@@ -46,7 +46,7 @@ const play = () => {
     } else {
       pause()
     }
-  }, 1000)
+  }, 1000) as unknown as number
 }
 
 /** 暂停倒计时 */
