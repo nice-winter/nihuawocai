@@ -55,7 +55,7 @@ export interface ThrowerModalProps {
   parent?: Element
 }
 
-const { parent, answer = '', reason = '', seconds = 5, showThrowItem = true } = defineProps<ThrowerModalProps>()
+const { parent = undefined, answer = '', reason = '', seconds = 5, showThrowItem = true } = defineProps<ThrowerModalProps>()
 
 const { sendGift } = useGameStore()
 

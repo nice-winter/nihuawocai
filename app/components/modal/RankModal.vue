@@ -72,7 +72,7 @@ export interface RankModalProps {
   parent?: Element
 }
 
-const { parent, ranks = [], seconds = 8 } = defineProps<RankModalProps>()
+const { parent = undefined, ranks = [], seconds = 8 } = defineProps<RankModalProps>()
 
 const baseModal = useTemplateRef('baseModal')
 const modalRef = ref<HTMLDivElement | null>(null)

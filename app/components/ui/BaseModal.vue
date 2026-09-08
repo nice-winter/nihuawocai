@@ -20,7 +20,7 @@ export interface BaseModalProps {
   closeOnMask?: boolean | 'reject'
 }
 
-const { parent, closeOnEsc = false, closeOnMask = false } = defineProps<BaseModalProps>()
+const { parent = undefined, closeOnEsc = false, closeOnMask = false } = defineProps<BaseModalProps>()
 
 const visible = ref(false)
 const resolveFn = ref<((value: unknown) => void) | null>(null)

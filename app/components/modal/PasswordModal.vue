@@ -29,7 +29,7 @@ interface Props {
   parent?: Element
 }
 
-const { parent } = defineProps<Props>()
+const { parent = undefined } = defineProps<Props>()
 
 const baseModal = useTemplateRef('baseModal')
 const passwordInputRef = useTemplateRef('passwordInputRef')

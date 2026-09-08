@@ -27,7 +27,7 @@ export interface OfflineModalProps {
   parent?: Element
 }
 
-const { parent, reason = '与服务器断开连接' } = defineProps<OfflineModalProps>()
+const { parent = undefined, reason = '与服务器断开连接' } = defineProps<OfflineModalProps>()
 
 const baseModal = useTemplateRef('baseModal')
 const modalRef = ref<HTMLDivElement | null>(null)

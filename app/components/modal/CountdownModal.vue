@@ -16,7 +16,7 @@ interface Props {
   initialValue?: number
 }
 
-const { parent, seconds = 5, initialValue } = defineProps<Props>()
+const { parent = undefined, seconds = 5, initialValue = undefined } = defineProps<Props>()
 
 const baseModal = useTemplateRef('baseModal')
 const numberEl = useTemplateRef<HTMLElement>('numberEl')
