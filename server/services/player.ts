@@ -4,6 +4,8 @@ import { isOpen, reply, safeSend, type WsPeer } from '~~/server/ws/utils'
 import { wsEventBus } from '~~/server/ws'
 import { getUserData, updateUserData, updateUserLastLoginAt } from './user'
 
+import { createLogger } from '~~/server/utils/logger'
+
 interface ServerPlayer extends LoggedInPlayer {
   peer: WsPeer
 }
@@ -20,8 +22,6 @@ type PlayerEventBus = {
     player: Omit<ServerPlayer, 'peer'>
   }
 }
-
-import { createLogger } from '~~/server/utils/logger'
 
 const logger = createLogger('PlayerService')
 

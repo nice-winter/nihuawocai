@@ -1,6 +1,8 @@
 import { nanoid } from 'nanoid'
 import { colors } from 'consola/utils'
 
+import { createLogger } from '~~/server/utils/logger'
+
 // ----------------------------------------------------------------
 //                          类型定义
 // ----------------------------------------------------------------
@@ -30,8 +32,6 @@ export interface WordLibrary extends LibraryMeta {
   editorIds: string[] // 有权编辑的用户 ID 列表
   words: WordItem[]
 }
-
-import { createLogger } from '~~/server/utils/logger'
 
 const logger = createLogger('WordService')
 
@@ -121,7 +121,9 @@ export const useWordManager = () => {
 
     await _saveLibrary(newLib)
     await _addToIndex(id)
-    logger.info(`词库创建: ${colors.cyan(meta.name)} (ID: ${id})，作者 ${colors.cyan(meta.authorId)}，${initialWords.length} 个词条`)
+    logger.info(
+      `词库创建: ${colors.cyan(meta.name)} (ID: ${id})，作者 ${colors.cyan(meta.authorId)}，${initialWords.length} 个词条`
+    )
     return id
   }
 

@@ -19,7 +19,7 @@ const fileReporter: ConsolaReporter = {
 
       // 去除 ANSI 颜色码
       const cleanArgs = logObj.args.map((arg) =>
-        typeof arg === 'string' ? arg.replace(/\x1B\[[0-9;]*m/g, '') : arg
+        typeof arg === 'string' ? arg.replace(new RegExp(String.fromCharCode(0x1b) + '\\[[0-9;]*m', 'g'), '') : arg
       )
 
       const entry = {

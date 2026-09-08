@@ -15,6 +15,8 @@ import { getUserData } from './user'
 import mitt from 'mitt'
 import { nanoid } from 'nanoid'
 
+import { createLogger } from '~~/server/utils/logger'
+
 type RoomEventBus = {
   'room:event:create': {
     roomNumber: number
@@ -60,8 +62,6 @@ type RoomEventBus = {
     room: Room
   }
 }
-
-import { createLogger } from '~~/server/utils/logger'
 
 const logger = createLogger('RoomService')
 

@@ -12,8 +12,6 @@ import defu from 'defu'
 import { colors } from 'consola/utils'
 import { getAppConfig } from './app-config'
 import { createLogger } from '~~/server/utils/logger'
-
-const logger = createLogger('GameService')
 import {
   checkPlayerIsInRoom,
   getPlayer,
@@ -24,6 +22,8 @@ import {
 import { end, roomEventBus } from './room'
 import { useWordManager, type WordItem } from './word'
 import { nanoid } from 'nanoid'
+
+const logger = createLogger('GameService')
 
 // ----------------------------------------------------------------
 //                          类型定义 (从 shared/types/game 导入)
