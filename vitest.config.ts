@@ -3,6 +3,9 @@ import { defineVitestProject } from '@nuxt/test-utils/config'
 
 export default defineConfig({
   test: {
+    alias: {
+      'vitest/environments': 'vitest/runtime',
+    },
     projects: [
       {
         test: {
