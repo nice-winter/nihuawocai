@@ -4,7 +4,7 @@
     class="w-5xl min-w-5xl min-h-app-h flex flex-col custom-bg bg-top bg-size-[1024px]"
   >
     <div class="w-full h-40 flex relative">
-      <div class="absolute right-23 top-6 flex gap-4 text-sm">
+      <div class="absolute right-23 bottom-5 flex gap-4 text-sm">
         <UiUserMenu v-if="userSession.loggedIn.value && userSession.user.value" class="" />
       </div>
     </div>
