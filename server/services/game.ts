@@ -889,6 +889,29 @@ const forceEndRound = (roomNumber: number) => {
   }
 }
 
+/**
+ * 聊天上下文查询 — 供 chat service 使用，不暴露内部 GameStateRecord
+ */
+interface ChatContext {
+  /** 是否应当尝试猜词（drawing 阶段 + 非画手 + 未猜对） */
+  shouldAttemptGuess: boolean
+  /** 当前答案（仅已猜对玩家需要，用于脱敏；其余情况为 null） */
+  answerForMasking: string | null
+}
+
+const getChatContext = (roomNumber: number, playerId: string): ChatContext | null => {
+  const st = GameStateRecord.get(roomNumber)
+  if (!st) return null
+
+  const isDrawer = playerId === st.drawer
+  const hasBingoed = st.bingoPlayers.includes(playerId)
+
+  const shouldAttemptGuess = st.roundPhase === 'drawing' && !isDrawer && !hasBingoed
+  const answerForMasking = hasBingoed && st.currentWord ? st.currentWord.word : null
+
+  return { shouldAttemptGuess, answerForMasking }
+}
+
 export {
   gameStart,
   handleSketchpad,
@@ -896,5 +919,6 @@ export {
   handleGuess,
   handleGift,
   forceEndRound,
+  getChatContext,
   GameStateRecord
 }

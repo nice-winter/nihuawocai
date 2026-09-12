@@ -7,7 +7,7 @@ import {
   sendToLobby,
   sendToRoom
 } from './player'
-import { handleGuess } from './game'
+import { handleGuess, getChatContext } from './game'
 
 import { createLogger } from '~~/server/utils/logger'
 
@@ -17,8 +17,28 @@ const logger = createLogger('ChatService')
 const chatIntervalRecord = new Map<string, number>()
 
 /**
+ * 将消息中的答案文本替换为等长的 *
+ * 使用全局替换，忽略大小写
+ */
+function maskAnswer(msg: string, answer: string): string {
+  if (!answer) return msg
+  const escaped = answer.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+  return msg.replace(new RegExp(escaped, 'gi'), '*'.repeat(answer.length))
+}
+
+/**
+ * 敏感词/关键词过滤
+ * @TODO 接入敏感词过滤系统（如 DFA 算法或第三方服务）
+ * @param msg 原始消息
+ * @returns 过滤后的消息，敏感词替换为 *
+ */
+async function filterSensitiveWords(msg: string): Promise<string> {
+  // TODO: 接入敏感词过滤系统
+  return msg
+}
+
+/**
  * 玩家发言
- * @TODO 需要完善屏蔽词过滤、联动游戏回答逻辑
  * @param user 用户信息
  * @param chatmsg 发言消息
  */
@@ -26,21 +46,35 @@ const say = async (user: UserData, chatmsg: string) => {
   const player = getPlayer(user.id)
   if (!player) throw new Error('玩家不存在')
 
-  // 如果在房间内，则尝试走猜词逻辑
-  // @TODO: 判断当前房间是否游戏中等
+  // 1 内容预处理（所有消息都走）
+  let displayMsg = await filterSensitiveWords(chatmsg)
+
+  // 2 游戏逻辑（仅房间内）
   if (checkPlayerIsInRoom(player.id)) {
-    const bingo = handleGuess(player.state.roomNumber!, player.id, chatmsg)
-    if (bingo) return // 猜对答案，略过后续处理过程，交由 game service 处理后续消息推送
+    const roomNumber = player.state.roomNumber!
+    const ctx = getChatContext(roomNumber, player.id)
+
+    if (ctx) {
+      // 画画阶段 + 未猜对 + 非画手 → 尝试猜词（用原始消息）
+      if (ctx.shouldAttemptGuess) {
+        const bingo = handleGuess(roomNumber, player.id, chatmsg)
+        if (bingo) return // 猜对，游戏侧处理后续广播
+      }
+
+      // 已猜对 → 脱敏答案文本，防止泄露
+      if (ctx.answerForMasking) {
+        displayMsg = maskAnswer(displayMsg, ctx.answerForMasking)
+      }
+    }
   }
 
+  // 3 冷却检查
   const now = Date.now()
   const config = await getAppConfig()
 
-  // 根据玩家所在状态，选取不同冷却时间
   const intervalSec = checkPlayerIsInRoom(player.id)
     ? config.game.room.time.chatIntervalTimeSecond
     : config.game.lobby.time.chatIntervalTimeSecond
-
   const intervalMs = intervalSec * 1000
 
   const nextAllowed = chatIntervalRecord.get(user.id) ?? 0
@@ -49,30 +83,23 @@ const say = async (user: UserData, chatmsg: string) => {
     throw new Error(`你太能说了吧，请 ${remaining} 秒后再试...`)
   }
 
-  // 更新下一次可发言时间
   chatIntervalRecord.set(user.id, now + intervalMs)
 
-  // 按状态广播消息
-  if (checkPlayerIsInLobby(player.id)) {
-    sendToLobby({
-      type: 'chat:event:say',
-      sender: user,
-      chatmsg,
-      timestamp: now
-    })
-  } else if (checkPlayerIsInRoom(player.id)) {
-    sendToRoom(
-      {
-        type: 'chat:event:say',
-        sender: user,
-        chatmsg,
-        timestamp: now
-      },
-      player.state.roomNumber!
-    )
+  // 4 广播
+  const payload = {
+    type: 'chat:event:say' as const,
+    sender: user,
+    chatmsg: displayMsg,
+    timestamp: now
   }
 
-  logger.info(`Player ${colors.cyan(user.nickname)} say: ${colors.green(chatmsg)}`)
+  if (checkPlayerIsInLobby(player.id)) {
+    sendToLobby(payload)
+  } else if (checkPlayerIsInRoom(player.id)) {
+    sendToRoom(payload, player.state.roomNumber!)
+  }
+
+  logger.info(`Player ${colors.cyan(user.nickname)} say: ${colors.green(displayMsg)}`)
 }
 
 export { say }
