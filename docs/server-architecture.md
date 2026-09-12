@@ -1,4 +1,4 @@
-# 服务端架构
+# 服务端架构与事件系统
 
 ## 项目概述
 
@@ -90,13 +90,45 @@ server/
 
 ### 2. 事件驱动架构
 
-三层事件总线：
+后端采用三层 mitt 事件总线，形成**单向依赖链**——上游不知道下游的存在，下游通过监听上游事件来响应。
 
-1. **wsEventBus** (全局): `ws:connect` / `ws:message` / `ws:disconnect` / `ws:error`
-2. **playerEventBus** (玩家): `player:connect` / `player:beforeDisconnect` / `player:disconnected`
-3. **roomEventBus** (房间): `room:event:create` / `room:event:destroy` / `room:event:player_join` / `room:event:player_leave` / `room:event:game_start` / `room:event:game_end` 等
+```
+WebSocket 连接 (crossws hooks)
+       │
+       ▼  wsEventBus.emit('ws:connect/message/disconnect/error')
+┌──────────────────────────┐
+│  Layer 1: wsEventBus     │  ws/core/events.ts
+│  传输层：连接生命周期      │
+└───────────┬──────────────┘
+            │ player.ts 监听 connect/disconnect，管理在线玩家
+            ▼  playerEventBus.emit('player:connect/beforeDisconnect/disconnected')
+┌──────────────────────────┐
+│  Layer 2: playerEventBus │  services/player.ts
+│  玩家层：上下线状态        │
+└───────────┬──────────────┘
+            │ room.ts 监听 beforeDisconnect，踢出房间
+            ▼  roomEventBus.emit('room:event:create/destroy/player_join/...')
+┌──────────────────────────┐
+│  Layer 3: roomEventBus   │  services/room.ts
+│  房间层：房间生命周期      │
+└───────────┬──────────────┘
+            │ game.ts 监听 game_start/player_leave/onlooker_join
+            ▼
+┌──────────────────────────┐
+│  game.ts (纯消费者)       │  services/game.ts
+│  游戏层：状态机驱动        │
+└──────────────────────────┘
+```
 
-事件流向：WS 连接 → player 服务注册玩家 → room 服务监听玩家事件 → game 服务监听房间事件
+**各层事件清单：**
+
+| 层级 | 事件总线         | 事件                                                                                                                                                                                                                       | 发射方      | 消费方                       |
+| ---- | ---------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------- | ---------------------------- |
+| L1   | `wsEventBus`     | `ws:connect` `ws:message` `ws:disconnect` `ws:error`                                                                                                                                                                       | ws/index.ts | handlers/index.ts, player.ts |
+| L2   | `playerEventBus` | `player:connect` `player:beforeDisconnect` `player:disconnected`                                                                                                                                                           | player.ts   | room.ts                      |
+| L3   | `roomEventBus`   | `room:event:create` `room:event:destroy` `room:event:player_join` `room:event:player_leave` `room:event:onlooker_join` `room:event:onlooker_sit` `room:event:onlooker_leave` `room:event:game_start` `room:event:game_end` | room.ts     | game.ts                      |
+
+**设计原则：game.ts 是纯下游消费者**——添加游戏模块时只需在 game.ts 里 `roomEventBus.on(...)` 即可，无需修改 room.ts 任何代码。
 
 ### 3. 消息广播分层
 
@@ -222,3 +254,157 @@ server/
 - `game:event:start` / `game:event:end` / `game:event:settlement` / `game:event:state` / `game:event:round:prepare` / `game:event:drawing:start` / `game:event:interaction:start` / `game:event:round:end` / `game:event:word` / `game:event:prompt` / `game:event:timer:update` / `game:event:sketchpad` / `game:event:guess:bingo` / `game:event:interaction:gift` / `game:event:notice`
 - `player:event:logged_in` / `player:event:state_update` / `player:event:lobby_players_add` / `player:event:lobby_players_remove`
 - `chat:event:say`
+
+---
+
+## 前端事件架构
+
+前端同样采用双层事件总线，与后端的三层形成镜像关系。
+
+### 1. 双层 EventBus
+
+```
+WebSocket Worker (二进制 CBOR 流)
+       │
+       ▼  Worker postMessage → store 接收
+┌──────────────────────────────────────────────────────────────┐
+│  Layer 1: wsEventBus  (app/stores/ws.ts, mitt)               │
+│  传输层事件: ws:connected / ws:message / ws:error /           │
+│             ws:disconnected                                  │
+│  职责: 连接管理、请求/响应 Promise 映射、日志                   │
+└────────────────────────┬─────────────────────────────────────┘
+                         │ 各 domain store 监听 ws:message
+                         │ 按 type 前缀过滤 + 数据富化
+                         ▼
+┌──────────────────────────────────────────────────────────────┐
+│  Layer 2: eventBus  (app/composables/eventBus.ts, mitt)      │
+│  业务/UI 层事件: game:event:* / chat:event:say /              │
+│                 current:room:event:* / sketchpad:* / ui:*    │
+│  职责: 一次性 UI 效果（动画、音效、toast、弹窗）                │
+└──────────────────────────────────────────────────────────────┘
+```
+
+### 2. Store 的双重职责
+
+每个 domain store（game/room/chat）同时承担两个角色：
+
+```ts
+// 以 game store 为例
+wsEventBus.on('ws:message', (msg) => {
+  if (msg.type.startsWith('game:')) {
+    // 角色 A：更新 reactive state → Vue 模板自动响应（持续状态）
+    state.bingoPlayers = payload.bingo_players
+    state.scores = payload.scores
+
+    // 角色 B：emit 到 eventBus → UI 组件监听（一次性效果）
+    eventBus.emit('game:event:guess:bingo', { ...payload })
+  }
+})
+```
+
+**区分原则：**
+
+| 类型                                    | 放哪里            | 举例                                                       |
+| --------------------------------------- | ----------------- | ---------------------------------------------------------- |
+| **持续状态**（模板绑定、computed 依赖） | `reactive state`  | 分数、当前画手、回合数、倒计时                             |
+| **一次性 UI 效果**（触发后即忘）        | `eventBus.emit()` | 播放音效、弹 toast、插入系统消息、播放抛物线动画、过场动画 |
+
+代码中标记为 `⚡ UI 广播点 ⚡` 的位置即为 eventBus 触发点。
+
+### 3. Store 数据富化（Enrichment）
+
+后端 WS 消息传输的是 ID（节省带宽），store 转发到 eventBus 时会将其富化为完整对象，让 UI 组件无需关心查找逻辑：
+
+```ts
+// 后端发的是 ID
+payload: { id: 'abc', drawer: 'xyz', bingo_players: ['abc'] }
+
+// store 转发时富化为 Player 对象
+eventBus.emit('game:event:guess:bingo', {
+  ...payload,
+  player: getPlayerFromCurrentRoom(payload.id)!  // ID → Player
+})
+
+eventBus.emit('game:event:interaction:start', {
+  ...payload,
+  drawerPlayer: getPlayerFromCurrentRoom(state.drawer!)!,
+  bingoPlayers: payload.bingo_players
+    .map(id => getPlayerFromCurrentRoom(id))
+    .filter(Boolean)
+})
+```
+
+因此前端 eventBus 的类型定义（`app/composables/eventBus.ts`）中，事件 payload 会比 `shared/types/protocol.ts` 中的 ServerEventMap 多出 `drawerPlayer`、`fromPlayer`、`bingoPlayers: Player[]` 等字段。
+
+### 4. UI 组件消费方式
+
+组件通过 `useEventBus` composable 订阅事件，自动绑定生命周期：
+
+```ts
+// 自动在 onBeforeMount 订阅、onUnmounted 取消
+useEventBus('game:event:guess:bingo', ({ player, score_delta }) => {
+  playBingoSound()
+  addChatSystemMessage(`${player.nickname} 猜对了！+${score_delta.guesserGain}`)
+})
+
+useEventBus('game:event:interaction:gift', ({ fromPlayer, item_type }) => {
+  playThrowAnimation(fromPlayer.id, item_type)
+})
+```
+
+---
+
+## 新增模块接入指南
+
+### 新增后端 Service
+
+1. **确定挂载层级**：该 service 应监听哪一层的事件？
+   - 需要感知玩家上下线 → 监听 `playerEventBus`
+   - 需要感知房间生命周期 → 监听 `roomEventBus`
+   - 只处理 WS 消息 → 在 `ws/handlers/` 添加 handler
+
+2. **事件监听**（以监听房间事件为例）：
+
+```ts
+// server/services/my-service.ts
+import { roomEventBus } from './room'
+
+roomEventBus.on('room:event:game_start', ({ roomNumber, room }) => {
+  // 响应游戏开始
+})
+```
+
+3. **广播消息**：通过 player.ts 的四个 sender 函数，不要自行管理连接
+
+```ts
+import { sendToRoom, sendToPlayer, sendToAllPlayer, sendToLobby } from './player'
+```
+
+### 新增前端 Store
+
+1. **在 ws.ts 注册 ws:message 监听**，按 `type` 前缀过滤：
+
+```ts
+// app/stores/my-store.ts
+const { wsEventBus, send } = useWsStore()
+
+wsEventBus.on('ws:message', (msg) => {
+  if (!msg.type.startsWith('my_module:')) return
+
+  // 1. 更新 reactive state（持续状态）
+  state.xxx = msg.xxx
+
+  // 2. 如有一次性 UI 效果，emit 到 eventBus
+  eventBus.emit('my_module:event:xxx', { ...msg, enrichedData })
+})
+```
+
+2. **如需新增 eventBus 事件类型**，在 `app/composables/eventBus.ts` 的 `Events` 类型中添加条目
+
+3. **UI 组件使用 `useEventBus` 订阅**，不要直接操作 wsEventBus
+
+### 新增 WS 消息类型
+
+1. 在 `shared/types/protocol.ts` 对应的 Map 中添加条目（ServerEventMap / ClientEventMap / ClientResponseMap）
+2. 后端：在 `ws/handlers/` 添加 handler（客户端→服务端），或在 service 中 `sendToRoom`/`sendToPlayer`（服务端→客户端）
+3. 前端：在对应 store 中处理 ws:message，在 eventBus.ts 的 Events 中声明 UI 事件类型
