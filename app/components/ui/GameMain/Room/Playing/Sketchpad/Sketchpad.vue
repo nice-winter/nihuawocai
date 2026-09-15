@@ -90,16 +90,6 @@ const animate = () => {
   requestAnimationFrame(animate)
 }
 
-/* ---------------- 画布事件 ---------------- */
-const eventsHandler = {
-  onClear: () => canvas.realClear(),
-  onUndo: () => canvas.undo(),
-  onRedo: () => canvas.redo()
-}
-useEventBus('sketchpad:undo', eventsHandler.onUndo)
-useEventBus('sketchpad:redo', eventsHandler.onRedo)
-useEventBus('sketchpad:clear', eventsHandler.onClear)
-
 /* ---------------- 挂载：初始化canvas ---------------- */
 onMounted(async () => {
   canvas = new SketchpadCanvas(SketchpadCanvasRef.value!, {
@@ -148,55 +138,41 @@ useEventListener(SketchpadRef, 'pointerenter', onPointerEnter)
 useEventListener(SketchpadRef, 'pointermove', onPointerMove)
 useEventListener(SketchpadRef, 'pointerleave', onPointerLeave)
 
-/* ---------------- ws 绘画回放 ---------------- */
-useEventBus('sketchpad:draw', ({ points }) => {
-  if (!canvas?.freeDrawingBrush) return
+/* ---------------- 暴露给父组件的画布操作 API ---------------- */
+defineExpose({
+  replayPoints: (points: { point: { x: number; y: number }; action: 'down' | 'move' | 'up' }[]) => {
+    if (!canvas?.freeDrawingBrush) return
 
-  const b = canvas.freeDrawingBrush as PencilBrush
-  for (const p of points) {
-    const point = new Point(p.point)
-    drawerLastXY.x = point.x
-    drawerLastXY.y = point.y
+    const b = canvas.freeDrawingBrush as PencilBrush
+    for (const p of points) {
+      const point = new Point(p.point)
+      drawerLastXY.x = point.x
+      drawerLastXY.y = point.y
 
-    switch (p.action) {
-      case 'down':
-        b.onMouseDown(point)
-        break
-      case 'move':
-        b.onMouseMove(point)
-        break
-      case 'up':
-        b.onMouseUp()
-        break
+      switch (p.action) {
+        case 'down':
+          b.onMouseDown(point)
+          break
+        case 'move':
+          b.onMouseMove(point)
+          break
+        case 'up':
+          b.onMouseUp()
+          break
+      }
     }
+  },
+  undo: () => canvas?.undo(),
+  redo: () => canvas?.redo(),
+  clear: () => canvas?.realClear(),
+  reset: () => {
+    canvas?.reset()
+    drawerLastXY.x = -1
+    drawerLastXY.y = -1
+  },
+  setDrawingMode: (enabled: boolean) => {
+    if (canvas) canvas.isDrawingMode = enabled
   }
-})
-
-/* ---------------- 游戏阶段事件 ---------------- */
-useEventBus('game:event:round:prepare', () => {
-  canvas.isDrawingMode = true
-  canvas.realClear()
-  canvas.isDrawingMode = false
-})
-
-useEventBus('game:event:drawing:start', () => {
-  if (gameStore.isMyTurn) {
-    // 绘画开始时，重新设置一次笔触和笔触设置
-    sketchpadStore.setCurrentBrush('pencil')
-    sketchpadStore.updateBrushOptions({
-      color: '#000000',
-      width: 1
-    })
-    // 开放 canvas 绘画模式
-    canvas.isDrawingMode = true
-  }
-})
-
-useEventBus('game:event:interaction:start', () => {
-  canvas.reset()
-  canvas.isDrawingMode = false
-  drawerLastXY.x = -1
-  drawerLastXY.y = -1
 })
 </script>
 
