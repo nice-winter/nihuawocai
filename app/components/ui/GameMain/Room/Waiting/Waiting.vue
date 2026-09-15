@@ -89,7 +89,7 @@
       class="relative flex flex-col items-center justify-center gap-tight select-none"
       :data-seat-number="i"
     >
-      <img
+      <!-- <img
         v-if="roomInfo?.players![i - 1]?.id === '28332824'"
         src="~/assets/cxy.png"
         class="absolute inset-0 z-1 w-56 origin-center pointer-events-none"
@@ -101,7 +101,7 @@
         src="~/assets/ygg1.png"
         class="absolute inset-0 z-1 w-56 origin-center pointer-events-none"
         style="transform: scale(1.2); top: 29px; left: 9px"
-      >
+      > -->
 
       <span
         v-if="roomInfo?.players![i - 1]?.id === roomInfo?.owner"
