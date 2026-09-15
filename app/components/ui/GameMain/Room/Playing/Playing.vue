@@ -64,7 +64,7 @@
     </div>
 
     <div id="sketchpad-container" ref="sketchpadContainerRef" class="relative h-[70%]">
-      <UiGameMainRoomPlayingSketchpad />
+      <UiGameMainRoomPlayingSketchpad ref="sketchpad" />
       <UiThrower ref="throwerRef" :container="sketchpadContainerRef" />
     </div>
 
@@ -105,6 +105,7 @@ import RankModal from '~/components/modal/RankModal.vue'
 
 const { roomInfo } = defineProps<{ roomInfo: RoomInfo }>()
 
+const sketchpadRef = useTemplateRef('sketchpad')
 const sketchpadContainerRef = useTemplateRef('sketchpadContainerRef')
 const timerRef = useTemplateRef('Timer')
 const throwerRef = useTemplateRef('throwerRef')
@@ -112,6 +113,7 @@ const throwerRef = useTemplateRef('throwerRef')
 const { isOnlooker } = storeToRefs(usePlayerStore())
 const { currentRoom, currentRoomRealPlayers } = storeToRefs(useRoomStore())
 const gameStore = useGameStore()
+const sketchpadStore = useSketchpadStore()
 
 // 组件 hook
 const { show, destroy, destroyAll } = useBubble('#game-panel')
@@ -123,7 +125,32 @@ const { playSound } = useSound()
 const _players = computed(() => roomInfo.players.filter((p) => p !== null))
 const drawingPlayer = computed(() => _players.value.find((p) => p.id === gameStore.state.drawer))
 
-// 游戏事件监听
+// --- 画布操作编排（游戏阶段 + WS 桥梁命令 → Sketchpad） ---
+
+// 游戏阶段 → 画布状态
+useEventBus('game:event:round:prepare', () => {
+  sketchpadRef.value?.clear()
+})
+useEventBus('game:event:drawing:start', () => {
+  if (gameStore.isMyTurn) {
+    sketchpadStore.setCurrentBrush('pencil')
+    sketchpadStore.updateBrushOptions({ color: '#000000', width: 1 })
+    sketchpadRef.value?.setDrawingMode(true)
+  }
+})
+useEventBus('game:event:interaction:start', () => {
+  sketchpadRef.value?.reset()
+  sketchpadRef.value?.setDrawingMode(false)
+})
+
+// WS 桥梁命令 → 画布渲染
+useEventBus('sketchpad:draw', ({ points }) => sketchpadRef.value?.replayPoints(points))
+useEventBus('sketchpad:undo', () => sketchpadRef.value?.undo())
+useEventBus('sketchpad:redo', () => sketchpadRef.value?.redo())
+useEventBus('sketchpad:clear', () => sketchpadRef.value?.clear())
+
+// --- UI 效果事件（弹窗 / 音效 / 动画） ---
+
 useEventBus('chat:event:say', ({ chatmsg, sender }) => {
   show(sender.id, chatmsg)
 })
