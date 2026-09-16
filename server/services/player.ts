@@ -1,3 +1,8 @@
+/**
+ * 玩家生命周期管理、状态同步与连接维护
+ * @author Winter <littlewiinter@gmail.com>
+ */
+
 import { colors } from 'consola/utils'
 import mitt from 'mitt'
 import { isOpen, reply, safeSend, type WsPeer } from '~~/server/ws/utils'

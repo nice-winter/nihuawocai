@@ -1,3 +1,8 @@
+/**
+ * WebSocket 入口：连接握手、消息分发与心跳
+ * @author Winter <littlewiinter@gmail.com>
+ */
+
 import { colors } from 'consola/utils'
 import { defineHooks } from 'crossws'
 import { wsEventBus } from './core/events'

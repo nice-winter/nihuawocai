@@ -1,3 +1,8 @@
+/**
+ * 用户数据持久化与第三方登录资料同步
+ * @author Winter <littlewiinter@gmail.com>
+ */
+
 import { shortHash } from '#shared/utils'
 import { defu } from 'defu'
 import { colors } from 'consola/utils'

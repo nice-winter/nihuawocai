@@ -1,3 +1,8 @@
+/**
+ * 消息发送工具：单播/广播/频道广播封装
+ * @author Winter <littlewiinter@gmail.com>
+ */
+
 import { safeSend, isOpen } from '~~/server/ws/utils'
 import { players } from '~~/server/services/player'
 import { channels } from './channel'

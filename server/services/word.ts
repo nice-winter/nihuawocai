@@ -1,3 +1,8 @@
+/**
+ * 词库管理：增删改查与随机抽词
+ * @author Winter <littlewiinter@gmail.com>
+ */
+
 import { nanoid } from 'nanoid'
 import { colors } from 'consola/utils'
 

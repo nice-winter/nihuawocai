@@ -1,3 +1,8 @@
+/**
+ * WS 处理器注册入口，路由事件到各 handler
+ * @author Winter <littlewiinter@gmail.com>
+ */
+
 import { colors } from 'consola/utils'
 import { wsEventBus } from '~~/server/ws/core/events'
 import playerHandler from './player'

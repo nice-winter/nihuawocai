@@ -1,3 +1,8 @@
+/**
+ * 房间创建/加入/退出与房主转移逻辑
+ * @author Winter <littlewiinter@gmail.com>
+ */
+
 import { colors } from 'consola/utils'
 import { getAppConfig } from '~~/server/services/app-config'
 import { defu } from 'defu'

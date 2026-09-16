@@ -1,3 +1,8 @@
+/**
+ * 频道订阅管理，按 topic 向 peer 分组广播
+ * @author Winter <littlewiinter@gmail.com>
+ */
+
 import type { WsPeer } from '~~/server/ws/utils'
 
 export const channels = new Map<string, Set<WsPeer>>()

@@ -1,3 +1,8 @@
+/**
+ * 聊天服务：发言处理与猜词联动逻辑
+ * @author Winter <littlewiinter@gmail.com>
+ */
+
 import { colors } from 'consola/utils'
 import { getAppConfig } from '~~/server/services/app-config'
 import {

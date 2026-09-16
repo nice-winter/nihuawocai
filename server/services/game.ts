@@ -1,11 +1,6 @@
 /**
- * @file game.ts - 游戏主逻辑服务
- * @author Winter <doyouknowmeemail@gmail.com>
- * @description 负责游戏核心流程循环、状态管理和主要计分机制
- * @created 2025-11-22
- * @lastModified 2025-11-26
- *
- * @module Game
+ * 游戏核心流程循环、状态管理和主要计分机制
+ * @author Winter <littlewiinter@gmail.com>
  */
 
 import defu from 'defu'
@@ -428,9 +423,10 @@ const handleDrawingTick = (roomNumber: number, st: GameState, now: number) => {
     const nextPromptTime = promptTimes[st.revealedPrompts]!
     if (elapsedSeconds >= nextPromptTime) {
       const promptIndex = st.revealedPrompts
-      const promptContent = promptIndex === 0
-        ? `${st.currentWord!.word.length}个字`
-        : st.currentWord!.prompts[promptIndex - 1] || '没有提示了'
+      const promptContent =
+        promptIndex === 0
+          ? `${st.currentWord!.word.length}个字`
+          : st.currentWord!.prompts[promptIndex - 1] || '没有提示了'
 
       sendToRoom(
         {
@@ -602,7 +598,9 @@ const handleGuess = (roomNumber: number, id: string, guessContent: string): bool
 
   if (normalizedGuess === normalizedAnswer) {
     st.bingoPlayers.push(id)
-    logger.info(`猜对! 房间 ${colors.cyan('#' + roomNumber)}，玩家 ${colors.cyan(id)}，第 ${st.bingoPlayers.length} 个猜对`)
+    logger.info(
+      `猜对! 房间 ${colors.cyan('#' + roomNumber)}，玩家 ${colors.cyan(id)}，第 ${st.bingoPlayers.length} 个猜对`
+    )
 
     const scoreDelta = applyScoreOnBingo(st, id)
 

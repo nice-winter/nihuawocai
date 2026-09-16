@@ -1,3 +1,8 @@
+/**
+ * 连接生命周期：鉴权解析、心跳检测与断线清理
+ * @author Winter <littlewiinter@gmail.com>
+ */
+
 import { colors } from 'consola/utils'
 import { getUserData } from '~~/server/services/user'
 import type { WsPeer } from '~~/server/ws/utils'
