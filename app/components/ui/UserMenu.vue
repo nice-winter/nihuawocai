@@ -1,6 +1,6 @@
 <template>
-  <div class="text-sm2 flex gap-4 select-none">
-    <UUser :avatar="{ src: user?.avatar_url }" :name="user?.nickname" />
+  <div class="text-sm2 flex gap-2 select-none">
+    <!-- <UUser :avatar="{ src: user?.avatar_url }" :name="user?.nickname" /> -->
     <UiLinkButton type="button" @click="openUserProfileModal"> 个人资料 </UiLinkButton>
     <UiLinkButton type="button" @click="logout">注销</UiLinkButton>
   </div>
