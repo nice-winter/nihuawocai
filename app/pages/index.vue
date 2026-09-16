@@ -71,7 +71,7 @@
           </div>
 
           <div class="flex flex-col justify-center max-w-[20rem] text-right">
-            <span>Copyright © 2025 WINTER</span>
+            <span>Copyright © 2026 WINTER</span>
             <span
               >我画你猜的源代码基于
               <a
