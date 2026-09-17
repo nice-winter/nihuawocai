@@ -12,7 +12,7 @@
     "prepare": "husky",
     "postinstall": "nuxt prepare",
     "build": "nuxt build",
-    "dev": "nuxt dev",
+    "dev": "rm -rf .nuxt/dev && nuxt dev",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
     "lint": "eslint .",
