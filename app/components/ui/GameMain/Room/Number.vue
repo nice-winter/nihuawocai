@@ -16,6 +16,7 @@ const displayText = computed(() => roomNumber.toString().padStart(3, '0'))
 
 <style scoped>
 span {
+  font-family: system-ui;
   text-shadow: -2px -0.5px 0px #cbad91;
 }
 </style>
