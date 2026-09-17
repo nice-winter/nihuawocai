@@ -171,16 +171,16 @@ const providers = [
         external: true
       })
     }
-  },
-  {
-    label: '使用 X 账号登录',
-    icon: 'i-simple-icons-x',
-    onClick: async () => {
-      await navigateTo('/auth/x', {
-        external: true
-      })
-    }
   }
+  // {
+  //   label: '使用 X 账号登录',
+  //   icon: 'i-simple-icons-x',
+  //   onClick: async () => {
+  //     await navigateTo('/auth/x', {
+  //       external: true
+  //     })
+  //   }
+  // }
 ]
 
 if (userSession.loggedIn.value) {

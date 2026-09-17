@@ -5,6 +5,9 @@ import { createLogger } from '~~/server/utils/logger'
 const logger = createLogger('Auth')
 
 export default defineOAuthXEventHandler({
+  config: {
+    scope: ['users.read', 'users.email']
+  },
   async onSuccess(event, { user, tokens }) {
     const xUser = user as XUser
 
