@@ -2,11 +2,11 @@ import type { AppConfig } from '~~/shared/types/appConfig'
 
 export const defaultAppConfig: AppConfig = {
   admin: {
-    superAdminId: '',  // 首次部署时需要初始化
+    superAdminId: '', // 首次部署时需要初始化
     adminIds: [],
     logLevel: '' // 空 = 不覆盖，使用 CONSOLA_LEVEL 环境变量或默认值
   },
-  name: '我画你猜',
+  name: '你画我猜',
   announcements: [
     '【公告】哈→基→米{:307:}南北路多阿西噶↓哈呀{:311:}↓库奶龙↗阿西噶叮咚鸡大狗叫带段'
   ],

@@ -6,7 +6,7 @@ export default defineNuxtConfig({
   // 应用信息
   app: {
     head: {
-      title: '我画你猜'
+      title: '你画我猜经典版'
     }
   },
 
