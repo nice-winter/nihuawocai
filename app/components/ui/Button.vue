@@ -49,27 +49,27 @@ const sizeConfigs = {
 
 const colorConfigs = {
   normal: {
-    text: 'text-white disabled:text-[#ddd]',
+    text: 'text-white disabled:text-gray-200',
     icon: 'text-game-taupe-500 group-hover:text-game-taupe-400 group-active:text-game-taupe-600 group-disabled:text-[#b3aca5]'
   },
 
   red: {
-    text: 'text-white disabled:text-[#ddd]',
+    text: 'text-white disabled:text-gray-200',
     icon: 'text-game-red-500 group-hover:text-game-red-400 group-active:text-game-red-600 group-disabled:text-game-red-300'
   },
 
   green: {
-    text: 'text-white disabled:text-[#ddd]',
+    text: 'text-white disabled:text-gray-200',
     icon: 'text-game-green-500 group-hover:text-game-green-400 group-active:text-game-green-600 group-disabled:text-game-green-300'
   },
 
   blue: {
-    text: 'text-white disabled:text-[#ddd]',
+    text: 'text-white disabled:text-gray-200',
     icon: 'text-game-blue-500 group-hover:text-game-blue-400 group-active:text-game-blue-600 group-disabled:text-game-blue-300'
   },
 
   playing: {
-    text: 'text-wood-800 disabled:text-[#ddd]',
+    text: 'text-wood-800 disabled:text-gray-200',
     icon: 'text-game-sand-500 group-hover:text-game-sand-400 group-active:text-game-sand-600 group-disabled:text-game-sand-300'
   }
 }
