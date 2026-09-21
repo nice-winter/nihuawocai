@@ -42,11 +42,5 @@ export default defineNitroPlugin(() => {
   })
 
   const driverName = import.meta.dev ? 'fs' : 'sqlite'
-  logger.info(`存储层初始化完成: ${driverName}，${tables.length} 张表 (${tables.join(', ')})`)
-
-  registerBannerItem({
-    icon: '💾',
-    label: '储存层就绪',
-    detail: `${driverName}  ·  ${tables.length} 张表`
-  })
+  logger.info(`✅ 存储层就绪 · ${driverName} · ${tables.length} 张表 (${tables.join(', ')})`)
 })
