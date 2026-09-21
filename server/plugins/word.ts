@@ -10,13 +10,22 @@ export default defineNitroPlugin(async () => {
 
     // 统计词库信息
     const libIndex = await wordManager.getLibraryIndex()
-    let totalWords = 0
+    const libStats: { name: string; count: number }[] = []
     for (const libId of libIndex) {
       const lib = await wordManager.getLibraryById(libId)
-      if (lib) totalWords += lib.words.length
+      if (lib) libStats.push({ name: lib.name, count: lib.words.length })
     }
 
-    logger.info(`✅ 词库就绪 · ${libIndex.length} 座词库 · ${totalWords} 个词条`)
+    const totalWords = libStats.reduce((sum, lib) => sum + lib.count, 0)
+    const tree = libStats
+      .map(
+        (lib, i) =>
+          `${i === libStats.length - 1 ? '└── ' : '├── '}${lib.name} (${lib.count})`
+      )
+      .join('\n')
+    logger.info(
+      `✅ 词库就绪 · ${libIndex.length} 座词库 · ${totalWords} 个词条:\n${tree}`
+    )
   } catch (e) {
     logger.error('词库初始化失败:', e)
   }

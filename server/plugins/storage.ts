@@ -42,5 +42,8 @@ export default defineNitroPlugin(() => {
   })
 
   const driverName = import.meta.dev ? 'fs' : 'sqlite'
-  logger.info(`✅ 存储层就绪 · ${driverName} · ${tables.length} 张表 (${tables.join(', ')})`)
+  const tree = tables
+    .map((t, i) => `${i === tables.length - 1 ? '└── ' : '├── '}${t}`)
+    .join('\n')
+  logger.info(`✅ 存储层就绪 · ${driverName} · ${tables.length} 张表:\n${tree}`)
 })

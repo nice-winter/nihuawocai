@@ -57,12 +57,26 @@ function registerHandlers(handlers: WsHandlers) {
 
   INITIALIZED = true
 
-  logger.debug(
-    `已注册 ${colors.cyan(Object.keys(handlers).length)} 个处理器:`,
-    Object.keys(handlers)
-      .map((k) => colors.cyan(k))
-      .join(', ')
-  )
+  const grouped = new Map<string, string[]>()
+  for (const key of Object.keys(handlers)) {
+    const prefix = key.split(':')[0] || key
+    const group = grouped.get(prefix)
+    if (group) group.push(key)
+    else grouped.set(prefix, [key])
+  }
+
+  const groups = [...grouped.entries()]
+  const totalCount = Object.keys(handlers).length
+  const tree = groups
+    .map(([prefix, keys], i) => {
+      const isLast = i === groups.length - 1
+      const connector = isLast ? '└── ' : '├── '
+      const keysStr = keys.map((k) => colors.cyan(k)).join(', ')
+      return `${connector}${colors.bold(prefix)} (${keys.length})  — ${keysStr}`
+    })
+    .join('\n')
+
+  logger.debug(`已注册 ${colors.cyan(totalCount)} 个处理器:\n${tree}`)
 }
 
 export default function () {
