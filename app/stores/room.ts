@@ -17,7 +17,7 @@ export const useRoomStore = defineStore('room', () => {
   const showOnlyWaitingRooms = ref(false) // 是否只显示等待中的房间
   const currentRoom = ref<Room | null>(null) // 玩家当前所在的房间
   const inviteRecord = reactive<Map<string, number>>(new Map()) // 邀请记录
-  const broadcastRecord = reactive<Map<number, number>>(new Map()) // 广播记录
+  const broadcastRecord = reactive<Map<string, number>>(new Map()) // 广播记录
 
   // Computed
   /**
@@ -146,16 +146,16 @@ export const useRoomStore = defineStore('room', () => {
         break
       case 'room:event:destroy':
         rooms.delete(event.roomNumber)
-        // 如果销毁的是当前房间，清空当前房间状态
-        if (event.roomNumber === currentRoom.value?.roomNumber) {
+        // 如果销毁的是当前房间，清空当前房间状态（按身份 ID 比较，防同号误判）
+        if (event.roomId === currentRoom.value?.id) {
           clearCurrentRoom()
         }
         break
 
       // 房间信息相关
       case 'room:event:info':
-        // 如果更新的是玩家当前所在房间，更新当前房间状态
-        if (event.room.roomNumber === playerStore.currentRoomNumber) {
+        // 如果更新的是玩家当前所在房间，更新当前房间状态（按身份 ID 比较）
+        if (event.room.id === playerStore.currentRoomId) {
           currentRoom.value = event.room
         }
         break
@@ -280,7 +280,7 @@ export const useRoomStore = defineStore('room', () => {
               color: 'neutral',
               variant: 'outline',
               onClick: (e) => {
-                join(event.roomNumber, event.password)
+                join(event.roomNumber, event.password, event.roomId)
                 e?.stopPropagation()
               }
             }
@@ -291,18 +291,19 @@ export const useRoomStore = defineStore('room', () => {
       // 房间广播相关事件
       case 'room:event:broadcast':
         eventBus.emit('room:event:broadcast', {
-          from: event.from,
           roomNumber: event.roomNumber,
+          roomId: event.roomId,
           password: event.password,
           sender: event.sender,
           expAt: event.expAt,
           timestamp: event.timestamp
         })
         // 记录该房间广播过期时间，广播按钮根据此记录判断是否冷却，防止频繁广播
-        broadcastRecord.set(event.roomNumber, event.expAt)
+        // 键用 roomId，避免同号新房误继承旧房冷却
+        broadcastRecord.set(event.roomId, event.expAt)
         // 清除过期的房间广播记录
         setTimeout(() => {
-          broadcastRecord.delete(event.roomNumber)
+          broadcastRecord.delete(event.roomId)
         }, event.expAt - Date.now())
         break
     }
@@ -324,10 +325,17 @@ export const useRoomStore = defineStore('room', () => {
   /**
    * 加入指定房间
    */
-  const join = async (roomNumber: number, password?: string) => {
+  /**
+   * 加入指定房间
+   * @param roomNumber 房间号（用户句柄）
+   * @param password 房间密码
+   * @param roomId 房间身份 ID（邀请/广播携带时一并传入，服务端校验防串房）
+   */
+  const join = async (roomNumber: number, password?: string, roomId?: string) => {
     await send({
       type: 'room:join',
       roomNumber,
+      roomId,
       password
     })
   }
@@ -342,12 +350,11 @@ export const useRoomStore = defineStore('room', () => {
   }
 
   /**
-   * 切换座位开关状态
+   * 切换座位开关状态（服务端从当前玩家状态反查房间）
    */
-  const switchSeat = async (roomNumber: number, seat: number, open: boolean) => {
+  const switchSeat = async (seat: number, open: boolean) => {
     await send({
       type: 'room:seat_switch',
-      roomNumber,
       seat,
       open
     })
@@ -365,12 +372,11 @@ export const useRoomStore = defineStore('room', () => {
   }
 
   /**
-   * 设置房间密码
+   * 设置房间密码（服务端从当前玩家状态反查房间）
    */
-  const changeRoomPassword = async (roomNumber: number, password?: string) => {
+  const changeRoomPassword = async (password?: string) => {
     await send({
       type: 'room:password_change',
-      roomNumber,
       password
     })
   }
