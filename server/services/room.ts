@@ -24,46 +24,47 @@ import { createLogger } from '~~/server/utils/logger'
 
 type RoomEventBus = {
   'room:event:create': {
-    roomNumber: number
+    roomId: string
     room: Room
   }
   'room:event:destroy': {
+    roomId: string
     roomNumber: number
   }
   'room:event:player_join': {
     seat: number
     player: UserData
-    roomNumber: number
+    roomId: string
     room: Room
   }
   'room:event:player_leave': {
     seat: number
     player: UserData
-    roomNumber: number
+    roomId: string
     room: Room
   }
   'room:event:onlooker_join': {
     player: UserData
-    roomNumber: number
+    roomId: string
     room: Room
   }
   'room:event:onlooker_sit': {
     seat: number
     player: UserData
-    roomNumber: number
+    roomId: string
     room: Room
   }
   'room:event:onlooker_leave': {
     player: UserData
-    roomNumber: number
+    roomId: string
     room: Room
   }
   'room:event:game_start': {
-    roomNumber: number
+    roomId: string
     room: Room
   }
   'room:event:game_end': {
-    roomNumber: number
+    roomId: string
     room: Room
   }
 }
@@ -77,9 +78,9 @@ const logger = createLogger('RoomService')
 const roomEventBus = mitt<RoomEventBus>()
 
 /**
- * 所有房间
+ * 所有房间，键为 room.id（内部身份键）
  */
-const rooms = new Map<number, Room>()
+const rooms = new Map<string, Room>()
 
 /**
  * 玩家邀请记录
@@ -87,9 +88,9 @@ const rooms = new Map<number, Room>()
 const inviteRecord = new Map<string, { expAt: number }>()
 
 /**
- * 房间广播记录
+ * 房间广播记录，键为 room.id
  */
-const broadcastRecord = new Map<number, { expAt: number }>()
+const broadcastRecord = new Map<string, { expAt: number }>()
 
 // ---------------------- Player Events ----------------------
 // 延迟初始化事件监听，避免循环依赖
@@ -101,7 +102,7 @@ const initPlayerEvents = () => {
   // 玩家离线时，从他所在的房间中移除他
   playerEventBus.on('player:beforeDisconnect', ({ player }) => {
     if (checkPlayerIsInRoom(player.id)) {
-      removeRoomPlayer(player.state.roomNumber!, player.id)
+      removeRoomPlayer(player.state.roomId!, player.id)
     }
   })
 }
@@ -111,11 +112,19 @@ setTimeout(initPlayerEvents, 0)
 
 // ------------------------ Actions ------------------------
 /**
- * 获取房间
+ * 按身份 ID 获取房间
+ * @param roomId 房间 ID
+ */
+const getRoom = (roomId: string) => {
+  return rooms.get(roomId)
+}
+
+/**
+ * 按房间号获取房间（房间号会回收复用，仅用于加入解析等用户句柄场景）
  * @param roomNumber 房间号
  */
-const getRoom = (roomNumber: number) => {
-  return rooms.get(roomNumber)
+const getRoomByNumber = (roomNumber: number) => {
+  return [...rooms.values()].find((r) => r.roomNumber === roomNumber)
 }
 
 /**
@@ -137,9 +146,12 @@ const getRoomList = (): RoomInfo[] => {
 /**
  * 获取下一个房间号
  * 以最小空洞索引生成房间号，例如考虑 0, 1, 2, 5, 7, 9...，最小空洞索引值为 3
+ * 注意：rooms 的键是 room.id，必须从 values() 收集已占用的房间号来探洞
  */
-const getNextRoomNumber = () =>
-  Array.from({ length: rooms.size + 1 }, (_, i) => i).find((i) => !rooms.has(i))!
+const getNextRoomNumber = () => {
+  const used = new Set([...rooms.values()].map((r) => r.roomNumber))
+  return Array.from({ length: used.size + 1 }, (_, i) => i).find((i) => !used.has(i))!
+}
 
 /**
  * 创建房间
@@ -186,14 +198,14 @@ const createRoom = async (
     createdAt: Date.now()
   }
 
-  rooms.set(roomNumber, room)
+  rooms.set(room.id, room)
 
   // 把房主加入房间
-  await joinRoom(roomNumber, owner, roomOptions.password)
+  await joinRoom(room.id, owner, roomOptions.password)
 
   // 向所有人推送新的房间信息
   // @TODO: 需要过滤不需要的字段
-  const roomInfo: RoomInfo = roomPropertyFilter(getRoom(roomNumber)!)
+  const roomInfo: RoomInfo = roomPropertyFilter(getRoom(room.id)!)
 
   // 广播房间创建事件
   sendToAllPlayer({
@@ -203,8 +215,8 @@ const createRoom = async (
   })
 
   roomEventBus.emit('room:event:create', {
-    roomNumber,
-    room: getRoom(roomNumber)!
+    roomId: room.id,
+    room: getRoom(room.id)!
   })
 
   logger.info(
@@ -214,23 +226,23 @@ const createRoom = async (
   )
 
   return {
-    room: getRoom(roomNumber)
+    room: getRoom(room.id)
   }
 }
 
 /**
  * 销毁房间，当前房间内的玩家会逐个更新为“不在房间内”状态
- * @param roomNumber
+ * @param roomId 房间 ID
  */
-const destroyRoom = (roomNumber: number) => {
-  const room = rooms.get(roomNumber)
+const destroyRoom = (roomId: string) => {
+  const room = rooms.get(roomId)
   if (room) {
-    rooms.delete(roomNumber)
+    rooms.delete(roomId)
     // 广播房间销毁事件
     sendToAllPlayer({
       type: 'room:event:destroy',
-      from: roomNumber,
-      roomNumber
+      roomNumber: room.roomNumber,
+      roomId: room.id
     })
 
     room.players
@@ -243,7 +255,8 @@ const destroyRoom = (roomNumber: number) => {
     })
 
     roomEventBus.emit('room:event:destroy', {
-      roomNumber
+      roomId: room.id,
+      roomNumber: room.roomNumber
     })
 
     logger.info(
@@ -256,18 +269,18 @@ const destroyRoom = (roomNumber: number) => {
 
 /**
  * 更新房间
- * @param roomNumber
+ * @param roomId 房间 ID
  * @param room
  */
-const updateRoom = (roomNumber: number, room: Room) => {
+const updateRoom = (roomId: string, room: Room) => {
   if (room.players.length !== 7) throw new Error('房间信息错误')
-  rooms.set(roomNumber, room)
+  rooms.set(roomId, room)
 }
 
-const joinRoom = async (roomNumber: number, id: string, password?: string) => {
+const joinRoom = async (roomId: string, id: string, password?: string) => {
   if (checkPlayerIsInRoom(id)) throw new Error('当前已在房间内')
 
-  const room = rooms.get(roomNumber)
+  const room = rooms.get(roomId)
   const user = await getUserData(id)
 
   if (room) {
@@ -282,17 +295,18 @@ const joinRoom = async (roomNumber: number, id: string, password?: string) => {
       if (room.onlookers.length < room.options.maxOnlookers) {
         room.onlookers.push(user) // 加入旁观者列表
         // 更新房间和玩家状态
-        updateRoom(roomNumber, room)
-        updatePlayerState(user.id, roomNumber, true)
+        updateRoom(roomId, room)
+        updatePlayerState(user.id, roomId, true)
         // 广播旁观者进房事件
         sendToAllPlayer({
           type: 'room:event:onlooker_join',
-          from: roomNumber,
+          from: room.roomNumber,
+          id: user.id,
           player: user
         })
 
         roomEventBus.emit('room:event:onlooker_join', {
-          roomNumber,
+          roomId,
           player: user,
           room
         })
@@ -313,12 +327,12 @@ const joinRoom = async (roomNumber: number, id: string, password?: string) => {
         if (seat > -1) {
           room.players[seat] = user // 坐到当前坑位
           // 更新房间和玩家状态
-          updateRoom(roomNumber, room)
-          updatePlayerState(user.id, roomNumber)
+          updateRoom(roomId, room)
+          updatePlayerState(user.id, roomId)
           // 广播玩家进房事件
           sendToAllPlayer({
             type: 'room:event:player_join',
-            from: roomNumber,
+            from: room.roomNumber,
             seat,
             player: user
           })
@@ -326,7 +340,7 @@ const joinRoom = async (roomNumber: number, id: string, password?: string) => {
           roomEventBus.emit('room:event:player_join', {
             seat,
             player: user,
-            roomNumber,
+            roomId,
             room
           })
         } else {
@@ -371,10 +385,10 @@ const sit = async (id: string, seat: number) => {
   if (!player) throw new Error('玩家不存在')
   if (!checkPlayerIsInRoom(id)) throw new Error('当前不在房间内')
 
-  const roomNumber = player.state.roomNumber!
+  const roomId = player.state.roomId!
 
   const user = await getUserData(id)
-  const room = rooms.get(roomNumber)
+  const room = rooms.get(roomId)
   if (room) {
     if (room.playing) throw new Error('游戏中无法坐下')
     if (room.players[seat] === null) {
@@ -387,12 +401,12 @@ const sit = async (id: string, seat: number) => {
       // 设置 players（座位）为此玩家
       room.players[seat] = user
       // 更新玩家和房间状态
-      updatePlayerState(id, roomNumber, false)
-      updateRoom(roomNumber, room)
+      updatePlayerState(id, roomId, false)
+      updateRoom(roomId, room)
       // @TODO: 广播旁观者坐下事件
       sendToAllPlayer({
         type: 'room:event:onlooker_sit',
-        from: roomNumber,
+        from: room.roomNumber,
         seat,
         player: user
       })
@@ -400,7 +414,7 @@ const sit = async (id: string, seat: number) => {
       roomEventBus.emit('room:event:onlooker_sit', {
         seat,
         player: user,
-        roomNumber,
+        roomId,
         room
       })
     } else {
@@ -412,31 +426,33 @@ const sit = async (id: string, seat: number) => {
 }
 
 /**
- * 座位开启/关闭
- * @param roomNumber 房间号
+ * 座位开启/关闭（房间从操作者状态反查，不信任客户端传入的房间标识）
+ * @param id 房主玩家 ID
  * @param seat 座位号
  * @param open 开关状态
- * @param id 房主玩家 ID
  */
-const seatSwitch = (roomNumber: number, seat: number, open: boolean, id: string) => {
-  const room = rooms.get(roomNumber)
+const seatSwitch = (id: string, seat: number, open: boolean) => {
+  const roomId = getPlayer(id)?.state.roomId
+  if (!roomId) throw new Error('当前不在房间内')
+
+  const room = rooms.get(roomId)
   if (room) {
     if (room.owner !== id) throw new Error('你不是房主')
     if (room.players[seat] !== null) throw new Error('此坑位存在玩家，无法调整')
 
     room.seats[seat] = open
-    updateRoom(roomNumber, room)
+    updateRoom(roomId, room)
 
     // 广播坑位切换事件
     sendToAllPlayer({
       type: 'room:event:seat_switch',
-      from: roomNumber,
+      from: room.roomNumber,
       seat,
       open
     })
 
     return {
-      roomNumber,
+      roomNumber: room.roomNumber,
       seat,
       open
     }
@@ -445,8 +461,16 @@ const seatSwitch = (roomNumber: number, seat: number, open: boolean, id: string)
   }
 }
 
-const changePassword = (roomNumber: number, password: string, id: string) => {
-  const room = rooms.get(roomNumber)
+/**
+ * 修改房间密码（房间从操作者状态反查，不信任客户端传入的房间标识）
+ * @param id 房主玩家 ID
+ * @param password 新密码
+ */
+const changePassword = (id: string, password: string) => {
+  const roomId = getPlayer(id)?.state.roomId
+  if (!roomId) throw new Error('当前不在房间内')
+
+  const room = rooms.get(roomId)
   if (room) {
     if (room.owner !== id) throw new Error('你不是房主')
 
@@ -460,14 +484,14 @@ const changePassword = (roomNumber: number, password: string, id: string) => {
       room.locked = false
     }
 
-    updateRoom(roomNumber, room)
+    updateRoom(roomId, room)
 
-    logger.debug(`房间密码变更: 房间 ${colors.cyan('#' + roomNumber)}，操作者 ${colors.cyan(id)}，锁定 ${room.locked}`)
+    logger.debug(`房间密码变更: 房间 ${colors.cyan('#' + room.roomNumber)}，操作者 ${colors.cyan(id)}，锁定 ${room.locked}`)
 
     // 广播房间锁定状态变更事件
     sendToAllPlayer({
       type: 'room:event:locked_state_change',
-      from: roomNumber,
+      from: room.roomNumber,
       locked: room.locked
     })
 
@@ -475,15 +499,15 @@ const changePassword = (roomNumber: number, password: string, id: string) => {
     sendToRoom(
       {
         type: 'room:event:password_change',
-        roomNumber,
+        roomNumber: room.roomNumber,
         password,
         locked: room.locked
       },
-      roomNumber
+      roomId
     )
 
     return {
-      roomNumber,
+      roomNumber: room.roomNumber,
       locked: room.locked,
       password
     }
@@ -499,8 +523,8 @@ const broadcast = async (id: string) => {
   if (!player) throw new Error('用户不存在')
   if (!checkPlayerIsInRoom(id)) throw new Error('你必须在房间中才能发送房间广播')
 
-  const roomNumber = player.state.roomNumber!
-  const room = getRoom(roomNumber)
+  const roomId = player.state.roomId!
+  const room = getRoom(roomId)
   if (!room) throw new Error('房间不存在')
 
   const appConfig = await getAppConfig()
@@ -510,22 +534,22 @@ const broadcast = async (id: string) => {
   const expAt = now + intervalTime
 
   // 防止重复广播（按房间冷却）
-  const existing = broadcastRecord.get(roomNumber)
+  const existing = broadcastRecord.get(roomId)
   if (existing && existing.expAt > now) {
     const remain = existing.expAt - now
     throw new Error(`广播过于频繁，请 ${remain} 秒后再试`)
   }
 
   // 记录冷却
-  broadcastRecord.set(roomNumber, { expAt })
+  broadcastRecord.set(roomId, { expAt })
   setTimeout(() => {
-    broadcastRecord.delete(roomNumber)
+    broadcastRecord.delete(roomId)
   }, intervalTime * 1000)
 
   // 构造消息（expAt 毫秒时间戳）
   const msg = {
-    from: roomNumber,
-    roomNumber,
+    roomNumber: room.roomNumber,
+    roomId: room.id,
     password: room.options.password,
     sender: await getUserData(id),
     expAt: expAt * 1000, // 前端一般用到毫秒
@@ -551,8 +575,8 @@ const invite = async (id: string, toId: string) => {
 
   if (!checkPlayerIsInRoom(id)) throw new Error('你必须在房间中才能邀请其他玩家')
 
-  const roomNumber = player.state.roomNumber!
-  const room = getRoom(roomNumber)
+  const roomId = player.state.roomId!
+  const room = getRoom(roomId)
   if (!room) throw new Error('房间不存在')
 
   const appConfig = await getAppConfig()
@@ -583,7 +607,8 @@ const invite = async (id: string, toId: string) => {
   const msg = {
     from: await getUserData(id),
     to: await getUserData(toId),
-    roomNumber,
+    roomNumber: room.roomNumber,
+    roomId: room.id,
     password: room.options.password,
     duration: 20, // toast 显示时间（秒）
     expAt: expAt * 1000 // 过期时间（Unix 时间戳毫秒）
@@ -592,7 +617,7 @@ const invite = async (id: string, toId: string) => {
   // 广播邀请
   sendToPlayer({ type: 'room:event:invite', ...msg }, toId)
 
-  logger.debug(`玩家 ${id} 邀请了 ${toId} 加入房间 ${roomNumber}，有效期 ${expSeconds} 秒`)
+  logger.debug(`玩家 ${id} 邀请了 ${toId} 加入房间 ${room.roomNumber}，有效期 ${expSeconds} 秒`)
 
   return msg
 }
@@ -600,30 +625,29 @@ const invite = async (id: string, toId: string) => {
 /**
  * 开始游戏
  * @param id
- * @param roomNumber
  */
-const start = async (id: string, roomNumber?: number) => {
+const start = async (id: string) => {
   const player = getPlayer(id)
   if (player) {
-    const rn = player.state.roomNumber ?? roomNumber
-    if (typeof rn !== 'undefined' && checkPlayerIsInRoom(player.id)) {
-      const room = getRoom(rn)!
+    const roomId = player.state.roomId ?? undefined
+    if (typeof roomId !== 'undefined' && checkPlayerIsInRoom(player.id)) {
+      const room = getRoom(roomId)!
       if (!room.playing) {
         room.playing = true
-        updateRoom(rn, room)
+        updateRoom(roomId, room)
 
-        logger.info(`游戏开始: 房间 ${colors.cyan('#' + rn)}，发起者 ${colors.cyan(id)}`)
+        logger.info(`游戏开始: 房间 ${colors.cyan('#' + room.roomNumber)}，发起者 ${colors.cyan(id)}`)
 
         const msg = {
           type: 'room:event:stage_update',
-          from: rn,
+          from: room.roomNumber,
           playing: true
         }
 
         sendToAllPlayer(msg)
 
         roomEventBus.emit('room:event:game_start', {
-          roomNumber: rn,
+          roomId,
           room
         })
       }
@@ -633,27 +657,27 @@ const start = async (id: string, roomNumber?: number) => {
 
 /**
  * 结束游戏
- * @param roomNumber
+ * @param roomId 房间 ID
  */
-const end = (roomNumber: number) => {
-  const room = getRoom(roomNumber)
+const end = (roomId: string) => {
+  const room = getRoom(roomId)
   if (room) {
     if (room.playing) {
       room.playing = false
-      updateRoom(roomNumber, room)
+      updateRoom(roomId, room)
 
-      logger.info(`游戏结束: 房间 ${colors.cyan('#' + roomNumber)}`)
+      logger.info(`游戏结束: 房间 ${colors.cyan('#' + room.roomNumber)}`)
 
       const msg = {
         type: 'room:event:stage_update',
-        from: roomNumber,
+        from: room.roomNumber,
         playing: false
       }
 
       sendToAllPlayer(msg)
 
       roomEventBus.emit('room:event:game_end', {
-        roomNumber,
+        roomId,
         room
       })
     }
@@ -663,29 +687,27 @@ const end = (roomNumber: number) => {
 /**
  * 离开房间（玩家和旁观玩家通用），主动调用
  * @param id 用户 ID
- * @param roomNumber 房间号，默认为提供的用户的状态中保存的房间号
  */
-const leaveRoom = (id: string, roomNumber?: number) => {
+const leaveRoom = (id: string) => {
   if (!checkPlayerIsInRoom(id)) throw new Error('当前不在房间内')
 
-  const rn = roomNumber || getPlayer(id)?.state.roomNumber || 0
-  const room = rooms.get(rn)
-  if (room) {
-    removeRoomPlayer(rn, id)
+  const roomId = getPlayer(id)?.state.roomId
+  if (roomId) {
+    removeRoomPlayer(roomId, id)
   }
 
   return {
-    roomNumber: rn
+    roomId
   }
 }
 
 /**
  * 移除房间内的用户
- * @param roomNumber 房间号
+ * @param roomId 房间 ID
  * @param id 用户 ID
  */
-const removeRoomPlayer = async (roomNumber: number, id: string) => {
-  const room = rooms.get(roomNumber)
+const removeRoomPlayer = async (roomId: string, id: string) => {
+  const room = rooms.get(roomId)
   const player = await getUserData(id)
   if (room) {
     const seat = room.players.findIndex((p) => p?.id === id)
@@ -709,7 +731,7 @@ const removeRoomPlayer = async (roomNumber: number, id: string) => {
       // 广播玩家（从坑位）离开房间事件
       sendToAllPlayer({
         type: 'room:event:player_leave',
-        from: roomNumber,
+        from: room.roomNumber,
         seat,
         player
       })
@@ -717,28 +739,28 @@ const removeRoomPlayer = async (roomNumber: number, id: string) => {
       roomEventBus.emit('room:event:player_leave', {
         seat,
         player,
-        roomNumber,
+        roomId,
         room
       })
     } else if (onlookersIndex > -1) {
       // 广播玩家（从树上）离开房间事件
       sendToAllPlayer({
         type: 'room:event:onlooker_leave',
-        from: roomNumber,
-        onlookersIndex,
+        from: room.roomNumber,
+        id: player.id,
         player
       })
 
       roomEventBus.emit('room:event:onlooker_leave', {
         player,
-        roomNumber,
+        roomId,
         room
       })
     }
 
     // 如果房间无其他玩家，则解散房间
     if (realPlayers.length === 0) {
-      destroyRoom(room.roomNumber)
+      destroyRoom(room.id)
       updatePlayerState(id) // 这里有个时序先后问题，所以先销毁房间，再更新玩家状态，避免出现闪烁
       return
     }
@@ -771,12 +793,12 @@ const removeRoomPlayer = async (roomNumber: number, id: string) => {
         // 广播房主变更事件
         sendToAllPlayer({
           type: 'room:event:owner_change',
-          from: roomNumber,
+          from: room.roomNumber,
           id: newOwner.id
         })
       } else {
         // 理论上不会发生，保险起见
-        logger.error(`严重异常: 房间 ${colors.cyan('#' + roomNumber)} 找不到有效新房主，数据一致性可能受损`)
+        logger.error(`严重异常: 房间 ${colors.cyan('#' + room.roomNumber)} 找不到有效新房主，数据一致性可能受损`)
         room.owner = ''
       }
     }
@@ -787,7 +809,7 @@ const removeRoomPlayer = async (roomNumber: number, id: string) => {
       updatePlayerState(id)
     }
 
-    updateRoom(roomNumber, room)
+    updateRoom(roomId, room)
   }
 }
 
@@ -825,7 +847,7 @@ const quickMatch = async (id: string) => {
 
   // 3. 加入房间
   try {
-    await joinRoom(room.roomNumber, id)
+    await joinRoom(room.id, id)
   } catch (err) {
     throw new Error(`加入房间失败：${(err as Error).message}`, { cause: err })
   }
@@ -836,6 +858,7 @@ const quickMatch = async (id: string) => {
 export {
   roomEventBus,
   getRoom,
+  getRoomByNumber,
   getRoomList,
   createRoom,
   destroyRoom,
