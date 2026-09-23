@@ -12,7 +12,11 @@ export const sendToAll = <T>(msg: WebsocketMessage<T>, peers: Set<WsPeer>) => {
   for (const peer of peers) safeSend(peer, msg)
 }
 
-export const sendToChannel = <T>(msg: WebsocketMessage<T>, channel: string | string[]) => {
+export const sendToChannel = <T>(
+  msg: WebsocketMessage<T>,
+  channel: string | string[],
+  opts?: { excludePeers?: Set<WsPeer> }
+) => {
   const topics = Array.isArray(channel) ? channel : [channel]
   const target = new Set<WsPeer>()
 
@@ -20,7 +24,10 @@ export const sendToChannel = <T>(msg: WebsocketMessage<T>, channel: string | str
     const set = channels.get(t)
     if (set) for (const p of set) target.add(p)
   }
-  for (const p of target) safeSend(p, msg)
+  for (const p of target) {
+    if (opts?.excludePeers?.has(p)) continue
+    safeSend(p, msg)
+  }
 }
 
 export const sendToUser = <T>(msg: WebsocketMessage<T>, id: string | string[]) => {

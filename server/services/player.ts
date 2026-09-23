@@ -7,7 +7,14 @@ import { colors } from 'consola/utils'
 import mitt from 'mitt'
 import { isOpen, reply, safeSend, type WsPeer } from '~~/server/ws/utils'
 import { wsEventBus } from '~~/server/ws'
+import {
+  roomTopic,
+  subscribePeerToChannel,
+  unsubscribePeerFromChannel
+} from '~~/server/ws/core/channel'
+import { sendToChannel } from '~~/server/ws/core/sender'
 import { getUserData, updateUserData, updateUserLastLoginAt } from './user'
+import { getRoom } from './room'
 
 import { createLogger } from '~~/server/utils/logger'
 
@@ -85,7 +92,7 @@ const checkDuplicateLogin = (id: string) => {
  * @param id
  */
 const checkPlayerIsInRoom = (id: string) => {
-  return getPlayer(id)?.state.type === 'in_room' && getPlayer(id)?.state.roomNumber !== null
+  return getPlayer(id)?.state.type === 'in_room' && getPlayer(id)?.state.roomId !== null
 }
 
 /**
@@ -115,6 +122,7 @@ const addPlayer = async (user: UserData & { peer: WsPeer }) => {
     state: {
       type: 'lobby',
       roomNumber: null,
+      roomId: null,
       onlooker: false
     }
   }
@@ -144,14 +152,22 @@ const addPlayer = async (user: UserData & { peer: WsPeer }) => {
 /**
  * 更新玩家状态
  * @param id 用户 ID
- * @param roomNumber 所在房间号，未提供则为在大厅
+ * @param roomId 所在房间 ID，未提供则为在大厅
+ * @param onlooker 是否旁观
  */
-const updatePlayerState = (id: string, roomNumber?: number, onlooker?: boolean) => {
+const updatePlayerState = (id: string, roomId?: string, onlooker?: boolean) => {
   const player = players.get(id)
   if (player) {
-    if (typeof roomNumber === 'undefined' || roomNumber < 0) {
+    const prevRoomId = player.state.roomId
+    // 换房/离房时先退订旧房间频道（同房角色切换 prevRoomId === roomId 时不动）
+    if (prevRoomId && prevRoomId !== roomId) {
+      unsubscribePeerFromChannel(player.peer, roomTopic(prevRoomId))
+    }
+
+    if (typeof roomId === 'undefined' || roomId === '') {
       player.state.type = 'lobby'
       player.state.roomNumber = null
+      player.state.roomId = null
       player.state.onlooker = false
       // 广播：添加此玩家到大厅列表
       sendToAllPlayer({
@@ -163,9 +179,15 @@ const updatePlayerState = (id: string, roomNumber?: number, onlooker?: boolean) 
         }
       })
     } else {
+      const room = getRoom(roomId)
       player.state.type = 'in_room'
-      player.state.roomNumber = roomNumber
+      player.state.roomNumber = room?.roomNumber ?? null
+      player.state.roomId = roomId
       player.state.onlooker = onlooker ?? false
+      // 进入新房间时订阅房间频道（同房角色切换时 Set 幂等，重复订阅无副作用）
+      if (prevRoomId !== roomId) {
+        subscribePeerToChannel(player.peer, roomTopic(roomId))
+      }
       // 广播：从大厅玩家列表移除此玩家
       sendToAllPlayer({
         type: 'player:event:lobby_players_remove',
@@ -183,8 +205,7 @@ const updatePlayerState = (id: string, roomNumber?: number, onlooker?: boolean) 
       {
         type: 'player:event:state_update',
         id,
-        state: player.state,
-        roomNumber
+        state: player.state
       },
       id
     )
@@ -250,21 +271,23 @@ const sendToAllPlayer = <T>(msg: WebsocketMessage<T>) => {
   players.forEach((p) => safeSend(p.peer, encoded))
 }
 
-const sendToRoom = <T>(msg: WebsocketMessage<T>, roomNumber: number, excludes?: string[]) => {
+const sendToRoom = <T>(msg: WebsocketMessage<T>, roomId: string, excludes?: string[]) => {
   const encoded = {
     ...msg,
     _scope: 'room'
   }
 
-  players.forEach((p) => {
-    if (
-      checkPlayerIsInRoom(p.id) &&
-      p.state.roomNumber === roomNumber &&
-      !excludes?.includes(p.id)
-    ) {
-      safeSend(p.peer, encoded)
+  // 走 channel 订阅广播，复杂度 O(房间内) 而非 O(全服)
+  let excludePeers: Set<WsPeer> | undefined
+  if (excludes?.length) {
+    excludePeers = new Set()
+    for (const i of excludes) {
+      const p = players.get(i)
+      if (p) excludePeers.add(p.peer)
     }
-  })
+  }
+
+  sendToChannel(encoded, roomTopic(roomId), { excludePeers })
 }
 
 const sendToLobby = <T>(msg: WebsocketMessage<T>) => {

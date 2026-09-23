@@ -53,10 +53,10 @@
       <div class="grid grid-cols-2 grid-rows-2 gap-tight">
         <UiButton
           color="green"
-          :disabled="Boolean(broadcastRecord.get(roomInfo.roomNumber))"
+          :disabled="Boolean(broadcastRecord.get(roomInfo.id))"
           @click="broadcast"
         >
-          {{ !broadcastRecord.get(roomInfo.roomNumber) ? '广播邀请' : '已广播' }}
+          {{ !broadcastRecord.get(roomInfo.id) ? '广播邀请' : '已广播' }}
         </UiButton>
 
         <UiButton color="blue"> 邀请好友 </UiButton>
@@ -240,7 +240,7 @@ watch(
       pendingPassword.value = ''
       editing.value = false
       if (originalPassword.value) {
-        changeRoomPassword(roomInfo.roomNumber, '')
+        changeRoomPassword('')
       }
     }
   }
@@ -267,7 +267,7 @@ const onCommit = () => {
     lockedLocal.value = false
   } else if (val !== roomInfo.options.password) {
     // 有值且与原密码不同 => 提交
-    changeRoomPassword(roomInfo.roomNumber, val)
+    changeRoomPassword(val)
     lockedLocal.value = true
   }
 }
@@ -288,7 +288,7 @@ const onCancel = () => {
  * @param seat
  */
 const onSeatSwitch = (open?: boolean, seat?: number | string) => {
-  switchSeat(roomInfo.roomNumber, Number(seat) - 1, Boolean(open))
+  switchSeat(Number(seat) - 1, Boolean(open))
 }
 
 /**

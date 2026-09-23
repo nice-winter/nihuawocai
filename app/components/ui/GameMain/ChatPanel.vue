@@ -122,7 +122,7 @@ useEventBus('chat:event:say', ({ chatmsg, sender, timestamp }) => {
   })
 })
 
-useEventBus('room:event:broadcast', ({ from, roomNumber, password, sender, timestamp }) => {
+useEventBus('room:event:broadcast', ({ roomId, roomNumber, password, sender, timestamp }) => {
   // 非游戏状态下，才显示广播信息
   // 当然这里在服务端不要推送就好了，前端也顺手过滤下呗
   if (!currentRoom.value?.playing) {
@@ -130,6 +130,7 @@ useEventBus('room:event:broadcast', ({ from, roomNumber, password, sender, times
       type: 'broadcast',
       sender,
       roomNumber,
+      roomId,
       password
     })
   }

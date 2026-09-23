@@ -34,6 +34,8 @@ export interface GameState {
   // --- 房间设置、配置 ---
   options: RoomOptions
   config: RoomConfig
+  /** 房间号（仅用于日志展示，身份键是 roomId） */
+  roomNumber: number
 
   // --- 状态标识 ---
   gamePhase: GamePhase
@@ -73,8 +75,8 @@ export interface GameState {
 //                        内存存储 & Mock
 // ----------------------------------------------------------------
 
-const GameStateRecord = new Map<number, GameState>()
-const GameLoopHandles = new Map<number, number>()
+const GameStateRecord = new Map<string, GameState>()
+const GameLoopHandles = new Map<string, number>()
 
 const wordManager = useWordManager()
 
@@ -82,16 +84,16 @@ const wordManager = useWordManager()
 //                           事件监听
 // ----------------------------------------------------------------
 
-roomEventBus.on('room:event:game_start', async ({ roomNumber, room }) => {
-  await gameStart(roomNumber, room)
+roomEventBus.on('room:event:game_start', async ({ roomId, room }) => {
+  await gameStart(roomId, room)
 })
 
-roomEventBus.on('room:event:player_leave', ({ roomNumber, player }) => {
-  handlePlayerLeave(roomNumber, player.id)
+roomEventBus.on('room:event:player_leave', ({ roomId, player }) => {
+  handlePlayerLeave(roomId, player.id)
 })
 
-roomEventBus.on('room:event:onlooker_join', ({ roomNumber, player }) => {
-  handleOnlookerJoin(roomNumber, player.id)
+roomEventBus.on('room:event:onlooker_join', ({ roomId, player }) => {
+  handleOnlookerJoin(roomId, player.id)
 })
 
 // ----------------------------------------------------------------
@@ -101,8 +103,8 @@ roomEventBus.on('room:event:onlooker_join', ({ roomNumber, player }) => {
 /**
  * 1. 游戏开始入口
  */
-const gameStart = async (roomNumber: number, room: Room) => {
-  if (GameStateRecord.has(roomNumber)) throw new Error('该房间已在游戏中')
+const gameStart = async (roomId: string, room: Room) => {
+  if (GameStateRecord.has(roomId)) throw new Error('该房间已在游戏中')
 
   const players = room.players.filter((p) => p !== null)
   if (players.length < 2) throw new Error('玩家数不足 2 人无法开始游戏')
@@ -126,6 +128,7 @@ const gameStart = async (roomNumber: number, room: Room) => {
     id: nanoid(),
     config,
     options,
+    roomNumber: room.roomNumber,
     gamePhase: 'game_start',
     roundPhase: 'round_prepare',
     currentRoundIndex: 0,
@@ -145,40 +148,39 @@ const gameStart = async (roomNumber: number, room: Room) => {
     timers: { startTime: Date.now(), endTime: Date.now(), duration: 0 }
   }
 
-  GameStateRecord.set(roomNumber, state)
+  GameStateRecord.set(roomId, state)
 
   logger.info(
-    `游戏开始: 房间 ${colors.cyan('#' + roomNumber)}`,
+    `游戏开始: 房间 ${colors.cyan('#' + room.roomNumber)}`,
     `${colors.cyan(String(players.length))} 名玩家，${totalRounds} 轮，游戏ID ${colors.gray(state.id)}`
   )
 
   sendToRoom(
     {
       type: 'game:event:start',
-      from: roomNumber,
       payload: {
         total_rounds: totalRounds
       }
     },
-    roomNumber
+    roomId
   )
 
   // 启动第一回合
-  await startRound(roomNumber)
+  await startRound(roomId)
 }
 
 /**
  * 2. 游戏主循环 Tick
  */
-const startGameTick = (roomNumber: number) => {
-  if (GameLoopHandles.has(roomNumber)) {
-    clearInterval(GameLoopHandles.get(roomNumber)!)
+const startGameTick = (roomId: string) => {
+  if (GameLoopHandles.has(roomId)) {
+    clearInterval(GameLoopHandles.get(roomId)!)
   }
 
   const tick = () => {
-    const st = GameStateRecord.get(roomNumber)
+    const st = GameStateRecord.get(roomId)
     if (!st) {
-      clearInterval(GameLoopHandles.get(roomNumber)!)
+      clearInterval(GameLoopHandles.get(roomId)!)
       return
     }
 
@@ -187,24 +189,24 @@ const startGameTick = (roomNumber: number) => {
 
     // A. 阶段时间结束检测
     if (remaining <= 0) {
-      handlePhaseTimeout(roomNumber, st)
+      handlePhaseTimeout(roomId, st)
       return
     }
 
     // B. 绘画阶段特殊检测 (提示词 & AFK)
     if (st.roundPhase === 'drawing') {
-      handleDrawingTick(roomNumber, st, now)
+      handleDrawingTick(roomId, st, now)
     }
   }
 
   const handle = setInterval(tick, 1000) as unknown as number
-  GameLoopHandles.set(roomNumber, handle)
+  GameLoopHandles.set(roomId, handle)
 }
 
 /**
  * 3. 进入结算展示阶段
  */
-const enterSettlementPhase = (roomNumber: number, st: GameState) => {
+const enterSettlementPhase = (roomId: string, st: GameState) => {
   st.gamePhase = 'game_settlement'
   const waitSeconds = st.config.cycle.time.cycleEndWaitTimeSecond
   setupTimer(st, waitSeconds)
@@ -242,7 +244,6 @@ const enterSettlementPhase = (roomNumber: number, st: GameState) => {
   sendToRoom(
     {
       type: 'game:event:settlement',
-      from: roomNumber,
       payload: {
         scores: finalScores,
         item_counts: finalItemCounts,
@@ -250,26 +251,26 @@ const enterSettlementPhase = (roomNumber: number, st: GameState) => {
         seconds: waitSeconds
       }
     },
-    roomNumber
+    roomId
   )
 }
 
 /**
  * 4. 游戏彻底结束
  */
-const endGame = (roomNumber: number) => {
-  const st = GameStateRecord.get(roomNumber)
+const endGame = (roomId: string) => {
+  const st = GameStateRecord.get(roomId)
   if (st) {
     st.gamePhase = 'game_end'
     st.roundPhase = 'round_end'
     logger.info(
-      `游戏结束: 房间 ${colors.cyan('#' + roomNumber)}，游戏ID ${colors.gray(st.id)}`,
+      `游戏结束: 房间 ${colors.cyan('#' + st.roomNumber)}，游戏ID ${colors.gray(st.id)}`,
       `积分 ${JSON.stringify(st.scores)}`
     )
-    sendToRoom({ type: 'game:event:end', from: roomNumber, payload: {} }, roomNumber)
+    sendToRoom({ type: 'game:event:end', payload: {} }, roomId)
   }
-  cleanUpRoom(roomNumber)
-  end(roomNumber)
+  cleanUpRoom(roomId)
+  end(roomId)
 }
 
 // ----------------------------------------------------------------
@@ -279,12 +280,12 @@ const endGame = (roomNumber: number) => {
 /**
  * 开始新回合
  */
-const startRound = async (roomNumber: number) => {
-  const st = GameStateRecord.get(roomNumber)
+const startRound = async (roomId: string) => {
+  const st = GameStateRecord.get(roomId)
   if (!st) return
 
   if (st.currentRoundIndex >= st.totalRounds) {
-    enterSettlementPhase(roomNumber, st)
+    enterSettlementPhase(roomId, st)
     return
   }
 
@@ -303,7 +304,7 @@ const startRound = async (roomNumber: number) => {
   // 如果算出来的画手不在了，直接开启新回合
   if (!drawerId) {
     st.currentRoundIndex++
-    await startRound(roomNumber)
+    await startRound(roomId)
     return
   }
 
@@ -312,21 +313,20 @@ const startRound = async (roomNumber: number) => {
   setupTimer(st, prepareSeconds)
 
   logger.debug(
-    `回合开始: 房间 ${colors.cyan('#' + roomNumber)}`,
+    `回合开始: 房间 ${colors.cyan('#' + st.roomNumber)}`,
     `第 ${st.currentRoundIndex + 1}/${st.totalRounds} 轮，画手 ${colors.cyan(drawerId!)}，题目 ${colors.green(st.currentWord?.word ?? '')}`
   )
 
   sendToRoom(
     {
       type: 'game:event:round:prepare',
-      from: roomNumber,
       payload: {
         round_index: st.currentRoundIndex + 1,
         drawer: st.drawer,
         seconds: prepareSeconds
       }
     },
-    roomNumber
+    roomId
   )
 
   // 下发答案给画手
@@ -340,32 +340,32 @@ const startRound = async (roomNumber: number) => {
     )
   }
 
-  startGameTick(roomNumber)
+  startGameTick(roomId)
 }
 
 /**
  * 阶段超时状态流转机
  */
-const handlePhaseTimeout = (roomNumber: number, st: GameState) => {
+const handlePhaseTimeout = (roomId: string, st: GameState) => {
   switch (st.gamePhase) {
     case 'game_settlement':
-      endGame(roomNumber)
+      endGame(roomId)
       break
 
     case 'game_round':
       switch (st.roundPhase) {
         case 'round_prepare':
-          enterDrawingPhase(roomNumber, st)
+          enterDrawingPhase(roomId, st)
           break
         case 'drawing':
-          enterInteractionPhase(roomNumber, st, 'timeout')
+          enterInteractionPhase(roomId, st, 'timeout')
           break
         case 'interaction':
-          endCurrentRound(roomNumber, st)
+          endCurrentRound(roomId, st)
           break
         case 'round_end':
           st.currentRoundIndex++
-          startRound(roomNumber)
+          startRound(roomId)
           break
       }
       break
@@ -375,7 +375,7 @@ const handlePhaseTimeout = (roomNumber: number, st: GameState) => {
 /**
  * 进入绘画阶段
  */
-const enterDrawingPhase = (roomNumber: number, st: GameState) => {
+const enterDrawingPhase = (roomId: string, st: GameState) => {
   st.roundPhase = 'drawing'
 
   // 重置 AFK 时间戳
@@ -388,17 +388,16 @@ const enterDrawingPhase = (roomNumber: number, st: GameState) => {
   sendToRoom(
     {
       type: 'game:event:drawing:start',
-      from: roomNumber,
       payload: { drawer: st.drawer, seconds: drawingSeconds }
     },
-    roomNumber
+    roomId
   )
 }
 
 /**
  * 绘画阶段的心跳检查 (提示词 + AFK)
  */
-const handleDrawingTick = (roomNumber: number, st: GameState, now: number) => {
+const handleDrawingTick = (roomId: string, st: GameState, now: number) => {
   const elapsedSeconds = Math.floor((now - st.timers.startTime) / 1000)
 
   // 1. AFK 检测
@@ -407,12 +406,11 @@ const handleDrawingTick = (roomNumber: number, st: GameState, now: number) => {
     sendToRoom(
       {
         type: 'game:event:notice',
-        from: roomNumber,
         payload: { message: '长时间未作画，本回合结束' }
       },
-      roomNumber
+      roomId
     )
-    enterInteractionPhase(roomNumber, st, 'afk')
+    enterInteractionPhase(roomId, st, 'afk')
     return
   }
 
@@ -431,10 +429,9 @@ const handleDrawingTick = (roomNumber: number, st: GameState, now: number) => {
       sendToRoom(
         {
           type: 'game:event:prompt',
-          from: roomNumber,
           payload: { content: promptContent, index: promptIndex + 1 }
         },
-        roomNumber
+        roomId
       )
 
       st.revealedPrompts++
@@ -446,7 +443,7 @@ const handleDrawingTick = (roomNumber: number, st: GameState, now: number) => {
  * 进入互动/展示阶段
  */
 const enterInteractionPhase = (
-  roomNumber: number,
+  roomId: string,
   st: GameState,
   reason: InteractionReason = 'timeout'
 ) => {
@@ -457,7 +454,6 @@ const enterInteractionPhase = (
   sendToRoom(
     {
       type: 'game:event:interaction:start',
-      from: roomNumber,
       payload: {
         answer: st.currentWord?.word,
         bingo_players: st.bingoPlayers,
@@ -465,14 +461,14 @@ const enterInteractionPhase = (
         reason
       }
     },
-    roomNumber
+    roomId
   )
 }
 
 /**
  * 结束本回合 (Round End)
  */
-const endCurrentRound = (roomNumber: number, st: GameState) => {
+const endCurrentRound = (roomId: string, st: GameState) => {
   st.roundPhase = 'round_end'
 
   // 极短过渡，由 Tick 处理跳转
@@ -481,13 +477,12 @@ const endCurrentRound = (roomNumber: number, st: GameState) => {
   sendToRoom(
     {
       type: 'game:event:round:end',
-      from: roomNumber,
       payload: {
         round: st.currentRoundIndex + 1,
         scores: st.scores
       }
     },
-    roomNumber
+    roomId
   )
 }
 
@@ -506,8 +501,8 @@ const handleSketchpad = async (
   const player = getPlayer(id)
   if (!player || !checkPlayerIsInRoom(id)) throw new Error('你已离线或当前不在房间内')
 
-  const roomNumber = player.state.roomNumber!
-  const st = GameStateRecord.get(roomNumber)
+  const roomId = player.state.roomId!
+  const st = GameStateRecord.get(roomId)
   if (!st) throw new Error('找不到游戏')
 
   // 如果不是 drawing 阶段，忽略
@@ -546,7 +541,7 @@ const handleSketchpad = async (
       command,
       payload
     },
-    roomNumber,
+    roomId,
     [id] // 广播消息时，排除自己
   )
 }
@@ -558,8 +553,8 @@ const handleGiveUp = (id: string) => {
   const player = getPlayer(id)
   if (!player || !checkPlayerIsInRoom(id)) throw new Error('你已离线或当前不在房间内')
 
-  const roomNumber = player.state.roomNumber!
-  const st = GameStateRecord.get(roomNumber)
+  const roomId = player.state.roomId!
+  const st = GameStateRecord.get(roomId)
   if (!st) throw new Error('找不到游戏')
 
   // 如果不是 drawing 阶段，忽略
@@ -570,25 +565,24 @@ const handleGiveUp = (id: string) => {
   sendToRoom(
     {
       type: 'game:event:notice',
-      from: roomNumber,
       payload: { message: '玩家放弃了本回合作画' }
     },
-    roomNumber
+    roomId
   )
   // 更新一次活跃时间防止在状态切换瞬间被误判 AFK (虽然马上就切阶段了，保险起见)
   st.lastDrawTime = Date.now()
 
-  enterInteractionPhase(roomNumber, st, 'give_up')
+  enterInteractionPhase(roomId, st, 'give_up')
 }
 
 /**
  * 玩家猜词，通过 chat event 调用此函数
- * @param roomNumber
+ * @param roomId
  * @param id
  * @param guessContent
  */
-const handleGuess = (roomNumber: number, id: string, guessContent: string): boolean => {
-  const st = GameStateRecord.get(roomNumber)
+const handleGuess = (roomId: string, id: string, guessContent: string): boolean => {
+  const st = GameStateRecord.get(roomId)
   if (!st || st.roundPhase !== 'drawing' || !st.currentWord) return false
   if (id === st.drawer) return false
   if (st.bingoPlayers.includes(id)) return false
@@ -599,7 +593,7 @@ const handleGuess = (roomNumber: number, id: string, guessContent: string): bool
   if (normalizedGuess === normalizedAnswer) {
     st.bingoPlayers.push(id)
     logger.info(
-      `猜对! 房间 ${colors.cyan('#' + roomNumber)}，玩家 ${colors.cyan(id)}，第 ${st.bingoPlayers.length} 个猜对`
+      `猜对! 房间 ${colors.cyan('#' + st.roomNumber)}，玩家 ${colors.cyan(id)}，第 ${st.bingoPlayers.length} 个猜对`
     )
 
     const scoreDelta = applyScoreOnBingo(st, id)
@@ -607,7 +601,6 @@ const handleGuess = (roomNumber: number, id: string, guessContent: string): bool
     sendToRoom(
       {
         type: 'game:event:guess:bingo',
-        from: roomNumber,
         payload: {
           id,
           score_delta: scoreDelta,
@@ -615,7 +608,7 @@ const handleGuess = (roomNumber: number, id: string, guessContent: string): bool
           scores: st.scores
         }
       },
-      roomNumber
+      roomId
     )
 
     // 1. 首答，缩短绘画时间
@@ -628,13 +621,12 @@ const handleGuess = (roomNumber: number, id: string, guessContent: string): bool
         sendToRoom(
           {
             type: 'game:event:timer:update',
-            from: roomNumber,
             payload: {
               seconds: st.config.cycle.time.roundBingoTimeSecond,
               reason: 'bingo_shorten'
             }
           },
-          roomNumber
+          roomId
         )
       }
     }
@@ -642,7 +634,7 @@ const handleGuess = (roomNumber: number, id: string, guessContent: string): bool
     // 2. 所有人猜对，直接转入互动阶段
     const activePlayersCount = st.drawerQueue.length
     if (st.bingoPlayers.length >= activePlayersCount - 1) {
-      enterInteractionPhase(roomNumber, st, 'bingo_all')
+      enterInteractionPhase(roomId, st, 'bingo_all')
     }
 
     return true
@@ -659,8 +651,8 @@ const handleGift = (id: string, itemType: ItemType) => {
   const player = getPlayer(id)
   if (!player || !checkPlayerIsInRoom(id)) throw new Error('你已离线或当前不在房间内')
 
-  const roomNumber = player.state.roomNumber!
-  const st = GameStateRecord.get(roomNumber)
+  const roomId = player.state.roomId!
+  const st = GameStateRecord.get(roomId)
   if (!st) throw new Error('找不到游戏')
 
   if (st.roundPhase !== 'interaction') throw new Error('非互动时间，无法赠送')
@@ -694,7 +686,6 @@ const handleGift = (id: string, itemType: ItemType) => {
   sendToRoom(
     {
       type: 'game:event:interaction:gift',
-      from: roomNumber,
       payload: {
         from: id,
         to: targetId,
@@ -702,7 +693,7 @@ const handleGift = (id: string, itemType: ItemType) => {
         count: 1
       }
     },
-    roomNumber
+    roomId
   )
 }
 
@@ -712,18 +703,17 @@ const handleGift = (id: string, itemType: ItemType) => {
 
 /**
  * 旁观者加入处理
- * @param roomNumber
+ * @param roomId
  * @param id
  */
-const handleOnlookerJoin = (roomNumber: number, id: string) => {
-  const st = GameStateRecord.get(roomNumber)
+const handleOnlookerJoin = (roomId: string, id: string) => {
+  const st = GameStateRecord.get(roomId)
   if (!st) return
   const remainingMs = Math.max(0, st.timers.endTime - Date.now())
 
   sendToPlayer(
     {
       type: 'game:event:state',
-      from: roomNumber,
       payload: {
         game_phase: st.gamePhase,
         round_phase: st.roundPhase,
@@ -742,11 +732,11 @@ const handleOnlookerJoin = (roomNumber: number, id: string) => {
 
 /**
  * 玩家离开处理
- * @param roomNumber
+ * @param roomId
  * @param id
  */
-const handlePlayerLeave = (roomNumber: number, id: string) => {
-  const st = GameStateRecord.get(roomNumber)
+const handlePlayerLeave = (roomId: string, id: string) => {
+  const st = GameStateRecord.get(roomId)
   if (!st) return
 
   // 1. 移除队列
@@ -757,14 +747,14 @@ const handlePlayerLeave = (roomNumber: number, id: string) => {
 
   // 2. 更新总轮数
   st.totalRounds = st.drawerQueue.length * st.config.cycle.count
-  broadcastState(roomNumber)
+  broadcastState(roomId)
 
   // 3. 检查剩余人数
   // 特殊情况：如果走得只剩 0 个人了（比如最后两个一起掉线），直接销毁，否则进入 Settlement 会因为没人而尴尬
   if (st.drawerQueue.length === 0) {
-    logger.info(`游戏因全员离线结束: 房间 ${colors.cyan('#' + roomNumber)}`)
-    cleanUpRoom(roomNumber)
-    end(roomNumber)
+    logger.info(`游戏因全员离线结束: 房间 ${colors.cyan('#' + st.roomNumber)}`)
+    cleanUpRoom(roomId)
+    end(roomId)
     return
   }
 
@@ -772,13 +762,12 @@ const handlePlayerLeave = (roomNumber: number, id: string) => {
     sendToRoom(
       {
         type: 'game:event:notice',
-        from: roomNumber,
         payload: { message: '剩余玩家不足 2 人，游戏即将结束' }
       },
-      roomNumber
+      roomId
     )
     // 进入结算，让剩下的 1 个人看一眼记分板，然后等待超时调用 endGame
-    enterSettlementPhase(roomNumber, st)
+    enterSettlementPhase(roomId, st)
     return
   }
 
@@ -787,12 +776,11 @@ const handlePlayerLeave = (roomNumber: number, id: string) => {
     sendToRoom(
       {
         type: 'game:event:notice',
-        from: roomNumber,
         payload: { message: '当前作画玩家离开，本回合跳过' }
       },
-      roomNumber
+      roomId
     )
-    enterInteractionPhase(roomNumber, st, 'leave')
+    enterInteractionPhase(roomId, st, 'leave')
   }
 }
 
@@ -838,22 +826,21 @@ const setupTimer = (st: GameState, seconds: number) => {
   st.timers.endTime = now + seconds * 1000
 }
 
-const cleanUpRoom = (roomNumber: number) => {
-  const handle = GameLoopHandles.get(roomNumber)
+const cleanUpRoom = (roomId: string) => {
+  const handle = GameLoopHandles.get(roomId)
   if (handle) clearInterval(handle)
-  GameLoopHandles.delete(roomNumber)
-  GameStateRecord.delete(roomNumber)
+  GameLoopHandles.delete(roomId)
+  GameStateRecord.delete(roomId)
 }
 
-const broadcastState = (roomNumber: number) => {
-  const st = GameStateRecord.get(roomNumber)
+const broadcastState = (roomId: string) => {
+  const st = GameStateRecord.get(roomId)
   if (!st) return
   const remainingMs = Math.max(0, st.timers.endTime - Date.now())
 
   sendToRoom(
     {
       type: 'game:event:state',
-      from: roomNumber,
       payload: {
         game_phase: st.gamePhase,
         round_phase: st.roundPhase,
@@ -866,24 +853,23 @@ const broadcastState = (roomNumber: number) => {
         item_counts: st.itemCounts
       }
     },
-    roomNumber
+    roomId
   )
 }
 
-const forceEndRound = (roomNumber: number) => {
-  const st = GameStateRecord.get(roomNumber)
+const forceEndRound = (roomId: string) => {
+  const st = GameStateRecord.get(roomId)
   if (!st) return
   if (st.roundPhase === 'drawing' || st.roundPhase === 'round_prepare') {
-    logger.info(`管理员强制结束回合: 房间 ${colors.cyan('#' + roomNumber)}`)
+    logger.info(`管理员强制结束回合: 房间 ${colors.cyan('#' + st.roomNumber)}`)
     sendToRoom(
       {
         type: 'game:event:notice',
-        from: roomNumber,
         payload: { message: '管理员强制结束了本回合' }
       },
-      roomNumber
+      roomId
     )
-    enterInteractionPhase(roomNumber, st, 'force')
+    enterInteractionPhase(roomId, st, 'force')
   }
 }
 
@@ -897,8 +883,8 @@ interface ChatContext {
   answerForMasking: string | null
 }
 
-const getChatContext = (roomNumber: number, playerId: string): ChatContext | null => {
-  const st = GameStateRecord.get(roomNumber)
+const getChatContext = (roomId: string, playerId: string): ChatContext | null => {
+  const st = GameStateRecord.get(roomId)
   if (!st) return null
 
   const isDrawer = playerId === st.drawer

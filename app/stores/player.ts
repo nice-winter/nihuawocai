@@ -21,6 +21,7 @@ export const usePlayerStore = defineStore('player', () => {
   )
   const isOnlooker = computed(() => loggedInPlayer.value?.state.onlooker)
   const currentRoomNumber = computed(() => loggedInPlayer.value?.state.roomNumber)
+  const currentRoomId = computed(() => loggedInPlayer.value?.state.roomId)
 
   const isSelf = (id: string) => id === loggedInPlayer.value?.id
 
@@ -81,6 +82,7 @@ export const usePlayerStore = defineStore('player', () => {
     isInLobby,
     isOnlooker,
     currentRoomNumber,
+    currentRoomId,
 
     isSelf,
     clear,

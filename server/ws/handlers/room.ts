@@ -3,6 +3,7 @@ import {
   broadcast,
   changePassword,
   createRoom,
+  getRoomByNumber,
   getRoomList,
   invite,
   start,
@@ -41,9 +42,14 @@ export default defineWsHandlers({
   },
   'room:join': async ({ msg, user }) => {
     const validData = roomJoinSchema.parse(msg)
-    const { roomNumber, password } = validData
+    const { roomNumber, roomId, password } = validData
 
-    return await joinRoom(Number(roomNumber), user.id, password?.trim().substring(0, 16) || '')
+    const room = getRoomByNumber(Number(roomNumber))
+    if (!room) throw new Error('房间不存在')
+    // 邀请/广播携带 roomId 时校验身份，防止旧引用误入同号新房
+    if (roomId && room.id !== roomId) throw new Error('房间已解散或不存在')
+
+    return await joinRoom(room.id, user.id, password?.trim().substring(0, 16) || '')
   },
   'room:leave': async ({ user }) => {
     return leaveRoom(user.id)
@@ -56,15 +62,15 @@ export default defineWsHandlers({
   },
   'room:seat_switch': async ({ msg, user }) => {
     const validData = roomSeatSwitchSchema.parse(msg)
-    const { roomNumber, seat, open } = validData
+    const { seat, open } = validData
 
-    return seatSwitch(roomNumber, seat, open, user.id)
+    return seatSwitch(user.id, seat, open)
   },
   'room:password_change': async ({ msg, user }) => {
     const validData = roomPasswordChangeSchema.parse(msg)
-    const { roomNumber, password } = validData
+    const { password } = validData
 
-    return changePassword(roomNumber, password, user.id)
+    return changePassword(user.id, password)
   },
   'room:broadcast': async ({ user }) => {
     return await broadcast(user.id)

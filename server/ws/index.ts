@@ -7,6 +7,7 @@ import { colors } from 'consola/utils'
 import { defineHooks } from 'crossws'
 import { wsEventBus } from './core/events'
 import { resolveUserFromPeer } from './core/connection'
+import { unsubscribePeerFromAllChannels } from './core/channel'
 import { safeSend, reply } from './utils'
 import handlers from './handlers'
 import { createLogger } from '~~/server/utils/logger'
@@ -82,6 +83,9 @@ export const hooks = defineHooks({
       peer.context._hb_timer = null
     }
 
+    // peer 级频道清扫：无条件执行（含 4001 被踢路径），防止 channels 泄漏已断开的 peer
+    unsubscribePeerFromAllChannels(peer)
+
     const { userData } = await resolveUserFromPeer(peer)
     wsEventBus.emit('ws:disconnect', { peer, user: userData, ...e })
     logger.info(
@@ -91,6 +95,9 @@ export const hooks = defineHooks({
   },
 
   async error(peer, error) {
+    // error 不保证后续有 close，这里也做 peer 级频道清扫
+    unsubscribePeerFromAllChannels(peer)
+
     const { userData } = await resolveUserFromPeer(peer)
     wsEventBus.emit('ws:error', { peer, user: userData, error })
     logger.error(

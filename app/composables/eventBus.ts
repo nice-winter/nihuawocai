@@ -47,8 +47,8 @@ type Events = {
 
   // room broadcast
   'room:event:broadcast': {
-    from: number
     roomNumber: number
+    roomId: string
     password: string
     sender: Player
     expAt: number

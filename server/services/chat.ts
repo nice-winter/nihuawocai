@@ -56,13 +56,13 @@ const say = async (user: UserData, chatmsg: string) => {
 
   // 2 游戏逻辑（仅房间内）
   if (checkPlayerIsInRoom(player.id)) {
-    const roomNumber = player.state.roomNumber!
-    const ctx = getChatContext(roomNumber, player.id)
+    const roomId = player.state.roomId!
+    const ctx = getChatContext(roomId, player.id)
 
     if (ctx) {
       // 画画阶段 + 未猜对 + 非画手 → 尝试猜词（用原始消息）
       if (ctx.shouldAttemptGuess) {
-        const bingo = handleGuess(roomNumber, player.id, chatmsg)
+        const bingo = handleGuess(roomId, player.id, chatmsg)
         if (bingo) return // 猜对，游戏侧处理后续广播
       }
 
@@ -101,7 +101,7 @@ const say = async (user: UserData, chatmsg: string) => {
   if (checkPlayerIsInLobby(player.id)) {
     sendToLobby(payload)
   } else if (checkPlayerIsInRoom(player.id)) {
-    sendToRoom(payload, player.state.roomNumber!)
+    sendToRoom(payload, player.state.roomId!)
   }
 
   logger.info(`Player ${colors.cyan(user.nickname)} say: ${colors.green(displayMsg)}`)
