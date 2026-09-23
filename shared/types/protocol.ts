@@ -71,6 +71,7 @@ export interface ServerEventMap {
   }
   'room:event:destroy': {
     roomNumber: number
+    roomId: string
   }
   'room:event:info': {
     room: Room
@@ -126,13 +127,14 @@ export interface ServerEventMap {
     from: Player
     to: Player
     roomNumber: number
+    roomId: string
     password: string
     duration: number
     expAt: number
   }
   'room:event:broadcast': {
-    from: number
     roomNumber: number
+    roomId: string
     password: string
     sender: Player
     expAt: number
@@ -276,6 +278,8 @@ export interface ClientEventMap {
   }
   'room:join': {
     roomNumber: number
+    /** 可选：邀请/广播携带的房间身份 ID，服务端校验与 roomNumber 对应，防止旧引用误入同号新房 */
+    roomId?: string
     password: string
     look?: boolean
   }
