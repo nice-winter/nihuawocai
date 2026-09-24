@@ -4,10 +4,10 @@
       <ul class="relative z-1 flex flex-wrap size-full">
         <UiGameMainLobbyRoomListItem
           v-for="room in roomStore.currentPageRooms"
-          :key="room.roomNumber"
+          :key="room.id"
           :room-info="room"
-          @join-button-click="() => tryJoin(room.roomNumber)"
-          @look-button-click="() => tryJoin(room.roomNumber)"
+          @join-button-click="() => tryJoin(room.id, room.roomNumber)"
+          @look-button-click="() => tryJoin(room.id, room.roomNumber)"
         />
       </ul>
 
@@ -29,12 +29,12 @@
           maxlength="3"
           class="w-14 game-input"
           style="background-color: #fff"
-          @keydown.enter.prevent="tryJoin(Number(roomNumberInputValue), true)"
+          @keydown.enter.prevent="tryJoin(undefined, Number(roomNumberInputValue), true)"
         />
         <UiButton
           size="sm"
           :disabled="roomNumberInputValue === ''"
-          @click="() => tryJoin(Number(roomNumberInputValue), true)"
+          @click="() => tryJoin(undefined, Number(roomNumberInputValue), true)"
         >
           加入
         </UiButton>
@@ -81,19 +81,34 @@ onBeforeMount(async () => {
   await pullRoomList()
 })
 
-const tryJoin = async (roomNumber: number, clearRoomNumberInput?: boolean) => {
+/**
+ * 尝试加入房间
+ * @param roomId 房间身份 ID（列表点击必带，防同号串房）；按号输入时为 undefined
+ * @param roomNumber 房间号（用户句柄）
+ * @param clearRoomNumberInput 是否清空房间号输入框
+ */
+const tryJoin = async (
+  roomId: string | undefined,
+  roomNumber: number,
+  clearRoomNumberInput?: boolean
+) => {
   if (clearRoomNumberInput) roomNumberInputValue.value = ''
   if (isNaN(roomNumber)) return gameMessageBox.show('房间号格式错误')
 
-  if (rooms.get(roomNumber)?.locked) {
+  // 列表点击带 roomId 直接取；按号输入无 roomId，按房间号反查仅用于判断是否上锁
+  const room = roomId
+    ? rooms.get(roomId)
+    : [...rooms.values()].find((r) => r.roomNumber === roomNumber)
+
+  if (room?.locked) {
     try {
       const password = await passwordModal.open()
-      join(roomNumber, password)
+      join(roomNumber, password, roomId)
     } catch {
       // cancel
     }
   } else {
-    join(roomNumber)
+    join(roomNumber, undefined, roomId)
   }
 }
 
