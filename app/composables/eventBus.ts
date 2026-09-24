@@ -57,7 +57,7 @@ type Events = {
 
   // chat
   'chat:event:say': {
-    chatmsg: string
+    message: string
     sender: Player
     timestamp: number
   }

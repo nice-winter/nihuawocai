@@ -168,7 +168,7 @@ const onClick = () => {
 
 const onAvatarClick = async () => {
   if (player && player.id) {
-    const { id, profile } = await getPlayerProfile(player.id)
+    const { profile } = await getPlayerProfile(player.id)
     if (profile) {
       playerProfile.value = profile
       showProfilePopover.value = true

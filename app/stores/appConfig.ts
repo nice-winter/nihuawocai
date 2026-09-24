@@ -19,11 +19,11 @@ export const useAppConfigStore = defineStore('appConfig', () => {
     appConfig.value = def
   }
 
-  const update = async (_: Partial<AppConfig>) => {
-    appConfig.value = defu(_, unref(appConfig.value))
+  const update = async (patch: Partial<AppConfig>) => {
+    appConfig.value = defu(patch, unref(appConfig.value))
     const result = await $fetch('/api/app-config', {
       method: 'POST',
-      body: _
+      body: patch
     })
 
     logger.success('✅', '更新远程配置成功', appConfig.value)

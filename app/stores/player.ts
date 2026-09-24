@@ -8,11 +8,11 @@ export const usePlayerStore = defineStore('player', () => {
   // 身份判断只看 state.type；roomNumber 仅供展示，roomId 仅供身份比较
   const isInRoom = computed(() => loggedInPlayer.value?.state.type === 'in_room')
   const isInLobby = computed(() => loggedInPlayer.value?.state.type === 'lobby')
-  const isOnlooker = computed(() => loggedInPlayer.value?.state.onlooker)
+  const isOnlooker = computed(() => loggedInPlayer.value?.state.isOnlooker)
   const currentRoomNumber = computed(() => loggedInPlayer.value?.state.roomNumber)
   const currentRoomId = computed(() => loggedInPlayer.value?.state.roomId)
 
-  const isSelf = (id: string) => id === loggedInPlayer.value?.id
+  const isSelf = (playerId: string) => playerId === loggedInPlayer.value?.id
 
   const clear = () => {
     loggedInPlayer.value = null
@@ -54,12 +54,12 @@ export const usePlayerStore = defineStore('player', () => {
   }
 
   const getPlayerProfile = async (playerId: string) => {
-    const { id, profile } = (await send({
+    const { playerId: pid, profile } = (await send({
       type: 'player:get_profile',
-      id: playerId
+      playerId
     })) as ClientResponse<'player:get_profile'>
 
-    return { id, profile }
+    return { playerId: pid, profile }
   }
 
   return {

@@ -71,8 +71,8 @@ export const useSketchpadStore = defineStore('sketchpad', () => {
     }
   }
 
-  const updateBrushOptions = async (bo: Partial<typeof brushOptions>) => {
-    Object.assign(brushOptions, bo)
+  const updateBrushOptions = async (patch: Partial<typeof brushOptions>) => {
+    Object.assign(brushOptions, patch)
 
     await send({
       type: 'game:drawing:sketchpad',

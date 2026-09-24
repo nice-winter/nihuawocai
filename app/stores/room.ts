@@ -113,10 +113,10 @@ export const useRoomStore = defineStore('room', () => {
 
   /**
    * 从当前房间中获取指定玩家
-   * @param id
+   * @param playerId 玩家 ID
    */
-  const getPlayerFromCurrentRoom = (id: string) => {
-    return currentRoomRealPlayers.value?.find((p) => p.id === id)
+  const getPlayerFromCurrentRoom = (playerId: string) => {
+    return currentRoomRealPlayers.value?.find((p) => p.id === playerId)
   }
 
   // Watch

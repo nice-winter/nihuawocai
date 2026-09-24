@@ -98,9 +98,9 @@ const selectEmoji = (emoji: string) => {
 }
 
 const sendChatMessage = () => {
-  const chatmsg = chatMessageInputValue.value.trim()
-  if (chatmsg !== '') {
-    say(chatmsg)
+  const message = chatMessageInputValue.value.trim()
+  if (message !== '') {
+    say(message)
     chatMessageInputValue.value = ''
   } else {
     ChatMessageInputRef.value?.inputRef?.focus()
@@ -114,11 +114,11 @@ watch(
   }
 )
 
-useEventBus('chat:event:say', ({ chatmsg, sender, timestamp }) => {
+useEventBus('chat:event:say', ({ message, sender, timestamp }) => {
   ChatPanelMessageListRef.value?.addMessage({
     type: 'chat',
     sender,
-    msg: chatmsg
+    msg: message
   })
 })
 

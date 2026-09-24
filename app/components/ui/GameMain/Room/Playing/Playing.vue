@@ -151,8 +151,8 @@ useEventBus('sketchpad:clear', () => sketchpadRef.value?.clear())
 
 // --- UI 效果事件（弹窗 / 音效 / 动画） ---
 
-useEventBus('chat:event:say', ({ chatmsg, sender }) => {
-  show(sender.id, chatmsg)
+useEventBus('chat:event:say', ({ message, sender }) => {
+  show(sender.id, message)
 })
 useEventBus('game:event:round:prepare', async ({ seconds }) => {
   await countdownModal.open({ seconds })

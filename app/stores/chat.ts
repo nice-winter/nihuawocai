@@ -6,17 +6,17 @@ export const useChatStore = defineStore('chat', () => {
       const event = msg as ServerMessage<'chat:event:say'>
 
       eventBus.emit('chat:event:say', {
-        chatmsg: event.chatmsg,
+        message: event.message,
         sender: event.sender,
         timestamp: event.timestamp
       })
     }
   })
 
-  const say = (chatmsg: string) => {
+  const say = (message: string) => {
     const msg = {
       type: 'chat:say',
-      chatmsg: chatmsg
+      message
     }
 
     send(msg)

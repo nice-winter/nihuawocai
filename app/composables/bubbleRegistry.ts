@@ -23,8 +23,8 @@ class BubbleRegistry {
     this.parentElement = el || document.body
   }
 
-  private getOrCreateRecord(id: string): BubbleRecord {
-    let record = this.map.get(id)
+  private getOrCreateRecord(bubbleId: string): BubbleRecord {
+    let record = this.map.get(bubbleId)
     if (!record) {
       record = {
         vnode: null,
@@ -32,14 +32,14 @@ class BubbleRegistry {
         hideTimer: null,
         rect: new DOMRect() // 初始为空 rect
       }
-      this.map.set(id, record)
+      this.map.set(bubbleId, record)
     }
     return record
   }
 
-  updateRect(id: string, rect: DOMRect) {
-    // console.log('Updating rect for:', id, rect)
-    const record = this.getOrCreateRecord(id)
+  updateRect(bubbleId: string, rect: DOMRect) {
+    // console.log('Updating rect for:', bubbleId, rect)
+    const record = this.getOrCreateRecord(bubbleId)
     record.rect = rect // 存储最新的 rect
     const comp = record.vnode?.component
     if (comp) {
@@ -48,17 +48,17 @@ class BubbleRegistry {
     }
   }
 
-  show(id: string, message: string) {
-    if (!this.map.get(id)) return
+  show(bubbleId: string, message: string) {
+    if (!this.map.get(bubbleId)) return
 
-    const record = this.getOrCreateRecord(id)
+    const record = this.getOrCreateRecord(bubbleId)
 
     if (!record.vnode) {
       const container = document.createElement('div')
       this.parentElement.appendChild(container) // 插入先前设置的父元素
 
       const vnode = h(BubbleInstance, {
-        id,
+        id: bubbleId,
         message,
         rect: record.rect, // 使用存储的 rect
         parentElement: this.parentElement // 把设置的父元素传给气泡实例 props
@@ -96,13 +96,13 @@ class BubbleRegistry {
   /**
    * 销毁指定 ID 的气泡
    */
-  public destroy(id: string) {
-    const record = this.map.get(id)
+  public destroy(bubbleId: string) {
+    const record = this.map.get(bubbleId)
     if (!record) {
       return
     }
 
-    // console.log('Destroying bubble:', id) // 清除 timeout
+    // console.log('Destroying bubble:', bubbleId) // 清除 timeout
 
     if (record.hideTimer !== null) {
       clearTimeout(record.hideTimer)
@@ -116,7 +116,7 @@ class BubbleRegistry {
       record.container.remove()
     }
 
-    this.map.delete(id)
+    this.map.delete(bubbleId)
   }
 
   /**
