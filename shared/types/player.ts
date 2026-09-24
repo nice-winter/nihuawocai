@@ -8,7 +8,7 @@ interface PlayerState {
     type: 'offline' | 'lobby' | 'in_room'
     roomNumber: number | null
     roomId: string | null
-    onlooker: boolean
+    isOnlooker: boolean
   }
 }
 

@@ -110,7 +110,7 @@ export type ClientMessage<T extends keyof ClientEventMap> = WebsocketMessage<{ t
  *
  * @example
  * // 获取玩家档案
- * const res = await send({ type: 'player:get_profile', id: playerId }) as ClientResponse<'player:get_profile'>
+ * const res = await send({ type: 'player:get_profile', playerId }) as ClientResponse<'player:get_profile'>
  * res.profile // ✅ Player
  *
  * @example

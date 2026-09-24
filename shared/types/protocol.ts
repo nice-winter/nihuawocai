@@ -167,7 +167,7 @@ export interface ServerEventMap {
 
   // --- 聊天事件 ---
   'chat:event:say': {
-    chatmsg: string
+    message: string
     sender: Player
     timestamp: number
   }
@@ -333,7 +333,7 @@ export interface ClientEventMap {
   // --- 玩家操作 ---
   'player:lobby_players_pull': Record<string, never>
   'player:get_profile': {
-    id: string
+    playerId: string
   }
 
   // --- 游戏操作 ---
@@ -349,7 +349,7 @@ export interface ClientEventMap {
 
   // --- 聊天 ---
   'chat:say': {
-    chatmsg: string
+    message: string
   }
 }
 
@@ -430,7 +430,7 @@ export interface ClientResponseMap {
     lobby_players: Player[]
   }
   'player:get_profile': {
-    id: string
+    playerId: string
     profile: Player
   }
   'game:drawing:give_up': Record<string, never>
