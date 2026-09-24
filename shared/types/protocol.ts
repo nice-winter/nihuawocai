@@ -13,6 +13,13 @@
  * - ServerEventMap 的 value 不含 `type` 字段，由消息框架自动附加
  * - ClientEventMap 的 value 不含 `type` 字段，由 send() 调用时附加
  *
+ * 字段语义约定（全协议强制）：
+ * 1. **作用域房间** —— `room:*` 事件 envelope 必带 `roomId: string`（身份键，nanoid 不可复用）
+ *    与 `roomNumber: number`（用户句柄，0-999 会回收复用，仅供 UI 展示与「按号加入」入口）。
+ *    **身份比较只允许用 `roomId`，禁止用 `roomNumber`。**
+ * 2. **人的发起者/目标** —— Player 对象用 `sender` / `target`；id 字符串用 `senderId` / `targetId`。
+ * 3. **全协议禁用 `from` / `to` 字段名**（历史遗留的一词多义已清除）。
+ *
  * 添加新事件的步骤：
  * 1. 在 ServerEventMap 或 ClientEventMap 中添加条目
  * 2. 后端 handler/service 中发送/返回对应结构
@@ -37,7 +44,10 @@ import type { Room, RoomInfo } from './room'
  *
  * 两种数据结构约定：
  * - 带 `payload` 的：游戏事件，如 `{ payload: { total_rounds } }`
- * - 不带 `payload` 的：房间/玩家事件，字段直接平铺在消息上，如 `{ from, room, seat, player }`
+ * - 不带 `payload` 的：房间/玩家事件，字段直接平铺在消息上
+ *
+ * 房间事件 envelope 统一携带 `roomId` + `roomNumber`（寻址用 roomId），
+ * `room` 对象（若有）负责数据载荷，二者职责分离。
  *
  * @example
  * // 前端接收并自动窄化
@@ -64,77 +74,91 @@ export interface ServerEventMap {
     player: Player
   }
 
-  // --- 房间事件 ---
+  // --- 房间事件（envelope 必带 roomId + roomNumber）---
   'room:event:create': {
+    roomId: string
+    roomNumber: number
     room: RoomInfo
-    from: number
   }
   'room:event:destroy': {
-    roomNumber: number
     roomId: string
+    roomNumber: number
   }
   'room:event:info': {
+    roomId: string
+    roomNumber: number
     room: Room
   }
   'room:event:owner_change': {
-    from: number
-    id: string
+    roomId: string
+    roomNumber: number
+    /** 新房主玩家 ID */
+    newOwnerId: string
   }
   'room:event:stage_update': {
-    from: number
+    roomId: string
+    roomNumber: number
     playing: boolean
   }
   'room:event:seat_switch': {
-    from: number
+    roomId: string
+    roomNumber: number
     seat: number
     open: boolean
   }
   'room:event:locked_state_change': {
-    from: number
+    roomId: string
+    roomNumber: number
     locked: boolean
   }
   'room:event:password_change': {
+    roomId: string
     roomNumber: number
     password: string
     locked: boolean
   }
   'room:event:player_join': {
-    from: number
+    roomId: string
+    roomNumber: number
     seat: number
     player: Player
   }
   'room:event:player_leave': {
-    from: number
+    roomId: string
+    roomNumber: number
     seat: number
     player: Player
   }
   'room:event:onlooker_join': {
-    from: number
-    id: string
+    roomId: string
+    roomNumber: number
     player: Player
   }
   'room:event:onlooker_leave': {
-    from: number
-    id: string
+    roomId: string
+    roomNumber: number
     player: Player
   }
   'room:event:onlooker_sit': {
-    from: number
+    roomId: string
+    roomNumber: number
     seat: number
     player: Player
   }
   'room:event:invite': {
-    from: Player
-    to: Player
-    roomNumber: number
+    /** 邀请人 */
+    sender: Player
+    /** 被邀请人 */
+    target: Player
     roomId: string
+    roomNumber: number
     password: string
     duration: number
     expAt: number
   }
   'room:event:broadcast': {
-    roomNumber: number
     roomId: string
+    roomNumber: number
     password: string
     sender: Player
     expAt: number
@@ -228,7 +252,8 @@ export interface ServerEventMap {
   }
   'game:event:guess:bingo': {
     payload: {
-      id: string
+      /** 猜中者玩家 ID */
+      guesserId: string
       score_delta: ScoreDelta
       bingo_players: string[]
       scores: Record<string, number>
@@ -242,8 +267,10 @@ export interface ServerEventMap {
   }
   'game:event:interaction:gift': {
     payload: {
-      from: string
-      to: string
+      /** 送道具者玩家 ID */
+      senderId: string
+      /** 接收者玩家 ID（固定为当回合画者） */
+      targetId: string
       item_type: ItemType
       count: number
     }
@@ -272,18 +299,42 @@ export interface ServerEventMap {
  */
 export interface ClientEventMap {
   // --- 房间操作 ---
+  'room:list_pull': Record<string, never>
+  'room:quick_match': Record<string, never>
   'room:create': {
     opens: number
     options: { password: string; maxOnlookers: number }
   }
   'room:join': {
     roomNumber: number
-    /** 可选：邀请/广播携带的房间身份 ID，服务端校验与 roomNumber 对应，防止旧引用误入同号新房 */
+    /** 可选：邀请/广播/列表携带的房间身份 ID，服务端校验与 roomNumber 对应，防止旧引用误入同号新房 */
     roomId?: string
-    password: string
+    password?: string | null
     look?: boolean
   }
   'room:leave': Record<string, never>
+  'room:sit': {
+    seat: number
+  }
+  'room:seat_switch': {
+    seat: number
+    open: boolean
+  }
+  'room:password_change': {
+    password: string
+  }
+  'room:broadcast': Record<string, never>
+  'room:invite': {
+    /** 被邀请玩家 ID */
+    targetId: string
+  }
+  'room:game_start': Record<string, never>
+
+  // --- 玩家操作 ---
+  'player:lobby_players_pull': Record<string, never>
+  'player:get_profile': {
+    id: string
+  }
 
   // --- 游戏操作 ---
   'game:drawing:give_up': Record<string, never>
@@ -310,13 +361,15 @@ export interface ClientEventMap {
  * 客户端请求 → 服务端响应类型映射
  *
  * key: 请求名（与 ClientEventMap 对应）
- * value: 服务端返回的数据结构（不含 _reply/_rid/_t/successful 等传输字段，由 WS_RECV 补充）
+ * value: 服务端返回的数据结构（不含 _reply/_rid/_t/_scope/successful 等传输字段，由 WS_RECV 补充）
  *
  * 工作原理：
  * 1. 客户端 send({ type }) 发起请求
  * 2. 服务端 handler 返回数据对象
  * 3. 框架自动包装为 { type, ...data, successful, _reply, _rid, _t } 回传
  * 4. 客户端用 as ClientResponse<'xxx'> 取到类型安全的响应
+ *
+ * 注意：handler 必须返回 object 才能携带业务字段；返回裸 number/string 会被回包机制吞掉。
  *
  * @example
  * const res = await send({ type: 'room:list_pull' }) as ClientResponse<'room:list_pull'>
@@ -327,14 +380,52 @@ export interface ClientResponseMap {
   'room:list_pull': {
     room_list: RoomInfo[]
   }
+  'room:quick_match': {
+    room: Room
+  }
+  'room:create': {
+    room: Room
+  }
+  'room:join': {
+    room: Room
+  }
+  'room:leave': {
+    roomId: string
+    roomNumber: number
+  }
+  'room:sit': Record<string, never>
+  'room:seat_switch': {
+    roomId: string
+    roomNumber: number
+    seat: number
+    open: boolean
+  }
+  'room:password_change': {
+    roomId: string
+    roomNumber: number
+    locked: boolean
+    password: string
+  }
+  'room:broadcast': {
+    roomId: string
+    roomNumber: number
+    password: string
+    sender: Player
+    expAt: number
+    timestamp: number
+  }
   'room:invite': {
-    from: Player
-    to: Player
+    /** 邀请人 */
+    sender: Player
+    /** 被邀请人 */
+    target: Player
+    roomId: string
     roomNumber: number
     password: string
     duration: number
     expAt: number
   }
+  'room:game_start': Record<string, never>
   'player:lobby_players_pull': {
     lobby_players: Player[]
   }
@@ -342,4 +433,8 @@ export interface ClientResponseMap {
     id: string
     profile: Player
   }
+  'game:drawing:give_up': Record<string, never>
+  'game:drawing:sketchpad': Record<string, never>
+  'game:interaction:gift': Record<string, never>
+  'chat:say': Record<string, never>
 }

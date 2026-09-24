@@ -1,7 +1,12 @@
 import type { ServerEventMap, ClientEventMap, ClientResponseMap } from './protocol'
 
+/** 服务端下发消息的投递范围标记，由 sendTo* 系列函数附加 */
+export type WsScope = 'player' | 'all' | 'room' | 'lobby'
+
 export interface BaseWebsocketMessage {
   type: WebsocketMessageType
+  /** 投递范围（服务端下发事件必带；请求-响应路径可选） */
+  _scope?: WsScope
   // status: 'success' | 'error' | 'pending'
   // timestamp: number
   // version?: string
@@ -110,7 +115,7 @@ export type ClientMessage<T extends keyof ClientEventMap> = WebsocketMessage<{ t
  *
  * @example
  * // 邀请玩家
- * const res = await send({ type: 'room:invite', toId }) as ClientResponse<'room:invite'>
+ * const res = await send({ type: 'room:invite', targetId }) as ClientResponse<'room:invite'>
  * res.expAt // ✅ number
  */
 export type ClientResponse<T extends keyof ClientResponseMap> = WS_RECV<ClientResponseMap[T]>
