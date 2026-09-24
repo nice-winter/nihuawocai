@@ -104,7 +104,7 @@
       > -->
 
       <span
-        v-if="roomInfo?.players![i - 1]?.id === roomInfo?.owner"
+        v-if="roomInfo?.players![i - 1]?.id === roomInfo?.ownerId"
         class="absolute left-10 top-0 flex"
       >
         <UIcon name="ph:arrow-bend-left-down-bold" />

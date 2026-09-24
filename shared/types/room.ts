@@ -24,7 +24,7 @@ interface RoomInfo {
   options: RoomOptions
 
   roomNumber: number
-  owner: string
+  ownerId: string
   players: RoomPlayers
   onlookers: Player[]
   seats: boolean[]
@@ -39,7 +39,7 @@ interface Room extends RoomInfo {
   id: string
   options: RoomOptions
   config: Partial<RoomConfig> | null
-  createdBy: string
+  createdById: string
   createdAt: number
 }
 

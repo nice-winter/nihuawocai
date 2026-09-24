@@ -187,13 +187,13 @@ const createRoom = async (
     options: roomOptions,
     config: roomConfig,
     roomNumber,
-    owner: ownerId,
+    ownerId,
     seats,
     locked,
     players: new Array(7).fill(null),
     onlookers: [],
     playing: false,
-    createdBy: ownerId,
+    createdById: ownerId,
     createdAt: Date.now()
   }
 
@@ -442,7 +442,7 @@ const seatSwitch = (playerId: string, seat: number, open: boolean) => {
 
   const room = rooms.get(roomId)
   if (room) {
-    if (room.owner !== playerId) throw new Error('你不是房主')
+    if (room.ownerId !== playerId) throw new Error('你不是房主')
     if (room.players[seat] !== null) throw new Error('此坑位存在玩家，无法调整')
 
     room.seats[seat] = open
@@ -479,7 +479,7 @@ const changePassword = (playerId: string, password: string) => {
 
   const room = rooms.get(roomId)
   if (room) {
-    if (room.owner !== playerId) throw new Error('你不是房主')
+    if (room.ownerId !== playerId) throw new Error('你不是房主')
 
     const pwd = password.trim().substring(0, 16)
 
@@ -782,7 +782,7 @@ const removeRoomPlayer = async (roomId: string, playerId: string) => {
     }
 
     // 如果玩家是房主且仍有其他玩家，则更改房主为相邻玩家
-    if (room.owner === playerId && seat > -1 && realPlayers.length > 0) {
+    if (room.ownerId === playerId && seat > -1 && realPlayers.length > 0) {
       let newOwnerIndex = -1
 
       // 向后找最近的非空座位
@@ -805,7 +805,7 @@ const removeRoomPlayer = async (roomId: string, playerId: string) => {
 
       const newOwner = room.players[newOwnerIndex]
       if (newOwner) {
-        room.owner = newOwner.id
+        room.ownerId = newOwner.id
         // 广播房主变更事件
         sendToAllPlayer({
           type: 'room:event:owner_change',
@@ -816,7 +816,7 @@ const removeRoomPlayer = async (roomId: string, playerId: string) => {
       } else {
         // 理论上不会发生，保险起见
         logger.error(`严重异常: 房间 ${colors.cyan('#' + room.roomNumber)} 找不到有效新房主，数据一致性可能受损`)
-        room.owner = ''
+        room.ownerId = ''
       }
     }
 

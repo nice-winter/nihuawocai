@@ -33,7 +33,7 @@ export const useRoomStore = defineStore('room', () => {
    * 是否为当前房间的房主
    */
   const isCurrentRoomOwner = computed(
-    () => playerStore.loggedInPlayer?.id === currentRoom.value?.owner
+    () => playerStore.loggedInPlayer?.id === currentRoom.value?.ownerId
   )
 
   /**
@@ -163,12 +163,12 @@ export const useRoomStore = defineStore('room', () => {
       case 'room:event:owner_change': {
         const room = rooms.get(event.roomId)
         if (room) {
-          room.owner = event.newOwnerId
+          room.ownerId = event.newOwnerId
           rooms.set(event.roomId, room)
         }
         // 如果房主变更的是当前房间，同步更新（按身份 ID 比较）
         if (event.roomId === playerStore.currentRoomId && currentRoom.value) {
-          currentRoom.value.owner = event.newOwnerId
+          currentRoom.value.ownerId = event.newOwnerId
         }
         break
       }
