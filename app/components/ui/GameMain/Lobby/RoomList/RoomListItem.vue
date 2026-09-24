@@ -68,10 +68,10 @@ type RoomListItemProps = RoomInfo
 const { roomInfo } = defineProps<{ roomInfo: RoomListItemProps }>()
 
 const playersWithoutOwner = computed(() =>
-  roomInfo.players.filter((p) => p && p.id !== roomInfo.owner)
+  roomInfo.players.filter((p) => p && p.id !== roomInfo.ownerId)
 )
 
-const ownerPlayer = computed(() => roomInfo.players.find((p) => p?.id === roomInfo.owner))
+const ownerPlayer = computed(() => roomInfo.players.find((p) => p?.id === roomInfo.ownerId))
 
 const totalPlayerCount = computed(() => roomInfo.players.filter((p) => p).length)
 
