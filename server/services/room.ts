@@ -166,7 +166,6 @@ const createRoom = async (
   options?: Partial<RoomOptions>,
   config?: Partial<RoomConfig>
 ) => {
-  const appConfig = await getAppConfig()
   const user = await getUserData(owner)
 
   if (checkPlayerIsInRoom(owner)) throw new Error('当前已在房间内')
@@ -210,7 +209,8 @@ const createRoom = async (
   // 广播房间创建事件
   sendToAllPlayer({
     type: 'room:event:create',
-    from: roomNumber,
+    roomId: room.id,
+    roomNumber,
     room: roomInfo
   })
 
@@ -300,8 +300,8 @@ const joinRoom = async (roomId: string, id: string, password?: string) => {
         // 广播旁观者进房事件
         sendToAllPlayer({
           type: 'room:event:onlooker_join',
-          from: room.roomNumber,
-          id: user.id,
+          roomId: room.id,
+          roomNumber: room.roomNumber,
           player: user
         })
 
@@ -332,7 +332,8 @@ const joinRoom = async (roomId: string, id: string, password?: string) => {
           // 广播玩家进房事件
           sendToAllPlayer({
             type: 'room:event:player_join',
-            from: room.roomNumber,
+            roomId: room.id,
+            roomNumber: room.roomNumber,
             seat,
             player: user
           })
@@ -358,9 +359,12 @@ const joinRoom = async (roomId: string, id: string, password?: string) => {
     }
 
     // 推给用户房间信息
+    // TODO: info 携带真实密码，create 走 roomPropertyFilter 打码，安全口径待统一
     sendToPlayer(
       {
         type: 'room:event:info',
+        roomId: room.id,
+        roomNumber: room.roomNumber,
         room
       },
       id
@@ -406,7 +410,8 @@ const sit = async (id: string, seat: number) => {
       // @TODO: 广播旁观者坐下事件
       sendToAllPlayer({
         type: 'room:event:onlooker_sit',
-        from: room.roomNumber,
+        roomId: room.id,
+        roomNumber: room.roomNumber,
         seat,
         player: user
       })
@@ -446,12 +451,14 @@ const seatSwitch = (id: string, seat: number, open: boolean) => {
     // 广播坑位切换事件
     sendToAllPlayer({
       type: 'room:event:seat_switch',
-      from: room.roomNumber,
+      roomId: room.id,
+      roomNumber: room.roomNumber,
       seat,
       open
     })
 
     return {
+      roomId: room.id,
       roomNumber: room.roomNumber,
       seat,
       open
@@ -491,7 +498,8 @@ const changePassword = (id: string, password: string) => {
     // 广播房间锁定状态变更事件
     sendToAllPlayer({
       type: 'room:event:locked_state_change',
-      from: room.roomNumber,
+      roomId: room.id,
+      roomNumber: room.roomNumber,
       locked: room.locked
     })
 
@@ -499,6 +507,7 @@ const changePassword = (id: string, password: string) => {
     sendToRoom(
       {
         type: 'room:event:password_change',
+        roomId: room.id,
         roomNumber: room.roomNumber,
         password,
         locked: room.locked
@@ -507,6 +516,7 @@ const changePassword = (id: string, password: string) => {
     )
 
     return {
+      roomId: room.id,
       roomNumber: room.roomNumber,
       locked: room.locked,
       password
@@ -567,9 +577,9 @@ const broadcast = async (id: string) => {
  * 邀请玩家
  * @TODO 完善邀请的接收、拒绝状态功能
  * @param id 发起用户 ID
- * @param toId 被邀请用户 Id
+ * @param targetId 被邀请用户 ID
  */
-const invite = async (id: string, toId: string) => {
+const invite = async (id: string, targetId: string) => {
   const player = getPlayer(id)
   if (!player) throw new Error('用户不存在')
 
@@ -585,12 +595,12 @@ const invite = async (id: string, toId: string) => {
   const expAt = now + expSeconds
 
   // 检查目标玩家
-  if (!checkPlayerIsInLobby(toId)) {
+  if (!checkPlayerIsInLobby(targetId)) {
     throw new Error('该玩家不在大厅')
   }
 
   // 防止重复邀请
-  const key = `${id}:${toId}`
+  const key = `${id}:${targetId}`
   const existing = inviteRecord.get(key)
   if (existing && existing.expAt > now) {
     const remain = existing.expAt - now
@@ -605,8 +615,8 @@ const invite = async (id: string, toId: string) => {
   }, expSeconds * 1000)
 
   const msg = {
-    from: await getUserData(id),
-    to: await getUserData(toId),
+    sender: await getUserData(id),
+    target: await getUserData(targetId),
     roomNumber: room.roomNumber,
     roomId: room.id,
     password: room.options.password,
@@ -615,9 +625,9 @@ const invite = async (id: string, toId: string) => {
   }
 
   // 广播邀请
-  sendToPlayer({ type: 'room:event:invite', ...msg }, toId)
+  sendToPlayer({ type: 'room:event:invite', ...msg }, targetId)
 
-  logger.debug(`玩家 ${id} 邀请了 ${toId} 加入房间 ${room.roomNumber}，有效期 ${expSeconds} 秒`)
+  logger.debug(`玩家 ${id} 邀请了 ${targetId} 加入房间 ${room.roomNumber}，有效期 ${expSeconds} 秒`)
 
   return msg
 }
@@ -640,7 +650,8 @@ const start = async (id: string) => {
 
         const msg = {
           type: 'room:event:stage_update',
-          from: room.roomNumber,
+          roomId: room.id,
+          roomNumber: room.roomNumber,
           playing: true
         }
 
@@ -670,7 +681,8 @@ const end = (roomId: string) => {
 
       const msg = {
         type: 'room:event:stage_update',
-        from: room.roomNumber,
+        roomId: room.id,
+        roomNumber: room.roomNumber,
         playing: false
       }
 
@@ -692,12 +704,15 @@ const leaveRoom = (id: string) => {
   if (!checkPlayerIsInRoom(id)) throw new Error('当前不在房间内')
 
   const roomId = getPlayer(id)?.state.roomId
-  if (roomId) {
-    removeRoomPlayer(roomId, id)
-  }
+  if (!roomId) return { roomId: '', roomNumber: 0 }
+
+  // 先读 roomNumber：removeRoomPlayer 可能触发房间销毁
+  const roomNumber = getRoom(roomId)?.roomNumber ?? 0
+  removeRoomPlayer(roomId, id)
 
   return {
-    roomId
+    roomId,
+    roomNumber
   }
 }
 
@@ -731,7 +746,8 @@ const removeRoomPlayer = async (roomId: string, id: string) => {
       // 广播玩家（从坑位）离开房间事件
       sendToAllPlayer({
         type: 'room:event:player_leave',
-        from: room.roomNumber,
+        roomId: room.id,
+        roomNumber: room.roomNumber,
         seat,
         player
       })
@@ -746,8 +762,8 @@ const removeRoomPlayer = async (roomId: string, id: string) => {
       // 广播玩家（从树上）离开房间事件
       sendToAllPlayer({
         type: 'room:event:onlooker_leave',
-        from: room.roomNumber,
-        id: player.id,
+        roomId: room.id,
+        roomNumber: room.roomNumber,
         player
       })
 
@@ -793,8 +809,9 @@ const removeRoomPlayer = async (roomId: string, id: string) => {
         // 广播房主变更事件
         sendToAllPlayer({
           type: 'room:event:owner_change',
-          from: room.roomNumber,
-          id: newOwner.id
+          roomId: room.id,
+          roomNumber: room.roomNumber,
+          newOwnerId: newOwner.id
         })
       } else {
         // 理论上不会发生，保险起见
@@ -847,12 +864,11 @@ const quickMatch = async (id: string) => {
 
   // 3. 加入房间
   try {
-    await joinRoom(room.id, id)
+    // 返回完整加入结果（回包机制只展开 object，裸 number 会被吞掉）
+    return await joinRoom(room.id, id)
   } catch (err) {
     throw new Error(`加入房间失败：${(err as Error).message}`, { cause: err })
   }
-
-  return room.roomNumber
 }
 
 export {

@@ -117,8 +117,10 @@ type Events = {
     index: number
   }
   'game:event:guess:bingo': {
-    id: string
-    player: Player
+    /** 猜中者玩家 ID */
+    guesserId: string
+    /** 猜中者（前端富化） */
+    guesser: Player
     score_delta: ScoreDelta
     bingo_players: string[]
     scores: Record<string, number>
@@ -128,9 +130,14 @@ type Events = {
     reason: string
   }
   'game:event:interaction:gift': {
-    from: string
-    fromPlayer: Player
-    to: string
+    /** 送道具者玩家 ID */
+    senderId: string
+    /** 送道具者（前端富化） */
+    sender: Player
+    /** 接收者玩家 ID（固定为当回合画者） */
+    targetId: string
+    /** 接收者（前端富化，画手可能已离场） */
+    target: Player | undefined
     item_type: ItemType
     count: number
   }

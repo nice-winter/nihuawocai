@@ -52,7 +52,7 @@ const safeSend = <T>(peer: WsPeer, msg: WebsocketMessage<T>) => {
 const reply =
   (peer: WsPeer, rid?: string) =>
   <T>(msg: WebsocketMessage<T>) => {
-    safeSend(peer, { ...msg, _reply: true, _rid: rid })
+    safeSend(peer, { ...msg, _scope: 'player', _reply: true, _rid: rid })
   }
 
 const defineWsHandlers = (handlers: WsHandlers) => {

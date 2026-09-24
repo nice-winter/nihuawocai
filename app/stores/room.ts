@@ -5,14 +5,13 @@ import { defineStore } from 'pinia'
  * 负责管理游戏房间的列表、当前房间状态以及与房间相关的 WebSocket 通信
  */
 export const useRoomStore = defineStore('room', () => {
-  const appConfigStore = useAppConfigStore()
-  const { appConfig } = storeToRefs(appConfigStore)
   const { wsEventBus, send } = useWsStore()
   const playerStore = usePlayerStore()
   const toast = useToast()
 
   // State
-  const rooms = reactive(new Map<number, RoomInfo>()) // 所有房间的映射表
+  /** 所有房间的映射表，键为 room.id（身份键，同号房间不会互相覆盖） */
+  const rooms = reactive(new Map<string, RoomInfo>())
   const currentPageNumber = ref(0) // 当前页码
   const showOnlyWaitingRooms = ref(false) // 是否只显示等待中的房间
   const currentRoom = ref<Room | null>(null) // 玩家当前所在的房间
@@ -23,7 +22,7 @@ export const useRoomStore = defineStore('room', () => {
   /**
    * 当前页显示的房间列表（最多显示6个）
    */
-  const { currentPage, currentPageItems, prevPage, nextPage } = usePaginatedMap(rooms, 6)
+  const { currentPageItems, prevPage, nextPage } = usePaginatedMap(rooms, 6)
   const currentPageRooms = computed(() => {
     return currentPageItems.value.filter((room) => {
       return showOnlyWaitingRooms.value ? !room.playing : true
@@ -54,22 +53,23 @@ export const useRoomStore = defineStore('room', () => {
 
   /**
    * 更新房间玩家座位信息
+   * @param roomId 房间身份 ID（身份比较只用 roomId，防同号误判）
    */
   const updateRoomPlayer = (
-    roomNumber: number,
+    roomId: string,
     seat: number,
     player: Player,
     action: 'join' | 'sit' | 'leave'
   ) => {
     // 更新房间列表中的房间
-    const room = rooms.get(roomNumber)
+    const room = rooms.get(roomId)
     if (room) {
       room.players[seat] = action === 'leave' ? null : player
-      rooms.set(roomNumber, room)
+      rooms.set(roomId, room)
     }
 
-    // 同步更新当前房间
-    if (roomNumber === currentRoom.value?.roomNumber) {
+    // 同步更新当前房间（按身份 ID 比较）
+    if (roomId === playerStore.currentRoomId && currentRoom.value) {
       currentRoom.value.players[seat] = action === 'leave' ? null : player
 
       if (action === 'join') {
@@ -84,22 +84,23 @@ export const useRoomStore = defineStore('room', () => {
 
   /**
    * 更新房间旁观者列表
+   * @param roomId 房间身份 ID（身份比较只用 roomId，防同号误判）
    */
   const updateRoomOnlookers = (
-    roomNumber: number,
+    roomId: string,
     updater: (onlookers: Player[]) => void,
     player: Player,
     action: 'join' | 'sit' | 'leave'
   ) => {
     // 更新房间列表中的房间
-    const room = rooms.get(roomNumber)
+    const room = rooms.get(roomId)
     if (room) {
       updater(room.onlookers)
-      rooms.set(roomNumber, room)
+      rooms.set(roomId, room)
     }
 
-    // 同步更新当前房间
-    if (roomNumber === playerStore.currentRoomNumber && currentRoom.value) {
+    // 同步更新当前房间（按身份 ID 比较）
+    if (roomId === playerStore.currentRoomId && currentRoom.value) {
       updater(currentRoom.value.onlookers)
 
       if (action === 'join') {
@@ -142,12 +143,12 @@ export const useRoomStore = defineStore('room', () => {
     switch (event.type) {
       // 房间列表相关事件
       case 'room:event:create':
-        rooms.set(event.from, event.room)
+        rooms.set(event.roomId, event.room)
         break
       case 'room:event:destroy':
-        rooms.delete(event.roomNumber)
+        rooms.delete(event.roomId)
         // 如果销毁的是当前房间，清空当前房间状态（按身份 ID 比较，防同号误判）
-        if (event.roomId === currentRoom.value?.id) {
+        if (event.roomId === playerStore.currentRoomId) {
           clearCurrentRoom()
         }
         break
@@ -155,30 +156,30 @@ export const useRoomStore = defineStore('room', () => {
       // 房间信息相关
       case 'room:event:info':
         // 如果更新的是玩家当前所在房间，更新当前房间状态（按身份 ID 比较）
-        if (event.room.id === playerStore.currentRoomId) {
+        if (event.roomId === playerStore.currentRoomId) {
           currentRoom.value = event.room
         }
         break
       case 'room:event:owner_change': {
-        const room = rooms.get(event.from)
+        const room = rooms.get(event.roomId)
         if (room) {
-          room.owner = event.id
-          rooms.set(event.from, room)
+          room.owner = event.newOwnerId
+          rooms.set(event.roomId, room)
         }
-        // 如果房主变更的是当前房间，同步更新
-        if (event.from === playerStore.currentRoomNumber && currentRoom.value) {
-          currentRoom.value.owner = event.id
+        // 如果房主变更的是当前房间，同步更新（按身份 ID 比较）
+        if (event.roomId === playerStore.currentRoomId && currentRoom.value) {
+          currentRoom.value.owner = event.newOwnerId
         }
         break
       }
       case 'room:event:stage_update': {
-        const room = rooms.get(event.from)
+        const room = rooms.get(event.roomId)
         if (room) {
           room.playing = event.playing
-          rooms.set(event.from, room)
+          rooms.set(event.roomId, room)
         }
-        // 如果阶段变更的是当前房间，同步更新
-        if (event.from === playerStore.currentRoomNumber && currentRoom.value) {
+        // 如果阶段变更的是当前房间，同步更新（按身份 ID 比较）
+        if (event.roomId === playerStore.currentRoomId && currentRoom.value) {
           currentRoom.value.playing = event.playing
         }
         break
@@ -186,27 +187,28 @@ export const useRoomStore = defineStore('room', () => {
 
       // 房间设置、状态相关事件
       case 'room:event:seat_switch': {
-        const room = rooms.get(event.from)
+        const room = rooms.get(event.roomId)
         if (room) {
           room.seats[event.seat] = event.open
-          rooms.set(event.from, room)
+          rooms.set(event.roomId, room)
         }
-        // 同步更新当前房间的座位状态
-        if (event.from === currentRoom.value?.roomNumber) {
+        // 同步更新当前房间的座位状态（按身份 ID 比较）
+        if (event.roomId === playerStore.currentRoomId && currentRoom.value) {
           currentRoom.value.seats[event.seat] = event.open
         }
         break
       }
       case 'room:event:locked_state_change': {
-        const room = rooms.get(event.from)
+        const room = rooms.get(event.roomId)
         if (room) {
           room.locked = event.locked
-          rooms.set(event.from, room)
+          rooms.set(event.roomId, room)
         }
         break
       }
       case 'room:event:password_change':
-        if (currentRoom.value && event.roomNumber === currentRoom.value.roomNumber) {
+        // 按身份 ID 比较，防同号误判
+        if (currentRoom.value && event.roomId === playerStore.currentRoomId) {
           currentRoom.value.options.password = event.password
           currentRoom.value.locked = event.locked
 
@@ -219,14 +221,14 @@ export const useRoomStore = defineStore('room', () => {
 
       // 房间玩家进出相关事件
       case 'room:event:player_join':
-        updateRoomPlayer(event.from, event.seat, event.player, 'join')
+        updateRoomPlayer(event.roomId, event.seat, event.player, 'join')
         break
       case 'room:event:player_leave':
-        updateRoomPlayer(event.from, event.seat, event.player, 'leave')
+        updateRoomPlayer(event.roomId, event.seat, event.player, 'leave')
         break
       case 'room:event:onlooker_join':
         updateRoomOnlookers(
-          event.from,
+          event.roomId,
           (onlookers) => {
             onlookers.push(event.player)
           },
@@ -236,7 +238,7 @@ export const useRoomStore = defineStore('room', () => {
         break
       case 'room:event:onlooker_leave':
         updateRoomOnlookers(
-          event.from,
+          event.roomId,
           (onlookers) => {
             const index = onlookers.findIndex((p) => p.id === event.player.id)
             if (index > -1) {
@@ -248,10 +250,10 @@ export const useRoomStore = defineStore('room', () => {
         )
         break
       case 'room:event:onlooker_sit':
-        updateRoomPlayer(event.from, event.seat, event.player, 'sit')
+        updateRoomPlayer(event.roomId, event.seat, event.player, 'sit')
         // 旁观者坐下后需要从旁观者列表中移除
         updateRoomOnlookers(
-          event.from,
+          event.roomId,
           (onlookers) => {
             const index = onlookers.findIndex((p) => p.id === event.player.id)
             if (index > -1) {
@@ -266,10 +268,10 @@ export const useRoomStore = defineStore('room', () => {
       // 房间邀请相关事件
       case 'room:event:invite':
         toast.add({
-          title: `${event.from.nickname} 向你发来邀请`,
+          title: `${event.sender.nickname} 向你发来邀请`,
           description: `TA在${event.roomNumber}号房间等你与TA一起游戏！`,
           avatar: {
-            src: event.from.avatar_url
+            src: event.sender.avatar_url
           },
           duration: event.duration * 1000,
           orientation: 'horizontal',
@@ -319,7 +321,7 @@ export const useRoomStore = defineStore('room', () => {
     })) as ClientResponse<'room:list_pull'>
 
     rooms.clear()
-    room_list.forEach((room) => rooms.set(room.roomNumber, room))
+    room_list.forEach((room) => rooms.set(room.id, room))
   }
 
   /**
@@ -392,21 +394,23 @@ export const useRoomStore = defineStore('room', () => {
 
   /**
    * 邀请玩家
+   * @param targetId 被邀请玩家 ID
    */
-  const invite = async (toId: string) => {
+  const invite = async (targetId: string) => {
     const msg = await send({
       type: 'room:invite',
-      toId
+      targetId
     })
 
     if (typeof (msg as WebsocketMessage<WS_RECV>).successful === 'undefined') return
-    const { to, expAt } = msg as ClientResponse<'room:invite'>
+    const { target, expAt } = msg as ClientResponse<'room:invite'>
 
-    inviteRecord.set(to.id, expAt)
+    // 键是被邀请者玩家 ID（InvitePanel 按 player.id 查询冷却状态）
+    inviteRecord.set(target.id, expAt)
 
     // 清除过期的邀请信息
     setTimeout(() => {
-      inviteRecord.delete(to.id)
+      inviteRecord.delete(target.id)
     }, expAt - Date.now())
   }
 
@@ -433,10 +437,16 @@ export const useRoomStore = defineStore('room', () => {
   /**
    * 快速匹配
    */
-  const quickMatch = () => {
-    send({
+  const quickMatch = async () => {
+    const msg = await send({
       type: 'room:quick_match'
     })
+
+    if (typeof (msg as WebsocketMessage<WS_RECV>).successful === 'undefined') return
+    const { room } = msg as ClientResponse<'room:quick_match'>
+
+    // 同步房间列表（进房态仍以 room:event:info 为准）
+    if (room) rooms.set(room.id, room)
   }
 
   return {

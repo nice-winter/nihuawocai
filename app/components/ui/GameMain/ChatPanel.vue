@@ -189,10 +189,10 @@ useEventBus('game:event:prompt', ({ index, content }) => {
     content
   })
 })
-useEventBus('game:event:guess:bingo', ({ player }) => {
+useEventBus('game:event:guess:bingo', ({ guesser }) => {
   ChatPanelMessageListRef.value?.addMessage({
     type: 'action',
-    sender: player,
+    sender: guesser,
     msg: `猜对了答案！`
   })
 })
@@ -251,12 +251,12 @@ useEventBus('game:event:interaction:start', ({ drawerPlayer, reason, bingo_playe
     msg: '回合结束'
   })
 })
-useEventBus('game:event:interaction:gift', ({ fromPlayer, item_type }) => {
+useEventBus('game:event:interaction:gift', ({ sender, item_type }) => {
   switch (item_type) {
     case 'flower': {
       ChatPanelMessageListRef.value?.addMessage({
         type: 'action',
-        sender: fromPlayer,
+        sender,
         msg: `赠送了鲜花~`
       })
       break
@@ -264,7 +264,7 @@ useEventBus('game:event:interaction:gift', ({ fromPlayer, item_type }) => {
     case 'egg': {
       ChatPanelMessageListRef.value?.addMessage({
         type: 'action',
-        sender: fromPlayer,
+        sender,
         msg: `扔出了鸡蛋...`
       })
       break
@@ -272,7 +272,7 @@ useEventBus('game:event:interaction:gift', ({ fromPlayer, item_type }) => {
     case 'slipper': {
       ChatPanelMessageListRef.value?.addMessage({
         type: 'action',
-        sender: fromPlayer,
+        sender,
         msg: `扔出了带脚气的拖鞋...`
       })
       break

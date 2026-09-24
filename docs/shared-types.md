@@ -37,6 +37,23 @@ shared/
 
 数据约定：游戏事件带 `payload` 字段，房间/玩家事件字段平铺。
 
+### 字段语义约定（全协议强制）
+
+1. **作用域房间** —— `room:*` 事件 envelope 必带 `roomId: string`（身份键，nanoid 不可复用）与 `roomNumber: number`（用户句柄，0-999 会回收复用，仅供 UI 展示与「按号加入」入口）。**身份比较只允许用 `roomId`，禁止用 `roomNumber`。**
+2. **人的发起者/目标** —— Player 对象用 `sender` / `target`；id 字符串用 `senderId` / `targetId`（游戏内猜中者用 `guesser` / `guesserId`）。
+3. **全协议禁用 `from` / `to` 字段名**（历史遗留的一词多义已清除）。
+
+### 传输层信封（ws.ts）
+
+| 字段         | 说明                                               |
+| ------------ | -------------------------------------------------- |
+| `type`       | 事件/消息名                                        |
+| `_scope`     | 投递范围：`'player' \| 'all' \| 'room' \| 'lobby'` |
+| `_reply`     | 是否为请求-响应的回包                              |
+| `_rid`       | 请求 ID，用于匹配回包                              |
+| `_t`         | 服务端时间戳（`pong` 不带）                        |
+| `successful` | 请求是否成功（仅回包）                             |
+
 ## 辅助泛型（ws.ts）
 
 | 类型                | 用途                              |
@@ -45,6 +62,7 @@ shared/
 | `ServerEvent`       | 联合类型，switch/case 自动窄化    |
 | `ClientMessage<T>`  | 已知消息名 → 完整发送结构         |
 | `ClientResponse<T>` | 已知请求名 → 带 successful 的响应 |
+| `WsScope`           | `_scope` 投递范围字面量联合       |
 
 ## 游戏状态机（game.ts）
 

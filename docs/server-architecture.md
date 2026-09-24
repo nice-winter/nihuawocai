@@ -61,7 +61,7 @@ server/
 └── ws/               # WebSocket 层
     ├── index.ts      # WS hooks（upgrade/open/message/close/error）+ 心跳
     ├── core/
-    │   ├── channel.ts    # Pub/Sub 频道管理（未被主要使用）
+    │   ├── channel.ts    # Pub/Sub 频道管理（roomTopic(roomId) 房间频道主通道）
     │   ├── connection.ts # 从 peer 解析用户 session
     │   ├── events.ts     # mitt 事件总线（ws:connect/message/disconnect/error）
     │   └── sender.ts     # 发送工具（sendToAll/sendToChannel/sendToUser）
@@ -136,7 +136,7 @@ WebSocket 连接 (crossws hooks)
 
 - `sendToPlayer(msg, id)` — 发给特定玩家（`_scope: 'player'`）
 - `sendToAllPlayer(msg)` — 发给所有在线玩家（`_scope: 'all'`）
-- `sendToRoom(msg, roomNumber, excludes?)` — 发给房间内玩家（`_scope: 'room'`）
+- `sendToRoom(msg, roomId, excludes?)` — 发给房间内玩家（`_scope: 'room'`，按 `room.id` 频道寻址）
 - `sendToLobby(msg)` — 发给大厅玩家（`_scope: 'lobby'`）
 
 ### 4. 游戏状态机
@@ -317,12 +317,12 @@ wsEventBus.on('ws:message', (msg) => {
 
 ```ts
 // 后端发的是 ID
-payload: { id: 'abc', drawer: 'xyz', bingo_players: ['abc'] }
+payload: { guesserId: 'abc', drawer: 'xyz', bingo_players: ['abc'] }
 
 // store 转发时富化为 Player 对象
 eventBus.emit('game:event:guess:bingo', {
   ...payload,
-  player: getPlayerFromCurrentRoom(payload.id)!  // ID → Player
+  guesser: getPlayerFromCurrentRoom(payload.guesserId)!  // ID → Player
 })
 
 eventBus.emit('game:event:interaction:start', {
@@ -334,7 +334,9 @@ eventBus.emit('game:event:interaction:start', {
 })
 ```
 
-因此前端 eventBus 的类型定义（`app/composables/eventBus.ts`）中，事件 payload 会比 `shared/types/protocol.ts` 中的 ServerEventMap 多出 `drawerPlayer`、`fromPlayer`、`bingoPlayers: Player[]` 等字段。
+因此前端 eventBus 的类型定义（`app/composables/eventBus.ts`）中，事件 payload 会比 `shared/types/protocol.ts` 中的 ServerEventMap 多出 `drawerPlayer`、`guesser`、`sender`、`target`、`bingoPlayers: Player[]` 等富化字段。
+
+**富化字段命名约定**：wire 层只有 id（`senderId`/`targetId`/`guesserId`）；eventBus 层人类发起者/目标一律 `sender`/`target`/`guesser`（`Player` 对象）。
 
 ### 4. UI 组件消费方式
 
@@ -342,13 +344,13 @@ eventBus.emit('game:event:interaction:start', {
 
 ```ts
 // 自动在 onBeforeMount 订阅、onUnmounted 取消
-useEventBus('game:event:guess:bingo', ({ player, score_delta }) => {
+useEventBus('game:event:guess:bingo', ({ guesser, score_delta }) => {
   playBingoSound()
-  addChatSystemMessage(`${player.nickname} 猜对了！+${score_delta.guesserGain}`)
+  addChatSystemMessage(`${guesser.nickname} 猜对了！+${score_delta.guesserGain}`)
 })
 
-useEventBus('game:event:interaction:gift', ({ fromPlayer, item_type }) => {
-  playThrowAnimation(fromPlayer.id, item_type)
+useEventBus('game:event:interaction:gift', ({ sender, item_type }) => {
+  playThrowAnimation(sender.id, item_type)
 })
 ```
 
@@ -369,7 +371,7 @@ useEventBus('game:event:interaction:gift', ({ fromPlayer, item_type }) => {
 // server/services/my-service.ts
 import { roomEventBus } from './room'
 
-roomEventBus.on('room:event:game_start', ({ roomNumber, room }) => {
+roomEventBus.on('room:event:game_start', ({ roomId, room }) => {
   // 响应游戏开始
 })
 ```

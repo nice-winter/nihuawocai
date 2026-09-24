@@ -602,7 +602,7 @@ const handleGuess = (roomId: string, id: string, guessContent: string): boolean 
       {
         type: 'game:event:guess:bingo',
         payload: {
-          id,
+          guesserId: id,
           score_delta: scoreDelta,
           bingo_players: st.bingoPlayers,
           scores: st.scores
@@ -676,8 +676,8 @@ const handleGift = (id: string, itemType: ItemType) => {
 
   // 记录流水
   st.giftHistory.push({
-    from: id,
-    to: targetId,
+    senderId: id,
+    targetId,
     itemType,
     count: 1,
     timestamp: Date.now()
@@ -687,8 +687,8 @@ const handleGift = (id: string, itemType: ItemType) => {
     {
       type: 'game:event:interaction:gift',
       payload: {
-        from: id,
-        to: targetId,
+        senderId: id,
+        targetId,
         item_type: itemType,
         count: 1
       }
@@ -793,6 +793,7 @@ const applyScoreOnBingo = (st: GameState, guesserId: string) => {
   const drawerId = st.drawer
 
   // 容错：如果没有画手信息，直接返回 0
+  // TODO: 此处返回缺 guesserId/drawerId，与 ScoreDelta 类型不完全一致，后续补齐
   if (!drawerId) return { guesserGain: 0, drawerGain: 0 }
 
   // 判断是否是首杀 (First Blood)

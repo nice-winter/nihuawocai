@@ -26,8 +26,10 @@ export interface ItemCounts {
 }
 
 export interface GiftRecord {
-  from: string // 送道具者 ID
-  to: string // 接收者 ID
+  /** 送道具者玩家 ID */
+  senderId: string
+  /** 接收者玩家 ID（固定为当回合画者） */
+  targetId: string
   itemType: ItemType
   count: number
   timestamp: number // 赠送时间

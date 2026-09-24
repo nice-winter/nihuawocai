@@ -22,10 +22,6 @@ import {
   roomInviteSchema
 } from '~~/server/ws/schemas/room'
 
-import { createLogger } from '~~/server/utils/logger'
-
-const _logger = createLogger('RoomHandler')
-
 export default defineWsHandlers({
   'room:list_pull': async () => {
     const roomList = getRoomList()
@@ -77,9 +73,9 @@ export default defineWsHandlers({
   },
   'room:invite': async ({ msg, user }) => {
     const validData = roomInviteSchema.parse(msg)
-    const { toId } = validData
+    const { targetId } = validData
 
-    return await invite(user.id, toId)
+    return await invite(user.id, targetId)
   },
   'room:game_start': async ({ user }) => {
     return await start(user.id)
