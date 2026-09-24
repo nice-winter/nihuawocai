@@ -38,7 +38,8 @@ export const roomPasswordChangeSchema = z.object({
 
 // Room invite schema
 export const roomInviteSchema = z.object({
-  toId: z.string()
+  /** 被邀请玩家 ID */
+  targetId: z.string()
 })
 
 // Type exports for TypeScript
