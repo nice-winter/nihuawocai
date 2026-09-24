@@ -13,7 +13,7 @@ const logger = createLogger('UserService')
 const userDataStorage = useStorage('user_data')
 
 const createUserData = async (
-  id: string,
+  userId: string,
   authProvider: UserData['auth_provider'],
   avatarUrl: string,
   nickname?: string
@@ -23,7 +23,7 @@ const createUserData = async (
   }
 
   const userData: UserData = {
-    id,
+    id: userId,
     auth_provider: authProvider,
     email: '',
     avatar_url: avatarUrl,
@@ -44,39 +44,39 @@ const createUserData = async (
     last_login_at: 0
   }
 
-  if (await userDataStorage.hasItem(id)) {
-    logger.warn(`用户创建跳过，已存在: ${colors.cyan(id)}`)
+  if (await userDataStorage.hasItem(userId)) {
+    logger.warn(`用户创建跳过，已存在: ${colors.cyan(userId)}`)
     return false
   } else {
-    await userDataStorage.setItem(id, userData)
-    logger.info(`新用户创建: ${colors.cyan(nickname)}@${id} (${colors.gray(authProvider)})`)
+    await userDataStorage.setItem(userId, userData)
+    logger.info(`新用户创建: ${colors.cyan(nickname)}@${userId} (${colors.gray(authProvider)})`)
   }
 
   return true
 }
 
-const hasUserData = (id: string) => {
-  return userDataStorage.hasItem(id)
+const hasUserData = (userId: string) => {
+  return userDataStorage.hasItem(userId)
 }
 
-const getUserData = async (id: string) => {
-  return (await userDataStorage.getItem(id)) as UserData
+const getUserData = async (userId: string) => {
+  return (await userDataStorage.getItem(userId)) as UserData
 }
 
-const setUserData = (id: string, userData: UserData) => {
-  return userDataStorage.setItem(id, userData)
+const setUserData = (userId: string, userData: UserData) => {
+  return userDataStorage.setItem(userId, userData)
 }
 
-const updateUserData = async (id: string, userData: Partial<UserData>) => {
-  const _ = await getUserData(id)
-  if (_) {
-    userDataStorage.setItem(id, defu(userData, _))
+const updateUserData = async (userId: string, patch: Partial<UserData>) => {
+  const existing = await getUserData(userId)
+  if (existing) {
+    userDataStorage.setItem(userId, defu(patch, existing))
   }
-  return Boolean(_)
+  return Boolean(existing)
 }
 
-const updateUserLastLoginAt = async (id: string) => {
-  return await updateUserData(id, {
+const updateUserLastLoginAt = async (userId: string) => {
+  return await updateUserData(userId, {
     last_login_at: Date.now()
   })
 }

@@ -112,9 +112,9 @@ export const useWordManager = () => {
     meta: { name: string; description?: string; authorId: string },
     initialWords: WordItem[] = []
   ): Promise<string> => {
-    const id = nanoid(10) // 生成短 ID
+    const libId = nanoid(10) // 生成短 ID
     const newLib: WordLibrary = {
-      id,
+      id: libId,
       name: meta.name,
       description: meta.description || '',
       authorId: meta.authorId,
@@ -125,21 +125,21 @@ export const useWordManager = () => {
     }
 
     await _saveLibrary(newLib)
-    await _addToIndex(id)
+    await _addToIndex(libId)
     logger.info(
-      `词库创建: ${colors.cyan(meta.name)} (ID: ${id})，作者 ${colors.cyan(meta.authorId)}，${initialWords.length} 个词条`
+      `词库创建: ${colors.cyan(meta.name)} (ID: ${libId})，作者 ${colors.cyan(meta.authorId)}，${initialWords.length} 个词条`
     )
-    return id
+    return libId
   }
 
   /**
    * 编辑词库元数据 (改名、改描述)
    */
   const updateLibraryMeta = async (
-    id: string,
+    libId: string,
     updates: Partial<Omit<LibraryMeta, 'id' | 'createdAt'>>
   ) => {
-    const lib = await getLibraryById(id)
+    const lib = await getLibraryById(libId)
     if (!lib) throw new Error('词库不存在')
 
     const updatedLib = {
@@ -153,12 +153,12 @@ export const useWordManager = () => {
   /**
    * 删除词库
    */
-  const deleteLibrary = async (id: string) => {
-    if (id === DEFAULT_LIB_ID) throw new Error('无法删除默认词库')
+  const deleteLibrary = async (libId: string) => {
+    if (libId === DEFAULT_LIB_ID) throw new Error('无法删除默认词库')
 
-    await storage.removeItem(`${STORAGE_KEY_PREFIX}${id}`)
-    await _removeFromIndex(id)
-    logger.info(`词库删除: ${id}`)
+    await storage.removeItem(`${STORAGE_KEY_PREFIX}${libId}`)
+    await _removeFromIndex(libId)
+    logger.info(`词库删除: ${libId}`)
   }
 
   /**
@@ -232,8 +232,8 @@ export const useWordManager = () => {
     return (list as string[]) || []
   }
 
-  const getLibraryById = async (id: string): Promise<WordLibrary | null> => {
-    const data = await storage.getItem(`${STORAGE_KEY_PREFIX}${id}`)
+  const getLibraryById = async (libId: string): Promise<WordLibrary | null> => {
+    const data = await storage.getItem(`${STORAGE_KEY_PREFIX}${libId}`)
     return (data as WordLibrary) || null
   }
 
@@ -245,17 +245,17 @@ export const useWordManager = () => {
     await storage.setItem(`${STORAGE_KEY_PREFIX}${lib.id}`, lib)
   }
 
-  const _addToIndex = async (id: string) => {
+  const _addToIndex = async (libId: string) => {
     const list = await getLibraryIndex()
-    if (!list.includes(id)) {
-      list.push(id)
+    if (!list.includes(libId)) {
+      list.push(libId)
       await storage.setItem(INDEX_KEY, list)
     }
   }
 
-  const _removeFromIndex = async (id: string) => {
+  const _removeFromIndex = async (libId: string) => {
     const list = await getLibraryIndex()
-    const newList = list.filter((i) => i !== id)
+    const newList = list.filter((i) => i !== libId)
     await storage.setItem(INDEX_KEY, newList)
   }
 

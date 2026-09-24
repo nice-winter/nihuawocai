@@ -45,14 +45,14 @@ async function filterSensitiveWords(msg: string): Promise<string> {
 /**
  * 玩家发言
  * @param user 用户信息
- * @param chatmsg 发言消息
+ * @param message 发言消息
  */
-const say = async (user: UserData, chatmsg: string) => {
+const say = async (user: UserData, message: string) => {
   const player = getPlayer(user.id)
   if (!player) throw new Error('玩家不存在')
 
   // 1 内容预处理（所有消息都走）
-  let displayMsg = await filterSensitiveWords(chatmsg)
+  let displayMsg = await filterSensitiveWords(message)
 
   // 2 游戏逻辑（仅房间内）
   if (checkPlayerIsInRoom(player.id)) {
@@ -62,7 +62,7 @@ const say = async (user: UserData, chatmsg: string) => {
     if (ctx) {
       // 画画阶段 + 未猜对 + 非画手 → 尝试猜词（用原始消息）
       if (ctx.shouldAttemptGuess) {
-        const bingo = handleGuess(roomId, player.id, chatmsg)
+        const bingo = handleGuess(roomId, player.id, message)
         if (bingo) return // 猜对，游戏侧处理后续广播
       }
 
@@ -94,7 +94,7 @@ const say = async (user: UserData, chatmsg: string) => {
   const payload = {
     type: 'chat:event:say' as const,
     sender: user,
-    chatmsg: displayMsg,
+    message: displayMsg,
     timestamp: now
   }
 

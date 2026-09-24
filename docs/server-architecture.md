@@ -136,7 +136,7 @@ WebSocket 连接 (crossws hooks)
 
 - `sendToPlayer(msg, id)` — 发给特定玩家（`_scope: 'player'`）
 - `sendToAllPlayer(msg)` — 发给所有在线玩家（`_scope: 'all'`）
-- `sendToRoom(msg, roomId, excludes?)` — 发给房间内玩家（`_scope: 'room'`，按 `room.id` 频道寻址）
+- `sendToRoom(msg, roomId, excludePlayerIds?)` — 发给房间内玩家（`_scope: 'room'`，按 `room.id` 频道寻址）
 - `sendToLobby(msg)` — 发给大厅玩家（`_scope: 'lobby'`）
 
 ### 4. 游戏状态机

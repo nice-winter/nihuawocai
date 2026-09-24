@@ -494,12 +494,12 @@ const endCurrentRound = (roomId: string, st: GameState) => {
  * 画板交互处理
  */
 const handleSketchpad = async (
-  id: string,
+  playerId: string,
   command: 'pencil_switch' | 'pencil_options_update' | 'draw' | 'undo' | 'redo' | 'clear',
   payload: unknown
 ) => {
-  const player = getPlayer(id)
-  if (!player || !checkPlayerIsInRoom(id)) throw new Error('你已离线或当前不在房间内')
+  const player = getPlayer(playerId)
+  if (!player || !checkPlayerIsInRoom(playerId)) throw new Error('你已离线或当前不在房间内')
 
   const roomId = player.state.roomId!
   const st = GameStateRecord.get(roomId)
@@ -508,7 +508,7 @@ const handleSketchpad = async (
   // 如果不是 drawing 阶段，忽略
   if (st.roundPhase !== 'drawing') throw new Error('当前不是绘画阶段')
   // 判断当前画手是否是调用者
-  if (st.drawer !== id) throw new Error('当前不是你在画画')
+  if (st.drawer !== playerId) throw new Error('当前不是你在画画')
 
   switch (command) {
     // 切换笔触
@@ -542,16 +542,16 @@ const handleSketchpad = async (
       payload
     },
     roomId,
-    [id] // 广播消息时，排除自己
+    [playerId] // 广播消息时，排除自己
   )
 }
 
 /**
  * 画手主动放弃
  */
-const handleGiveUp = (id: string) => {
-  const player = getPlayer(id)
-  if (!player || !checkPlayerIsInRoom(id)) throw new Error('你已离线或当前不在房间内')
+const handleGiveUp = (playerId: string) => {
+  const player = getPlayer(playerId)
+  if (!player || !checkPlayerIsInRoom(playerId)) throw new Error('你已离线或当前不在房间内')
 
   const roomId = player.state.roomId!
   const st = GameStateRecord.get(roomId)
@@ -560,7 +560,7 @@ const handleGiveUp = (id: string) => {
   // 如果不是 drawing 阶段，忽略
   if (st.roundPhase !== 'drawing') throw new Error('当前不是绘画阶段')
   // 判断当前画手是否是调用者
-  if (st.drawer !== id) throw new Error('当前不是你在画画')
+  if (st.drawer !== playerId) throw new Error('当前不是你在画画')
 
   sendToRoom(
     {
@@ -577,32 +577,32 @@ const handleGiveUp = (id: string) => {
 
 /**
  * 玩家猜词，通过 chat event 调用此函数
- * @param roomId
- * @param id
- * @param guessContent
+ * @param roomId 房间 ID
+ * @param guesserId 猜词玩家 ID
+ * @param guessContent 猜词内容
  */
-const handleGuess = (roomId: string, id: string, guessContent: string): boolean => {
+const handleGuess = (roomId: string, guesserId: string, guessContent: string): boolean => {
   const st = GameStateRecord.get(roomId)
   if (!st || st.roundPhase !== 'drawing' || !st.currentWord) return false
-  if (id === st.drawer) return false
-  if (st.bingoPlayers.includes(id)) return false
+  if (guesserId === st.drawer) return false
+  if (st.bingoPlayers.includes(guesserId)) return false
 
   const normalizedGuess = guessContent.trim().toLowerCase()
   const normalizedAnswer = st.currentWord.word.trim().toLowerCase()
 
   if (normalizedGuess === normalizedAnswer) {
-    st.bingoPlayers.push(id)
+    st.bingoPlayers.push(guesserId)
     logger.info(
-      `猜对! 房间 ${colors.cyan('#' + st.roomNumber)}，玩家 ${colors.cyan(id)}，第 ${st.bingoPlayers.length} 个猜对`
+      `猜对! 房间 ${colors.cyan('#' + st.roomNumber)}，玩家 ${colors.cyan(guesserId)}，第 ${st.bingoPlayers.length} 个猜对`
     )
 
-    const scoreDelta = applyScoreOnBingo(st, id)
+    const scoreDelta = applyScoreOnBingo(st, guesserId)
 
     sendToRoom(
       {
         type: 'game:event:guess:bingo',
         payload: {
-          guesserId: id,
+          guesserId,
           score_delta: scoreDelta,
           bingo_players: st.bingoPlayers,
           scores: st.scores
@@ -640,26 +640,26 @@ const handleGuess = (roomId: string, id: string, guessContent: string): boolean 
     return true
   }
 
-  st.guesses[id] = guessContent
+  st.guesses[guesserId] = guessContent
   return false
 }
 
 /**
  * 赠送道具
  */
-const handleGift = (id: string, itemType: ItemType) => {
-  const player = getPlayer(id)
-  if (!player || !checkPlayerIsInRoom(id)) throw new Error('你已离线或当前不在房间内')
+const handleGift = (playerId: string, itemType: ItemType) => {
+  const player = getPlayer(playerId)
+  if (!player || !checkPlayerIsInRoom(playerId)) throw new Error('你已离线或当前不在房间内')
 
   const roomId = player.state.roomId!
   const st = GameStateRecord.get(roomId)
   if (!st) throw new Error('找不到游戏')
 
   if (st.roundPhase !== 'interaction') throw new Error('非互动时间，无法赠送')
-  if (st.drawer === id) throw new Error('不能给自己送道具')
+  if (st.drawer === playerId) throw new Error('不能给自己送道具')
 
   // --- 限制逻辑 ---
-  if (st.roundGiftSenders.has(id)) {
+  if (st.roundGiftSenders.has(playerId)) {
     throw new Error('本回合你已经送过了')
   }
 
@@ -672,11 +672,11 @@ const handleGift = (id: string, itemType: ItemType) => {
   }
   st.itemCounts[targetId][itemType]++
 
-  st.roundGiftSenders.add(id) // 标记本回合已送
+  st.roundGiftSenders.add(playerId) // 标记本回合已送
 
   // 记录流水
   st.giftHistory.push({
-    senderId: id,
+    senderId: playerId,
     targetId,
     itemType,
     count: 1,
@@ -687,7 +687,7 @@ const handleGift = (id: string, itemType: ItemType) => {
     {
       type: 'game:event:interaction:gift',
       payload: {
-        senderId: id,
+        senderId: playerId,
         targetId,
         item_type: itemType,
         count: 1
@@ -703,10 +703,10 @@ const handleGift = (id: string, itemType: ItemType) => {
 
 /**
  * 旁观者加入处理
- * @param roomId
- * @param id
+ * @param roomId 房间 ID
+ * @param playerId 玩家 ID
  */
-const handleOnlookerJoin = (roomId: string, id: string) => {
+const handleOnlookerJoin = (roomId: string, playerId: string) => {
   const st = GameStateRecord.get(roomId)
   if (!st) return
   const remainingMs = Math.max(0, st.timers.endTime - Date.now())
@@ -726,21 +726,21 @@ const handleOnlookerJoin = (roomId: string, id: string) => {
         item_counts: st.itemCounts
       }
     },
-    id
+    playerId
   )
 }
 
 /**
  * 玩家离开处理
- * @param roomId
- * @param id
+ * @param roomId 房间 ID
+ * @param playerId 玩家 ID
  */
-const handlePlayerLeave = (roomId: string, id: string) => {
+const handlePlayerLeave = (roomId: string, playerId: string) => {
   const st = GameStateRecord.get(roomId)
   if (!st) return
 
   // 1. 移除队列
-  const queueIndex = st.drawerQueue.indexOf(id)
+  const queueIndex = st.drawerQueue.indexOf(playerId)
   if (queueIndex !== -1) {
     st.drawerQueue.splice(queueIndex, 1)
   }
@@ -772,7 +772,7 @@ const handlePlayerLeave = (roomId: string, id: string) => {
   }
 
   // 4. 如果离开的是当前画手，直接快进
-  if (st.drawer === id) {
+  if (st.drawer === playerId) {
     sendToRoom(
       {
         type: 'game:event:notice',

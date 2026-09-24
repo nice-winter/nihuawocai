@@ -72,16 +72,16 @@ wsEventBus.on('ws:disconnect', ({ user, code }) => {
 })
 
 // ------------------------ Actions ------------------------
-const getPlayer = (id: string) => players.get(id)
+const getPlayer = (playerId: string) => players.get(playerId)
 
 /**
  * 检查是否重复登录，并关掉先前的连接
- * @param id
+ * @param playerId 玩家 ID
  */
-const checkDuplicateLogin = (id: string) => {
-  const isLoginedPlayer = getPlayer(id)
+const checkDuplicateLogin = (playerId: string) => {
+  const isLoginedPlayer = getPlayer(playerId)
   if (isLoginedPlayer) {
-    logger.warn(`重复登录检测: ${colors.cyan(id)}，踢出旧连接`)
+    logger.warn(`重复登录检测: ${colors.cyan(playerId)}，踢出旧连接`)
     removePlayer(isLoginedPlayer.id) // 重复登录时移除旧玩家状态
     isLoginedPlayer.peer.close(4001, 'Duplicate login')
   }
@@ -89,18 +89,18 @@ const checkDuplicateLogin = (id: string) => {
 
 /**
  * 检查玩家是否在房间内
- * @param id
+ * @param playerId 玩家 ID
  */
-const checkPlayerIsInRoom = (id: string) => {
-  return getPlayer(id)?.state.type === 'in_room' && getPlayer(id)?.state.roomId !== null
+const checkPlayerIsInRoom = (playerId: string) => {
+  return getPlayer(playerId)?.state.type === 'in_room' && getPlayer(playerId)?.state.roomId !== null
 }
 
 /**
  * 检查玩家是否在大厅内
- * @param id
+ * @param playerId 玩家 ID
  */
-const checkPlayerIsInLobby = (id: string) => {
-  return getPlayer(id)?.state.type === 'lobby'
+const checkPlayerIsInLobby = (playerId: string) => {
+  return getPlayer(playerId)?.state.type === 'lobby'
 }
 
 /**
@@ -123,7 +123,7 @@ const addPlayer = async (user: UserData & { peer: WsPeer }) => {
       type: 'lobby',
       roomNumber: null,
       roomId: null,
-      onlooker: false
+      isOnlooker: false
     }
   }
   players.set(user.id, player)
@@ -151,12 +151,12 @@ const addPlayer = async (user: UserData & { peer: WsPeer }) => {
 
 /**
  * 更新玩家状态
- * @param id 用户 ID
+ * @param playerId 玩家 ID
  * @param roomId 所在房间 ID，未提供则为在大厅
- * @param onlooker 是否旁观
+ * @param isOnlooker 是否旁观
  */
-const updatePlayerState = (id: string, roomId?: string, onlooker?: boolean) => {
-  const player = players.get(id)
+const updatePlayerState = (playerId: string, roomId?: string, isOnlooker?: boolean) => {
+  const player = players.get(playerId)
   if (player) {
     const prevRoomId = player.state.roomId
     // 换房/离房时先退订旧房间频道（同房角色切换 prevRoomId === roomId 时不动）
@@ -168,7 +168,7 @@ const updatePlayerState = (id: string, roomId?: string, onlooker?: boolean) => {
       player.state.type = 'lobby'
       player.state.roomNumber = null
       player.state.roomId = null
-      player.state.onlooker = false
+      player.state.isOnlooker = false
       // 广播：添加此玩家到大厅列表
       sendToAllPlayer({
         type: 'player:event:lobby_players_add',
@@ -183,7 +183,7 @@ const updatePlayerState = (id: string, roomId?: string, onlooker?: boolean) => {
       player.state.type = 'in_room'
       player.state.roomNumber = room?.roomNumber ?? null
       player.state.roomId = roomId
-      player.state.onlooker = onlooker ?? false
+      player.state.isOnlooker = isOnlooker ?? false
       // 进入新房间时订阅房间频道（同房角色切换时 Set 幂等，重复订阅无副作用）
       if (prevRoomId !== roomId) {
         subscribePeerToChannel(player.peer, roomTopic(roomId))
@@ -199,23 +199,23 @@ const updatePlayerState = (id: string, roomId?: string, onlooker?: boolean) => {
       })
     }
 
-    players.set(id, player)
+    players.set(playerId, player)
 
     sendToPlayer(
       {
         type: 'player:event:state_update',
-        id,
+        id: playerId,
         state: player.state
       },
-      id
+      playerId
     )
 
     logger.debug('玩家状态更新:', `${colors.cyan(player?.nickname)}@${player.id}`)
   }
 }
 
-const removePlayer = (id: string) => {
-  const player = getPlayer(id)
+const removePlayer = (playerId: string) => {
+  const player = getPlayer(playerId)
   if (player) {
     // @TODO: 这里玩家的连接已经 close，为了安全起见，应该不要在后续处理过程中还存在这个东西，防止错误访问
     // @TODO: 但是这里暂时先用 Omit<ServerPlayer, 'peer'> 把 ServerPlayer 类型的 peer 属性移除（并未在真实对象中移除掉）
@@ -224,7 +224,7 @@ const removePlayer = (id: string) => {
       player
     })
 
-    players.delete(id)
+    players.delete(playerId)
 
     // 这里需要一前一后两个钩子，因为有些时候需要用到旧状态
     playerEventBus.emit('player:disconnected', {
@@ -238,26 +238,26 @@ const removePlayer = (id: string) => {
 /**
  * 更新玩家统计数据
  * @TODO 写在这里的原因是，考虑将来统计数据并不存在 UserData Service 中，而是独立出一个 UserStats Service
- * @param id
- * @param stats
+ * @param playerId 玩家 ID
+ * @param stats 统计增量
  */
-const updatePlayerStats = async (id: string, stats: Partial<UserStats>) => {
-  const userData = await getUserData(id)
+const updatePlayerStats = async (playerId: string, stats: Partial<UserStats>) => {
+  const userData = await getUserData(playerId)
   const oldStats = userData.stats
   const newStats = defuSum(stats, oldStats)
-  await updateUserData(id, { stats: newStats })
+  await updateUserData(playerId, { stats: newStats })
 }
 
 // ------------------------ Sender ------------------------
-const sendToPlayer = <T>(msg: WebsocketMessage<T>, id: string | string[]) => {
-  const ids = Array.isArray(id) ? id : [id]
+const sendToPlayer = <T>(msg: WebsocketMessage<T>, playerId: string | string[]) => {
+  const ids = Array.isArray(playerId) ? playerId : [playerId]
   const encoded = {
     ...msg,
     _scope: 'player'
   }
 
-  for (const i of ids) {
-    const p = players.get(i)
+  for (const pid of ids) {
+    const p = players.get(pid)
     if (p && isOpen(p.peer)) safeSend(p.peer, encoded)
   }
 }
@@ -271,7 +271,7 @@ const sendToAllPlayer = <T>(msg: WebsocketMessage<T>) => {
   players.forEach((p) => safeSend(p.peer, encoded))
 }
 
-const sendToRoom = <T>(msg: WebsocketMessage<T>, roomId: string, excludes?: string[]) => {
+const sendToRoom = <T>(msg: WebsocketMessage<T>, roomId: string, excludePlayerIds?: string[]) => {
   const encoded = {
     ...msg,
     _scope: 'room'
@@ -279,10 +279,10 @@ const sendToRoom = <T>(msg: WebsocketMessage<T>, roomId: string, excludes?: stri
 
   // 走 channel 订阅广播，复杂度 O(房间内) 而非 O(全服)
   let excludePeers: Set<WsPeer> | undefined
-  if (excludes?.length) {
+  if (excludePlayerIds?.length) {
     excludePeers = new Set()
-    for (const i of excludes) {
-      const p = players.get(i)
+    for (const pid of excludePlayerIds) {
+      const p = players.get(pid)
       if (p) excludePeers.add(p.peer)
     }
   }

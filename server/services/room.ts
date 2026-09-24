@@ -155,20 +155,20 @@ const getNextRoomNumber = () => {
 
 /**
  * 创建房间
- * @param owner 房主 id
+ * @param ownerId 房主 ID
  * @param opens 默认坑位数量（0~6）；0 为全关，6 为全开，并且始终有一个坑位给房主
  * @param options 房间设置
  * @param config 房间自己的配置（如果有），这会覆盖全局应用配置中的房间配置
  */
 const createRoom = async (
-  owner: string,
+  ownerId: string,
   opens?: number,
   options?: Partial<RoomOptions>,
   config?: Partial<RoomConfig>
 ) => {
-  const user = await getUserData(owner)
+  const user = await getUserData(ownerId)
 
-  if (checkPlayerIsInRoom(owner)) throw new Error('当前已在房间内')
+  if (checkPlayerIsInRoom(ownerId)) throw new Error('当前已在房间内')
 
   const defaultRoomOptions: RoomOptions = {
     password: '',
@@ -187,20 +187,20 @@ const createRoom = async (
     options: roomOptions,
     config: roomConfig,
     roomNumber,
-    owner,
+    owner: ownerId,
     seats,
     locked,
     players: new Array(7).fill(null),
     onlookers: [],
     playing: false,
-    createdBy: owner,
+    createdBy: ownerId,
     createdAt: Date.now()
   }
 
   rooms.set(room.id, room)
 
   // 把房主加入房间
-  await joinRoom(room.id, owner, roomOptions.password)
+  await joinRoom(room.id, ownerId, roomOptions.password)
 
   // 向所有人推送新的房间信息
   // @TODO: 需要过滤不需要的字段
@@ -277,11 +277,11 @@ const updateRoom = (roomId: string, room: Room) => {
   rooms.set(roomId, room)
 }
 
-const joinRoom = async (roomId: string, id: string, password?: string) => {
-  if (checkPlayerIsInRoom(id)) throw new Error('当前已在房间内')
+const joinRoom = async (roomId: string, playerId: string, password?: string) => {
+  if (checkPlayerIsInRoom(playerId)) throw new Error('当前已在房间内')
 
   const room = rooms.get(roomId)
-  const user = await getUserData(id)
+  const user = await getUserData(playerId)
 
   if (room) {
     if (room.options.password.trim() !== '' && password?.trim() !== room.options.password.trim())
@@ -367,7 +367,7 @@ const joinRoom = async (roomId: string, id: string, password?: string) => {
         roomNumber: room.roomNumber,
         room
       },
-      id
+      playerId
     )
 
     return {
@@ -380,18 +380,18 @@ const joinRoom = async (roomId: string, id: string, password?: string) => {
 
 /**
  * 房间内坐下
- * @param id
- * @param seat
+ * @param playerId 玩家 ID
+ * @param seat 座位号
  */
-const sit = async (id: string, seat: number) => {
-  const player = getPlayer(id)
+const sit = async (playerId: string, seat: number) => {
+  const player = getPlayer(playerId)
 
   if (!player) throw new Error('玩家不存在')
-  if (!checkPlayerIsInRoom(id)) throw new Error('当前不在房间内')
+  if (!checkPlayerIsInRoom(playerId)) throw new Error('当前不在房间内')
 
   const roomId = player.state.roomId!
 
-  const user = await getUserData(id)
+  const user = await getUserData(playerId)
   const room = rooms.get(roomId)
   if (room) {
     if (room.playing) throw new Error('游戏中无法坐下')
@@ -399,13 +399,13 @@ const sit = async (id: string, seat: number) => {
       if (!room.seats[seat]) throw new Error('房主关掉了这个坑位')
       // 从旁观者列表移除
       room.onlookers.splice(
-        room.onlookers.findIndex((p) => p.id === id),
+        room.onlookers.findIndex((p) => p.id === playerId),
         1
       )
       // 设置 players（座位）为此玩家
       room.players[seat] = user
       // 更新玩家和房间状态
-      updatePlayerState(id, roomId, false)
+      updatePlayerState(playerId, roomId, false)
       updateRoom(roomId, room)
       // @TODO: 广播旁观者坐下事件
       sendToAllPlayer({
@@ -432,17 +432,17 @@ const sit = async (id: string, seat: number) => {
 
 /**
  * 座位开启/关闭（房间从操作者状态反查，不信任客户端传入的房间标识）
- * @param id 房主玩家 ID
+ * @param playerId 房主玩家 ID
  * @param seat 座位号
  * @param open 开关状态
  */
-const seatSwitch = (id: string, seat: number, open: boolean) => {
-  const roomId = getPlayer(id)?.state.roomId
+const seatSwitch = (playerId: string, seat: number, open: boolean) => {
+  const roomId = getPlayer(playerId)?.state.roomId
   if (!roomId) throw new Error('当前不在房间内')
 
   const room = rooms.get(roomId)
   if (room) {
-    if (room.owner !== id) throw new Error('你不是房主')
+    if (room.owner !== playerId) throw new Error('你不是房主')
     if (room.players[seat] !== null) throw new Error('此坑位存在玩家，无法调整')
 
     room.seats[seat] = open
@@ -470,16 +470,16 @@ const seatSwitch = (id: string, seat: number, open: boolean) => {
 
 /**
  * 修改房间密码（房间从操作者状态反查，不信任客户端传入的房间标识）
- * @param id 房主玩家 ID
+ * @param playerId 房主玩家 ID
  * @param password 新密码
  */
-const changePassword = (id: string, password: string) => {
-  const roomId = getPlayer(id)?.state.roomId
+const changePassword = (playerId: string, password: string) => {
+  const roomId = getPlayer(playerId)?.state.roomId
   if (!roomId) throw new Error('当前不在房间内')
 
   const room = rooms.get(roomId)
   if (room) {
-    if (room.owner !== id) throw new Error('你不是房主')
+    if (room.owner !== playerId) throw new Error('你不是房主')
 
     const pwd = password.trim().substring(0, 16)
 
@@ -493,7 +493,7 @@ const changePassword = (id: string, password: string) => {
 
     updateRoom(roomId, room)
 
-    logger.debug(`房间密码变更: 房间 ${colors.cyan('#' + room.roomNumber)}，操作者 ${colors.cyan(id)}，锁定 ${room.locked}`)
+    logger.debug(`房间密码变更: 房间 ${colors.cyan('#' + room.roomNumber)}，操作者 ${colors.cyan(playerId)}，锁定 ${room.locked}`)
 
     // 广播房间锁定状态变更事件
     sendToAllPlayer({
@@ -526,12 +526,12 @@ const changePassword = (id: string, password: string) => {
 
 /**
  * 发送广播
- * @param id 发起用户 ID
+ * @param playerId 发起玩家 ID
  */
-const broadcast = async (id: string) => {
-  const player = getPlayer(id)
+const broadcast = async (playerId: string) => {
+  const player = getPlayer(playerId)
   if (!player) throw new Error('用户不存在')
-  if (!checkPlayerIsInRoom(id)) throw new Error('你必须在房间中才能发送房间广播')
+  if (!checkPlayerIsInRoom(playerId)) throw new Error('你必须在房间中才能发送房间广播')
 
   const roomId = player.state.roomId!
   const room = getRoom(roomId)
@@ -561,7 +561,7 @@ const broadcast = async (id: string) => {
     roomNumber: room.roomNumber,
     roomId: room.id,
     password: room.options.password,
-    sender: await getUserData(id),
+    sender: await getUserData(playerId),
     expAt: expAt * 1000, // 前端一般用到毫秒
     timestamp: Date.now()
   }
@@ -576,14 +576,14 @@ const broadcast = async (id: string) => {
 /**
  * 邀请玩家
  * @TODO 完善邀请的接收、拒绝状态功能
- * @param id 发起用户 ID
- * @param targetId 被邀请用户 ID
+ * @param playerId 发起玩家 ID
+ * @param targetId 被邀请玩家 ID
  */
-const invite = async (id: string, targetId: string) => {
-  const player = getPlayer(id)
+const invite = async (playerId: string, targetId: string) => {
+  const player = getPlayer(playerId)
   if (!player) throw new Error('用户不存在')
 
-  if (!checkPlayerIsInRoom(id)) throw new Error('你必须在房间中才能邀请其他玩家')
+  if (!checkPlayerIsInRoom(playerId)) throw new Error('你必须在房间中才能邀请其他玩家')
 
   const roomId = player.state.roomId!
   const room = getRoom(roomId)
@@ -600,7 +600,7 @@ const invite = async (id: string, targetId: string) => {
   }
 
   // 防止重复邀请
-  const key = `${id}:${targetId}`
+  const key = `${playerId}:${targetId}`
   const existing = inviteRecord.get(key)
   if (existing && existing.expAt > now) {
     const remain = existing.expAt - now
@@ -615,7 +615,7 @@ const invite = async (id: string, targetId: string) => {
   }, expSeconds * 1000)
 
   const msg = {
-    sender: await getUserData(id),
+    sender: await getUserData(playerId),
     target: await getUserData(targetId),
     roomNumber: room.roomNumber,
     roomId: room.id,
@@ -627,17 +627,17 @@ const invite = async (id: string, targetId: string) => {
   // 广播邀请
   sendToPlayer({ type: 'room:event:invite', ...msg }, targetId)
 
-  logger.debug(`玩家 ${id} 邀请了 ${targetId} 加入房间 ${room.roomNumber}，有效期 ${expSeconds} 秒`)
+  logger.debug(`玩家 ${playerId} 邀请了 ${targetId} 加入房间 ${room.roomNumber}，有效期 ${expSeconds} 秒`)
 
   return msg
 }
 
 /**
  * 开始游戏
- * @param id
+ * @param playerId 发起玩家 ID
  */
-const start = async (id: string) => {
-  const player = getPlayer(id)
+const start = async (playerId: string) => {
+  const player = getPlayer(playerId)
   if (player) {
     const roomId = player.state.roomId ?? undefined
     if (typeof roomId !== 'undefined' && checkPlayerIsInRoom(player.id)) {
@@ -646,7 +646,7 @@ const start = async (id: string) => {
         room.playing = true
         updateRoom(roomId, room)
 
-        logger.info(`游戏开始: 房间 ${colors.cyan('#' + room.roomNumber)}，发起者 ${colors.cyan(id)}`)
+        logger.info(`游戏开始: 房间 ${colors.cyan('#' + room.roomNumber)}，发起者 ${colors.cyan(playerId)}`)
 
         const msg = {
           type: 'room:event:stage_update',
@@ -698,17 +698,17 @@ const end = (roomId: string) => {
 
 /**
  * 离开房间（玩家和旁观玩家通用），主动调用
- * @param id 用户 ID
+ * @param playerId 玩家 ID
  */
-const leaveRoom = (id: string) => {
-  if (!checkPlayerIsInRoom(id)) throw new Error('当前不在房间内')
+const leaveRoom = (playerId: string) => {
+  if (!checkPlayerIsInRoom(playerId)) throw new Error('当前不在房间内')
 
-  const roomId = getPlayer(id)?.state.roomId
+  const roomId = getPlayer(playerId)?.state.roomId
   if (!roomId) return { roomId: '', roomNumber: 0 }
 
   // 先读 roomNumber：removeRoomPlayer 可能触发房间销毁
   const roomNumber = getRoom(roomId)?.roomNumber ?? 0
-  removeRoomPlayer(roomId, id)
+  removeRoomPlayer(roomId, playerId)
 
   return {
     roomId,
@@ -719,14 +719,14 @@ const leaveRoom = (id: string) => {
 /**
  * 移除房间内的用户
  * @param roomId 房间 ID
- * @param id 用户 ID
+ * @param playerId 玩家 ID
  */
-const removeRoomPlayer = async (roomId: string, id: string) => {
+const removeRoomPlayer = async (roomId: string, playerId: string) => {
   const room = rooms.get(roomId)
-  const player = await getUserData(id)
+  const player = await getUserData(playerId)
   if (room) {
-    const seat = room.players.findIndex((p) => p?.id === id)
-    const onlookersIndex = room.onlookers.findIndex((p) => p?.id === id)
+    const seat = room.players.findIndex((p) => p?.id === playerId)
+    const onlookersIndex = room.onlookers.findIndex((p) => p?.id === playerId)
 
     if (seat < 0 && onlookersIndex < 0) {
       throw new Error('当前玩家不在房间内')
@@ -777,12 +777,12 @@ const removeRoomPlayer = async (roomId: string, id: string) => {
     // 如果房间无其他玩家，则解散房间
     if (realPlayers.length === 0) {
       destroyRoom(room.id)
-      updatePlayerState(id) // 这里有个时序先后问题，所以先销毁房间，再更新玩家状态，避免出现闪烁
+      updatePlayerState(playerId) // 这里有个时序先后问题，所以先销毁房间，再更新玩家状态，避免出现闪烁
       return
     }
 
     // 如果玩家是房主且仍有其他玩家，则更改房主为相邻玩家
-    if (room.owner === id && seat > -1 && realPlayers.length > 0) {
+    if (room.owner === playerId && seat > -1 && realPlayers.length > 0) {
       let newOwnerIndex = -1
 
       // 向后找最近的非空座位
@@ -823,7 +823,7 @@ const removeRoomPlayer = async (roomId: string, id: string) => {
     // 如果玩家在房间内，则更新玩家状态至“不在房间内”
     // 这里同上面的销毁逻辑一样，有个时序先后问题，所以处理离场事件，再更新玩家状态
     if (seat > -1 || onlookersIndex > -1) {
-      updatePlayerState(id)
+      updatePlayerState(playerId)
     }
 
     updateRoom(roomId, room)
@@ -833,10 +833,10 @@ const removeRoomPlayer = async (roomId: string, id: string) => {
 /**
  * 快速匹配房间（快速开始）
  */
-const quickMatch = async (id: string) => {
-  const player = getPlayer(id)
+const quickMatch = async (playerId: string) => {
+  const player = getPlayer(playerId)
   if (!player) throw new Error('玩家不存在')
-  if (!checkPlayerIsInLobby(id)) throw new Error('你当前不在大厅')
+  if (!checkPlayerIsInLobby(playerId)) throw new Error('你当前不在大厅')
 
   const rooms = getRoomList() // RoomInfo[]
 
@@ -865,7 +865,7 @@ const quickMatch = async (id: string) => {
   // 3. 加入房间
   try {
     // 返回完整加入结果（回包机制只展开 object，裸 number 会被吞掉）
-    return await joinRoom(room.id, id)
+    return await joinRoom(room.id, playerId)
   } catch (err) {
     throw new Error(`加入房间失败：${(err as Error).message}`, { cause: err })
   }

@@ -9,11 +9,11 @@ const logger = createLogger('PlayerHandler')
 export default defineWsHandlers({
   'player:get_profile': async ({ msg, user }) => {
     // @TODO: 这里需要验证传入参数
-    const { id } = msg as WebsocketMessage<{ id: string }>
+    const { playerId } = msg as WebsocketMessage<{ playerId: string }>
 
     return {
-      id,
-      profile: await getUserData(id)
+      playerId,
+      profile: await getUserData(playerId)
     }
   },
   'player:lobby_players_pull': async ({ msg, user }) => {

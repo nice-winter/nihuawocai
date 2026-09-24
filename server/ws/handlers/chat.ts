@@ -6,12 +6,12 @@ const logger = createLogger('ChatHandler')
 
 export default defineWsHandlers({
   'chat:say': async ({ msg, user }) => {
-    const { chatmsg } = msg as WebsocketMessage<{
-      chatmsg: string
+    const { message } = msg as WebsocketMessage<{
+      message: string
     }>
 
-    if (!chatmsg || chatmsg === '') throw new Error('发送的消息不能为空')
+    if (!message || message === '') throw new Error('发送的消息不能为空')
 
-    return await say(user, chatmsg.substring(0, 128))
+    return await say(user, message.substring(0, 128))
   }
 })
