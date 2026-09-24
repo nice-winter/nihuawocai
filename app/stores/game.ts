@@ -33,7 +33,6 @@ export interface GameState {
 export const useGameStore = defineStore('game', () => {
   const { wsEventBus, send } = useWsStore()
   const { myId } = storeToRefs(usePlayerStore())
-  const { currentRoom } = storeToRefs(useRoomStore())
   const { getPlayerFromCurrentRoom } = useRoomStore()
 
   const defaultState: GameState = {
@@ -144,9 +143,8 @@ export const useGameStore = defineStore('game', () => {
       }
 
       case 'game:event:notice': {
-        const { payload } = msg
         // !!! ⚡ UI 广播点 ⚡ !!!
-        // Toast.info(payload.message)
+        // Toast.info(msg.payload.message)
         break
       }
 
@@ -255,7 +253,7 @@ export const useGameStore = defineStore('game', () => {
         // 2. 聊天栏插入系统消息
         eventBus.emit('game:event:guess:bingo', {
           ...payload,
-          player: getPlayerFromCurrentRoom(payload.id)!
+          guesser: getPlayerFromCurrentRoom(payload.guesserId)!
         })
         break
       }
@@ -276,17 +274,18 @@ export const useGameStore = defineStore('game', () => {
       case 'game:event:interaction:gift': {
         const { payload } = msg
 
-        if (!state.itemCounts[payload.to]) {
-          state.itemCounts[payload.to] = { flower: 0, egg: 0, slipper: 0 }
+        if (!state.itemCounts[payload.targetId]) {
+          state.itemCounts[payload.targetId] = { flower: 0, egg: 0, slipper: 0 }
         } else {
-          state.itemCounts[payload.to]![payload.item_type] += payload.count
+          state.itemCounts[payload.targetId]![payload.item_type] += payload.count
         }
 
         // !!! ⚡ UI 广播点 ⚡ !!!
-        // 播放抛物线动画: from -> to
+        // 播放抛物线动画: sender -> target
         eventBus.emit('game:event:interaction:gift', {
           ...payload,
-          fromPlayer: getPlayerFromCurrentRoom(payload.from)!
+          sender: getPlayerFromCurrentRoom(payload.senderId)!,
+          target: getPlayerFromCurrentRoom(payload.targetId)
         })
         break
       }

@@ -1,5 +1,3 @@
-import consola from 'consola'
-
 export const usePlayerStore = defineStore('player', () => {
   const { wsEventBus, send } = useWsStore()
 
@@ -7,18 +5,9 @@ export const usePlayerStore = defineStore('player', () => {
   const lobbyPlayers = reactive<Map<string, Player>>(new Map())
 
   const myId = computed(() => loggedInPlayer.value?.id ?? null)
-  const isInRoom = computed(
-    () =>
-      loggedInPlayer.value !== null &&
-      loggedInPlayer.value.state.type === 'in_room' &&
-      loggedInPlayer.value.state.roomNumber !== null
-  )
-  const isInLobby = computed(
-    () =>
-      loggedInPlayer.value !== null &&
-      loggedInPlayer.value.state.type === 'lobby' &&
-      loggedInPlayer.value.state.roomNumber == null
-  )
+  // 身份判断只看 state.type；roomNumber 仅供展示，roomId 仅供身份比较
+  const isInRoom = computed(() => loggedInPlayer.value?.state.type === 'in_room')
+  const isInLobby = computed(() => loggedInPlayer.value?.state.type === 'lobby')
   const isOnlooker = computed(() => loggedInPlayer.value?.state.onlooker)
   const currentRoomNumber = computed(() => loggedInPlayer.value?.state.roomNumber)
   const currentRoomId = computed(() => loggedInPlayer.value?.state.roomId)
