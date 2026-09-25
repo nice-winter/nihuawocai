@@ -29,24 +29,24 @@ export class LevelHelper {
     }
 
     const isMaxLevel = !nextLevel
-    let progress = 0
+    let progressPercent = 0
 
     if (isMaxLevel) {
-      progress = 100
+      progressPercent = 100
     } else if (nextLevel) {
       const currentLevelScore = currentLevel.minScore
-      const nextLevelScore = nextLevel.minScore
-      const scoreRange = nextLevelScore - currentLevelScore
+      const nextLevelMinScore = nextLevel.minScore
+      const scoreRange = nextLevelMinScore - currentLevelScore
       const earnedScore = score - currentLevelScore
-      progress = Math.min(100, Math.max(0, (earnedScore / scoreRange) * 100))
+      progressPercent = Math.min(100, Math.max(0, (earnedScore / scoreRange) * 100))
     }
 
     return {
       level: currentLevel.level,
       title: currentLevel.title,
       currentScore: score,
-      nextLevelScore: nextLevel?.minScore || null,
-      progress: Math.round(progress * 100) / 100,
+      nextLevelMinScore: nextLevel?.minScore || null,
+      progressPercent: Math.round(progressPercent * 100) / 100,
       isMaxLevel
     }
   }

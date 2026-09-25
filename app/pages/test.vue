@@ -218,7 +218,7 @@ const testScrollBarRef = useTemplateRef('testScrollBarRef')
 const isTestScrollOnBottom = ref(false)
 
 const pullRoomList = () => {
-  send({ type: 'room:list_pull' })
+  send({ type: 'room:get_rooms' })
 }
 
 const create = () => {

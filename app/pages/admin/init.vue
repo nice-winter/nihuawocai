@@ -60,7 +60,7 @@ const handleInit = async () => {
         <div class="space-y-5">
           <!-- 用户信息 -->
           <div v-if="user" class="flex items-center gap-3 p-3 rounded-lg bg-elevated">
-            <UAvatar :src="user.avatar_url" :alt="user.nickname" size="sm" />
+            <UAvatar :src="user.avatarUrl" :alt="user.nickname" size="sm" />
             <div>
               <p class="font-medium text-highlighted">{{ user.nickname }}</p>
               <p class="text-xs text-muted">ID: {{ user.id }}</p>

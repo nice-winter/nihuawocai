@@ -79,7 +79,7 @@ const handleDeleteAdmin = async () => {
           </template>
 
           <div v-if="adminData?.superAdmin" class="flex items-center gap-3 p-3 rounded-lg bg-elevated">
-            <UAvatar :src="adminData.superAdmin.avatar_url" :alt="adminData.superAdmin.nickname" size="md" />
+            <UAvatar :src="adminData.superAdmin.avatarUrl" :alt="adminData.superAdmin.nickname" size="md" />
             <div>
               <p class="font-medium text-highlighted">{{ adminData.superAdmin.nickname }}</p>
               <p class="text-xs text-muted">{{ adminData.superAdmin.email || '无邮箱' }}</p>
@@ -111,7 +111,7 @@ const handleDeleteAdmin = async () => {
               class="flex items-center justify-between py-4 first:pt-0 last:pb-0"
             >
               <div class="flex items-center gap-3">
-                <UAvatar :src="adm.avatar_url" :alt="adm.nickname" size="md" />
+                <UAvatar :src="adm.avatarUrl" :alt="adm.nickname" size="md" />
                 <div>
                   <p class="font-medium text-highlighted">{{ adm.nickname }}</p>
                   <p class="text-xs text-muted">{{ adm.email || '无邮箱' }}</p>

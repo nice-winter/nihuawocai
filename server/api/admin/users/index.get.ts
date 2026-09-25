@@ -35,7 +35,7 @@ export default defineEventHandler(async (event) => {
   }
 
   // 按创建时间倒序排序
-  users.sort((a, b) => b.created_at - a.created_at)
+  users.sort((a, b) => b.createdAt - a.createdAt)
 
   // 分页
   const total = users.length

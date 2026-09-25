@@ -5,9 +5,9 @@ export const usePlayerStore = defineStore('player', () => {
   const lobbyPlayers = reactive<Map<string, Player>>(new Map())
 
   const myId = computed(() => loggedInPlayer.value?.id ?? null)
-  // 身份判断只看 state.type；roomNumber 仅供展示，roomId 仅供身份比较
-  const isInRoom = computed(() => loggedInPlayer.value?.state.type === 'in_room')
-  const isInLobby = computed(() => loggedInPlayer.value?.state.type === 'lobby')
+  // 身份判断只看 state.presence；roomNumber 仅供展示，roomId 仅供身份比较
+  const isInRoom = computed(() => loggedInPlayer.value?.state.presence === 'inRoom')
+  const isInLobby = computed(() => loggedInPlayer.value?.state.presence === 'lobby')
   const isOnlooker = computed(() => loggedInPlayer.value?.state.isOnlooker)
   const currentRoomNumber = computed(() => loggedInPlayer.value?.state.roomNumber)
   const currentRoomId = computed(() => loggedInPlayer.value?.state.roomId)
@@ -24,17 +24,17 @@ export const usePlayerStore = defineStore('player', () => {
     const event = msg as ServerEvent
     switch (event.type) {
       case 'player:event:logged_in':
-        loggedInPlayer.value = event.player_info
+        loggedInPlayer.value = event.player
         break
       case 'player:event:state_update':
         if (loggedInPlayer.value && event.id === loggedInPlayer.value.id) {
           loggedInPlayer.value.state = event.state
         }
         break
-      case 'player:event:lobby_players_add':
+      case 'player:event:lobby_join':
         lobbyPlayers.set(event.player.id, event.player)
         break
-      case 'player:event:lobby_players_remove':
+      case 'player:event:lobby_leave':
         lobbyPlayers.delete(event.player.id)
         break
     }
@@ -45,12 +45,12 @@ export const usePlayerStore = defineStore('player', () => {
   wsEventBus.on('ws:error', clear)
 
   const getLobbyPlayers = async () => {
-    const { lobby_players } = (await send({
-      type: 'player:lobby_players_pull'
-    })) as ClientResponse<'player:lobby_players_pull'>
+    const res = (await send({
+      type: 'player:get_lobby_players'
+    })) as ClientResponse<'player:get_lobby_players'>
 
     lobbyPlayers.clear()
-    lobby_players.forEach((p) => lobbyPlayers.set(p.id, p))
+    res.lobbyPlayers.forEach((p) => lobbyPlayers.set(p.id, p))
   }
 
   const getPlayerProfile = async (playerId: string) => {

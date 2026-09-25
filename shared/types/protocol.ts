@@ -17,8 +17,14 @@
  * 1. **作用域房间** —— `room:*` 事件 envelope 必带 `roomId: string`（身份键，nanoid 不可复用）
  *    与 `roomNumber: number`（用户句柄，0-999 会回收复用，仅供 UI 展示与「按号加入」入口）。
  *    **身份比较只允许用 `roomId`，禁止用 `roomNumber`。**
- * 2. **人的发起者/目标** —— Player 对象用 `sender` / `target`；id 字符串用 `senderId` / `targetId`。
+ * 2. **人的发起者/目标** —— Player 对象用 `sender` / `target`；id 字符串用 `senderId` / `targetId`
+ *    （游戏内猜中者用 `guesser` / `guesserId`，作画者用 `drawerId`）。
  * 3. **全协议禁用 `from` / `to` 字段名**（历史遗留的一词多义已清除）。
+ * 4. **ID 字段带 `Id` 后缀**，数组装 ID 用 `*Ids`；内部字段一律 camelCase（外部 DTO 保留上游 snake）。
+ * 5. **时间戳用 `*At`（毫秒）**，时长/剩余秒数用 `*Seconds`（duration/remaining/display 按语义区分）。
+ * 6. **词表统一** —— turn=单人回合（cycle=全员一轮）、hint=提示词、item=互动道具、presence=玩家位置；
+ *    布尔字段用 `is*` / `has*` 前缀。
+ * @see docs/shared-types.md — 完整命名约定
  *
  * 添加新事件的步骤：
  * 1. 在 ServerEventMap 或 ClientEventMap 中添加条目
@@ -28,9 +34,9 @@
  * @see shared/types/ws.ts — ServerMessage, ServerEvent, ClientResponse 等辅助类型
  */
 
-import type { GamePhase, RoundPhase, InteractionReason, ItemType, ItemCounts, GiftRecord, ScoreDelta } from './game'
+import type { GamePhase, TurnPhase, InteractionReason, ItemType, ItemCounts, ItemUse, ScoreChange, TimerChangeCause } from './game'
 import type { Player, LoggedInPlayer, PlayerState } from './player'
-import type { Room, RoomInfo } from './room'
+import type { Room, RoomSummary } from './room'
 
 // ================================================================
 //                     Server → Client 事件
@@ -43,7 +49,7 @@ import type { Room, RoomInfo } from './room'
  * value: 事件携带的数据结构（不含 type，由框架补充）
  *
  * 两种数据结构约定：
- * - 带 `payload` 的：游戏事件，如 `{ payload: { total_rounds } }`
+ * - 带 `payload` 的：游戏事件，如 `{ payload: { totalTurns } }`
  * - 不带 `payload` 的：房间/玩家事件，字段直接平铺在消息上
  *
  * 房间事件 envelope 统一携带 `roomId` + `roomNumber`（寻址用 roomId），
@@ -53,24 +59,25 @@ import type { Room, RoomInfo } from './room'
  * // 前端接收并自动窄化
  * const event = msg as ServerEvent
  * if (event.type === 'game:event:start') {
- *   event.payload.total_rounds // ✅
+ *   event.payload.totalTurns // ✅
  * }
  */
 export interface ServerEventMap {
   // --- 基础协议 ---
   ping: Record<string, never>
   pong: Record<string, never>
+  /** @TODO 未接线（顶号走 peer.close(4001)），且是唯一无模块前缀的业务事件；接线或删除 */
   duplicate_login: Record<string, never>
 
   // --- 玩家事件 ---
   'player:event:logged_in': {
-    player_info: LoggedInPlayer
+    player: LoggedInPlayer
   }
   'player:event:state_update': PlayerState
-  'player:event:lobby_players_add': {
+  'player:event:lobby_join': {
     player: Player
   }
-  'player:event:lobby_players_remove': {
+  'player:event:lobby_leave': {
     player: Player
   }
 
@@ -78,7 +85,7 @@ export interface ServerEventMap {
   'room:event:create': {
     roomId: string
     roomNumber: number
-    room: RoomInfo
+    room: RoomSummary
   }
   'room:event:destroy': {
     roomId: string
@@ -95,27 +102,27 @@ export interface ServerEventMap {
     /** 新房主玩家 ID */
     newOwnerId: string
   }
-  'room:event:stage_update': {
+  'room:event:playing_change': {
     roomId: string
     roomNumber: number
-    playing: boolean
+    isPlaying: boolean
   }
-  'room:event:seat_switch': {
+  'room:event:seat_open_change': {
     roomId: string
     roomNumber: number
     seat: number
-    open: boolean
+    isOpen: boolean
   }
-  'room:event:locked_state_change': {
+  'room:event:has_password_change': {
     roomId: string
     roomNumber: number
-    locked: boolean
+    hasPassword: boolean
   }
   'room:event:password_change': {
     roomId: string
     roomNumber: number
     password: string
-    locked: boolean
+    hasPassword: boolean
   }
   'room:event:player_join': {
     roomId: string
@@ -153,15 +160,14 @@ export interface ServerEventMap {
     roomId: string
     roomNumber: number
     password: string
-    duration: number
-    expAt: number
+    expiresAt: number
   }
-  'room:event:broadcast': {
+  'room:event:lobby_invite': {
     roomId: string
     roomNumber: number
     password: string
     sender: Player
-    expAt: number
+    expiresAt: number
     timestamp: number
   }
 
@@ -175,15 +181,16 @@ export interface ServerEventMap {
   // --- 游戏核心生命周期 ---
   'game:event:start': {
     payload: {
-      total_rounds: number
+      totalTurns: number
     }
   }
   'game:event:settlement': {
     payload: {
       scores: Record<string, number>
-      item_counts: Record<string, ItemCounts>
-      gift_history: GiftRecord[]
-      seconds: number
+      itemCounts: Record<string, ItemCounts>
+      itemUses: ItemUse[]
+      /** 结算面板展示时长 */
+      displaySeconds: number
     }
   }
   'game:event:end': {
@@ -191,15 +198,15 @@ export interface ServerEventMap {
   }
   'game:event:state': {
     payload: {
-      game_phase: GamePhase
-      round_phase: RoundPhase
-      round_index: number
-      total_rounds: number
-      drawer: string | null
-      remaining_seconds: number
-      bingo_players: string[]
+      gamePhase: GamePhase
+      turnPhase: TurnPhase
+      turnIndex: number
+      totalTurns: number
+      drawerId: string | null
+      remainingSeconds: number
+      bingoPlayerIds: string[]
       scores: Record<string, number>
-      item_counts: Record<string, ItemCounts>
+      itemCounts: Record<string, ItemCounts>
     }
   }
   'game:event:notice': {
@@ -209,30 +216,33 @@ export interface ServerEventMap {
   }
 
   // --- 回合流程控制 ---
-  'game:event:round:prepare': {
+  'game:event:turn:prepare': {
     payload: {
-      round_index: number
-      drawer: string
-      seconds: number
+      turnIndex: number
+      drawerId: string
+      /** 准备阶段总时长 */
+      durationSeconds: number
     }
   }
   'game:event:drawing:start': {
     payload: {
-      drawer: string
-      seconds: number
+      drawerId: string
+      /** 绘画阶段总时长 */
+      durationSeconds: number
     }
   }
   'game:event:interaction:start': {
     payload: {
       answer?: string
-      bingo_players: string[]
-      seconds: number
+      bingoPlayerIds: string[]
+      /** 互动阶段总时长 */
+      durationSeconds: number
       reason: InteractionReason
     }
   }
-  'game:event:round:end': {
+  'game:event:turn:end': {
     payload: {
-      round: number
+      turnIndex: number
       scores: Record<string, number>
     }
   }
@@ -244,34 +254,37 @@ export interface ServerEventMap {
       category: string
     }
   }
-  'game:event:prompt': {
+  'game:event:hint': {
     payload: {
-      content: string
-      index: number
+      hintText: string
+      /** 第几条提示（1-based） */
+      hintIndex: number
     }
   }
   'game:event:guess:bingo': {
     payload: {
       /** 猜中者玩家 ID */
       guesserId: string
-      score_delta: ScoreDelta
-      bingo_players: string[]
+      scoreChange: ScoreChange
+      bingoPlayerIds: string[]
       scores: Record<string, number>
     }
   }
   'game:event:timer:update': {
     payload: {
-      seconds: number
-      reason: string
+      /** 调整后的新剩余时长 */
+      remainingSeconds: number
+      /** 计时被改写的原因 */
+      cause: TimerChangeCause
     }
   }
-  'game:event:interaction:gift': {
+  'game:event:interaction:item': {
     payload: {
       /** 送道具者玩家 ID */
       senderId: string
       /** 接收者玩家 ID（固定为当回合画者） */
       targetId: string
-      item_type: ItemType
+      itemType: ItemType
       count: number
     }
   }
@@ -295,35 +308,36 @@ export interface ServerEventMap {
  *
  * @example
  * await send({ type: 'room:join', roomNumber: 1234, password: 'xxx' })
- * await send({ type: 'game:interaction:gift', item_type: 'flower', count: 1 })
+ * await send({ type: 'game:interaction:item', itemType: 'flower', count: 1 })
  */
 export interface ClientEventMap {
   // --- 房间操作 ---
-  'room:list_pull': Record<string, never>
+  'room:get_rooms': Record<string, never>
   'room:quick_match': Record<string, never>
   'room:create': {
-    opens: number
-    options: { password: string; maxOnlookers: number }
+    openSeatCount: number
+    joinOptions: { password: string; maxOnlookers: number }
   }
   'room:join': {
     roomNumber: number
     /** 可选：邀请/广播/列表携带的房间身份 ID，服务端校验与 roomNumber 对应，防止旧引用误入同号新房 */
     roomId?: string
     password?: string | null
-    look?: boolean
+    /** 指定以旁观身份加入（缺省则优先入座，坐满时自动转旁观） */
+    asOnlooker?: boolean
   }
   'room:leave': Record<string, never>
   'room:sit': {
     seat: number
   }
-  'room:seat_switch': {
+  'room:seat_open_change': {
     seat: number
-    open: boolean
+    isOpen: boolean
   }
   'room:password_change': {
     password: string
   }
-  'room:broadcast': Record<string, never>
+  'room:lobby_invite': Record<string, never>
   'room:invite': {
     /** 被邀请玩家 ID */
     targetId: string
@@ -331,7 +345,7 @@ export interface ClientEventMap {
   'room:game_start': Record<string, never>
 
   // --- 玩家操作 ---
-  'player:lobby_players_pull': Record<string, never>
+  'player:get_lobby_players': Record<string, never>
   'player:get_profile': {
     playerId: string
   }
@@ -342,8 +356,8 @@ export interface ClientEventMap {
     command: 'pencil_switch' | 'pencil_options_update' | 'draw' | 'undo' | 'redo' | 'clear'
     payload: unknown
   }
-  'game:interaction:gift': {
-    item_type: ItemType
+  'game:interaction:item': {
+    itemType: ItemType
     count: number
   }
 
@@ -361,24 +375,24 @@ export interface ClientEventMap {
  * 客户端请求 → 服务端响应类型映射
  *
  * key: 请求名（与 ClientEventMap 对应）
- * value: 服务端返回的数据结构（不含 _reply/_rid/_t/_scope/successful 等传输字段，由 WS_RECV 补充）
+ * value: 服务端返回的数据结构（不含 _reply/_requestId/_timestamp/_scope/successful 等传输字段，由 WS_RECV 补充）
  *
  * 工作原理：
  * 1. 客户端 send({ type }) 发起请求
  * 2. 服务端 handler 返回数据对象
- * 3. 框架自动包装为 { type, ...data, successful, _reply, _rid, _t } 回传
+ * 3. 框架自动包装为 { type, ...data, successful, _reply, _requestId, _timestamp } 回传
  * 4. 客户端用 as ClientResponse<'xxx'> 取到类型安全的响应
  *
  * 注意：handler 必须返回 object 才能携带业务字段；返回裸 number/string 会被回包机制吞掉。
  *
  * @example
- * const res = await send({ type: 'room:list_pull' }) as ClientResponse<'room:list_pull'>
- * res.room_list   // ✅ RoomInfo[]
+ * const res = await send({ type: 'room:get_rooms' }) as ClientResponse<'room:get_rooms'>
+ * res.rooms   // ✅ RoomSummary[]
  * res.successful  // ✅ boolean (来自 WS_RECV)
  */
 export interface ClientResponseMap {
-  'room:list_pull': {
-    room_list: RoomInfo[]
+  'room:get_rooms': {
+    rooms: RoomSummary[]
   }
   'room:quick_match': {
     room: Room
@@ -394,24 +408,24 @@ export interface ClientResponseMap {
     roomNumber: number
   }
   'room:sit': Record<string, never>
-  'room:seat_switch': {
+  'room:seat_open_change': {
     roomId: string
     roomNumber: number
     seat: number
-    open: boolean
+    isOpen: boolean
   }
   'room:password_change': {
     roomId: string
     roomNumber: number
-    locked: boolean
+    hasPassword: boolean
     password: string
   }
-  'room:broadcast': {
+  'room:lobby_invite': {
     roomId: string
     roomNumber: number
     password: string
     sender: Player
-    expAt: number
+    expiresAt: number
     timestamp: number
   }
   'room:invite': {
@@ -422,12 +436,11 @@ export interface ClientResponseMap {
     roomId: string
     roomNumber: number
     password: string
-    duration: number
-    expAt: number
+    expiresAt: number
   }
   'room:game_start': Record<string, never>
-  'player:lobby_players_pull': {
-    lobby_players: Player[]
+  'player:get_lobby_players': {
+    lobbyPlayers: Player[]
   }
   'player:get_profile': {
     playerId: string
@@ -435,6 +448,6 @@ export interface ClientResponseMap {
   }
   'game:drawing:give_up': Record<string, never>
   'game:drawing:sketchpad': Record<string, never>
-  'game:interaction:gift': Record<string, never>
+  'game:interaction:item': Record<string, never>
   'chat:say': Record<string, never>
 }

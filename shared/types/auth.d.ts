@@ -2,10 +2,10 @@ import type { UserData } from '~~/shared/types/userData'
 
 declare module '#auth-utils' {
   interface User {
-    auth_provider: UserData['auth_provider']
+    authProvider: UserData['authProvider']
     id: string
     nickname: string
-    avatar_url: string
+    avatarUrl: string
   }
 
   interface UserSession {

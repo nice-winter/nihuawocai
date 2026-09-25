@@ -47,7 +47,7 @@ export const hooks = defineHooks({
 
   async message(peer, message) {
     try {
-      const msg = decode(message.uint8Array()) as WebsocketMessage<{ rid?: string }>
+      const msg = decode(message.uint8Array()) as WebsocketMessage<{ requestId?: string }>
 
       if (!msg || !msg.type) return
 
@@ -69,10 +69,11 @@ export const hooks = defineHooks({
         peer,
         msg,
         user: userData,
-        reply: reply(peer, msg.rid?.substring(0, 36))
+        reply: reply(peer, msg.requestId?.substring(0, 36))
       })
     } catch (e) {
       logger.warn('消息处理错误:', e)
+      // @TODO: type 'error' 未在协议映射表声明且前端无消费，应并入 successful: false 回包机制
       reply(peer)({ type: 'error', message: 'Invalid message' })
     }
   },

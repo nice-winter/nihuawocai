@@ -12,7 +12,7 @@
       <div class="h-full w-11"/>
 
       <div class="flex w-64 flex-col items-center justify-center gap-2 p-2 text-sm2 select-none">
-        <span> 第 {{ gameStore.state.currentRound }}/{{ gameStore.state.totalRounds }} 回合 </span>
+        <span> 第 {{ gameStore.state.currentTurn }}/{{ gameStore.state.totalTurns }} 回合 </span>
 
         <span v-if="gameStore.isMyTurn && gameStore.state.currentWord !== null">
           题目是：
@@ -21,11 +21,11 @@
           </span>
         </span>
 
-        <span v-else-if="gameStore.state.prompts.length" class="w-full text-center truncate">
+        <span v-else-if="gameStore.state.hints.length" class="w-full text-center truncate">
           提示：
-          <template v-for="(prompt, index) in gameStore.state.prompts" :key="index">
-            <span class="text-red-600">{{ prompt }}</span>
-            <span v-if="index < gameStore.state.prompts.length - 1">，</span>
+          <template v-for="(hint, index) in gameStore.state.hints" :key="index">
+            <span class="text-red-600">{{ hint }}</span>
+            <span v-if="index < gameStore.state.hints.length - 1">，</span>
           </template>
         </span>
 
@@ -54,7 +54,7 @@
       <div class="flex w-20 flex-col items-center justify-center">
         <UiGameMainRoomTimer
           v-show="
-            gameStore.state.roundPhase === 'drawing' &&
+            gameStore.state.turnPhase === 'drawing' &&
             gameStore.state.gamePhase !== 'game_settlement'
           "
           ref="Timer"
@@ -81,9 +81,9 @@
               class="size-18 overflow-hidden rounded-lg"
               :class="{
                 bingo: gameStore.state.bingoPlayers.includes(player.id),
-                drawing: player.id === gameStore.state.drawer,
+                drawing: player.id === gameStore.state.drawerId,
                 'drawing-bingo':
-                  player.id === gameStore.state.drawer && gameStore.state.bingoPlayers.length > 0
+                  player.id === gameStore.state.drawerId && gameStore.state.bingoPlayers.length > 0
               }"
               :verified-icon="{ show: true, size: 12, bottom: 2, right: 2 }"
             />
@@ -103,7 +103,7 @@ import CountdownModal from '~/components/modal/CountdownModal.vue'
 import ThrowerModal from '~/components/modal/ThrowerModal.vue'
 import RankModal from '~/components/modal/RankModal.vue'
 
-const { roomInfo } = defineProps<{ roomInfo: RoomInfo }>()
+const { room } = defineProps<{ room: RoomSummary }>()
 
 const sketchpadRef = useTemplateRef('sketchpad')
 const sketchpadContainerRef = useTemplateRef('sketchpadContainerRef')
@@ -122,13 +122,13 @@ const throwerModal = useModal(ThrowerModal, { parent: '#sketchpad-container' })
 const rankModal = useModal(RankModal, { parent: '#sketchpad-container' })
 const { playSound } = useSound()
 
-const _players = computed(() => roomInfo.players.filter((p) => p !== null))
-const drawingPlayer = computed(() => _players.value.find((p) => p.id === gameStore.state.drawer))
+const _players = computed(() => room.players.filter((p) => p !== null))
+const drawingPlayer = computed(() => _players.value.find((p) => p.id === gameStore.state.drawerId))
 
 // --- 画布操作编排（游戏阶段 + WS 桥梁命令 → Sketchpad） ---
 
 // 游戏阶段 → 画布状态
-useEventBus('game:event:round:prepare', () => {
+useEventBus('game:event:turn:prepare', () => {
   sketchpadRef.value?.clear()
 })
 useEventBus('game:event:drawing:start', () => {
@@ -154,23 +154,23 @@ useEventBus('sketchpad:clear', () => sketchpadRef.value?.clear())
 useEventBus('chat:event:say', ({ message, sender }) => {
   show(sender.id, message)
 })
-useEventBus('game:event:round:prepare', async ({ seconds }) => {
-  await countdownModal.open({ seconds })
+useEventBus('game:event:turn:prepare', async ({ durationSeconds }) => {
+  await countdownModal.open({ seconds: durationSeconds })
 })
 useEventBus('game:event:drawing:start', () => {
   timerRef.value?.play()
 })
-useEventBus('game:event:prompt', () => {
+useEventBus('game:event:hint', () => {
   playSound('pop') // 弹出提示词时，发出泡泡音效
 })
-useEventBus('game:event:guess:bingo', ({ score_delta }) => {
-  show(score_delta.drawerId, `+${score_delta.drawerGain}`)
-  show(score_delta.guesserId, `+${score_delta.guesserGain}`)
+useEventBus('game:event:guess:bingo', ({ scoreChange }) => {
+  show(scoreChange.drawerId, `+${scoreChange.drawerGain}`)
+  show(scoreChange.guesserId, `+${scoreChange.guesserGain}`)
   playSound('bingo')
 })
 useEventBus(
   'game:event:interaction:start',
-  async ({ answer, seconds, drawerPlayer, bingoPlayers, reason }) => {
+  async ({ answer, durationSeconds, drawerPlayer, bingoPlayers, reason }) => {
     let text = ''
     switch (reason) {
       case 'give_up':
@@ -206,12 +206,12 @@ useEventBus(
       answer,
       reason: text,
       showThrowItem: !gameStore.isMyTurn,
-      seconds: seconds + 1
+      seconds: durationSeconds + 1
     })
   }
 )
-useEventBus('game:event:interaction:gift', async ({ item_type }) => {
-  switch (item_type) {
+useEventBus('game:event:interaction:item', async ({ itemType }) => {
+  switch (itemType) {
     case 'flower':
       throwerRef.value?.throwFlower(1, -400, -50)
       playSound('flower')
@@ -222,20 +222,20 @@ useEventBus('game:event:interaction:gift', async ({ item_type }) => {
       break
   }
 })
-useEventBus('game:event:settlement', async ({ scores, item_counts, seconds }) => {
+useEventBus('game:event:settlement', async ({ scores, itemCounts, displaySeconds }) => {
   timerRef.value?.pause()
   const ranks = _players.value.map((p) => {
     return {
       player: p,
       score: scores[p.id],
-      flower: item_counts[p.id]?.flower,
-      egg: item_counts[p.id]?.egg,
-      slipper: item_counts[p.id]?.slipper
+      flower: itemCounts[p.id]?.flower,
+      egg: itemCounts[p.id]?.egg,
+      slipper: itemCounts[p.id]?.slipper
     }
   })
   await rankModal.open({
     ranks,
-    seconds
+    seconds: displaySeconds
   })
 })
 </script>

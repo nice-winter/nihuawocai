@@ -1,6 +1,6 @@
 import { defineWsHandlers } from '~~/server/ws/utils'
 import {
-  broadcast,
+  sendLobbyInvite,
   changePassword,
   createRoom,
   getRoomByNumber,
@@ -9,7 +9,7 @@ import {
   start,
   joinRoom,
   leaveRoom,
-  seatSwitch,
+  setSeatOpen,
   sit,
   quickMatch
 } from '~~/server/services/room'
@@ -17,35 +17,35 @@ import {
   roomCreateSchema,
   roomJoinSchema,
   roomSitSchema,
-  roomSeatSwitchSchema,
+  roomSeatOpenChangeSchema,
   roomPasswordChangeSchema,
   roomInviteSchema
 } from '~~/server/ws/schemas/room'
 
 export default defineWsHandlers({
-  'room:list_pull': async () => {
+  'room:get_rooms': async () => {
     const roomList = getRoomList()
-    return { room_list: roomList }
+    return { rooms: roomList }
   },
   'room:quick_match': async ({ user }) => {
     return await quickMatch(user.id)
   },
   'room:create': async ({ msg, user }) => {
     const validData = roomCreateSchema.parse(msg)
-    const { opens, options } = validData
+    const { openSeatCount, joinOptions } = validData
 
-    return await createRoom(user.id, opens, options)
+    return await createRoom(user.id, openSeatCount, joinOptions)
   },
   'room:join': async ({ msg, user }) => {
     const validData = roomJoinSchema.parse(msg)
-    const { roomNumber, roomId, password } = validData
+    const { roomNumber, roomId, password, asOnlooker } = validData
 
     const room = getRoomByNumber(Number(roomNumber))
     if (!room) throw new Error('房间不存在')
     // 邀请/广播携带 roomId 时校验身份，防止旧引用误入同号新房
     if (roomId && room.id !== roomId) throw new Error('房间已解散或不存在')
 
-    return await joinRoom(room.id, user.id, password?.trim().substring(0, 16) || '')
+    return await joinRoom(room.id, user.id, password?.trim().substring(0, 16) || '', asOnlooker)
   },
   'room:leave': async ({ user }) => {
     return leaveRoom(user.id)
@@ -56,11 +56,11 @@ export default defineWsHandlers({
 
     return await sit(user.id, seat)
   },
-  'room:seat_switch': async ({ msg, user }) => {
-    const validData = roomSeatSwitchSchema.parse(msg)
-    const { seat, open } = validData
+  'room:seat_open_change': async ({ msg, user }) => {
+    const validData = roomSeatOpenChangeSchema.parse(msg)
+    const { seat, isOpen } = validData
 
-    return seatSwitch(user.id, seat, open)
+    return setSeatOpen(user.id, seat, isOpen)
   },
   'room:password_change': async ({ msg, user }) => {
     const validData = roomPasswordChangeSchema.parse(msg)
@@ -68,8 +68,8 @@ export default defineWsHandlers({
 
     return changePassword(user.id, password)
   },
-  'room:broadcast': async ({ user }) => {
-    return await broadcast(user.id)
+  'room:lobby_invite': async ({ user }) => {
+    return await sendLobbyInvite(user.id)
   },
   'room:invite': async ({ msg, user }) => {
     const validData = roomInviteSchema.parse(msg)

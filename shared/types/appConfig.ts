@@ -48,7 +48,7 @@ export interface AppConfig {
         /** 是否启用踢人功能 @default true */
         kick: boolean
         /** 是否启用广播功能 @default true */
-        broadcast: boolean
+        lobbyInvite: boolean
         /** 邀请功能设置 */
         invite: {
           /** 是否允许邀请空闲玩家 @default true */
@@ -58,15 +58,15 @@ export interface AppConfig {
         }
       }
       /** 每轮最大广播次数，0 为不限制 @default 0 */
-      maxBroadcastCount: number
+      maxLobbyInviteCount: number
       /** 每分钟聊天消息限制条数，0 为不限制 @default 0 */
       perMinuteChatCount: number
       /** 房间密码最大长度 @default 4 */
-      passwordMaxLengh: number
+      passwordMaxLength: number
       /** 时间相关设置 */
       time: {
         /** 广播消息发送间隔时间（秒） @default 300 */
-        broadcastIntervalTimeSecond: number
+        lobbyInviteIntervalTimeSecond: number
         /** 聊天消息发送间隔时间（秒） @default 1 */
         chatIntervalTimeSecond: number
         /** 游戏开始前的准备等待时间（秒） @default 30 */
@@ -85,21 +85,21 @@ export interface AppConfig {
         /** 时间相关设置 */
         time: {
           /** 开始绘画前的等待时间 @default 5 */
-          roundStartWaitTimeSecond: number
+          turnStartWaitTimeSecond: number
           /** 绘画开始后，N 秒内仍未有任何动作，则判定为绘画超时，直接结束当前回合 @default 20 */
-          roundDrawingTimeoutSecond: number
+          turnDrawingTimeoutSecond: number
           /** 绘画时间 @default 60 */
-          roundDrawingTimeSecond: number
+          turnDrawingTimeSecond: number
           /** 最大绘画时间，预留给加时卡道具等使用 @default 120 */
-          maxRoundDrawingTimeSecond: number
+          maxTurnDrawingTimeSecond: number
           /** 绘画过程中弹出提示词的时间节点（相对于起始绘画时间） @default [20,40] */
-          roundPromptTimeSecond: number[]
+          hintTimeOffsets: number[]
           /** 绘画时，若有人猜对，直接将剩余时间缩短为至此值 @default 20 */
-          roundBingoTimeSecond: number
+          bingoShortenToSeconds: number
           /** 小回合结束时的互动的等待时间 @default 5 */
-          roundEndWaitTimeSecond: number
+          turnEndWaitTimeSecond: number
           /** 最终结算面板的显示时间 @default 8 */
-          cycleEndWaitTimeSecond: number
+          settlementDisplaySeconds: number
         }
         /** 回合计分规则 */
         scoreRule: {

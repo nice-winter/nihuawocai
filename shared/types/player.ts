@@ -5,7 +5,8 @@ type Player = UserData
 interface PlayerState {
   id: string
   state: {
-    type: 'offline' | 'lobby' | 'in_room'
+    /** 玩家所在位置状态 */
+    presence: 'offline' | 'lobby' | 'inRoom'
     roomNumber: number | null
     roomId: string | null
     isOnlooker: boolean

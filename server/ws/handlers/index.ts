@@ -39,7 +39,7 @@ function registerHandlers(handlers: WsHandlers) {
       if (result === undefined) {
         e.reply({ ...replyBase, successful: true }) // handler 没有返回任何内容
       } else if (typeof result === 'string') {
-        if (result !== NON_REPONSE) {
+        if (result !== NON_RESPONSE) {
           e.reply({ ...replyBase, message: result, successful: true })
         }
       } else if (typeof result === 'object') {

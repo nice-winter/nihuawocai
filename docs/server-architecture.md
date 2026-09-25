@@ -85,8 +85,8 @@ server/
 - **入口**: `server/routes/_ws/server.ts` → `server/ws/index.ts` 的 `hooks`
 - **心跳**: 30 秒 Ping/Pong，超时断开
 - **消息路由**: `wsEventBus`（mitt）→ `handlers/index.ts` 按 `msg.type` 分发到对应 handler
-- **消息格式**: `WebsocketMessage<T>` 包含 `type`、`payload`、`rid`（请求 ID 用于 reply）
-- **回复机制**: `reply(peer, rid)` 返回一个函数，自动附加 `_reply: true` 和 `_rid`
+- **消息格式**: `WebsocketMessage<T>` 包含 `type`、`payload`、`requestId`（请求 ID 用于 reply）
+- **回复机制**: `reply(peer, requestId)` 返回一个函数，自动附加 `_reply: true` 和 `_requestId`
 
 ### 2. 事件驱动架构
 
@@ -141,13 +141,13 @@ WebSocket 连接 (crossws hooks)
 
 ### 4. 游戏状态机
 
-**GamePhase**: `game_start` → `game_round` → `game_settlement` → `game_end`
+**GamePhase**: `game_start` → `game_turn` → `game_settlement` → `game_end`
 
-**RoundPhase**: `round_prepare` → `drawing` → `interaction` → `round_end`
+**TurnPhase**: `turn_prepare` → `drawing` → `interaction` → `turn_end`
 
 核心流程：
 
-1. 房主调用 `room:game_start` → room 服务设置 `playing=true` → 触发 `room:event:game_start`
+1. 房主调用 `room:game_start` → room 服务设置 `isPlaying=true` → 触发 `room:event:game_start`
 2. game 服务监听事件 → `gameStart()` 初始化 GameState → 开始回合循环
 3. 每回合：准备倒计时 → 画手收到答案 → 绘画阶段（AFK 检测 + 提示词渐显）→ 猜词/超时进入互动阶段 → 回合结束
 4. 所有轮次完成 → 结算阶段（展示积分榜）→ 游戏结束
@@ -180,7 +180,7 @@ WebSocket 连接 (crossws hooks)
 - 支持多词库（每个词库有 id、name、描述、编辑者列表）
 - 默认词库 `default-official` 在启动时自动初始化
 - 抽词策略：先随机选库，再随机选词
-- 每个词包含 `word`（答案）和 `prompts[]`（提示词数组，在绘画阶段渐显）
+- 每个词包含 `word`（答案）和 `hints[]`（提示词数组，在绘画阶段渐显）
 
 ### 8. Admin 后台管理系统
 
@@ -243,16 +243,16 @@ WebSocket 连接 (crossws hooks)
 
 ### 客户端 → 服务端（Handler）
 
-- `room:list_pull` / `room:create` / `room:join` / `room:leave` / `room:sit` / `room:seat_switch` / `room:password_change` / `room:broadcast` / `room:invite` / `room:game_start` / `room:quick_match`
-- `game:drawing:give_up` / `game:drawing:sketchpad` / `game:interaction:gift`
-- `player:get_profile` / `player:lobby_players_pull`
+- `room:get_rooms` / `room:create` / `room:join` / `room:leave` / `room:sit` / `room:seat_open_change` / `room:password_change` / `room:lobby_invite` / `room:invite` / `room:game_start` / `room:quick_match`
+- `game:drawing:give_up` / `game:drawing:sketchpad` / `game:interaction:item`
+- `player:get_profile` / `player:get_lobby_players`
 - `chat:say`
 
 ### 服务端 → 客户端（Event）
 
-- `room:event:create` / `room:event:destroy` / `room:event:player_join` / `room:event:player_leave` / `room:event:onlooker_join` / `room:event:onlooker_sit` / `room:event:onlooker_leave` / `room:event:stage_update` / `room:event:seat_switch` / `room:event:locked_state_change` / `room:event:password_change` / `room:event:broadcast` / `room:event:invite` / `room:event:info` / `room:event:owner_change`
-- `game:event:start` / `game:event:end` / `game:event:settlement` / `game:event:state` / `game:event:round:prepare` / `game:event:drawing:start` / `game:event:interaction:start` / `game:event:round:end` / `game:event:word` / `game:event:prompt` / `game:event:timer:update` / `game:event:sketchpad` / `game:event:guess:bingo` / `game:event:interaction:gift` / `game:event:notice`
-- `player:event:logged_in` / `player:event:state_update` / `player:event:lobby_players_add` / `player:event:lobby_players_remove`
+- `room:event:create` / `room:event:destroy` / `room:event:player_join` / `room:event:player_leave` / `room:event:onlooker_join` / `room:event:onlooker_sit` / `room:event:onlooker_leave` / `room:event:playing_change` / `room:event:seat_open_change` / `room:event:has_password_change` / `room:event:password_change` / `room:event:lobby_invite` / `room:event:invite` / `room:event:info` / `room:event:owner_change`
+- `game:event:start` / `game:event:end` / `game:event:settlement` / `game:event:state` / `game:event:turn:prepare` / `game:event:drawing:start` / `game:event:interaction:start` / `game:event:turn:end` / `game:event:word` / `game:event:hint` / `game:event:timer:update` / `game:event:sketchpad` / `game:event:guess:bingo` / `game:event:interaction:item` / `game:event:notice`
+- `player:event:logged_in` / `player:event:state_update` / `player:event:lobby_join` / `player:event:lobby_leave`
 - `chat:event:say`
 
 ---
@@ -293,7 +293,7 @@ WebSocket Worker (二进制 CBOR 流)
 wsEventBus.on('ws:message', (msg) => {
   if (msg.type.startsWith('game:')) {
     // 角色 A：更新 reactive state → Vue 模板自动响应（持续状态）
-    state.bingoPlayers = payload.bingo_players
+    state.bingoPlayers = payload.bingoPlayerIds
     state.scores = payload.scores
 
     // 角色 B：emit 到 eventBus → UI 组件监听（一次性效果）
@@ -317,7 +317,7 @@ wsEventBus.on('ws:message', (msg) => {
 
 ```ts
 // 后端发的是 ID
-payload: { guesserId: 'abc', drawer: 'xyz', bingo_players: ['abc'] }
+payload: { guesserId: 'abc', drawerId: 'xyz', bingoPlayerIds: ['abc'] }
 
 // store 转发时富化为 Player 对象
 eventBus.emit('game:event:guess:bingo', {
@@ -327,8 +327,8 @@ eventBus.emit('game:event:guess:bingo', {
 
 eventBus.emit('game:event:interaction:start', {
   ...payload,
-  drawerPlayer: getPlayerFromCurrentRoom(state.drawer!)!,
-  bingoPlayers: payload.bingo_players
+  drawerPlayer: getPlayerFromCurrentRoom(state.drawerId!)!,
+  bingoPlayers: payload.bingoPlayerIds
     .map(id => getPlayerFromCurrentRoom(id))
     .filter(Boolean)
 })
@@ -344,13 +344,13 @@ eventBus.emit('game:event:interaction:start', {
 
 ```ts
 // 自动在 onBeforeMount 订阅、onUnmounted 取消
-useEventBus('game:event:guess:bingo', ({ guesser, score_delta }) => {
+useEventBus('game:event:guess:bingo', ({ guesser, scoreChange }) => {
   playBingoSound()
-  addChatSystemMessage(`${guesser.nickname} 猜对了！+${score_delta.guesserGain}`)
+  addChatSystemMessage(`${guesser.nickname} 猜对了！+${scoreChange.guesserGain}`)
 })
 
-useEventBus('game:event:interaction:gift', ({ sender, item_type }) => {
-  playThrowAnimation(sender.id, item_type)
+useEventBus('game:event:interaction:item', ({ sender, itemType }) => {
+  playThrowAnimation(sender.id, itemType)
 })
 ```
 

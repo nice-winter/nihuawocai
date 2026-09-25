@@ -8,7 +8,7 @@
       <div class="flex flex-col">
         <div class="h-40 flex gap-4">
           <div class="flex flex-col gap-4 items-center">
-            <UAvatar :src="userData.avatar_url" class="size-16" />
+            <UAvatar :src="userData.avatarUrl" class="size-16" />
             <UButton
               label="上传"
               icon="lucide:upload"
@@ -56,7 +56,7 @@
           <div class="flex items-center">
             <span class="text-sm text-gray-400"
               >您当前的资料同步自<UIcon
-                :name="`i-simple-icons-${userData.auth_provider}`"
+                :name="`i-simple-icons-${userData.authProvider}`"
                 class="size-4 align-top mx-0.5"
               />，部分可能无法更改。</span
             >
@@ -78,7 +78,7 @@ const appConfigStore = useAppConfigStore()
 const { appConfig } = storeToRefs(appConfigStore)
 
 const currentGender = computed(() =>
-  appConfig.value.genders.find((g) => g.value === userData.gender)
+  appConfig.value.genders.find((g) => g.code === userData.gender)
 )
 
 const save = async () => {

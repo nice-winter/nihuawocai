@@ -5,19 +5,22 @@
 
 export type GamePhase =
   | 'game_start' // 游戏初始化
-  | 'game_round' // 游戏进行回合中
+  | 'game_turn' // 游戏进行回合中
   | 'game_settlement' // 最终结算 (展示积分结算榜)
   | 'game_end' // 游戏完全结束 (清理资源)
 
-export type RoundPhase =
-  | 'round_prepare' // 准备/倒计时
+export type TurnPhase =
+  | 'turn_prepare' // 准备/倒计时
   | 'drawing' // 绘画中
   | 'interaction' // 互动 (答案展示/送花)
-  | 'round_end' // 回合结束
+  | 'turn_end' // 回合结束
 
 export type ItemType = 'flower' | 'egg' | 'slipper'
 
 export type InteractionReason = 'give_up' | 'bingo_all' | 'timeout' | 'afk' | 'force' | 'leave'
+
+/** 计时被改写的原因 */
+export type TimerChangeCause = 'bingo_shorten'
 
 export interface ItemCounts {
   flower: number
@@ -25,7 +28,7 @@ export interface ItemCounts {
   slipper: number
 }
 
-export interface GiftRecord {
+export interface ItemUse {
   /** 送道具者玩家 ID */
   senderId: string
   /** 接收者玩家 ID（固定为当回合画者） */
@@ -35,7 +38,7 @@ export interface GiftRecord {
   timestamp: number // 赠送时间
 }
 
-export interface ScoreDelta {
+export interface ScoreChange {
   drawerId: string
   drawerGain: number
   guesserId: string

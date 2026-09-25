@@ -14,7 +14,7 @@ const userDataStorage = useStorage('user_data')
 
 const createUserData = async (
   userId: string,
-  authProvider: UserData['auth_provider'],
+  authProvider: UserData['authProvider'],
   avatarUrl: string,
   nickname?: string
 ) => {
@@ -24,24 +24,24 @@ const createUserData = async (
 
   const userData: UserData = {
     id: userId,
-    auth_provider: authProvider,
+    authProvider: authProvider,
     email: '',
-    avatar_url: avatarUrl,
+    avatarUrl: avatarUrl,
     nickname,
     gender: 0,
     stats: {
       score: 0,
-      flower_count: 0,
-      egg_count: 0,
-      slipper_count: 0,
-      total_games: 0
+      receivedFlowerCount: 0,
+      receivedEggCount: 0,
+      receivedSlipperCount: 0,
+      totalGames: 0
     },
     verification: {
       verified: false,
-      description: ''
+      note: ''
     },
-    created_at: Date.now(),
-    last_login_at: 0
+    createdAt: Date.now(),
+    lastLoginAt: 0
   }
 
   if (await userDataStorage.hasItem(userId)) {
@@ -77,7 +77,7 @@ const updateUserData = async (userId: string, patch: Partial<UserData>) => {
 
 const updateUserLastLoginAt = async (userId: string) => {
   return await updateUserData(userId, {
-    last_login_at: Date.now()
+    lastLoginAt: Date.now()
   })
 }
 

@@ -92,7 +92,7 @@ const checkDuplicateLogin = (playerId: string) => {
  * @param playerId 玩家 ID
  */
 const checkPlayerIsInRoom = (playerId: string) => {
-  return getPlayer(playerId)?.state.type === 'in_room' && getPlayer(playerId)?.state.roomId !== null
+  return getPlayer(playerId)?.state.presence === 'inRoom' && getPlayer(playerId)?.state.roomId !== null
 }
 
 /**
@@ -100,7 +100,7 @@ const checkPlayerIsInRoom = (playerId: string) => {
  * @param playerId 玩家 ID
  */
 const checkPlayerIsInLobby = (playerId: string) => {
-  return getPlayer(playerId)?.state.type === 'lobby'
+  return getPlayer(playerId)?.state.presence === 'lobby'
 }
 
 /**
@@ -120,7 +120,7 @@ const addPlayer = async (user: UserData & { peer: WsPeer }) => {
   const player: ServerPlayer = {
     ...user,
     state: {
-      type: 'lobby',
+      presence: 'lobby',
       roomNumber: null,
       roomId: null,
       isOnlooker: false
@@ -139,7 +139,7 @@ const addPlayer = async (user: UserData & { peer: WsPeer }) => {
   sendToPlayer(
     {
       type: 'player:event:logged_in',
-      player_info: {
+      player: {
         ...player,
         peer: undefined // @TODO: 这里不要把 server runtime 的东西传出去，暂时偷懒这么写。。
       }
@@ -165,13 +165,13 @@ const updatePlayerState = (playerId: string, roomId?: string, isOnlooker?: boole
     }
 
     if (typeof roomId === 'undefined' || roomId === '') {
-      player.state.type = 'lobby'
+      player.state.presence = 'lobby'
       player.state.roomNumber = null
       player.state.roomId = null
       player.state.isOnlooker = false
       // 广播：添加此玩家到大厅列表
       sendToAllPlayer({
-        type: 'player:event:lobby_players_add',
+        type: 'player:event:lobby_join',
         player: {
           ...player,
           state: undefined, // @TODO: 这里不要把 server runtime 的东西传出去，暂时偷懒这么写。。
@@ -180,7 +180,7 @@ const updatePlayerState = (playerId: string, roomId?: string, isOnlooker?: boole
       })
     } else {
       const room = getRoom(roomId)
-      player.state.type = 'in_room'
+      player.state.presence = 'inRoom'
       player.state.roomNumber = room?.roomNumber ?? null
       player.state.roomId = roomId
       player.state.isOnlooker = isOnlooker ?? false
@@ -190,7 +190,7 @@ const updatePlayerState = (playerId: string, roomId?: string, isOnlooker?: boole
       }
       // 广播：从大厅玩家列表移除此玩家
       sendToAllPlayer({
-        type: 'player:event:lobby_players_remove',
+        type: 'player:event:lobby_leave',
         player: {
           ...player,
           state: undefined, // @TODO: 这里不要把 server runtime 的东西传出去，暂时偷懒这么写。。

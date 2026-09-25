@@ -19,7 +19,7 @@
         <UAvatar
           v-show="player"
           class="game-avatar cursor-pointer size-full"
-          :src="player?.avatar_url"
+          :src="player?.avatarUrl"
           @click="onAvatarClick"
           @close="onProfilePopoverClose"
         />
@@ -39,7 +39,7 @@
       <template #content>
         <div v-if="player" class="inline-flex flex-col select-none w-35 bg-surface-150 bg-texture">
           <div class="relative p-1.5">
-            <UAvatar class="game-avatar size-32" :src="player?.avatar_url" />
+            <UAvatar class="game-avatar size-32" :src="player?.avatarUrl" />
           </div>
 
           <span class="truncate px-1.5 h-5 text-sm2">
@@ -54,7 +54,7 @@
             <template v-if="player?.verification.verified">
               <img class="inline-block size-3.5 align-middle" src="~/assets/icons/verified.png" >
               <span class="truncate text-wood-500 text-shadow-light">
-                {{ player.verification.description }}
+                {{ player.verification.note }}
               </span>
             </template>
           </span>
@@ -73,14 +73,14 @@
               <div class="inline-flex items-end gap-0.5 h-3.5 leading-3.5 text-xs">
                 <span class="min-w-12 text-wood-700"> 鲜ㅤ花： </span>
                 <span class="flex-1 leading-sm2">
-                  {{ playerProfile?.stats.flower_count }}
+                  {{ playerProfile?.stats.receivedFlowerCount }}
                 </span>
               </div>
 
               <div class="inline-flex items-end gap-0.5 h-3.5 leading-3.5 text-xs">
                 <span class="min-w-12 text-wood-700"> 盘ㅤ数： </span>
                 <span class="flex-1 leading-sm2">
-                  {{ playerProfile?.stats.total_games }}
+                  {{ playerProfile?.stats.totalGames }}
                 </span>
               </div>
             </div>
@@ -97,7 +97,7 @@
     </UPopover>
 
     <template v-if="mode.includes('seat') && !player">
-      <span v-if="open" class="text-sm2">{{ placeholder }}</span>
+      <span v-if="isOpen" class="text-sm2">{{ placeholder }}</span>
       <UIcon v-else :name="`fe:disabled`" class="text-game-red-500 size-14" />
     </template>
   </span>
@@ -136,10 +136,10 @@ const { getPlayerProfile } = playerStore
 const { loggedInPlayer } = storeToRefs(playerStore)
 const { levelHelper } = useAppConfigStore()
 
-const open = defineModel<boolean>('open', { default: true })
+const isOpen = defineModel<boolean>('isOpen', { default: true })
 
 const emit = defineEmits<{
-  (e: 'switch', open: boolean, seat?: number | string): void
+  (e: 'switch', isOpen: boolean, seat?: number | string): void
   (e: 'sit', seat?: number | string): void
 }>()
 
@@ -160,8 +160,8 @@ const onClick = () => {
   // 可切换座位模式，触发 switch 事件
   if (mode === 'switchable-seat') {
     if (!player) {
-      open.value = !open.value
-      emit('switch', open.value, id)
+      isOpen.value = !isOpen.value
+      emit('switch', isOpen.value, id)
     }
   }
 }

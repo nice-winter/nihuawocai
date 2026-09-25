@@ -12,10 +12,10 @@ export default defineOAuthGitHubEventHandler({
 
     await setUserSession(event, {
       user: {
-        auth_provider: 'github',
+        authProvider: 'github',
         id,
         nickname: githubUser.name,
-        avatar_url: githubUser.avatar_url
+        avatarUrl: githubUser.avatar_url
       },
       loggedInAt: Date.now()
     })
@@ -23,7 +23,7 @@ export default defineOAuthGitHubEventHandler({
     if (await hasUserData(id)) {
       await updateUserData(id, {
         nickname: githubUser.name,
-        avatar_url: githubUser.avatar_url
+        avatarUrl: githubUser.avatar_url
       })
     } else {
       await createUserData(id, 'github', githubUser.avatar_url, githubUser.name)

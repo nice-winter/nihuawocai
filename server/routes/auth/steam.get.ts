@@ -10,10 +10,10 @@ export default defineOAuthSteamEventHandler({
 
     await setUserSession(event, {
       user: {
-        auth_provider: 'steam',
+        authProvider: 'steam',
         id: steamUser.steamid,
         nickname: steamUser.personaname,
-        avatar_url: steamUser.avatarfull
+        avatarUrl: steamUser.avatarfull
       },
       loggedInAt: Date.now()
     })
@@ -21,7 +21,7 @@ export default defineOAuthSteamEventHandler({
     if (await hasUserData(steamUser.steamid)) {
       await updateUserData(steamUser.steamid, {
         nickname: steamUser.personaname,
-        avatar_url: steamUser.avatarfull
+        avatarUrl: steamUser.avatarfull
       })
     } else {
       await createUserData(steamUser.steamid, 'steam', steamUser.avatarfull, steamUser.personaname)

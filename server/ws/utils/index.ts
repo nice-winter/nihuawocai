@@ -37,7 +37,7 @@ const isOpen = (peer: WsPeer) => peer.websocket && peer.websocket.readyState ===
 const safeSend = <T>(peer: WsPeer, msg: WebsocketMessage<T>) => {
   const encoded = encode({
     ...msg,
-    ...(msg.type.toLowerCase() !== 'pong' ? { _t: Date.now() } : {})
+    ...(msg.type.toLowerCase() !== 'pong' ? { _timestamp: Date.now() } : {})
   })
   if (isOpen(peer)) {
     try {
@@ -50,9 +50,9 @@ const safeSend = <T>(peer: WsPeer, msg: WebsocketMessage<T>) => {
 }
 
 const reply =
-  (peer: WsPeer, rid?: string) =>
+  (peer: WsPeer, requestId?: string) =>
   <T>(msg: WebsocketMessage<T>) => {
-    safeSend(peer, { ...msg, _scope: 'player', _reply: true, _rid: rid })
+    safeSend(peer, { ...msg, _scope: 'player', _reply: true, _requestId: requestId })
   }
 
 const defineWsHandlers = (handlers: WsHandlers) => {

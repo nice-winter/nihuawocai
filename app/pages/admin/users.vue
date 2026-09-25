@@ -14,7 +14,7 @@ const { appConfig } = storeToRefs(appConfigStore)
 const genderMap = computed(() => {
   const map: Record<number, string> = {}
   for (const g of appConfig.value.genders) {
-    map[g.value] = g.label
+    map[g.code] = g.label
   }
   return map
 })
@@ -63,7 +63,7 @@ const handleEditSave = async () => {
       method: 'PUT',
       body: {
         nickname: editingUser.value.nickname,
-        avatar_url: editingUser.value.avatar_url,
+        avatarUrl: editingUser.value.avatarUrl,
         email: editingUser.value.email,
         gender: editingUser.value.gender,
         verification: editingUser.value.verification
@@ -111,11 +111,11 @@ const columns = [
   { accessorKey: 'id', header: 'ID' },
   { accessorKey: 'nickname', header: '昵称' },
   { accessorKey: 'email', header: '邮箱' },
-  { accessorKey: 'auth_provider', header: '登录方式' },
+  { accessorKey: 'authProvider', header: '登录方式' },
   { accessorKey: 'gender', header: '性别' },
   { accessorKey: 'stats.score', header: '积分' },
-  { accessorKey: 'stats.total_games', header: '总局数' },
-  { accessorKey: 'created_at', header: '注册时间' },
+  { accessorKey: 'stats.totalGames', header: '总局数' },
+  { accessorKey: 'createdAt', header: '注册时间' },
   { id: 'actions', header: '操作' }
 ]
 </script>
@@ -152,9 +152,9 @@ const columns = [
         <UCard>
           <UTable :columns="columns" :data="users?.list || []" :loading="status === 'pending'">
             <!-- 登录方式 -->
-            <template #auth_provider-cell="{ row }">
+            <template #authProvider-cell="{ row }">
               <UBadge variant="soft" color="info">
-                {{ authProviderMap[row.original.auth_provider] || row.original.auth_provider }}
+                {{ authProviderMap[row.original.authProvider] || row.original.authProvider }}
               </UBadge>
             </template>
 
@@ -169,8 +169,8 @@ const columns = [
             </template>
 
             <!-- 注册时间 -->
-            <template #created_at-cell="{ row }">
-              <span class="text-sm text-muted">{{ formatTime(row.original.created_at) }}</span>
+            <template #createdAt-cell="{ row }">
+              <span class="text-sm text-muted">{{ formatTime(row.original.createdAt) }}</span>
             </template>
 
             <!-- 操作 -->
@@ -210,7 +210,7 @@ const columns = [
               <UInput v-model="editingUser.nickname" />
             </UFormField>
             <UFormField label="头像 URL">
-              <UInput v-model="editingUser.avatar_url" />
+              <UInput v-model="editingUser.avatarUrl" />
             </UFormField>
             <UFormField label="邮箱">
               <UInput v-model="editingUser.email" type="email" />
@@ -218,7 +218,7 @@ const columns = [
             <UFormField label="性别">
               <USelect
                 v-model="editingUser.gender"
-                :items="appConfig.genders.map(g => ({ label: g.label, value: g.value }))"
+                :items="appConfig.genders.map(g => ({ label: g.label, value: g.code }))"
                 class="w-full"
               />
             </UFormField>
@@ -231,7 +231,7 @@ const columns = [
               </div>
             </UFormField>
             <UFormField v-if="editingUser.verification.verified" label="认证说明">
-              <UInput v-model="editingUser.verification.description" />
+              <UInput v-model="editingUser.verification.note" />
             </UFormField>
           </div>
         </template>

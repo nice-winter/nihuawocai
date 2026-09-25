@@ -21,6 +21,7 @@ export const WS_MESSAGE_PONG: WebsocketMessage = {
   type: 'pong'
 }
 
+// @TODO: duplicate_login 声明了但从未发送——顶号目前走 peer.close(4001)；要么接线发送本事件，要么删除
 export const WS_MESSAGE_DUPLICATE_LOGIN: WebsocketMessage = {
   type: 'duplicate_login'
 }
@@ -29,15 +30,15 @@ export type WebsocketMessage<T = object> = BaseWebsocketMessage & T
 
 export type WS_RECV<T = object> = WebsocketMessage<{
   _reply: boolean
-  _rid: string
-  _t: number
+  _requestId: string
+  _timestamp: number
   successful?: boolean
 }> &
   T
 
 export type WebsocketMessageType = 'ping' | 'pong' | string
 
-export const NON_REPONSE = 'NON_REPONSE'
+export const NON_RESPONSE = 'NON_RESPONSE'
 
 // ----------------------------------------------------------------
 //           共享协议辅助类型 (Server ↔ Client)
@@ -51,7 +52,7 @@ export const NON_REPONSE = 'NON_REPONSE'
  * @example
  * // 在 store 中处理已知类型的事件
  * const event = msg as ServerMessage<'game:event:start'>
- * event.payload.total_rounds // ✅ number
+ * event.payload.totalTurns // ✅ number
  *
  * @example
  * // 处理画板事件
@@ -72,7 +73,7 @@ export type ServerMessage<T extends keyof ServerEventMap> = WebsocketMessage<Ser
  *   const event = msg as ServerEvent
  *   switch (event.type) {
  *     case 'game:event:start':
- *       event.payload.total_rounds // ✅ 自动窄化为 number
+ *       event.payload.totalTurns // ✅ 自动窄化为 number
  *       break
  *     case 'game:event:notice':
  *       event.payload.message // ✅ 自动窄化为 string
@@ -90,9 +91,9 @@ export type ServerEvent = {
  * 适用场景：构造发送给服务端的消息时，确保参数类型正确
  *
  * @example
- * const msg: ClientMessage<'game:interaction:gift'> = {
- *   type: 'game:interaction:gift',
- *   item_type: 'flower',
+ * const msg: ClientMessage<'game:interaction:item'> = {
+ *   type: 'game:interaction:item',
+ *   itemType: 'flower',
  *   count: 1
  * }
  */
@@ -105,8 +106,8 @@ export type ClientMessage<T extends keyof ClientEventMap> = WebsocketMessage<{ t
  *
  * @example
  * // 拉取房间列表
- * const res = await send({ type: 'room:list_pull' }) as ClientResponse<'room:list_pull'>
- * res.room_list // ✅ RoomInfo[]
+ * const res = await send({ type: 'room:get_rooms' }) as ClientResponse<'room:get_rooms'>
+ * res.rooms // ✅ RoomSummary[]
  *
  * @example
  * // 获取玩家档案
@@ -116,6 +117,6 @@ export type ClientMessage<T extends keyof ClientEventMap> = WebsocketMessage<{ t
  * @example
  * // 邀请玩家
  * const res = await send({ type: 'room:invite', targetId }) as ClientResponse<'room:invite'>
- * res.expAt // ✅ number
+ * res.expiresAt // ✅ number
  */
 export type ClientResponse<T extends keyof ClientResponseMap> = WS_RECV<ClientResponseMap[T]>

@@ -77,7 +77,7 @@ const genderColumns = [
 ]
 
 const addGender = () => {
-  editingConfig.value.genders.push({ label: '', value: editingConfig.value.genders.length, icon: '', color: '' })
+  editingConfig.value.genders.push({ label: '', code: editingConfig.value.genders.length, icon: '', color: '' })
 }
 </script>
 
@@ -141,7 +141,7 @@ const addGender = () => {
                 <UInput v-model="row.original.label" placeholder="性别名称" size="sm" />
               </template>
               <template #value-cell="{ row }">
-                <UInput v-model.number="row.original.value" type="number" size="sm" class="w-20" />
+                <UInput v-model.number="row.original.code" type="number" size="sm" class="w-20" />
               </template>
               <template #icon-cell="{ row }">
                 <UInput v-model="row.original.icon" placeholder="图标名称" size="sm" />
@@ -171,7 +171,7 @@ const addGender = () => {
                 <UInput v-model="editingConfig.game.room.feature.kick" type="number" :min="0" :max="20" />
               </UFormField>
               <UFormField label="房间密码最大长度">
-                <UInput v-model="editingConfig.game.room.passwordMaxLengh" type="number" :min="0" :max="20" />
+                <UInput v-model="editingConfig.game.room.passwordMaxLength" type="number" :min="0" :max="20" />
               </UFormField>
             </div>
           </div>
@@ -188,7 +188,7 @@ const addGender = () => {
                 class="p-3 rounded-lg bg-elevated"
               />
               <USwitch
-                v-model="editingConfig.game.room.feature.broadcast"
+                v-model="editingConfig.game.room.feature.lobbyInvite"
                 label="广播功能"
                 description="允许房间内发送广播消息"
                 class="p-3 rounded-lg bg-elevated"
@@ -218,7 +218,7 @@ const addGender = () => {
             <h4 class="font-medium text-highlighted">房间时间设置</h4>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
               <UFormField label="广播消息间隔（秒）">
-                <UInput v-model="editingConfig.game.room.time.broadcastIntervalTimeSecond" type="number" :min="0" />
+                <UInput v-model="editingConfig.game.room.time.lobbyInviteIntervalTimeSecond" type="number" :min="0" />
               </UFormField>
               <UFormField label="聊天消息间隔（秒）">
                 <UInput v-model="editingConfig.game.room.time.chatIntervalTimeSecond" type="number" :min="0" />
@@ -238,22 +238,22 @@ const addGender = () => {
             <h4 class="font-medium text-highlighted">回合时间设置</h4>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
               <UFormField label="准备等待时间（秒）">
-                <UInput v-model="editingConfig.game.room.cycle.time.roundStartWaitTimeSecond" type="number" :min="1" />
+                <UInput v-model="editingConfig.game.room.cycle.time.turnStartWaitTimeSecond" type="number" :min="1" />
               </UFormField>
               <UFormField label="绘画超时时间（秒）">
-                <UInput v-model="editingConfig.game.room.cycle.time.roundDrawingTimeoutSecond" type="number" :min="5" />
+                <UInput v-model="editingConfig.game.room.cycle.time.turnDrawingTimeoutSecond" type="number" :min="5" />
               </UFormField>
               <UFormField label="绘画时间（秒）">
-                <UInput v-model="editingConfig.game.room.cycle.time.roundDrawingTimeSecond" type="number" :min="10" />
+                <UInput v-model="editingConfig.game.room.cycle.time.turnDrawingTimeSecond" type="number" :min="10" />
               </UFormField>
               <UFormField label="猜对后剩余时间（秒）">
-                <UInput v-model="editingConfig.game.room.cycle.time.roundBingoTimeSecond" type="number" :min="5" />
+                <UInput v-model="editingConfig.game.room.cycle.time.bingoShortenToSeconds" type="number" :min="5" />
               </UFormField>
               <UFormField label="回合结束等待时间（秒）">
-                <UInput v-model="editingConfig.game.room.cycle.time.roundEndWaitTimeSecond" type="number" :min="1" />
+                <UInput v-model="editingConfig.game.room.cycle.time.turnEndWaitTimeSecond" type="number" :min="1" />
               </UFormField>
               <UFormField label="结算展示时间（秒）">
-                <UInput v-model="editingConfig.game.room.cycle.time.cycleEndWaitTimeSecond" type="number" :min="3" />
+                <UInput v-model="editingConfig.game.room.cycle.time.settlementDisplaySeconds" type="number" :min="3" />
               </UFormField>
             </div>
           </div>

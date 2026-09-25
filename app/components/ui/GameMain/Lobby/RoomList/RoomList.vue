@@ -5,9 +5,9 @@
         <UiGameMainLobbyRoomListItem
           v-for="room in roomStore.currentPageRooms"
           :key="room.id"
-          :room-info="room"
+          :room="room"
           @join-button-click="() => tryJoin(room.id, room.roomNumber)"
-          @look-button-click="() => tryJoin(room.id, room.roomNumber)"
+          @onlooker-button-click="() => tryJoin(room.id, room.roomNumber, false, true)"
         />
       </ul>
 
@@ -67,7 +67,7 @@ const passwordModal = useModal<string>(PasswordModal, {
 })
 
 const createRoomModal = useModal<{
-  opens: number
+  openSeatCount: number
   password: string
   maxOnlookers: number
 }>(CreateRoomModal, {
@@ -86,11 +86,13 @@ onBeforeMount(async () => {
  * @param roomId 房间身份 ID（列表点击必带，防同号串房）；按号输入时为 undefined
  * @param roomNumber 房间号（用户句柄）
  * @param clearRoomNumberInput 是否清空房间号输入框
+ * @param asOnlooker 指定以旁观身份加入
  */
 const tryJoin = async (
   roomId: string | undefined,
   roomNumber: number,
-  clearRoomNumberInput?: boolean
+  clearRoomNumberInput?: boolean,
+  asOnlooker?: boolean
 ) => {
   if (clearRoomNumberInput) roomNumberInputValue.value = ''
   if (isNaN(roomNumber)) return gameMessageBox.show('房间号格式错误')
@@ -100,22 +102,22 @@ const tryJoin = async (
     ? rooms.get(roomId)
     : [...rooms.values()].find((r) => r.roomNumber === roomNumber)
 
-  if (room?.locked) {
+  if (room?.hasPassword) {
     try {
       const password = await passwordModal.open()
-      join(roomNumber, password, roomId)
+      join(roomNumber, password, roomId, asOnlooker)
     } catch {
       // cancel
     }
   } else {
-    join(roomNumber, undefined, roomId)
+    join(roomNumber, undefined, roomId, asOnlooker)
   }
 }
 
 const tryCreateRoom = async () => {
   try {
-    const { opens, password, maxOnlookers } = await createRoomModal.open()
-    createRoom(opens, { password, maxOnlookers })
+    const { openSeatCount, password, maxOnlookers } = await createRoomModal.open()
+    createRoom(openSeatCount, { password, maxOnlookers })
   } catch {
     //
   }

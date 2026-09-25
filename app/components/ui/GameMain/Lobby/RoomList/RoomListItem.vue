@@ -7,13 +7,13 @@
         <div class="relative flex-1">
           <UTooltip text="非公开房间" :delay-duration="500" :content="{ side: 'right' }" :ui="{ content: 'game-tooltip' }">
             <UIcon
-              v-show="roomInfo.locked"
+              v-show="room.hasPassword"
               name="ph:lock-simple-fill"
               class="absolute left-0 top-0 size-4 text-amber-400"
             />
           </UTooltip>
 
-          <UiGameMainRoomNumber :room-number="roomInfo.roomNumber || 0" class="float-right" />
+          <UiGameMainRoomNumber :room-number="room.roomNumber || 0" class="float-right" />
 
           <span class="absolute right-0 bottom-0 max-w-[233px] text-sm leading-3.5 truncate">
             <UiGenderIcon :gender="ownerPlayer.gender" class="align-text-top" />
@@ -39,11 +39,11 @@
 
       <div class="flex justify-center">
         <UiButton
-          v-if="!roomInfo.playing"
+          v-if="!room.isPlaying"
           size="xl"
           color="red"
           :disabled="totalPlayerCount >= openSeatCount"
-          @click="emit('joinButtonClick', roomInfo.id, roomInfo.roomNumber)"
+          @click="emit('joinButtonClick', room.id, room.roomNumber)"
         >
           加ㅤ入
         </UiButton>
@@ -52,10 +52,10 @@
           v-else
           size="xl"
           color="playing"
-          :disabled="roomInfo.onlookers.length >= roomInfo.options.maxOnlookers"
-          @click="emit('lookButtonClick', roomInfo.id, roomInfo.roomNumber)"
+          :disabled="room.onlookers.length >= room.joinOptions.maxOnlookers"
+          @click="emit('onlookerButtonClick', room.id, room.roomNumber)"
         >
-          旁观ㅤ{{ roomInfo.onlookers.length }}/{{ roomInfo.options.maxOnlookers }}
+          旁观ㅤ{{ room.onlookers.length }}/{{ room.joinOptions.maxOnlookers }}
         </UiButton>
       </div>
     </div>
@@ -63,21 +63,21 @@
 </template>
 
 <script setup lang="ts">
-type RoomListItemProps = RoomInfo
+type RoomListItemProps = RoomSummary
 
-const { roomInfo } = defineProps<{ roomInfo: RoomListItemProps }>()
+const { room } = defineProps<{ room: RoomListItemProps }>()
 
 const playersWithoutOwner = computed(() =>
-  roomInfo.players.filter((p) => p && p.id !== roomInfo.ownerId)
+  room.players.filter((p) => p && p.id !== room.ownerId)
 )
 
-const ownerPlayer = computed(() => roomInfo.players.find((p) => p?.id === roomInfo.ownerId))
+const ownerPlayer = computed(() => room.players.find((p) => p?.id === room.ownerId))
 
-const totalPlayerCount = computed(() => roomInfo.players.filter((p) => p).length)
+const totalPlayerCount = computed(() => room.players.filter((p) => p).length)
 
-const openSeatCount = computed(() => roomInfo.seats.filter((s) => s).length)
+const openSeatCount = computed(() => room.seatOpenFlags.filter((s) => s).length)
 
 const emit = defineEmits<{
-  (e: 'joinButtonClick' | 'lookButtonClick', roomId: string, roomNumber: number): void
+  (e: 'joinButtonClick' | 'onlookerButtonClick', roomId: string, roomNumber: number): void
 }>()
 </script>

@@ -9,18 +9,18 @@ import { usePlayerStore } from './player'
 export interface SettlementData {
   scores: Record<string, number>
   itemCounts: Record<string, ItemCounts>
-  giftHistory: GiftRecord[]
-  seconds: number
+  itemUses: ItemUse[]
+  displaySeconds: number
 }
 
 export interface GameState {
   gamePhase: GamePhase
-  roundPhase: RoundPhase
-  currentRound: number
-  totalRounds: number
-  drawer: string | null
+  turnPhase: TurnPhase
+  currentTurn: number
+  totalTurns: number
+  drawerId: string | null
   currentWord: string | null
-  prompts: string[]
+  hints: string[]
   bingoPlayers: string[]
   timeLeft: number
   scores: Record<string, number>
@@ -37,12 +37,12 @@ export const useGameStore = defineStore('game', () => {
 
   const defaultState: GameState = {
     gamePhase: 'game_start',
-    roundPhase: 'round_prepare',
-    currentRound: 0,
-    totalRounds: 0,
-    drawer: null,
+    turnPhase: 'turn_prepare',
+    currentTurn: 0,
+    totalTurns: 0,
+    drawerId: null,
     currentWord: null,
-    prompts: [],
+    hints: [],
     bingoPlayers: [],
     timeLeft: 0,
     scores: {},
@@ -54,8 +54,8 @@ export const useGameStore = defineStore('game', () => {
 
   const state = reactive<GameState>({ ...defaultState })
 
-  const isMyTurn = computed(() => state.drawer === myId.value)
-  const isDrawing = computed(() => state.roundPhase === 'drawing' && isMyTurn.value)
+  const isMyTurn = computed(() => state.drawerId === myId.value)
+  const isDrawing = computed(() => state.turnPhase === 'drawing' && isMyTurn.value)
 
   const resetState = () => {
     Object.assign(state, defaultState)
@@ -63,10 +63,10 @@ export const useGameStore = defineStore('game', () => {
     state.scores = {}
   }
 
-  const resetRoundState = () => {
-    state.roundPhase = 'round_prepare'
+  const resetTurnState = () => {
+    state.turnPhase = 'turn_prepare'
     state.currentWord = null
-    state.prompts = []
+    state.hints = []
     state.bingoPlayers = []
 
     state.draw = false
@@ -88,7 +88,7 @@ export const useGameStore = defineStore('game', () => {
         const { payload } = msg
 
         state.gamePhase = 'game_start'
-        state.totalRounds = payload.total_rounds
+        state.totalTurns = payload.totalTurns
         state.scores = {}
         state.itemCounts = {}
 
@@ -103,11 +103,11 @@ export const useGameStore = defineStore('game', () => {
         state.gamePhase = 'game_settlement'
         state.settlementData = {
           scores: payload.scores,
-          itemCounts: payload.item_counts,
-          giftHistory: payload.gift_history,
-          seconds: payload.seconds
+          itemCounts: payload.itemCounts,
+          itemUses: payload.itemUses,
+          displaySeconds: payload.displaySeconds
         }
-        state.timeLeft = payload.seconds
+        state.timeLeft = payload.displaySeconds
 
         // !!! ⚡ UI 广播点 ⚡ !!!
         // 打开 <SettlementModal />
@@ -130,15 +130,15 @@ export const useGameStore = defineStore('game', () => {
         // 全量状态同步
         const { payload } = msg
 
-        state.gamePhase = payload.game_phase
-        state.roundPhase = payload.round_phase
-        state.currentRound = payload.round_index
-        state.totalRounds = payload.total_rounds
-        state.drawer = payload.drawer
-        state.timeLeft = payload.remaining_seconds
-        state.bingoPlayers = payload.bingo_players || []
+        state.gamePhase = payload.gamePhase
+        state.turnPhase = payload.turnPhase
+        state.currentTurn = payload.turnIndex
+        state.totalTurns = payload.totalTurns
+        state.drawerId = payload.drawerId
+        state.timeLeft = payload.remainingSeconds
+        state.bingoPlayers = payload.bingoPlayerIds || []
         state.scores = payload.scores || {}
-        state.itemCounts = payload.item_counts || {}
+        state.itemCounts = payload.itemCounts || {}
         break
       }
 
@@ -152,21 +152,21 @@ export const useGameStore = defineStore('game', () => {
       //       回合流程控制事件
       // ==============================
 
-      case 'game:event:round:prepare': {
+      case 'game:event:turn:prepare': {
         const { payload } = msg
 
-        resetRoundState()
-        state.gamePhase = 'game_round'
-        state.roundPhase = 'round_prepare'
-        state.currentRound = payload.round_index
-        state.drawer = payload.drawer
-        state.timeLeft = payload.seconds
+        resetTurnState()
+        state.gamePhase = 'game_turn'
+        state.turnPhase = 'turn_prepare'
+        state.currentTurn = payload.turnIndex
+        state.drawerId = payload.drawerId
+        state.timeLeft = payload.durationSeconds
 
         // !!! ⚡ UI 广播点 ⚡ !!!
         // 显示 "第X轮开始" 过场动画
-        eventBus.emit('game:event:round:prepare', {
+        eventBus.emit('game:event:turn:prepare', {
           ...payload,
-          drawerPlayer: getPlayerFromCurrentRoom(payload.drawer)!
+          drawerPlayer: getPlayerFromCurrentRoom(payload.drawerId)!
         })
         break
       }
@@ -174,15 +174,15 @@ export const useGameStore = defineStore('game', () => {
       case 'game:event:drawing:start': {
         const { payload } = msg
 
-        state.roundPhase = 'drawing'
-        state.timeLeft = payload.seconds
+        state.turnPhase = 'drawing'
+        state.timeLeft = payload.durationSeconds
 
         // !!! ⚡ UI 广播点 ⚡ !!!
         // 检查 isMyTurn，切换 Canvas 锁定/解锁状态
         if (isMyTurn.value) state.draw = true
         eventBus.emit('game:event:drawing:start', {
           ...payload,
-          drawerPlayer: getPlayerFromCurrentRoom(payload.drawer)!
+          drawerPlayer: getPlayerFromCurrentRoom(payload.drawerId)!
         })
         break
       }
@@ -190,30 +190,30 @@ export const useGameStore = defineStore('game', () => {
       case 'game:event:interaction:start': {
         const { payload } = msg
 
-        state.roundPhase = 'interaction'
-        state.timeLeft = payload.seconds
+        state.turnPhase = 'interaction'
+        state.timeLeft = payload.durationSeconds
         if (payload.answer) {
           state.currentWord = payload.answer
         }
 
         // !!! ⚡ UI 广播点 ⚡ !!!
         // 1. 弹窗显示答案
-        // 2. 显示本轮猜对的人 payload.bingo_players
+        // 2. 显示本轮猜对的人 payload.bingoPlayerIds
         state.draw = false
         eventBus.emit('game:event:interaction:start', {
           ...payload,
-          drawerPlayer: getPlayerFromCurrentRoom(state.drawer!)!,
-          bingoPlayers: payload.bingo_players
+          drawerPlayer: getPlayerFromCurrentRoom(state.drawerId!)!,
+          bingoPlayers: payload.bingoPlayerIds
             .map((p) => getPlayerFromCurrentRoom(p))
             .filter((p) => typeof p !== 'undefined')
         })
         break
       }
 
-      case 'game:event:round:end': {
+      case 'game:event:turn:end': {
         const { payload } = msg
 
-        state.roundPhase = 'round_end'
+        state.turnPhase = 'turn_end'
         state.scores = payload.scores
         break
       }
@@ -229,14 +229,14 @@ export const useGameStore = defineStore('game', () => {
         break
       }
 
-      case 'game:event:prompt': {
+      case 'game:event:hint': {
         const { payload } = msg
 
-        state.prompts.push(payload.content)
+        state.hints.push(payload.hintText)
 
         // !!! ⚡ UI 广播点 ⚡ !!!
         // 顶部提示栏闪烁
-        eventBus.emit('game:event:prompt', {
+        eventBus.emit('game:event:hint', {
           ...payload
         })
         break
@@ -245,7 +245,7 @@ export const useGameStore = defineStore('game', () => {
       case 'game:event:guess:bingo': {
         const { payload } = msg
 
-        state.bingoPlayers = payload.bingo_players
+        state.bingoPlayers = payload.bingoPlayerIds
         state.scores = payload.scores
 
         // !!! ⚡ UI 广播点 ⚡ !!!
@@ -261,7 +261,7 @@ export const useGameStore = defineStore('game', () => {
       case 'game:event:timer:update': {
         const { payload } = msg
 
-        state.timeLeft = payload.seconds
+        state.timeLeft = payload.remainingSeconds
 
         // !!! ⚡ UI 广播点 ⚡ !!!
         // 提示 "时间缩短"
@@ -271,18 +271,18 @@ export const useGameStore = defineStore('game', () => {
         break
       }
 
-      case 'game:event:interaction:gift': {
+      case 'game:event:interaction:item': {
         const { payload } = msg
 
         if (!state.itemCounts[payload.targetId]) {
           state.itemCounts[payload.targetId] = { flower: 0, egg: 0, slipper: 0 }
         } else {
-          state.itemCounts[payload.targetId]![payload.item_type] += payload.count
+          state.itemCounts[payload.targetId]![payload.itemType] += payload.count
         }
 
         // !!! ⚡ UI 广播点 ⚡ !!!
         // 播放抛物线动画: sender -> target
-        eventBus.emit('game:event:interaction:gift', {
+        eventBus.emit('game:event:interaction:item', {
           ...payload,
           sender: getPlayerFromCurrentRoom(payload.senderId)!,
           target: getPlayerFromCurrentRoom(payload.targetId)
@@ -301,10 +301,10 @@ export const useGameStore = defineStore('game', () => {
     })
   }
 
-  const sendGift = async (itemType: ItemType) => {
+  const sendItem = async (itemType: ItemType) => {
     return await send({
-      type: 'game:interaction:gift',
-      item_type: itemType,
+      type: 'game:interaction:item',
+      itemType,
       count: 1
     })
   }
@@ -314,8 +314,8 @@ export const useGameStore = defineStore('game', () => {
     isMyTurn,
     isDrawing,
     resetState,
-    resetRoundState,
+    resetTurnState,
     giveUp,
-    sendGift
+    sendItem
   }
 })

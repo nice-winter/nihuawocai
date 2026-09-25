@@ -108,7 +108,7 @@ const sendChatMessage = () => {
 }
 
 watch(
-  () => currentRoom.value?.playing,
+  () => currentRoom.value?.isPlaying,
   () => {
     ChatPanelMessageListRef.value?.clear()
   }
@@ -122,12 +122,12 @@ useEventBus('chat:event:say', ({ message, sender, timestamp }) => {
   })
 })
 
-useEventBus('room:event:broadcast', ({ roomId, roomNumber, password, sender, timestamp }) => {
+useEventBus('room:event:lobby_invite', ({ roomId, roomNumber, password, sender, timestamp }) => {
   // 非游戏状态下，才显示广播信息
   // 当然这里在服务端不要推送就好了，前端也顺手过滤下呗
-  if (!currentRoom.value?.playing) {
+  if (!currentRoom.value?.isPlaying) {
     ChatPanelMessageListRef.value?.addMessage({
-      type: 'broadcast',
+      type: 'lobbyInvite',
       sender,
       roomNumber,
       roomId,
@@ -137,7 +137,7 @@ useEventBus('room:event:broadcast', ({ roomId, roomNumber, password, sender, tim
 })
 
 useEventBus('current:room:event:player_leave', ({ player }) => {
-  if (!currentRoom.value?.playing) return // 非游戏状态下不显示
+  if (!currentRoom.value?.isPlaying) return // 非游戏状态下不显示
   if (isSelf(player.id)) return // 如果是自己，则不显要显示事件，因为自己离开之后会闪一下
   ChatPanelMessageListRef.value?.addMessage({
     type: 'action',
@@ -147,7 +147,7 @@ useEventBus('current:room:event:player_leave', ({ player }) => {
 })
 
 useEventBus('current:room:event:onlooker_join', ({ player }) => {
-  if (!currentRoom.value?.playing) return // 非游戏状态下不显示
+  if (!currentRoom.value?.isPlaying) return // 非游戏状态下不显示
   ChatPanelMessageListRef.value?.addMessage({
     type: 'action',
     sender: player,
@@ -156,7 +156,7 @@ useEventBus('current:room:event:onlooker_join', ({ player }) => {
 })
 
 useEventBus('current:room:event:onlooker_leave', ({ player }) => {
-  if (!currentRoom.value?.playing) return // 非游戏状态下不显示
+  if (!currentRoom.value?.isPlaying) return // 非游戏状态下不显示
   ChatPanelMessageListRef.value?.addMessage({
     type: 'action',
     sender: player,
@@ -165,7 +165,7 @@ useEventBus('current:room:event:onlooker_leave', ({ player }) => {
 })
 
 // 游戏事件通知
-useEventBus('game:event:round:prepare', ({ drawerPlayer }) => {
+useEventBus('game:event:turn:prepare', ({ drawerPlayer }) => {
   ChatPanelMessageListRef.value?.addMessage({
     type: 'system',
     msg: '回合开始'
@@ -182,11 +182,11 @@ useEventBus('game:event:drawing:start', ({ drawerPlayer }) => {
     msg: `开始作画...`
   })
 })
-useEventBus('game:event:prompt', ({ index, content }) => {
+useEventBus('game:event:hint', ({ hintIndex, hintText }) => {
   ChatPanelMessageListRef.value?.addMessage({
-    type: 'prompt',
-    index,
-    content
+    type: 'hint',
+    hintIndex,
+    hintText
   })
 })
 useEventBus('game:event:guess:bingo', ({ guesser }) => {
@@ -196,7 +196,7 @@ useEventBus('game:event:guess:bingo', ({ guesser }) => {
     msg: `猜对了答案！`
   })
 })
-useEventBus('game:event:interaction:start', ({ drawerPlayer, reason, bingo_players }) => {
+useEventBus('game:event:interaction:start', ({ drawerPlayer, reason, bingoPlayerIds }) => {
   switch (reason) {
     case 'afk': {
       ChatPanelMessageListRef.value?.addMessage({
@@ -236,9 +236,9 @@ useEventBus('game:event:interaction:start', ({ drawerPlayer, reason, bingo_playe
     }
     case 'timeout': {
       let msg = ''
-      if (bingo_players.length === 0) msg = '没有人猜对。'
-      if (bingo_players.length === 1) msg = '只有1人猜对。'
-      if (bingo_players.length > 1) msg = `共有${bingo_players.length}人猜对。`
+      if (bingoPlayerIds.length === 0) msg = '没有人猜对。'
+      if (bingoPlayerIds.length === 1) msg = '只有1人猜对。'
+      if (bingoPlayerIds.length > 1) msg = `共有${bingoPlayerIds.length}人猜对。`
       ChatPanelMessageListRef.value?.addMessage({
         type: 'text',
         msg: `作画时间到，${msg}`
@@ -251,8 +251,8 @@ useEventBus('game:event:interaction:start', ({ drawerPlayer, reason, bingo_playe
     msg: '回合结束'
   })
 })
-useEventBus('game:event:interaction:gift', ({ sender, item_type }) => {
-  switch (item_type) {
+useEventBus('game:event:interaction:item', ({ sender, itemType }) => {
+  switch (itemType) {
     case 'flower': {
       ChatPanelMessageListRef.value?.addMessage({
         type: 'action',

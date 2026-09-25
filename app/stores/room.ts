@@ -11,12 +11,12 @@ export const useRoomStore = defineStore('room', () => {
 
   // State
   /** 所有房间的映射表，键为 room.id（身份键，同号房间不会互相覆盖） */
-  const rooms = reactive(new Map<string, RoomInfo>())
+  const rooms = reactive(new Map<string, RoomSummary>())
   const currentPageNumber = ref(0) // 当前页码
   const showOnlyWaitingRooms = ref(false) // 是否只显示等待中的房间
   const currentRoom = ref<Room | null>(null) // 玩家当前所在的房间
   const inviteRecord = reactive<Map<string, number>>(new Map()) // 邀请记录
-  const broadcastRecord = reactive<Map<string, number>>(new Map()) // 广播记录
+  const lobbyInviteRecord = reactive<Map<string, number>>(new Map()) // 广播记录
 
   // Computed
   /**
@@ -25,7 +25,7 @@ export const useRoomStore = defineStore('room', () => {
   const { currentPageItems, prevPage, nextPage } = usePaginatedMap(rooms, 6)
   const currentPageRooms = computed(() => {
     return currentPageItems.value.filter((room) => {
-      return showOnlyWaitingRooms.value ? !room.playing : true
+      return showOnlyWaitingRooms.value ? !room.isPlaying : true
     })
   })
 
@@ -126,7 +126,7 @@ export const useRoomStore = defineStore('room', () => {
   watch(
     () => playerStore.loggedInPlayer?.state,
     (newState) => {
-      if (newState?.type !== 'in_room') clearCurrentRoom()
+      if (newState?.presence !== 'inRoom') clearCurrentRoom()
     }
   )
 
@@ -172,36 +172,36 @@ export const useRoomStore = defineStore('room', () => {
         }
         break
       }
-      case 'room:event:stage_update': {
+      case 'room:event:playing_change': {
         const room = rooms.get(event.roomId)
         if (room) {
-          room.playing = event.playing
+          room.isPlaying = event.isPlaying
           rooms.set(event.roomId, room)
         }
         // 如果阶段变更的是当前房间，同步更新（按身份 ID 比较）
         if (event.roomId === playerStore.currentRoomId && currentRoom.value) {
-          currentRoom.value.playing = event.playing
+          currentRoom.value.isPlaying = event.isPlaying
         }
         break
       }
 
       // 房间设置、状态相关事件
-      case 'room:event:seat_switch': {
+      case 'room:event:seat_open_change': {
         const room = rooms.get(event.roomId)
         if (room) {
-          room.seats[event.seat] = event.open
+          room.seatOpenFlags[event.seat] = event.isOpen
           rooms.set(event.roomId, room)
         }
         // 同步更新当前房间的座位状态（按身份 ID 比较）
         if (event.roomId === playerStore.currentRoomId && currentRoom.value) {
-          currentRoom.value.seats[event.seat] = event.open
+          currentRoom.value.seatOpenFlags[event.seat] = event.isOpen
         }
         break
       }
-      case 'room:event:locked_state_change': {
+      case 'room:event:has_password_change': {
         const room = rooms.get(event.roomId)
         if (room) {
-          room.locked = event.locked
+          room.hasPassword = event.hasPassword
           rooms.set(event.roomId, room)
         }
         break
@@ -209,11 +209,11 @@ export const useRoomStore = defineStore('room', () => {
       case 'room:event:password_change':
         // 按身份 ID 比较，防同号误判
         if (currentRoom.value && event.roomId === playerStore.currentRoomId) {
-          currentRoom.value.options.password = event.password
-          currentRoom.value.locked = event.locked
+          currentRoom.value.joinOptions.password = event.password
+          currentRoom.value.hasPassword = event.hasPassword
 
           eventBus.emit('current:room:event:password_change', {
-            locked: event.locked,
+            hasPassword: event.hasPassword,
             password: event.password
           })
         }
@@ -271,9 +271,9 @@ export const useRoomStore = defineStore('room', () => {
           title: `${event.sender.nickname} 向你发来邀请`,
           description: `TA在${event.roomNumber}号房间等你与TA一起游戏！`,
           avatar: {
-            src: event.sender.avatar_url
+            src: event.sender.avatarUrl
           },
-          duration: event.duration * 1000,
+          duration: 20 * 1000, // toast 显示时长由前端自理
           orientation: 'horizontal',
           actions: [
             {
@@ -291,22 +291,22 @@ export const useRoomStore = defineStore('room', () => {
         break
 
       // 房间广播相关事件
-      case 'room:event:broadcast':
-        eventBus.emit('room:event:broadcast', {
+      case 'room:event:lobby_invite':
+        eventBus.emit('room:event:lobby_invite', {
           roomNumber: event.roomNumber,
           roomId: event.roomId,
           password: event.password,
           sender: event.sender,
-          expAt: event.expAt,
+          expiresAt: event.expiresAt,
           timestamp: event.timestamp
         })
         // 记录该房间广播过期时间，广播按钮根据此记录判断是否冷却，防止频繁广播
         // 键用 roomId，避免同号新房误继承旧房冷却
-        broadcastRecord.set(event.roomId, event.expAt)
+        lobbyInviteRecord.set(event.roomId, event.expiresAt)
         // 清除过期的房间广播记录
         setTimeout(() => {
-          broadcastRecord.delete(event.roomId)
-        }, event.expAt - Date.now())
+          lobbyInviteRecord.delete(event.roomId)
+        }, event.expiresAt - Date.now())
         break
     }
   })
@@ -316,12 +316,12 @@ export const useRoomStore = defineStore('room', () => {
    * 拉取房间列表
    */
   const pullRoomList = async () => {
-    const { room_list } = (await send({
-      type: 'room:list_pull'
-    })) as ClientResponse<'room:list_pull'>
+    const res = (await send({
+      type: 'room:get_rooms'
+    })) as ClientResponse<'room:get_rooms'>
 
     rooms.clear()
-    room_list.forEach((room) => rooms.set(room.id, room))
+    res.rooms.forEach((room) => rooms.set(room.id, room))
   }
 
   /**
@@ -332,13 +332,20 @@ export const useRoomStore = defineStore('room', () => {
    * @param roomNumber 房间号（用户句柄）
    * @param password 房间密码
    * @param roomId 房间身份 ID（邀请/广播携带时一并传入，服务端校验防串房）
+   * @param asOnlooker 指定以旁观身份加入
    */
-  const join = async (roomNumber: number, password?: string, roomId?: string) => {
+  const join = async (
+    roomNumber: number,
+    password?: string,
+    roomId?: string,
+    asOnlooker?: boolean
+  ) => {
     await send({
       type: 'room:join',
       roomNumber,
       roomId,
-      password
+      password,
+      asOnlooker
     })
   }
 
@@ -354,11 +361,11 @@ export const useRoomStore = defineStore('room', () => {
   /**
    * 切换座位开关状态（服务端从当前玩家状态反查房间）
    */
-  const switchSeat = async (seat: number, open: boolean) => {
+  const setSeatOpen = async (seat: number, isOpen: boolean) => {
     await send({
-      type: 'room:seat_switch',
+      type: 'room:seat_open_change',
       seat,
-      open
+      isOpen
     })
   }
 
@@ -386,9 +393,9 @@ export const useRoomStore = defineStore('room', () => {
   /**
    * 发送广播
    */
-  const broadcast = async () => {
+  const sendLobbyInvite = async () => {
     await send({
-      type: 'room:broadcast'
+      type: 'room:lobby_invite'
     })
   }
 
@@ -403,15 +410,15 @@ export const useRoomStore = defineStore('room', () => {
     })
 
     if (typeof (msg as WebsocketMessage<WS_RECV>).successful === 'undefined') return
-    const { target, expAt } = msg as ClientResponse<'room:invite'>
+    const { target, expiresAt } = msg as ClientResponse<'room:invite'>
 
     // 键是被邀请者玩家 ID（InvitePanel 按 player.id 查询冷却状态）
-    inviteRecord.set(target.id, expAt)
+    inviteRecord.set(target.id, expiresAt)
 
     // 清除过期的邀请信息
     setTimeout(() => {
       inviteRecord.delete(target.id)
-    }, expAt - Date.now())
+    }, expiresAt - Date.now())
   }
 
   /**
@@ -426,11 +433,11 @@ export const useRoomStore = defineStore('room', () => {
   /**
    * 创建新房间
    */
-  const createRoom = (opens: number, options: { password: string; maxOnlookers: number }) => {
+  const createRoom = (openSeatCount: number, joinOptions: { password: string; maxOnlookers: number }) => {
     send({
       type: 'room:create',
-      opens,
-      options
+      openSeatCount,
+      joinOptions
     })
   }
 
@@ -458,7 +465,7 @@ export const useRoomStore = defineStore('room', () => {
     isCurrentRoomOwner,
     isOwner: isCurrentRoomOwner,
     inviteRecord,
-    broadcastRecord,
+    lobbyInviteRecord,
 
     // Computed
     currentPageRooms,
@@ -469,9 +476,9 @@ export const useRoomStore = defineStore('room', () => {
     join,
     leave,
     sit,
-    switchSeat,
+    setSeatOpen,
     changeRoomPassword,
-    broadcast,
+    sendLobbyInvite,
     invite,
     start,
     prevPage,

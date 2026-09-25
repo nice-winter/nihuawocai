@@ -41,17 +41,17 @@ type Events = {
     player: Player
   }
   'current:room:event:password_change': {
-    locked: boolean
+    hasPassword: boolean
     password: string
   }
 
-  // room broadcast
-  'room:event:broadcast': {
+  // room lobby_invite
+  'room:event:lobby_invite': {
     roomNumber: number
     roomId: string
     password: string
     sender: Player
-    expAt: number
+    expiresAt: number
     timestamp: number
   }
 
@@ -65,46 +65,46 @@ type Events = {
   // game base
   'game:event:settlement': {
     scores: Record<string, number>
-    item_counts: Record<string, ItemCounts>
-    gift_history: GiftRecord[]
-    seconds: number
+    itemCounts: Record<string, ItemCounts>
+    itemUses: ItemUse[]
+    displaySeconds: number
   }
   'game:event:state': {
-    game_phase: GamePhase
-    round_phase: RoundPhase
-    round_index: number
-    total_rounds: number
-    drawer: string | null
-    remaining_seconds: number
-    bingo_players: string[]
+    gamePhase: GamePhase
+    turnPhase: TurnPhase
+    turnIndex: number
+    totalTurns: number
+    drawerId: string | null
+    remainingSeconds: number
+    bingoPlayerIds: string[]
     scores: Record<string, number>
-    item_counts: Record<string, ItemCounts>
+    itemCounts: Record<string, ItemCounts>
   }
   'game:event:notice': {
     message: string
   }
   // game round
-  'game:event:round:prepare': {
-    round_index: number
-    drawer: string
+  'game:event:turn:prepare': {
+    turnIndex: number
+    drawerId: string
     drawerPlayer: Player
-    seconds: number
+    durationSeconds: number
   }
   'game:event:drawing:start': {
-    drawer: string
+    drawerId: string
     drawerPlayer: Player
-    seconds: number
+    durationSeconds: number
   }
   'game:event:interaction:start': {
     drawerPlayer: Player
     bingoPlayers: Player[]
     answer?: string
-    bingo_players: string[]
-    seconds: number
+    bingoPlayerIds: string[]
+    durationSeconds: number
     reason: InteractionReason
   }
-  'game:event:round:end': {
-    round: number
+  'game:event:turn:end': {
+    turnIndex: number
     scores: Record<string, number>
   }
   // game 互动
@@ -112,24 +112,24 @@ type Events = {
     word: string
     category: string
   }
-  'game:event:prompt': {
-    content: string
-    index: number
+  'game:event:hint': {
+    hintText: string
+    hintIndex: number
   }
   'game:event:guess:bingo': {
     /** 猜中者玩家 ID */
     guesserId: string
     /** 猜中者（前端富化） */
     guesser: Player
-    score_delta: ScoreDelta
-    bingo_players: string[]
+    scoreChange: ScoreChange
+    bingoPlayerIds: string[]
     scores: Record<string, number>
   }
   'game:event:timer:update': {
-    seconds: number
-    reason: string
+    remainingSeconds: number
+    cause: TimerChangeCause
   }
-  'game:event:interaction:gift': {
+  'game:event:interaction:item': {
     /** 送道具者玩家 ID */
     senderId: string
     /** 送道具者（前端富化） */
@@ -138,7 +138,7 @@ type Events = {
     targetId: string
     /** 接收者（前端富化，画手可能已离场） */
     target: Player | undefined
-    item_type: ItemType
+    itemType: ItemType
     count: number
   }
   'game:event:sketchpad:draw': unknown
@@ -159,7 +159,7 @@ type EventHandler<K extends EventKeys> = (payload: Events[K]) => void
  * @param handler - 事件处理函数，payload 类型自动推导
  *
  * @example
- * useEventBus('game:event:round:prepare', ({ seconds, drawerPlayer }) => {
+ * useEventBus('game:event:turn:prepare', ({ durationSeconds, drawerPlayer }) => {
  *   // 秒级类型安全，无需手动 on/off
  * })
  */

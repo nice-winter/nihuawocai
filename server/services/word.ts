@@ -14,7 +14,7 @@ import { createLogger } from '~~/server/utils/logger'
 
 export interface WordItem {
   word: string
-  prompts: string[]
+  hints: string[]
 }
 
 /**
@@ -68,25 +68,25 @@ export const useWordManager = () => {
       logger.log('词库为空，初始化默认词库...')
 
       const defaultWords: WordItem[] = [
-        { word: '苹果', prompts: ['水果', '红色', '乔布斯'] },
-        { word: '奥特曼', prompts: ['打怪兽', '光', 'M78星云'] },
-        { word: '程序员', prompts: ['写代码', '秃头', '格子衫'] },
-        { word: '爆浆蟑螂', prompts: ['美食', '特别好吃', '咬开会爆浆'] },
-        { word: '奶龙', prompts: ['卡通角色', '黄颜色的', '像鼻涕泡一样'] },
-        { word: '叮咚鸡', prompts: ['卡通角色', '白颜色的', '设定是一种鸡'] },
-        { word: '哪吒', prompts: ['卡通角色', '穿红背心', '曾经大闹东海'] },
-        { word: '玉桂狗', prompts: ['卡通角色', '是一只狗', '有两个大耳朵'] },
-        { word: '曼波', prompts: ['卡通角色', '傻不拉几', '睿智的眼神'] },
-        { word: '电棍', prompts: ['知名人物', '前LPL职业选手', '母亲没了'] },
-        { word: '梦泪', prompts: ['知名人物', 'KPL职业选手', '猫雷'] },
-        { word: '东北雨姐', prompts: ['知名人物', '穿大花棉袄', '脚很带派'] },
-        { word: '曹万江', prompts: ['知名人物', '歌手', '唱歌好听'] },
-        { word: '吴京', prompts: ['知名人物', '武打演员', '很爱国'] },
-        { word: '毒液', prompts: ['漫威超级英雄', '一坨黑色', '寄生在人身上'] },
-        { word: '永雏塔菲', prompts: ['虚拟主播', '粉毛', '唐氏综合征'] },
-        { word: '丫丫', prompts: ['动物', '黑白相间', '刚从美国回来'] },
-        { word: '圆头耄耋', prompts: ['动物', '生气会哈人', '是一只橘猫'] },
-        { word: '测试词', prompts: ['测试提示1', '测试提示2', '测试提示3'] }
+        { word: '苹果', hints: ['水果', '红色', '乔布斯'] },
+        { word: '奥特曼', hints: ['打怪兽', '光', 'M78星云'] },
+        { word: '程序员', hints: ['写代码', '秃头', '格子衫'] },
+        { word: '爆浆蟑螂', hints: ['美食', '特别好吃', '咬开会爆浆'] },
+        { word: '奶龙', hints: ['卡通角色', '黄颜色的', '像鼻涕泡一样'] },
+        { word: '叮咚鸡', hints: ['卡通角色', '白颜色的', '设定是一种鸡'] },
+        { word: '哪吒', hints: ['卡通角色', '穿红背心', '曾经大闹东海'] },
+        { word: '玉桂狗', hints: ['卡通角色', '是一只狗', '有两个大耳朵'] },
+        { word: '曼波', hints: ['卡通角色', '傻不拉几', '睿智的眼神'] },
+        { word: '电棍', hints: ['知名人物', '前LPL职业选手', '母亲没了'] },
+        { word: '梦泪', hints: ['知名人物', 'KPL职业选手', '猫雷'] },
+        { word: '东北雨姐', hints: ['知名人物', '穿大花棉袄', '脚很带派'] },
+        { word: '曹万江', hints: ['知名人物', '歌手', '唱歌好听'] },
+        { word: '吴京', hints: ['知名人物', '武打演员', '很爱国'] },
+        { word: '毒液', hints: ['漫威超级英雄', '一坨黑色', '寄生在人身上'] },
+        { word: '永雏塔菲', hints: ['虚拟主播', '粉毛', '唐氏综合征'] },
+        { word: '丫丫', hints: ['动物', '黑白相间', '刚从美国回来'] },
+        { word: '圆头耄耋', hints: ['动物', '生气会哈人', '是一只橘猫'] },
+        { word: '测试词', hints: ['测试提示1', '测试提示2', '测试提示3'] }
       ]
 
       const defaultLib: WordLibrary = {
@@ -192,28 +192,28 @@ export const useWordManager = () => {
 
   /**
    * 2. 随机选取词汇
-   * @param libIds 指定从哪些词库中随机 (如果不传，则从所有词库中随机)
+   * @param wordLibIds 指定从哪些词库中随机 (如果不传，则从所有词库中随机)
    */
-  const pickWord = async (libIds?: string[]): Promise<WordItem | null> => {
-    let targetLibIds = libIds
+  const pickWord = async (wordLibIds?: string[]): Promise<WordItem | null> => {
+    let targetWordLibIds = wordLibIds
 
     // 如果未指定，则获取所有 ID
-    if (!targetLibIds || targetLibIds.length === 0) {
-      targetLibIds = await getLibraryIndex()
+    if (!targetWordLibIds || targetWordLibIds.length === 0) {
+      targetWordLibIds = await getLibraryIndex()
     }
 
-    if (targetLibIds.length === 0) return null
+    if (targetWordLibIds.length === 0) return null
 
     // 策略：先随机选一个库，再从库里随机选一个词
     // (这种策略比起“把所有词合并再随机”性能更好，不需要加载所有数据)
-    const randomLibId = targetLibIds[Math.floor(Math.random() * targetLibIds.length)]!
+    const randomLibId = targetWordLibIds[Math.floor(Math.random() * targetWordLibIds.length)]!
     const lib = await getLibraryById(randomLibId)
 
     if (!lib || lib.words.length === 0) {
       // 如果运气不好选到了空库，递归重试（或者简单返回 null）
       // 为防止死循环，实际业务建议做更复杂的池化处理，这里简单处理：
-      if (targetLibIds.length > 1) {
-        const remainingIds = targetLibIds.filter((id) => id !== randomLibId)
+      if (targetWordLibIds.length > 1) {
+        const remainingIds = targetWordLibIds.filter((id) => id !== randomLibId)
         return pickWord(remainingIds)
       }
       return null

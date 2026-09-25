@@ -1,6 +1,6 @@
 export interface Gender {
   label: string
-  value: number
+  code: number
   icon: string
   color: string
 }

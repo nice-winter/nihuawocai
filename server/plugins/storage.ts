@@ -3,6 +3,7 @@ import dbDriver from 'unstorage/drivers/db0'
 import fsDriver from 'unstorage/drivers/fs'
 import sqlite from 'db0/connectors/node-sqlite'
 import { createLogger } from '~~/server/utils/logger'
+import { runDataMigration } from '~~/server/utils/data-migration'
 
 const logger = createLogger('Storage')
 
@@ -40,6 +41,9 @@ export default defineNitroPlugin(() => {
   tables.forEach((t) => {
     storage.mount(t, pickDriver(t))
   })
+
+  // 存量数据键名迁移（须在表挂载之后执行；插件同步启动，迁移异步完成）
+  runDataMigration().catch((err) => logger.error('存量数据迁移失败', err))
 
   const driverName = import.meta.dev ? 'fs' : 'sqlite'
   const tree = tables

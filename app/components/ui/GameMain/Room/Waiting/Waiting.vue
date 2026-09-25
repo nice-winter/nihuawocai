@@ -1,11 +1,11 @@
 <template>
   <div class="relative flex h-[21.05%] gap-tight px-tight border-b-4 border-surface-450">
     <div class="flex w-36 flex-col justify-center gap-tight">
-      <UiGameMainRoomNumber :room-number="roomInfo.roomNumber || 0" />
+      <UiGameMainRoomNumber :room-number="room.roomNumber || 0" />
 
       <span class="relative inline-flex items-center gap-1 pl-1 align-text-bottom">
         <UCheckbox
-          v-model="lockedLocal"
+          v-model="hasPasswordLocal"
           size="sm"
           icon="ph:check-bold"
           class="game-checkbox"
@@ -53,16 +53,16 @@
       <div class="grid grid-cols-2 grid-rows-2 gap-tight">
         <UiButton
           color="green"
-          :disabled="Boolean(broadcastRecord.get(roomInfo.id))"
-          @click="broadcast"
+          :disabled="Boolean(lobbyInviteRecord.get(room.id))"
+          @click="sendLobbyInvite"
         >
-          {{ !broadcastRecord.get(roomInfo.id) ? '广播邀请' : '已广播' }}
+          {{ !lobbyInviteRecord.get(room.id) ? '广播邀请' : '已广播' }}
         </UiButton>
 
         <UiButton color="blue"> 邀请好友 </UiButton>
 
         <div>
-          <UiButton v-if="isCurrentRoomOwner && !roomInfo.locked && canStart"> 再等一会 </UiButton>
+          <UiButton v-if="isCurrentRoomOwner && !room.hasPassword && canStart"> 再等一会 </UiButton>
         </div>
 
         <div>
@@ -75,7 +75,7 @@
 
     <div class="flex flex-1 flex-col items-center justify-center">
       <UiGameMainRoomTimer
-        v-if="!roomInfo.locked && canStart"
+        v-if="!room.hasPassword && canStart"
         ref="Timer"
         v-model:seconds="prepareStartSeconds"
       />
@@ -90,21 +90,21 @@
       :data-seat-number="i"
     >
       <!-- <img
-        v-if="roomInfo?.players![i - 1]?.id === '28332824'"
+        v-if="room?.players![i - 1]?.id === '28332824'"
         src="~/assets/cxy.png"
         class="absolute inset-0 z-1 w-56 origin-center pointer-events-none"
         style="transform: scale(1.14); top: 14px; left: -2px"
       >
 
       <img
-        v-if="roomInfo?.players![i - 1]?.id === '76561198413318292'"
+        v-if="room?.players![i - 1]?.id === '76561198413318292'"
         src="~/assets/ygg1.png"
         class="absolute inset-0 z-1 w-56 origin-center pointer-events-none"
         style="transform: scale(1.2); top: 29px; left: 9px"
       > -->
 
       <span
-        v-if="roomInfo?.players![i - 1]?.id === roomInfo?.ownerId"
+        v-if="room?.players![i - 1]?.id === room?.ownerId"
         class="absolute left-10 top-0 flex"
       >
         <UIcon name="ph:arrow-bend-left-down-bold" />
@@ -113,19 +113,19 @@
 
       <UiAvatar
         :id="i"
-        :open="roomInfo?.seats![i - 1]"
-        :player="roomInfo?.players![i - 1] || undefined"
+        :is-open="room?.seatOpenFlags![i - 1]"
+        :player="room?.players![i - 1] || undefined"
         :mode="seatMode"
         class="size-28.5"
-        :disabled="(!isCurrentRoomOwner && !isOnlooker) || (isOnlooker && !roomInfo?.seats![i - 1])"
+        :disabled="(!isCurrentRoomOwner && !isOnlooker) || (isOnlooker && !room?.seatOpenFlags![i - 1])"
         :verified-icon="{ show: true, size: 16 }"
         :placeholder="isOnlooker ? '点击坐下' : undefined"
-        @switch="onSeatSwitch"
+        @switch="onSeatOpenChange"
         @sit="onSeatSit"
       />
 
       <p class="w-full truncate text-center text-sm text-shadow-light">
-        {{ roomInfo?.players![i - 1]?.nickname || `ㅤ` }}
+        {{ room?.players![i - 1]?.nickname || `ㅤ` }}
       </p>
     </div>
 
@@ -140,13 +140,13 @@
 </template>
 
 <script setup lang="ts">
-const { roomInfo } = defineProps<{ roomInfo: Room }>()
+const { room } = defineProps<{ room: Room }>()
 const playerStore = usePlayerStore()
 const { isSelf } = playerStore
 const { loggedInPlayer, isOnlooker } = storeToRefs(playerStore)
 const roomStore = useRoomStore()
-const { sit, switchSeat, changeRoomPassword, broadcast, start } = roomStore
-const { isCurrentRoomOwner, broadcastRecord } = storeToRefs(roomStore)
+const { sit, setSeatOpen, changeRoomPassword, sendLobbyInvite, start } = roomStore
+const { isCurrentRoomOwner, lobbyInviteRecord } = storeToRefs(roomStore)
 
 const passwordUInputRef = useTemplateRef('passwordUInputRef')
 const RoomEventsRef = useTemplateRef('RoomEvents')
@@ -155,7 +155,7 @@ const TimerRef = useTemplateRef('Timer')
 const prepareStartSeconds = ref(13)
 
 // 是否可开始
-const canStart = computed(() => roomInfo.players.filter((p) => p).length > 1)
+const canStart = computed(() => room.players.filter((p) => p).length > 1)
 // 座位模式
 const seatMode = computed(() => {
   if (isCurrentRoomOwner.value) {
@@ -168,23 +168,23 @@ const seatMode = computed(() => {
 })
 
 // 本地状态：由 prop 同步（房主可以修改）
-const lockedLocal = ref(roomInfo.locked)
+const hasPasswordLocal = ref(room.hasPassword)
 const editing = ref(false)
 
-// pendingPassword：编辑时的临时值；originalPassword：来自 roomInfo 的当前密码（只读）
-const pendingPassword = ref(roomInfo.locked ? roomInfo.options.password || '' : '')
-const originalPassword = computed(() => (roomInfo.locked ? roomInfo.options.password || '' : ''))
+// pendingPassword：编辑时的临时值；originalPassword：来自 room 的当前密码（只读）
+const pendingPassword = ref(room.hasPassword ? room.joinOptions.password || '' : '')
+const originalPassword = computed(() => (room.hasPassword ? room.joinOptions.password || '' : ''))
 
 const displayHasPassword = computed(
   () =>
-    lockedLocal.value &&
+    hasPasswordLocal.value &&
     (isCurrentRoomOwner.value
       ? pendingPassword.value !== '' || originalPassword.value !== ''
       : originalPassword.value !== '')
 )
 
 const displayText = computed(() => {
-  if (!lockedLocal.value) return '密码'
+  if (!hasPasswordLocal.value) return '密码'
   // 房主看到自己设置的 pending（编辑中）或真实密码；别人只看到真实密码
   if (isCurrentRoomOwner.value) {
     const pwd = editing.value
@@ -196,18 +196,18 @@ const displayText = computed(() => {
   }
 })
 
-// 同步外部变更（当 roomInfo 改变时，非房主应跟随）
+// 同步外部变更（当 room 改变时，非房主应跟随）
 watch(
-  () => roomInfo.locked,
+  () => room.hasPassword,
   (val) => {
     if (!isCurrentRoomOwner.value) {
-      lockedLocal.value = val
+      hasPasswordLocal.value = val
       pendingPassword.value = originalPassword.value
     }
   }
 )
 watch(
-  () => roomInfo.options?.password,
+  () => room.joinOptions?.password,
   (val) => {
     if (!isCurrentRoomOwner.value) {
       pendingPassword.value = originalPassword.value
@@ -229,7 +229,7 @@ const enterEditMode = () => {
 
 // 当锁状态由房主改变时的副作用：若开锁且没有密码，生成随机并进入编辑；若取消则提交空密码
 watch(
-  () => lockedLocal.value,
+  () => hasPasswordLocal.value,
   (checked) => {
     if (!isCurrentRoomOwner.value) return
 
@@ -249,8 +249,8 @@ watch(
 // 开始编辑（点击密码文字）
 const startEdit = () => {
   if (!isCurrentRoomOwner.value) return
-  if (!lockedLocal.value) {
-    lockedLocal.value = true // 触发 watcher -> enterEditMode
+  if (!hasPasswordLocal.value) {
+    hasPasswordLocal.value = true // 触发 watcher -> enterEditMode
   } else {
     enterEditMode()
   }
@@ -264,11 +264,11 @@ const onCommit = () => {
   const val = (pendingPassword.value || '').trim()
   if (!val) {
     // 空密码 => 取消上锁，由 watcher 统一调用 changeRoomPassword
-    lockedLocal.value = false
-  } else if (val !== roomInfo.options.password) {
+    hasPasswordLocal.value = false
+  } else if (val !== room.joinOptions.password) {
     // 有值且与原密码不同 => 提交
     changeRoomPassword(val)
-    lockedLocal.value = true
+    hasPasswordLocal.value = true
   }
 }
 
@@ -278,17 +278,17 @@ const onCancel = () => {
   // 恢复为外部密码（如果存在）或清空（如果原来无密码）
   pendingPassword.value = originalPassword.value || ''
   if (!originalPassword.value) {
-    lockedLocal.value = false
+    hasPasswordLocal.value = false
   }
 }
 
 /**
  * 切换座位开关
- * @param open
+ * @param isOpen
  * @param seat
  */
-const onSeatSwitch = (open?: boolean, seat?: number | string) => {
-  switchSeat(Number(seat) - 1, Boolean(open))
+const onSeatOpenChange = (isOpen?: boolean, seat?: number | string) => {
+  setSeatOpen(Number(seat) - 1, Boolean(isOpen))
 }
 
 /**
@@ -299,8 +299,8 @@ const onSeatSit = (seat?: number | string) => {
   sit(Number(seat) - 1)
 }
 
-useEventBus('current:room:event:password_change', ({ locked, password }) => {
-  if (locked) {
+useEventBus('current:room:event:password_change', ({ hasPassword, password }) => {
+  if (hasPassword) {
     RoomEventsRef.value?.addMessage({
       type: 'text',
       msg: `房主将房间密码设置为：${password}`
