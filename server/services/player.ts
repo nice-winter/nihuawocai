@@ -6,15 +6,14 @@
 import { colors } from 'consola/utils'
 import mitt from 'mitt'
 import { isOpen, reply, safeSend, type WsPeer } from '~~/server/ws/utils'
-import { wsEventBus } from '~~/server/ws'
+import { wsEventBus } from '~~/server/ws/core/events'
 import {
   roomTopic,
   subscribePeerToChannel,
   unsubscribePeerFromChannel
 } from '~~/server/ws/core/channel'
 import { sendToChannel } from '~~/server/ws/core/sender'
-import { getUserData, updateUserData, updateUserLastLoginAt } from './user'
-import { getRoom } from './room'
+import { updateUserLastLoginAt } from './user'
 
 import { createLogger } from '~~/server/utils/logger'
 
@@ -152,12 +151,22 @@ const addPlayer = async (user: UserData & { peer: WsPeer }) => {
 /**
  * 更新玩家状态
  * @param playerId 玩家 ID
- * @param roomId 所在房间 ID，未提供则为在大厅
- * @param isOnlooker 是否旁观
+ * @param opts 房间上下文（由调用方传入，玩家服务不反查房间）
+ * @param opts.roomId 所在房间 ID，未提供则为在大厅
+ * @param opts.roomNumber 所在房间号，进房时由房间侧传入
+ * @param opts.isOnlooker 是否旁观
  */
-const updatePlayerState = (playerId: string, roomId?: string, isOnlooker?: boolean) => {
+const updatePlayerState = (
+  playerId: string,
+  opts?: {
+    roomId?: string
+    roomNumber?: number
+    isOnlooker?: boolean
+  }
+) => {
   const player = players.get(playerId)
   if (player) {
+    const { roomId, roomNumber, isOnlooker } = opts ?? {}
     const prevRoomId = player.state.roomId
     // 换房/离房时先退订旧房间频道（同房角色切换 prevRoomId === roomId 时不动）
     if (prevRoomId && prevRoomId !== roomId) {
@@ -179,9 +188,8 @@ const updatePlayerState = (playerId: string, roomId?: string, isOnlooker?: boole
         }
       })
     } else {
-      const room = getRoom(roomId)
       player.state.presence = 'inRoom'
-      player.state.roomNumber = room?.roomNumber ?? null
+      player.state.roomNumber = roomNumber ?? null
       player.state.roomId = roomId
       player.state.isOnlooker = isOnlooker ?? false
       // 进入新房间时订阅房间频道（同房角色切换时 Set 幂等，重复订阅无副作用）
@@ -233,19 +241,6 @@ const removePlayer = (playerId: string) => {
 
     logger.debug('玩家离线:', `${colors.cyan(player?.nickname)}@${player.id}`)
   }
-}
-
-/**
- * 更新玩家统计数据
- * @TODO 写在这里的原因是，考虑将来统计数据并不存在 UserData Service 中，而是独立出一个 UserStats Service
- * @param playerId 玩家 ID
- * @param stats 统计增量
- */
-const updatePlayerStats = async (playerId: string, stats: Partial<UserStats>) => {
-  const userData = await getUserData(playerId)
-  const oldStats = userData.stats
-  const newStats = defuSum(stats, oldStats)
-  await updateUserData(playerId, { stats: newStats })
 }
 
 // ------------------------ Sender ------------------------
@@ -312,7 +307,6 @@ export {
   checkPlayerIsInRoom,
   checkPlayerIsInLobby,
   updatePlayerState,
-  updatePlayerStats,
   sendToPlayer,
   sendToAllPlayer,
   sendToRoom,

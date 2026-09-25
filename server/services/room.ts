@@ -67,6 +67,10 @@ type RoomEventBus = {
     roomId: string
     room: Room
   }
+  /** game → room：游戏流程已结束，请重置房间游戏状态 */
+  'game:ended': {
+    roomId: string
+  }
 }
 
 const logger = createLogger('RoomService')
@@ -93,22 +97,16 @@ const inviteRecord = new Map<string, { expiresAt: number }>()
 const lobbyBroadcastRecord = new Map<string, { expiresAt: number }>()
 
 // ---------------------- Player Events ----------------------
-// 延迟初始化事件监听，避免循环依赖
-const initPlayerEvents = () => {
-  // playerEventBus.on('player:connect', ({ player }) => {
-  //   // @TODO: 暂时没用上
-  // })
+// playerEventBus.on('player:connect', ({ player }) => {
+//   // @TODO: 暂时没用上
+// })
 
-  // 玩家离线时，从他所在的房间中移除他
-  playerEventBus.on('player:beforeDisconnect', ({ player }) => {
-    if (checkPlayerIsInRoom(player.id)) {
-      removeRoomPlayer(player.state.roomId!, player.id)
-    }
-  })
-}
-
-// 延迟执行，确保所有模块都已加载
-setTimeout(initPlayerEvents, 0)
+// 玩家离线时，从他所在的房间中移除他
+playerEventBus.on('player:beforeDisconnect', ({ player }) => {
+  if (checkPlayerIsInRoom(player.id)) {
+    removeRoomPlayer(player.state.roomId!, player.id)
+  }
+})
 
 // ------------------------ Actions ------------------------
 /**
@@ -302,7 +300,7 @@ const joinRoom = async (
         room.onlookers.push(user) // 加入旁观者列表
         // 更新房间和玩家状态
         updateRoom(roomId, room)
-        updatePlayerState(user.id, roomId, true)
+        updatePlayerState(user.id, { roomId, roomNumber: room.roomNumber, isOnlooker: true })
         // 广播旁观者进房事件
         sendToAllPlayer({
           type: 'room:event:onlooker_join',
@@ -334,7 +332,7 @@ const joinRoom = async (
           room.players[seat] = user // 坐到当前坑位
           // 更新房间和玩家状态
           updateRoom(roomId, room)
-          updatePlayerState(user.id, roomId)
+          updatePlayerState(user.id, { roomId, roomNumber: room.roomNumber })
           // 广播玩家进房事件
           sendToAllPlayer({
             type: 'room:event:player_join',
@@ -414,7 +412,7 @@ const sit = async (playerId: string, seat: number) => {
       // 设置 players（座位）为此玩家
       room.players[seat] = user
       // 更新玩家和房间状态
-      updatePlayerState(playerId, roomId, false)
+      updatePlayerState(playerId, { roomId, roomNumber: room.roomNumber, isOnlooker: false })
       updateRoom(roomId, room)
       // @TODO: 广播旁观者坐下事件
       sendToAllPlayer({
@@ -704,6 +702,12 @@ const end = (roomId: string) => {
   }
 }
 
+// ---------------------- Game Events ----------------------
+// 游戏流程结束时重置房间游戏状态（game 侧只发信号，不直接调用房间函数）
+roomEventBus.on('game:ended', ({ roomId }) => {
+  end(roomId)
+})
+
 /**
  * 离开房间（玩家和旁观玩家通用），主动调用
  * @param playerId 玩家 ID
@@ -893,7 +897,6 @@ export {
   sendLobbyBroadcast,
   invite,
   start,
-  end,
   leaveRoom,
   removeRoomPlayer,
   quickMatch
