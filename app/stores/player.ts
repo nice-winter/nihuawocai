@@ -24,7 +24,7 @@ export const usePlayerStore = defineStore('player', () => {
     const event = msg as ServerEvent
     switch (event.type) {
       case 'player:event:logged_in':
-        loggedInPlayer.value = event.player_info
+        loggedInPlayer.value = event.player
         break
       case 'player:event:state_update':
         if (loggedInPlayer.value && event.id === loggedInPlayer.value.id) {
@@ -45,12 +45,12 @@ export const usePlayerStore = defineStore('player', () => {
   wsEventBus.on('ws:error', clear)
 
   const getLobbyPlayers = async () => {
-    const { lobby_players } = (await send({
+    const res = (await send({
       type: 'player:lobby_players_pull'
     })) as ClientResponse<'player:lobby_players_pull'>
 
     lobbyPlayers.clear()
-    lobby_players.forEach((p) => lobbyPlayers.set(p.id, p))
+    res.lobbyPlayers.forEach((p) => lobbyPlayers.set(p.id, p))
   }
 
   const getPlayerProfile = async (playerId: string) => {

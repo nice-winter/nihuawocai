@@ -154,8 +154,8 @@ useEventBus('sketchpad:clear', () => sketchpadRef.value?.clear())
 useEventBus('chat:event:say', ({ message, sender }) => {
   show(sender.id, message)
 })
-useEventBus('game:event:turn:prepare', async ({ seconds }) => {
-  await countdownModal.open({ seconds })
+useEventBus('game:event:turn:prepare', async ({ durationSeconds }) => {
+  await countdownModal.open({ seconds: durationSeconds })
 })
 useEventBus('game:event:drawing:start', () => {
   timerRef.value?.play()
@@ -170,7 +170,7 @@ useEventBus('game:event:guess:bingo', ({ score_delta }) => {
 })
 useEventBus(
   'game:event:interaction:start',
-  async ({ answer, seconds, drawerPlayer, bingoPlayers, reason }) => {
+  async ({ answer, durationSeconds, drawerPlayer, bingoPlayers, reason }) => {
     let text = ''
     switch (reason) {
       case 'give_up':
@@ -206,7 +206,7 @@ useEventBus(
       answer,
       reason: text,
       showThrowItem: !gameStore.isMyTurn,
-      seconds: seconds + 1
+      seconds: durationSeconds + 1
     })
   }
 )
@@ -222,7 +222,7 @@ useEventBus('game:event:interaction:item', async ({ itemType }) => {
       break
   }
 })
-useEventBus('game:event:settlement', async ({ scores, item_counts, seconds }) => {
+useEventBus('game:event:settlement', async ({ scores, item_counts, displaySeconds }) => {
   timerRef.value?.pause()
   const ranks = _players.value.map((p) => {
     return {
@@ -235,7 +235,7 @@ useEventBus('game:event:settlement', async ({ scores, item_counts, seconds }) =>
   })
   await rankModal.open({
     ranks,
-    seconds
+    seconds: displaySeconds
   })
 })
 </script>

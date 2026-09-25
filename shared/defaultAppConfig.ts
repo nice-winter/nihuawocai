@@ -157,17 +157,17 @@ export const defaultAppConfig: AppConfig = {
       ],
       feature: {
         kick: true,
-        broadcast: true,
+        lobbyInvite: true,
         invite: {
           idle: true,
           sameCity: false
         }
       },
-      maxBroadcastCount: 0,
+      maxLobbyInviteCount: 0,
       perMinuteChatCount: 0,
       passwordMaxLength: 4,
       time: {
-        broadcastIntervalTimeSecond: 300,
+        lobbyInviteIntervalTimeSecond: 300,
         chatIntervalTimeSecond: 1,
         preStartTimeSecond: 30,
         maxPreStartTimeSecond: 60,

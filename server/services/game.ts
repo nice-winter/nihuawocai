@@ -248,7 +248,7 @@ const enterSettlementPhase = (roomId: string, st: GameState) => {
         scores: finalScores,
         item_counts: finalItemCounts,
         itemUses: st.itemUses, // 包含道具记录
-        seconds: waitSeconds
+        displaySeconds: waitSeconds
       }
     },
     roomId
@@ -323,7 +323,7 @@ const startRound = async (roomId: string) => {
       payload: {
         turnIndex: st.currentTurnIndex + 1,
         drawer: st.drawer,
-        seconds: prepareSeconds
+        durationSeconds: prepareSeconds
       }
     },
     roomId
@@ -388,7 +388,7 @@ const enterDrawingPhase = (roomId: string, st: GameState) => {
   sendToRoom(
     {
       type: 'game:event:drawing:start',
-      payload: { drawer: st.drawer, seconds: drawingSeconds }
+      payload: { drawer: st.drawer, durationSeconds: drawingSeconds }
     },
     roomId
   )
@@ -457,7 +457,7 @@ const enterInteractionPhase = (
       payload: {
         answer: st.currentWord?.word,
         bingo_players: st.bingoPlayers,
-        seconds: waitSeconds,
+        durationSeconds: waitSeconds,
         reason
       }
     },
@@ -622,7 +622,7 @@ const handleGuess = (roomId: string, guesserId: string, guessContent: string): b
           {
             type: 'game:event:timer:update',
             payload: {
-              seconds: st.gameRules.cycle.time.bingoShortenToSeconds,
+              remainingSeconds: st.gameRules.cycle.time.bingoShortenToSeconds,
               reason: 'bingo_shorten'
             }
           },

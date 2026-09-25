@@ -106,7 +106,7 @@ export type ClientMessage<T extends keyof ClientEventMap> = WebsocketMessage<{ t
  * @example
  * // 拉取房间列表
  * const res = await send({ type: 'room:list_pull' }) as ClientResponse<'room:list_pull'>
- * res.room_list // ✅ RoomSummary[]
+ * res.rooms // ✅ RoomSummary[]
  *
  * @example
  * // 获取玩家档案

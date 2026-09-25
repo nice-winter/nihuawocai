@@ -18,7 +18,7 @@ export default defineWsHandlers({
   },
   'player:lobby_players_pull': async ({ msg, user }) => {
     return {
-      lobby_players: getLobbyPlayers()
+      lobbyPlayers: getLobbyPlayers()
     }
   }
 })

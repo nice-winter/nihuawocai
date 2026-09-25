@@ -10,7 +10,7 @@ export interface SettlementData {
   scores: Record<string, number>
   itemCounts: Record<string, ItemCounts>
   itemUses: ItemUse[]
-  seconds: number
+  displaySeconds: number
 }
 
 export interface GameState {
@@ -105,9 +105,9 @@ export const useGameStore = defineStore('game', () => {
           scores: payload.scores,
           itemCounts: payload.item_counts,
           itemUses: payload.itemUses,
-          seconds: payload.seconds
+          displaySeconds: payload.displaySeconds
         }
-        state.timeLeft = payload.seconds
+        state.timeLeft = payload.displaySeconds
 
         // !!! ⚡ UI 广播点 ⚡ !!!
         // 打开 <SettlementModal />
@@ -160,7 +160,7 @@ export const useGameStore = defineStore('game', () => {
         state.turnPhase = 'turn_prepare'
         state.currentTurn = payload.turnIndex
         state.drawer = payload.drawer
-        state.timeLeft = payload.seconds
+        state.timeLeft = payload.durationSeconds
 
         // !!! ⚡ UI 广播点 ⚡ !!!
         // 显示 "第X轮开始" 过场动画
@@ -175,7 +175,7 @@ export const useGameStore = defineStore('game', () => {
         const { payload } = msg
 
         state.turnPhase = 'drawing'
-        state.timeLeft = payload.seconds
+        state.timeLeft = payload.durationSeconds
 
         // !!! ⚡ UI 广播点 ⚡ !!!
         // 检查 isMyTurn，切换 Canvas 锁定/解锁状态
@@ -191,7 +191,7 @@ export const useGameStore = defineStore('game', () => {
         const { payload } = msg
 
         state.turnPhase = 'interaction'
-        state.timeLeft = payload.seconds
+        state.timeLeft = payload.durationSeconds
         if (payload.answer) {
           state.currentWord = payload.answer
         }
@@ -261,7 +261,7 @@ export const useGameStore = defineStore('game', () => {
       case 'game:event:timer:update': {
         const { payload } = msg
 
-        state.timeLeft = payload.seconds
+        state.timeLeft = payload.remainingSeconds
 
         // !!! ⚡ UI 广播点 ⚡ !!!
         // 提示 "时间缩短"

@@ -48,7 +48,7 @@ export interface AppConfig {
         /** 是否启用踢人功能 @default true */
         kick: boolean
         /** 是否启用广播功能 @default true */
-        broadcast: boolean
+        lobbyInvite: boolean
         /** 邀请功能设置 */
         invite: {
           /** 是否允许邀请空闲玩家 @default true */
@@ -58,7 +58,7 @@ export interface AppConfig {
         }
       }
       /** 每轮最大广播次数，0 为不限制 @default 0 */
-      maxBroadcastCount: number
+      maxLobbyInviteCount: number
       /** 每分钟聊天消息限制条数，0 为不限制 @default 0 */
       perMinuteChatCount: number
       /** 房间密码最大长度 @default 4 */
@@ -66,7 +66,7 @@ export interface AppConfig {
       /** 时间相关设置 */
       time: {
         /** 广播消息发送间隔时间（秒） @default 300 */
-        broadcastIntervalTimeSecond: number
+        lobbyInviteIntervalTimeSecond: number
         /** 聊天消息发送间隔时间（秒） @default 1 */
         chatIntervalTimeSecond: number
         /** 游戏开始前的准备等待时间（秒） @default 30 */

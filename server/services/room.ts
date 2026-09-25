@@ -90,7 +90,7 @@ const inviteRecord = new Map<string, { expiresAt: number }>()
 /**
  * 房间广播记录，键为 room.id
  */
-const broadcastRecord = new Map<string, { expiresAt: number }>()
+const lobbyInviteRecord = new Map<string, { expiresAt: number }>()
 
 // ---------------------- Player Events ----------------------
 // 延迟初始化事件监听，避免循环依赖
@@ -528,7 +528,7 @@ const changePassword = (playerId: string, password: string) => {
  * 发送广播
  * @param playerId 发起玩家 ID
  */
-const broadcast = async (playerId: string) => {
+const sendLobbyInvite = async (playerId: string) => {
   const player = getPlayer(playerId)
   if (!player) throw new Error('用户不存在')
   if (!checkPlayerIsInRoom(playerId)) throw new Error('你必须在房间中才能发送房间广播')
@@ -538,22 +538,22 @@ const broadcast = async (playerId: string) => {
   if (!room) throw new Error('房间不存在')
 
   const appConfig = await getAppConfig()
-  const intervalMs = appConfig.game.room.time.broadcastIntervalTimeSecond * 1000
+  const intervalMs = appConfig.game.room.time.lobbyInviteIntervalTimeSecond * 1000
 
   const now = Date.now()
   const expiresAt = now + intervalMs
 
   // 防止重复广播（按房间冷却）
-  const existing = broadcastRecord.get(roomId)
+  const existing = lobbyInviteRecord.get(roomId)
   if (existing && existing.expiresAt > now) {
     const remainSeconds = Math.ceil((existing.expiresAt - now) / 1000)
     throw new Error(`广播过于频繁，请 ${remainSeconds} 秒后再试`)
   }
 
   // 记录冷却
-  broadcastRecord.set(roomId, { expiresAt })
+  lobbyInviteRecord.set(roomId, { expiresAt })
   setTimeout(() => {
-    broadcastRecord.delete(roomId)
+    lobbyInviteRecord.delete(roomId)
   }, intervalMs)
 
   // 构造消息（expiresAt 毫秒时间戳）
@@ -568,7 +568,7 @@ const broadcast = async (playerId: string) => {
 
   // 广播
   // @TODO: 这里可以只发送给大厅与房间内（排除游戏中的房间）
-  sendToAllPlayer({ type: 'room:event:broadcast', ...msg })
+  sendToAllPlayer({ type: 'room:event:lobby_invite', ...msg })
 
   return msg
 }
@@ -882,7 +882,7 @@ export {
   sit,
   setSeatOpen,
   changePassword,
-  broadcast,
+  sendLobbyInvite,
   invite,
   start,
   end,

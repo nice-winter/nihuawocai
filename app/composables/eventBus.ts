@@ -45,8 +45,8 @@ type Events = {
     password: string
   }
 
-  // room broadcast
-  'room:event:broadcast': {
+  // room lobby_invite
+  'room:event:lobby_invite': {
     roomNumber: number
     roomId: string
     password: string
@@ -67,7 +67,7 @@ type Events = {
     scores: Record<string, number>
     item_counts: Record<string, ItemCounts>
     itemUses: ItemUse[]
-    seconds: number
+    displaySeconds: number
   }
   'game:event:state': {
     game_phase: GamePhase
@@ -88,19 +88,19 @@ type Events = {
     turnIndex: number
     drawer: string
     drawerPlayer: Player
-    seconds: number
+    durationSeconds: number
   }
   'game:event:drawing:start': {
     drawer: string
     drawerPlayer: Player
-    seconds: number
+    durationSeconds: number
   }
   'game:event:interaction:start': {
     drawerPlayer: Player
     bingoPlayers: Player[]
     answer?: string
     bingo_players: string[]
-    seconds: number
+    durationSeconds: number
     reason: InteractionReason
   }
   'game:event:turn:end': {
@@ -126,7 +126,7 @@ type Events = {
     scores: Record<string, number>
   }
   'game:event:timer:update': {
-    seconds: number
+    remainingSeconds: number
     reason: string
   }
   'game:event:interaction:item': {
@@ -159,7 +159,7 @@ type EventHandler<K extends EventKeys> = (payload: Events[K]) => void
  * @param handler - 事件处理函数，payload 类型自动推导
  *
  * @example
- * useEventBus('game:event:turn:prepare', ({ seconds, drawerPlayer }) => {
+ * useEventBus('game:event:turn:prepare', ({ durationSeconds, drawerPlayer }) => {
  *   // 秒级类型安全，无需手动 on/off
  * })
  */

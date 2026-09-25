@@ -16,7 +16,7 @@ export const useRoomStore = defineStore('room', () => {
   const showOnlyWaitingRooms = ref(false) // 是否只显示等待中的房间
   const currentRoom = ref<Room | null>(null) // 玩家当前所在的房间
   const inviteRecord = reactive<Map<string, number>>(new Map()) // 邀请记录
-  const broadcastRecord = reactive<Map<string, number>>(new Map()) // 广播记录
+  const lobbyInviteRecord = reactive<Map<string, number>>(new Map()) // 广播记录
 
   // Computed
   /**
@@ -291,8 +291,8 @@ export const useRoomStore = defineStore('room', () => {
         break
 
       // 房间广播相关事件
-      case 'room:event:broadcast':
-        eventBus.emit('room:event:broadcast', {
+      case 'room:event:lobby_invite':
+        eventBus.emit('room:event:lobby_invite', {
           roomNumber: event.roomNumber,
           roomId: event.roomId,
           password: event.password,
@@ -302,10 +302,10 @@ export const useRoomStore = defineStore('room', () => {
         })
         // 记录该房间广播过期时间，广播按钮根据此记录判断是否冷却，防止频繁广播
         // 键用 roomId，避免同号新房误继承旧房冷却
-        broadcastRecord.set(event.roomId, event.expiresAt)
+        lobbyInviteRecord.set(event.roomId, event.expiresAt)
         // 清除过期的房间广播记录
         setTimeout(() => {
-          broadcastRecord.delete(event.roomId)
+          lobbyInviteRecord.delete(event.roomId)
         }, event.expiresAt - Date.now())
         break
     }
@@ -316,12 +316,12 @@ export const useRoomStore = defineStore('room', () => {
    * 拉取房间列表
    */
   const pullRoomList = async () => {
-    const { room_list } = (await send({
+    const res = (await send({
       type: 'room:list_pull'
     })) as ClientResponse<'room:list_pull'>
 
     rooms.clear()
-    room_list.forEach((room) => rooms.set(room.id, room))
+    res.rooms.forEach((room) => rooms.set(room.id, room))
   }
 
   /**
@@ -386,9 +386,9 @@ export const useRoomStore = defineStore('room', () => {
   /**
    * 发送广播
    */
-  const broadcast = async () => {
+  const sendLobbyInvite = async () => {
     await send({
-      type: 'room:broadcast'
+      type: 'room:lobby_invite'
     })
   }
 
@@ -458,7 +458,7 @@ export const useRoomStore = defineStore('room', () => {
     isCurrentRoomOwner,
     isOwner: isCurrentRoomOwner,
     inviteRecord,
-    broadcastRecord,
+    lobbyInviteRecord,
 
     // Computed
     currentPageRooms,
@@ -471,7 +471,7 @@ export const useRoomStore = defineStore('room', () => {
     sit,
     setSeatOpen,
     changeRoomPassword,
-    broadcast,
+    sendLobbyInvite,
     invite,
     start,
     prevPage,

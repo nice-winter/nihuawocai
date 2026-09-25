@@ -28,6 +28,8 @@ const KEY_MIGRATIONS: KeyMigration[] = [
   { table: 'word', parent: 'words.*', from: 'prompts', to: 'hints' },
   // --- app_config ---
   { table: 'app', parent: 'game.room', from: 'passwordMaxLengh', to: 'passwordMaxLength' },
+  { table: 'app', parent: 'game.room', from: 'maxBroadcastCount', to: 'maxLobbyInviteCount' },
+  { table: 'app', parent: 'game.room.time', from: 'broadcastIntervalTimeSecond', to: 'lobbyInviteIntervalTimeSecond' },
   // 轮次词汇 round→turn（cycle.time 下的计时配置）
   { table: 'app', parent: 'game.room.cycle.time', from: 'roundStartWaitTimeSecond', to: 'turnStartWaitTimeSecond' },
   { table: 'app', parent: 'game.room.cycle.time', from: 'roundDrawingTimeoutSecond', to: 'turnDrawingTimeoutSecond' },

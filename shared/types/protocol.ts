@@ -64,7 +64,7 @@ export interface ServerEventMap {
 
   // --- 玩家事件 ---
   'player:event:logged_in': {
-    player_info: LoggedInPlayer
+    player: LoggedInPlayer
   }
   'player:event:state_update': PlayerState
   'player:event:lobby_players_add': {
@@ -156,7 +156,7 @@ export interface ServerEventMap {
     duration: number
     expiresAt: number
   }
-  'room:event:broadcast': {
+  'room:event:lobby_invite': {
     roomId: string
     roomNumber: number
     password: string
@@ -183,7 +183,8 @@ export interface ServerEventMap {
       scores: Record<string, number>
       item_counts: Record<string, ItemCounts>
       itemUses: ItemUse[]
-      seconds: number
+      /** 结算面板展示时长 */
+      displaySeconds: number
     }
   }
   'game:event:end': {
@@ -213,20 +214,23 @@ export interface ServerEventMap {
     payload: {
       turnIndex: number
       drawer: string
-      seconds: number
+      /** 准备阶段总时长 */
+      durationSeconds: number
     }
   }
   'game:event:drawing:start': {
     payload: {
       drawer: string
-      seconds: number
+      /** 绘画阶段总时长 */
+      durationSeconds: number
     }
   }
   'game:event:interaction:start': {
     payload: {
       answer?: string
       bingo_players: string[]
-      seconds: number
+      /** 互动阶段总时长 */
+      durationSeconds: number
       reason: InteractionReason
     }
   }
@@ -262,7 +266,8 @@ export interface ServerEventMap {
   }
   'game:event:timer:update': {
     payload: {
-      seconds: number
+      /** 调整后的新剩余时长 */
+      remainingSeconds: number
       reason: string
     }
   }
@@ -324,7 +329,7 @@ export interface ClientEventMap {
   'room:password_change': {
     password: string
   }
-  'room:broadcast': Record<string, never>
+  'room:lobby_invite': Record<string, never>
   'room:invite': {
     /** 被邀请玩家 ID */
     targetId: string
@@ -374,12 +379,12 @@ export interface ClientEventMap {
  *
  * @example
  * const res = await send({ type: 'room:list_pull' }) as ClientResponse<'room:list_pull'>
- * res.room_list   // ✅ RoomSummary[]
+ * res.rooms   // ✅ RoomSummary[]
  * res.successful  // ✅ boolean (来自 WS_RECV)
  */
 export interface ClientResponseMap {
   'room:list_pull': {
-    room_list: RoomSummary[]
+    rooms: RoomSummary[]
   }
   'room:quick_match': {
     room: Room
@@ -407,7 +412,7 @@ export interface ClientResponseMap {
     hasPassword: boolean
     password: string
   }
-  'room:broadcast': {
+  'room:lobby_invite': {
     roomId: string
     roomNumber: number
     password: string
@@ -428,7 +433,7 @@ export interface ClientResponseMap {
   }
   'room:game_start': Record<string, never>
   'player:lobby_players_pull': {
-    lobby_players: Player[]
+    lobbyPlayers: Player[]
   }
   'player:get_profile': {
     playerId: string

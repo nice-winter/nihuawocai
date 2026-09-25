@@ -188,7 +188,7 @@ const addGender = () => {
                 class="p-3 rounded-lg bg-elevated"
               />
               <USwitch
-                v-model="editingConfig.game.room.feature.broadcast"
+                v-model="editingConfig.game.room.feature.lobbyInvite"
                 label="广播功能"
                 description="允许房间内发送广播消息"
                 class="p-3 rounded-lg bg-elevated"
@@ -218,7 +218,7 @@ const addGender = () => {
             <h4 class="font-medium text-highlighted">房间时间设置</h4>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
               <UFormField label="广播消息间隔（秒）">
-                <UInput v-model="editingConfig.game.room.time.broadcastIntervalTimeSecond" type="number" :min="0" />
+                <UInput v-model="editingConfig.game.room.time.lobbyInviteIntervalTimeSecond" type="number" :min="0" />
               </UFormField>
               <UFormField label="聊天消息间隔（秒）">
                 <UInput v-model="editingConfig.game.room.time.chatIntervalTimeSecond" type="number" :min="0" />
