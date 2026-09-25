@@ -81,11 +81,25 @@ const updateUserLastLoginAt = async (userId: string) => {
   })
 }
 
+/**
+ * 更新玩家统计数据
+ * @TODO 写在这里的原因是，考虑将来统计数据并不存在 UserData Service 中，而是独立出一个 UserStats Service
+ * @param playerId 玩家 ID
+ * @param stats 统计增量
+ */
+const updatePlayerStats = async (playerId: string, stats: Partial<UserStats>) => {
+  const userData = await getUserData(playerId)
+  const oldStats = userData.stats
+  const newStats = defuSum(stats, oldStats)
+  await updateUserData(playerId, { stats: newStats })
+}
+
 export {
   createUserData,
   hasUserData,
   getUserData,
   updateUserData,
   setUserData,
-  updateUserLastLoginAt
+  updateUserLastLoginAt,
+  updatePlayerStats
 }

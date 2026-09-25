@@ -3,8 +3,7 @@
  * @author Winter <littlewiinter@gmail.com>
  */
 
-import { safeSend, isOpen } from '~~/server/ws/utils'
-import { players } from '~~/server/services/player'
+import { safeSend } from '~~/server/ws/utils'
 import { channels } from './channel'
 import type { WsPeer } from '~~/server/ws/utils'
 
@@ -27,13 +26,5 @@ export const sendToChannel = <T>(
   for (const p of target) {
     if (opts?.excludePeers?.has(p)) continue
     safeSend(p, msg)
-  }
-}
-
-export const sendToUser = <T>(msg: WebsocketMessage<T>, id: string | string[]) => {
-  const ids = Array.isArray(id) ? id : [id]
-  for (const i of ids) {
-    const u = players.get(i)
-    if (u && isOpen(u.peer)) safeSend(u.peer, msg)
   }
 }

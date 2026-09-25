@@ -11,10 +11,10 @@ import {
   checkPlayerIsInRoom,
   getPlayer,
   sendToPlayer,
-  sendToRoom,
-  updatePlayerStats
+  sendToRoom
 } from './player'
-import { end, roomEventBus } from './room'
+import { updatePlayerStats } from './user'
+import { roomEventBus } from './room'
 import { useWordManager, type WordItem } from './word'
 import { nanoid } from 'nanoid'
 
@@ -270,7 +270,7 @@ const endGame = (roomId: string) => {
     sendToRoom({ type: 'game:event:end', payload: {} }, roomId)
   }
   cleanUpRoom(roomId)
-  end(roomId)
+  roomEventBus.emit('game:ended', { roomId })
 }
 
 // ----------------------------------------------------------------
@@ -754,7 +754,7 @@ const handlePlayerLeave = (roomId: string, playerId: string) => {
   if (st.drawerQueue.length === 0) {
     logger.info(`游戏因全员离线结束: 房间 ${colors.cyan('#' + st.roomNumber)}`)
     cleanUpRoom(roomId)
-    end(roomId)
+    roomEventBus.emit('game:ended', { roomId })
     return
   }
 
