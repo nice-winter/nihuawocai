@@ -67,7 +67,7 @@ const passwordModal = useModal<string>(PasswordModal, {
 })
 
 const createRoomModal = useModal<{
-  opens: number
+  openSeatCount: number
   password: string
   maxOnlookers: number
 }>(CreateRoomModal, {
@@ -114,8 +114,8 @@ const tryJoin = async (
 
 const tryCreateRoom = async () => {
   try {
-    const { opens, password, maxOnlookers } = await createRoomModal.open()
-    createRoom(opens, { password, maxOnlookers })
+    const { openSeatCount, password, maxOnlookers } = await createRoomModal.open()
+    createRoom(openSeatCount, { password, maxOnlookers })
   } catch {
     //
   }

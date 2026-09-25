@@ -100,11 +100,11 @@ export interface ServerEventMap {
     roomNumber: number
     playing: boolean
   }
-  'room:event:seat_switch': {
+  'room:event:seat_open_change': {
     roomId: string
     roomNumber: number
     seat: number
-    open: boolean
+    isOpen: boolean
   }
   'room:event:locked_state_change': {
     roomId: string
@@ -303,7 +303,7 @@ export interface ClientEventMap {
   'room:list_pull': Record<string, never>
   'room:quick_match': Record<string, never>
   'room:create': {
-    opens: number
+    openSeatCount: number
     options: { password: string; maxOnlookers: number }
   }
   'room:join': {
@@ -317,9 +317,9 @@ export interface ClientEventMap {
   'room:sit': {
     seat: number
   }
-  'room:seat_switch': {
+  'room:seat_open_change': {
     seat: number
-    open: boolean
+    isOpen: boolean
   }
   'room:password_change': {
     password: string
@@ -395,11 +395,11 @@ export interface ClientResponseMap {
     roomNumber: number
   }
   'room:sit': Record<string, never>
-  'room:seat_switch': {
+  'room:seat_open_change': {
     roomId: string
     roomNumber: number
     seat: number
-    open: boolean
+    isOpen: boolean
   }
   'room:password_change': {
     roomId: string

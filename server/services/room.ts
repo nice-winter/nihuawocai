@@ -156,13 +156,13 @@ const getNextRoomNumber = () => {
 /**
  * 创建房间
  * @param ownerId 房主 ID
- * @param opens 默认坑位数量（0~6）；0 为全关，6 为全开，并且始终有一个坑位给房主
+ * @param openSeatCount 默认坑位数量（0~6）；0 为全关，6 为全开，并且始终有一个坑位给房主
  * @param options 房间设置
  * @param config 房间自己的配置（如果有），这会覆盖全局应用配置中的房间配置
  */
 const createRoom = async (
   ownerId: string,
-  opens?: number,
+  openSeatCount?: number,
   options?: Partial<RoomOptions>,
   config?: Partial<RoomConfig>
 ) => {
@@ -179,7 +179,7 @@ const createRoom = async (
   const roomOptions: RoomOptions = defu(options, defaultRoomOptions),
     roomConfig = config ?? null,
     roomNumber = getNextRoomNumber(),
-    seats = Array.from({ length: 7 }, (_, i) => i === 0 || i <= (opens || 0)),
+    seatOpenFlags = Array.from({ length: 7 }, (_, i) => i === 0 || i <= (openSeatCount || 0)),
     locked = roomOptions.password.trim() !== ''
 
   const room: Room = {
@@ -188,7 +188,7 @@ const createRoom = async (
     config: roomConfig,
     roomNumber,
     ownerId,
-    seats,
+    seatOpenFlags,
     locked,
     players: new Array(7).fill(null),
     onlookers: [],
@@ -320,9 +320,9 @@ const joinRoom = async (roomId: string, playerId: string, password?: string) => 
      */
     const tryJoinAsPlayer = () => {
       // 打开的坑位数是否大于当前玩家总数
-      if (room.seats.filter((s) => s).length > room.players.filter((p) => p).length) {
+      if (room.seatOpenFlags.filter((s) => s).length > room.players.filter((p) => p).length) {
         // 查找第一个没有玩家且呈打开状态的坑位索引号
-        const seat = room.players.findIndex((i, index) => i === null && room.seats[index] === true)
+        const seat = room.players.findIndex((i, index) => i === null && room.seatOpenFlags[index] === true)
         // 判断是否已找到索引，找不到就是说明所有坑位不是有人就是被关掉了
         if (seat > -1) {
           room.players[seat] = user // 坐到当前坑位
@@ -396,7 +396,7 @@ const sit = async (playerId: string, seat: number) => {
   if (room) {
     if (room.playing) throw new Error('游戏中无法坐下')
     if (room.players[seat] === null) {
-      if (!room.seats[seat]) throw new Error('房主关掉了这个坑位')
+      if (!room.seatOpenFlags[seat]) throw new Error('房主关掉了这个坑位')
       // 从旁观者列表移除
       room.onlookers.splice(
         room.onlookers.findIndex((p) => p.id === playerId),
@@ -434,9 +434,9 @@ const sit = async (playerId: string, seat: number) => {
  * 座位开启/关闭（房间从操作者状态反查，不信任客户端传入的房间标识）
  * @param playerId 房主玩家 ID
  * @param seat 座位号
- * @param open 开关状态
+ * @param isOpen 开关状态
  */
-const seatSwitch = (playerId: string, seat: number, open: boolean) => {
+const setSeatOpen = (playerId: string, seat: number, isOpen: boolean) => {
   const roomId = getPlayer(playerId)?.state.roomId
   if (!roomId) throw new Error('当前不在房间内')
 
@@ -445,23 +445,23 @@ const seatSwitch = (playerId: string, seat: number, open: boolean) => {
     if (room.ownerId !== playerId) throw new Error('你不是房主')
     if (room.players[seat] !== null) throw new Error('此坑位存在玩家，无法调整')
 
-    room.seats[seat] = open
+    room.seatOpenFlags[seat] = isOpen
     updateRoom(roomId, room)
 
     // 广播坑位切换事件
     sendToAllPlayer({
-      type: 'room:event:seat_switch',
+      type: 'room:event:seat_open_change',
       roomId: room.id,
       roomNumber: room.roomNumber,
       seat,
-      open
+      isOpen
     })
 
     return {
       roomId: room.id,
       roomNumber: room.roomNumber,
       seat,
-      open
+      isOpen
     }
   } else {
     throw new Error('房间不存在')
@@ -847,7 +847,7 @@ const quickMatch = async (playerId: string) => {
 
     // 判断是否存在 “空位且启用的 seat”
     const hasValidSeat = room.players.some((p, idx) => {
-      return p === null && room.seats[idx] === true
+      return p === null && room.seatOpenFlags[idx] === true
     })
 
     if (!hasValidSeat) return false
@@ -880,7 +880,7 @@ export {
   destroyRoom,
   joinRoom,
   sit,
-  seatSwitch,
+  setSeatOpen,
   changePassword,
   broadcast,
   invite,

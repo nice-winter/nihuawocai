@@ -97,7 +97,7 @@
     </UPopover>
 
     <template v-if="mode.includes('seat') && !player">
-      <span v-if="open" class="text-sm2">{{ placeholder }}</span>
+      <span v-if="isOpen" class="text-sm2">{{ placeholder }}</span>
       <UIcon v-else :name="`fe:disabled`" class="text-game-red-500 size-14" />
     </template>
   </span>
@@ -136,10 +136,10 @@ const { getPlayerProfile } = playerStore
 const { loggedInPlayer } = storeToRefs(playerStore)
 const { levelHelper } = useAppConfigStore()
 
-const open = defineModel<boolean>('open', { default: true })
+const isOpen = defineModel<boolean>('isOpen', { default: true })
 
 const emit = defineEmits<{
-  (e: 'switch', open: boolean, seat?: number | string): void
+  (e: 'switch', isOpen: boolean, seat?: number | string): void
   (e: 'sit', seat?: number | string): void
 }>()
 
@@ -160,8 +160,8 @@ const onClick = () => {
   // 可切换座位模式，触发 switch 事件
   if (mode === 'switchable-seat') {
     if (!player) {
-      open.value = !open.value
-      emit('switch', open.value, id)
+      isOpen.value = !isOpen.value
+      emit('switch', isOpen.value, id)
     }
   }
 }

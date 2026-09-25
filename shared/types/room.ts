@@ -27,7 +27,7 @@ interface RoomInfo {
   ownerId: string
   players: RoomPlayers
   onlookers: Player[]
-  seats: boolean[]
+  seatOpenFlags: boolean[]
   playing: boolean
   locked: boolean
 }

@@ -10,7 +10,7 @@
         <div class="flex gap-4 items-center">
           <span class="text-sm2">玩家座位数：</span>
           <UInputNumber
-            v-model="options.opens"
+            v-model="options.openSeatCount"
             :min="0"
             :max="6"
             size="sm"
@@ -49,7 +49,7 @@
 
 <script setup lang="ts">
 export interface CreateRoomModalResult {
-  opens: number
+  openSeatCount: number
   password: string
   maxOnlookers: number
 }
@@ -63,7 +63,7 @@ const { parent = undefined } = defineProps<Props>()
 const baseModal = useTemplateRef('baseModal')
 
 const options = ref<CreateRoomModalResult>({
-  opens: 6,
+  openSeatCount: 6,
   password: '',
   maxOnlookers: 5
 })

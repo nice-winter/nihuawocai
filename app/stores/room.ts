@@ -186,15 +186,15 @@ export const useRoomStore = defineStore('room', () => {
       }
 
       // 房间设置、状态相关事件
-      case 'room:event:seat_switch': {
+      case 'room:event:seat_open_change': {
         const room = rooms.get(event.roomId)
         if (room) {
-          room.seats[event.seat] = event.open
+          room.seatOpenFlags[event.seat] = event.isOpen
           rooms.set(event.roomId, room)
         }
         // 同步更新当前房间的座位状态（按身份 ID 比较）
         if (event.roomId === playerStore.currentRoomId && currentRoom.value) {
-          currentRoom.value.seats[event.seat] = event.open
+          currentRoom.value.seatOpenFlags[event.seat] = event.isOpen
         }
         break
       }
@@ -354,11 +354,11 @@ export const useRoomStore = defineStore('room', () => {
   /**
    * 切换座位开关状态（服务端从当前玩家状态反查房间）
    */
-  const switchSeat = async (seat: number, open: boolean) => {
+  const setSeatOpen = async (seat: number, isOpen: boolean) => {
     await send({
-      type: 'room:seat_switch',
+      type: 'room:seat_open_change',
       seat,
-      open
+      isOpen
     })
   }
 
@@ -426,10 +426,10 @@ export const useRoomStore = defineStore('room', () => {
   /**
    * 创建新房间
    */
-  const createRoom = (opens: number, options: { password: string; maxOnlookers: number }) => {
+  const createRoom = (openSeatCount: number, options: { password: string; maxOnlookers: number }) => {
     send({
       type: 'room:create',
-      opens,
+      openSeatCount,
       options
     })
   }
@@ -469,7 +469,7 @@ export const useRoomStore = defineStore('room', () => {
     join,
     leave,
     sit,
-    switchSeat,
+    setSeatOpen,
     changeRoomPassword,
     broadcast,
     invite,

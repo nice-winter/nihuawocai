@@ -3,7 +3,7 @@ import { z } from 'zod'
 // Room create schema
 export const roomCreateSchema = z.object({
   type: z.literal('room:create'),
-  opens: z.number().int().min(1).max(6),
+  openSeatCount: z.number().int().min(1).max(6),
   options: z.object({
     password: z.string().max(16),
     maxOnlookers: z.number().int().min(0)
@@ -26,9 +26,9 @@ export const roomSitSchema = z.object({
 })
 
 // Room seat switch schema
-export const roomSeatSwitchSchema = z.object({
+export const roomSeatOpenChangeSchema = z.object({
   seat: z.number().int().min(0).max(6),
-  open: z.boolean()
+  isOpen: z.boolean()
 })
 
 // Room password change schema
@@ -46,6 +46,6 @@ export const roomInviteSchema = z.object({
 export type RoomCreate = z.infer<typeof roomCreateSchema>
 export type RoomJoin = z.infer<typeof roomJoinSchema>
 export type RoomSit = z.infer<typeof roomSitSchema>
-export type RoomSeatSwitch = z.infer<typeof roomSeatSwitchSchema>
+export type RoomSeatOpenChange = z.infer<typeof roomSeatOpenChangeSchema>
 export type RoomPasswordChange = z.infer<typeof roomPasswordChangeSchema>
 export type RoomInvite = z.infer<typeof roomInviteSchema>

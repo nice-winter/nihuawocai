@@ -75,7 +75,7 @@ const ownerPlayer = computed(() => roomInfo.players.find((p) => p?.id === roomIn
 
 const totalPlayerCount = computed(() => roomInfo.players.filter((p) => p).length)
 
-const openSeatCount = computed(() => roomInfo.seats.filter((s) => s).length)
+const openSeatCount = computed(() => roomInfo.seatOpenFlags.filter((s) => s).length)
 
 const emit = defineEmits<{
   (e: 'joinButtonClick' | 'lookButtonClick', roomId: string, roomNumber: number): void

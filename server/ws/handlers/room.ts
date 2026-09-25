@@ -9,7 +9,7 @@ import {
   start,
   joinRoom,
   leaveRoom,
-  seatSwitch,
+  setSeatOpen,
   sit,
   quickMatch
 } from '~~/server/services/room'
@@ -17,7 +17,7 @@ import {
   roomCreateSchema,
   roomJoinSchema,
   roomSitSchema,
-  roomSeatSwitchSchema,
+  roomSeatOpenChangeSchema,
   roomPasswordChangeSchema,
   roomInviteSchema
 } from '~~/server/ws/schemas/room'
@@ -32,9 +32,9 @@ export default defineWsHandlers({
   },
   'room:create': async ({ msg, user }) => {
     const validData = roomCreateSchema.parse(msg)
-    const { opens, options } = validData
+    const { openSeatCount, options } = validData
 
-    return await createRoom(user.id, opens, options)
+    return await createRoom(user.id, openSeatCount, options)
   },
   'room:join': async ({ msg, user }) => {
     const validData = roomJoinSchema.parse(msg)
@@ -56,11 +56,11 @@ export default defineWsHandlers({
 
     return await sit(user.id, seat)
   },
-  'room:seat_switch': async ({ msg, user }) => {
-    const validData = roomSeatSwitchSchema.parse(msg)
-    const { seat, open } = validData
+  'room:seat_open_change': async ({ msg, user }) => {
+    const validData = roomSeatOpenChangeSchema.parse(msg)
+    const { seat, isOpen } = validData
 
-    return seatSwitch(user.id, seat, open)
+    return setSeatOpen(user.id, seat, isOpen)
   },
   'room:password_change': async ({ msg, user }) => {
     const validData = roomPasswordChangeSchema.parse(msg)

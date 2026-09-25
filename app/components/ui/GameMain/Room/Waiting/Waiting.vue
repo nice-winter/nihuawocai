@@ -113,14 +113,14 @@
 
       <UiAvatar
         :id="i"
-        :open="roomInfo?.seats![i - 1]"
+        :is-open="roomInfo?.seatOpenFlags![i - 1]"
         :player="roomInfo?.players![i - 1] || undefined"
         :mode="seatMode"
         class="size-28.5"
-        :disabled="(!isCurrentRoomOwner && !isOnlooker) || (isOnlooker && !roomInfo?.seats![i - 1])"
+        :disabled="(!isCurrentRoomOwner && !isOnlooker) || (isOnlooker && !roomInfo?.seatOpenFlags![i - 1])"
         :verified-icon="{ show: true, size: 16 }"
         :placeholder="isOnlooker ? '点击坐下' : undefined"
-        @switch="onSeatSwitch"
+        @switch="onSeatOpenChange"
         @sit="onSeatSit"
       />
 
@@ -145,7 +145,7 @@ const playerStore = usePlayerStore()
 const { isSelf } = playerStore
 const { loggedInPlayer, isOnlooker } = storeToRefs(playerStore)
 const roomStore = useRoomStore()
-const { sit, switchSeat, changeRoomPassword, broadcast, start } = roomStore
+const { sit, setSeatOpen, changeRoomPassword, broadcast, start } = roomStore
 const { isCurrentRoomOwner, broadcastRecord } = storeToRefs(roomStore)
 
 const passwordUInputRef = useTemplateRef('passwordUInputRef')
@@ -284,11 +284,11 @@ const onCancel = () => {
 
 /**
  * 切换座位开关
- * @param open
+ * @param isOpen
  * @param seat
  */
-const onSeatSwitch = (open?: boolean, seat?: number | string) => {
-  switchSeat(Number(seat) - 1, Boolean(open))
+const onSeatOpenChange = (isOpen?: boolean, seat?: number | string) => {
+  setSeatOpen(Number(seat) - 1, Boolean(isOpen))
 }
 
 /**
