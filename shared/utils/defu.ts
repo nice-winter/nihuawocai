@@ -10,3 +10,14 @@ export const defuSum = createDefu((obj: any, key, value) => {
     return true
   }
 })
+
+/**
+ * 递归合并对象，数组字段直接替换而非拼接（默认 defu 是拼接）
+ * 适用于局部更新：传了就用传的，没传保留原值
+ */
+export const defuReplaceArray = createDefu((obj, key, value) => {
+  if (Array.isArray(obj[key]) || Array.isArray(value)) {
+    obj[key] = value
+    return true
+  }
+})

@@ -1,5 +1,4 @@
 import { defaultAppConfig } from '#shared/defaultAppConfig'
-import defu from 'defu'
 import { consola } from 'consola/browser'
 
 const logger = consola.withTag('AppConfig')
@@ -20,7 +19,7 @@ export const useAppConfigStore = defineStore('appConfig', () => {
   }
 
   const update = async (patch: Partial<AppConfig>) => {
-    appConfig.value = defu(patch, unref(appConfig.value))
+    appConfig.value = defuReplaceArray(patch, unref(appConfig.value))
     const result = await $fetch('/api/app-config', {
       method: 'POST',
       body: patch
