@@ -21,8 +21,8 @@ export default defineEventHandler(async () => {
 
   return {
     superAdmin: superAdmin
-      ? { id: superAdmin.id, nickname: superAdmin.nickname, avatar_url: superAdmin.avatar_url, email: superAdmin.email }
+      ? { id: superAdmin.id, nickname: superAdmin.nickname, avatarUrl: superAdmin.avatarUrl, email: superAdmin.email }
       : null,
-    admins: admins.map((u) => ({ id: u.id, nickname: u.nickname, avatar_url: u.avatar_url, email: u.email }))
+    admins: admins.map((u) => ({ id: u.id, nickname: u.nickname, avatarUrl: u.avatarUrl, email: u.email }))
   }
 })

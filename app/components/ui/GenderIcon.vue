@@ -15,7 +15,7 @@ const { appConfig } = storeToRefs(appConfigStore)
 const genderComputed = computed(() => {
   const genders = appConfig.value.genders
   const defaultGenderIcon = { icon: 'ph:gender-male-bold', color: '#23a9ce' }
-  return genders.find((g) => g.value === gender) || defaultGenderIcon
+  return genders.find((g) => g.code === gender) || defaultGenderIcon
 })
 </script>
 

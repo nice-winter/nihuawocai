@@ -6,10 +6,10 @@ export interface UserData {
   id: string
 
   /** 用户登录方式 */
-  auth_provider: 'github' | 'steam' | 'x' | 'qq'
+  authProvider: 'github' | 'steam' | 'x' | 'qq'
 
   email: string
-  avatar_url: string
+  avatarUrl: string
   nickname: string
 
   /** 性别 */
@@ -22,10 +22,10 @@ export interface UserData {
   verification: UserVerification
 
   /** 创建时间 */
-  created_at: number
+  createdAt: number
 
   /** 上次登录时间 */
-  last_login_at: number
+  lastLoginAt: number
 }
 
 /**
@@ -36,16 +36,16 @@ export interface UserStats {
   score: number
 
   /** 鲜花数量 */
-  flower_count: number
+  receivedFlowerCount: number
 
   /** 鸡蛋数量 */
-  egg_count: number
+  receivedEggCount: number
 
   /** 拖鞋数量 */
-  slipper_count: number
+  receivedSlipperCount: number
 
   /** 总局数 */
-  total_games: number
+  totalGames: number
 }
 
 /**
@@ -55,5 +55,5 @@ export interface UserVerification {
   verified: boolean
 
   /** 认证说明 */
-  description: string
+  note: string
 }

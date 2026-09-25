@@ -11,14 +11,14 @@ export default defineOAuthXEventHandler({
   async onSuccess(event, { user, tokens }) {
     const xUser = user as XUser
 
-    const avatar_url = xUser.profile_image_url.replace('_normal', '')
+    const avatarUrl = xUser.profile_image_url.replace('_normal', '')
 
     await setUserSession(event, {
       user: {
-        auth_provider: 'x',
+        authProvider: 'x',
         id: xUser.id,
         nickname: xUser.name,
-        avatar_url
+        avatarUrl
       },
       loggedInAt: Date.now()
     })
@@ -26,10 +26,10 @@ export default defineOAuthXEventHandler({
     if (await hasUserData(xUser.id)) {
       await updateUserData(xUser.id, {
         nickname: xUser.name,
-        avatar_url
+        avatarUrl
       })
     } else {
-      await createUserData(xUser.id, 'x', avatar_url, xUser.name)
+      await createUserData(xUser.id, 'x', avatarUrl, xUser.name)
     }
 
     logger.info(`X(Twitter) 登录成功: ${colors.cyan(xUser.name)}@${xUser.id}`)

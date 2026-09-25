@@ -13,67 +13,67 @@ export const defaultAppConfig: AppConfig = {
   genders: [
     {
       label: '男',
-      value: 0,
+      code: 0,
       icon: 'ph:gender-male-bold',
       color: '#23a9ce'
     },
     {
       label: '女',
-      value: 1,
+      code: 1,
       icon: 'ph:gender-female-bold',
       color: '#dd243c'
     },
     {
       label: '不想说',
-      value: 2,
+      code: 2,
       icon: 'ph:question-mark-bold',
       color: ''
     },
     {
       label: '沃尔玛购物袋',
-      value: 3,
+      code: 3,
       icon: 'tabler:shopping-bag',
       color: '#00ab07'
     },
     {
       label: '武装直升机',
-      value: 4,
+      code: 4,
       icon: 'tabler:helicopter',
       color: '#ad1ef4'
     },
     {
       label: '科比',
-      value: 5,
+      code: 5,
       icon: 'material-symbols:sports-basketball',
       color: '#ad1ef4'
     },
     {
       label: '咖啡杯',
-      value: 6,
+      code: 6,
       icon: 'streamline-plump:coffee-mug-solid',
       color: '#ad1ef4'
     },
     {
       label: '显示器',
-      value: 7,
+      code: 7,
       icon: 'material-symbols:nest-display-outline',
       color: '#ad1ef4'
     },
     {
       label: '艾玛电动车',
-      value: 8,
+      code: 8,
       icon: 'material-symbols:motorcycle-rounded',
       color: '#ad1ef4'
     },
     {
       label: '厕纸',
-      value: 9,
+      code: 9,
       icon: 'ph:toilet-paper-fill',
       color: '#ad1ef4'
     },
     {
       label: '双生一体',
-      value: 10,
+      code: 10,
       icon: 'tabler:gender-bigender',
       color: '#ad1ef4'
     }

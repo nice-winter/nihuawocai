@@ -232,11 +232,11 @@ const enterSettlementPhase = (roomId: string, st: GameState) => {
   ids.forEach((id) => {
     const items = finalItemCounts[id]
     updatePlayerStats(id, {
-      total_games: 1,
+      totalGames: 1,
       score: finalScores[id],
-      flower_count: items?.flower ?? 0,
-      egg_count: items?.egg ?? 0,
-      slipper_count: items?.slipper ?? 0
+      receivedFlowerCount: items?.flower ?? 0,
+      receivedEggCount: items?.egg ?? 0,
+      receivedSlipperCount: items?.slipper ?? 0
     })
   })
   // ------------------
@@ -246,7 +246,7 @@ const enterSettlementPhase = (roomId: string, st: GameState) => {
       type: 'game:event:settlement',
       payload: {
         scores: finalScores,
-        item_counts: finalItemCounts,
+        itemCounts: finalItemCounts,
         itemUses: st.itemUses, // 包含道具记录
         displaySeconds: waitSeconds
       }
@@ -715,15 +715,15 @@ const handleOnlookerJoin = (roomId: string, playerId: string) => {
     {
       type: 'game:event:state',
       payload: {
-        game_phase: st.gamePhase,
+        gamePhase: st.gamePhase,
         turnPhase: st.turnPhase,
         turnIndex: st.currentTurnIndex + 1,
         totalTurns: st.totalTurns,
         drawerId: st.drawerId,
-        remaining_seconds: Math.ceil(remainingMs / 1000),
+        remainingSeconds: Math.ceil(remainingMs / 1000),
         bingoPlayerIds: st.bingoPlayers,
         scores: st.scores,
-        item_counts: st.itemCounts
+        itemCounts: st.itemCounts
       }
     },
     playerId
@@ -843,15 +843,15 @@ const broadcastState = (roomId: string) => {
     {
       type: 'game:event:state',
       payload: {
-        game_phase: st.gamePhase,
+        gamePhase: st.gamePhase,
         turnPhase: st.turnPhase,
         turnIndex: st.currentTurnIndex + 1,
         totalTurns: st.totalTurns,
         drawerId: st.drawerId,
-        remaining_seconds: Math.ceil(remainingMs / 1000),
+        remainingSeconds: Math.ceil(remainingMs / 1000),
         bingoPlayerIds: st.bingoPlayers,
         scores: st.scores,
-        item_counts: st.itemCounts
+        itemCounts: st.itemCounts
       }
     },
     roomId

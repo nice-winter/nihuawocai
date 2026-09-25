@@ -26,6 +26,16 @@ interface KeyMigration {
 const KEY_MIGRATIONS: KeyMigration[] = [
   // --- word 词库（WordItem.prompts → hints，嵌套在 words 数组内）---
   { table: 'word', parent: 'words.*', from: 'prompts', to: 'hints' },
+  // --- user_data ---
+  { table: 'user_data', parent: '', from: 'auth_provider', to: 'authProvider' },
+  { table: 'user_data', parent: '', from: 'avatar_url', to: 'avatarUrl' },
+  { table: 'user_data', parent: '', from: 'created_at', to: 'createdAt' },
+  { table: 'user_data', parent: '', from: 'last_login_at', to: 'lastLoginAt' },
+  { table: 'user_data', parent: 'stats', from: 'flower_count', to: 'receivedFlowerCount' },
+  { table: 'user_data', parent: 'stats', from: 'egg_count', to: 'receivedEggCount' },
+  { table: 'user_data', parent: 'stats', from: 'slipper_count', to: 'receivedSlipperCount' },
+  { table: 'user_data', parent: 'stats', from: 'total_games', to: 'totalGames' },
+  { table: 'user_data', parent: 'verification', from: 'description', to: 'note' },
   // --- app_config ---
   { table: 'app', parent: 'game.room', from: 'passwordMaxLengh', to: 'passwordMaxLength' },
   { table: 'app', parent: 'game.room', from: 'maxBroadcastCount', to: 'maxLobbyInviteCount' },

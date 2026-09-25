@@ -103,7 +103,7 @@ export const useGameStore = defineStore('game', () => {
         state.gamePhase = 'game_settlement'
         state.settlementData = {
           scores: payload.scores,
-          itemCounts: payload.item_counts,
+          itemCounts: payload.itemCounts,
           itemUses: payload.itemUses,
           displaySeconds: payload.displaySeconds
         }
@@ -130,15 +130,15 @@ export const useGameStore = defineStore('game', () => {
         // 全量状态同步
         const { payload } = msg
 
-        state.gamePhase = payload.game_phase
+        state.gamePhase = payload.gamePhase
         state.turnPhase = payload.turnPhase
         state.currentTurn = payload.turnIndex
         state.totalTurns = payload.totalTurns
         state.drawerId = payload.drawerId
-        state.timeLeft = payload.remaining_seconds
+        state.timeLeft = payload.remainingSeconds
         state.bingoPlayers = payload.bingoPlayerIds || []
         state.scores = payload.scores || {}
-        state.itemCounts = payload.item_counts || {}
+        state.itemCounts = payload.itemCounts || {}
         break
       }
 

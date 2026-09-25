@@ -54,35 +54,35 @@ describe('LevelHelper', () => {
       expect(info.level).toBe(4)
       expect(info.title).toBe('大师')
       expect(info.isMaxLevel).toBe(true)
-      expect(info.progress).toBe(100)
-      expect(info.nextLevelScore).toBeNull()
+      expect(info.progressPercent).toBe(100)
+      expect(info.nextLevelMinScore).toBeNull()
     })
 
-    it('progress 在两个等级之间正确计算', () => {
+    it('progressPercent 在两个等级之间正确计算', () => {
       // 等级3 minScore=30, 等级4 minScore=60, 差值30
       // 分数45 → (45-30)/30 * 100 = 50%
       const info = helper.getUserLevelInfo(45)
-      expect(info.progress).toBe(50)
+      expect(info.progressPercent).toBe(50)
     })
 
-    it('刚好在等级起点 → progress=0', () => {
+    it('刚好在等级起点 → progressPercent=0', () => {
       const info = helper.getUserLevelInfo(30)
-      expect(info.progress).toBe(0)
+      expect(info.progressPercent).toBe(0)
     })
 
-    it('刚好在下一等级起点前 → progress 接近 100', () => {
+    it('刚好在下一等级起点前 → progressPercent 接近 100', () => {
       const info = helper.getUserLevelInfo(59)
       // (59-30)/30 * 100 = 96.67%
-      expect(info.progress).toBeCloseTo(96.67, 1)
+      expect(info.progressPercent).toBeCloseTo(96.67, 1)
     })
 
     it('currentScore 正确反映输入分数', () => {
       expect(helper.getUserLevelInfo(42).currentScore).toBe(42)
     })
 
-    it('nextLevelScore 指向下一等级的 minScore', () => {
+    it('nextLevelMinScore 指向下一等级的 minScore', () => {
       const info = helper.getUserLevelInfo(15)
-      expect(info.nextLevelScore).toBe(30) // 等级3 的 minScore
+      expect(info.nextLevelMinScore).toBe(30) // 等级3 的 minScore
     })
   })
 

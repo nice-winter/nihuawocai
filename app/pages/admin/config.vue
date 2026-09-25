@@ -77,7 +77,7 @@ const genderColumns = [
 ]
 
 const addGender = () => {
-  editingConfig.value.genders.push({ label: '', value: editingConfig.value.genders.length, icon: '', color: '' })
+  editingConfig.value.genders.push({ label: '', code: editingConfig.value.genders.length, icon: '', color: '' })
 }
 </script>
 
@@ -141,7 +141,7 @@ const addGender = () => {
                 <UInput v-model="row.original.label" placeholder="性别名称" size="sm" />
               </template>
               <template #value-cell="{ row }">
-                <UInput v-model.number="row.original.value" type="number" size="sm" class="w-20" />
+                <UInput v-model.number="row.original.code" type="number" size="sm" class="w-20" />
               </template>
               <template #icon-cell="{ row }">
                 <UInput v-model="row.original.icon" placeholder="图标名称" size="sm" />

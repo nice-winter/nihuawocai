@@ -65,20 +65,20 @@ type Events = {
   // game base
   'game:event:settlement': {
     scores: Record<string, number>
-    item_counts: Record<string, ItemCounts>
+    itemCounts: Record<string, ItemCounts>
     itemUses: ItemUse[]
     displaySeconds: number
   }
   'game:event:state': {
-    game_phase: GamePhase
+    gamePhase: GamePhase
     turnPhase: TurnPhase
     turnIndex: number
     totalTurns: number
     drawerId: string | null
-    remaining_seconds: number
+    remainingSeconds: number
     bingoPlayerIds: string[]
     scores: Record<string, number>
-    item_counts: Record<string, ItemCounts>
+    itemCounts: Record<string, ItemCounts>
   }
   'game:event:notice': {
     message: string

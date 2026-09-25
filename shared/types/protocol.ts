@@ -180,7 +180,7 @@ export interface ServerEventMap {
   'game:event:settlement': {
     payload: {
       scores: Record<string, number>
-      item_counts: Record<string, ItemCounts>
+      itemCounts: Record<string, ItemCounts>
       itemUses: ItemUse[]
       /** 结算面板展示时长 */
       displaySeconds: number
@@ -191,15 +191,15 @@ export interface ServerEventMap {
   }
   'game:event:state': {
     payload: {
-      game_phase: GamePhase
+      gamePhase: GamePhase
       turnPhase: TurnPhase
       turnIndex: number
       totalTurns: number
       drawerId: string | null
-      remaining_seconds: number
+      remainingSeconds: number
       bingoPlayerIds: string[]
       scores: Record<string, number>
-      item_counts: Record<string, ItemCounts>
+      itemCounts: Record<string, ItemCounts>
     }
   }
   'game:event:notice': {

@@ -33,7 +33,7 @@ export default defineEventHandler(async (event) => {
   // 过滤不允许修改的字段
   const allowedFields: (keyof UserData)[] = [
     'nickname',
-    'avatar_url',
+    'avatarUrl',
     'email',
     'gender',
     'verification'

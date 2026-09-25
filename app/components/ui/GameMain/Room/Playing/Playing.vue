@@ -222,15 +222,15 @@ useEventBus('game:event:interaction:item', async ({ itemType }) => {
       break
   }
 })
-useEventBus('game:event:settlement', async ({ scores, item_counts, displaySeconds }) => {
+useEventBus('game:event:settlement', async ({ scores, itemCounts, displaySeconds }) => {
   timerRef.value?.pause()
   const ranks = _players.value.map((p) => {
     return {
       player: p,
       score: scores[p.id],
-      flower: item_counts[p.id]?.flower,
-      egg: item_counts[p.id]?.egg,
-      slipper: item_counts[p.id]?.slipper
+      flower: itemCounts[p.id]?.flower,
+      egg: itemCounts[p.id]?.egg,
+      slipper: itemCounts[p.id]?.slipper
     }
   })
   await rankModal.open({

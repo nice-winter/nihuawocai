@@ -271,7 +271,7 @@ export const useRoomStore = defineStore('room', () => {
           title: `${event.sender.nickname} 向你发来邀请`,
           description: `TA在${event.roomNumber}号房间等你与TA一起游戏！`,
           avatar: {
-            src: event.sender.avatar_url
+            src: event.sender.avatarUrl
           },
           duration: 20 * 1000, // toast 显示时长由前端自理
           orientation: 'horizontal',

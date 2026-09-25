@@ -8,7 +8,7 @@ export interface UserLevelInfo {
   level: number
   title: string
   currentScore: number
-  nextLevelScore: number | null
-  progress: number
+  nextLevelMinScore: number | null
+  progressPercent: number
   isMaxLevel: boolean
 }
