@@ -32,9 +32,9 @@ export default defineWsHandlers({
   },
   'room:create': async ({ msg, user }) => {
     const validData = roomCreateSchema.parse(msg)
-    const { openSeatCount, options } = validData
+    const { openSeatCount, joinOptions } = validData
 
-    return await createRoom(user.id, openSeatCount, options)
+    return await createRoom(user.id, openSeatCount, joinOptions)
   },
   'room:join': async ({ msg, user }) => {
     const validData = roomJoinSchema.parse(msg)

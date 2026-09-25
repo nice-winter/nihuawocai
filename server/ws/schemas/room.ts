@@ -4,7 +4,7 @@ import { z } from 'zod'
 export const roomCreateSchema = z.object({
   type: z.literal('room:create'),
   openSeatCount: z.number().int().min(1).max(6),
-  options: z.object({
+  joinOptions: z.object({
     password: z.string().max(16),
     maxOnlookers: z.number().int().min(0)
   })

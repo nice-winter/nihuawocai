@@ -10,7 +10,7 @@
         <div class="flex gap-4 items-center">
           <span class="text-sm2">玩家座位数：</span>
           <UInputNumber
-            v-model="options.openSeatCount"
+            v-model="form.openSeatCount"
             :min="0"
             :max="6"
             size="sm"
@@ -21,7 +21,7 @@
         <div class="flex gap-4 items-center">
           <span class="text-sm2">最多几人旁观：</span>
           <UInputNumber
-            v-model="options.maxOnlookers"
+            v-model="form.maxOnlookers"
             :min="0"
             :max="10"
             size="sm"
@@ -31,7 +31,7 @@
         <div class="flex gap-4 items-center">
           <span class="text-sm2">房间初始密码：</span>
           <UInput
-            v-model="options.password"
+            v-model="form.password"
             size="sm"
             maxlength="4"
             class="game-input w-32 ml-auto"
@@ -62,7 +62,7 @@ const { parent = undefined } = defineProps<Props>()
 
 const baseModal = useTemplateRef('baseModal')
 
-const options = ref<CreateRoomModalResult>({
+const form = ref<CreateRoomModalResult>({
   openSeatCount: 6,
   password: '',
   maxOnlookers: 5
@@ -73,7 +73,7 @@ const open = (): Promise<CreateRoomModalResult> => {
 }
 
 const onConfirm = () => {
-  baseModal.value?.close(options.value)
+  baseModal.value?.close(form.value)
 }
 
 defineExpose({ open })

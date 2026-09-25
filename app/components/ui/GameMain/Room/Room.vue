@@ -1,8 +1,8 @@
 <template>
   <div v-if="currentRoom" class="flex h-full">
     <div class="flex w-main-w-left flex-col">
-      <UiGameMainRoomWaiting v-if="!currentRoom.isPlaying" :room-info="currentRoom" />
-      <UiGameMainRoomPlaying v-else-if="currentRoom.isPlaying" :room-info="currentRoom" />
+      <UiGameMainRoomWaiting v-if="!currentRoom.isPlaying" :room="currentRoom" />
+      <UiGameMainRoomPlaying v-else-if="currentRoom.isPlaying" :room="currentRoom" />
     </div>
 
     <div class="flex flex-1 flex-col border-l-2 border-white/60 bg-tint-soft-400">

@@ -32,8 +32,8 @@ export interface GameState {
   id: string
 
   // --- 房间设置、配置 ---
-  options: RoomOptions
-  config: RoomConfig
+  joinOptions: JoinOptions
+  gameRules: RoomGameRules
   /** 房间号（仅用于日志展示，身份键是 roomId） */
   roomNumber: number
 
@@ -109,12 +109,12 @@ const gameStart = async (roomId: string, room: Room) => {
   const players = room.players.filter((p) => p !== null)
   if (players.length < 2) throw new Error('玩家数不足 2 人无法开始游戏')
 
-  const options = room.options
+  const joinOptions = room.joinOptions
   const defaultConfig = (await getAppConfig()).game.room
-  const config = defu(room.config, defaultConfig)
+  const gameRules = defu(room.gameRules, defaultConfig)
 
   const drawerQueue = players.map((p) => p.id)
-  const totalTurns = drawerQueue.length * config.cycle.count
+  const totalTurns = drawerQueue.length * gameRules.cycle.count
 
   const initialScores: Record<string, number> = {}
   const initialItems: Record<string, ItemCounts> = {}
@@ -126,8 +126,8 @@ const gameStart = async (roomId: string, room: Room) => {
 
   const state: GameState = {
     id: nanoid(),
-    config,
-    options,
+    gameRules,
+    joinOptions,
     roomNumber: room.roomNumber,
     gamePhase: 'game_start',
     turnPhase: 'turn_prepare',
@@ -208,7 +208,7 @@ const startGameTick = (roomId: string) => {
  */
 const enterSettlementPhase = (roomId: string, st: GameState) => {
   st.gamePhase = 'game_settlement'
-  const waitSeconds = st.config.cycle.time.settlementDisplaySeconds
+  const waitSeconds = st.gameRules.cycle.time.settlementDisplaySeconds
   setupTimer(st, waitSeconds)
 
   // --- 数据过滤逻辑 ---
@@ -216,7 +216,7 @@ const enterSettlementPhase = (roomId: string, st: GameState) => {
   let finalItemCounts = st.itemCounts
 
   // 如果不允许包含离场玩家，则进行过滤
-  if (!st.config.cycle.scoreRule.includeLeaversInSettlement) {
+  if (!st.gameRules.cycle.scoreRule.includeLeaversInSettlement) {
     const activePlayers = new Set(st.drawerQueue) // drawerQueue 始终代表当前在线玩家
 
     finalScores = Object.fromEntries(
@@ -308,8 +308,8 @@ const startRound = async (roomId: string) => {
     return
   }
 
-  st.currentWord = await wordManager.pickWord(st.options.libIds)
-  const prepareSeconds = st.config.cycle.time.turnStartWaitTimeSecond
+  st.currentWord = await wordManager.pickWord(st.joinOptions.wordLibIds)
+  const prepareSeconds = st.gameRules.cycle.time.turnStartWaitTimeSecond
   setupTimer(st, prepareSeconds)
 
   logger.debug(
@@ -382,7 +382,7 @@ const enterDrawingPhase = (roomId: string, st: GameState) => {
   st.drawingStartAt = Date.now()
   st.lastDrawTime = 0
 
-  const drawingSeconds = st.config.cycle.time.turnDrawingTimeSecond
+  const drawingSeconds = st.gameRules.cycle.time.turnDrawingTimeSecond
   setupTimer(st, drawingSeconds)
 
   sendToRoom(
@@ -401,7 +401,7 @@ const handleDrawingTick = (roomId: string, st: GameState, now: number) => {
   const elapsedSeconds = Math.floor((now - st.timers.startTime) / 1000)
 
   // 1. AFK 检测
-  const afkThresholdMs = st.config.cycle.time.turnDrawingTimeoutSecond * 1000
+  const afkThresholdMs = st.gameRules.cycle.time.turnDrawingTimeoutSecond * 1000
   if (st.lastDrawTime === 0 && now - st.drawingStartAt > afkThresholdMs) {
     sendToRoom(
       {
@@ -415,7 +415,7 @@ const handleDrawingTick = (roomId: string, st: GameState, now: number) => {
   }
 
   // 2. 提示词逻辑
-  const hintTimes = st.config.cycle.time.hintTimeOffsets
+  const hintTimes = st.gameRules.cycle.time.hintTimeOffsets
   if (st.revealedHints < hintTimes.length) {
     if (st.bingoPlayers.length > 0) return // 如果已有玩家猜对，则后续不再弹出提示词
     const nextHintTime = hintTimes[st.revealedHints]!
@@ -448,7 +448,7 @@ const enterInteractionPhase = (
   reason: InteractionReason = 'timeout'
 ) => {
   st.turnPhase = 'interaction'
-  const waitSeconds = st.config.cycle.time.turnEndWaitTimeSecond
+  const waitSeconds = st.gameRules.cycle.time.turnEndWaitTimeSecond
   setupTimer(st, waitSeconds)
 
   sendToRoom(
@@ -615,14 +615,14 @@ const handleGuess = (roomId: string, guesserId: string, guessContent: string): b
     if (st.bingoPlayers.length === 1) {
       const now = Date.now()
       const remainingMs = st.timers.endTime - now
-      const bingoTimeMs = st.config.cycle.time.bingoShortenToSeconds * 1000
+      const bingoTimeMs = st.gameRules.cycle.time.bingoShortenToSeconds * 1000
       if (remainingMs > bingoTimeMs) {
         st.timers.endTime = now + bingoTimeMs
         sendToRoom(
           {
             type: 'game:event:timer:update',
             payload: {
-              seconds: st.config.cycle.time.bingoShortenToSeconds,
+              seconds: st.gameRules.cycle.time.bingoShortenToSeconds,
               reason: 'bingo_shorten'
             }
           },
@@ -746,7 +746,7 @@ const handlePlayerLeave = (roomId: string, playerId: string) => {
   }
 
   // 2. 更新总轮数
-  st.totalTurns = st.drawerQueue.length * st.config.cycle.count
+  st.totalTurns = st.drawerQueue.length * st.gameRules.cycle.count
   broadcastState(roomId)
 
   // 3. 检查剩余人数
@@ -789,7 +789,7 @@ const handlePlayerLeave = (roomId: string, playerId: string) => {
  * @returns 返回本次变动的分数，用于前端展示 "+10" 动画
  */
 const applyScoreOnBingo = (st: GameState, guesserId: string) => {
-  const rules = st.config.cycle.scoreRule
+  const rules = st.gameRules.cycle.scoreRule
   const drawerId = st.drawer
 
   // 容错：如果没有画手信息，直接返回 0

@@ -103,7 +103,7 @@ import CountdownModal from '~/components/modal/CountdownModal.vue'
 import ThrowerModal from '~/components/modal/ThrowerModal.vue'
 import RankModal from '~/components/modal/RankModal.vue'
 
-const { roomInfo } = defineProps<{ roomInfo: RoomInfo }>()
+const { room } = defineProps<{ room: RoomSummary }>()
 
 const sketchpadRef = useTemplateRef('sketchpad')
 const sketchpadContainerRef = useTemplateRef('sketchpadContainerRef')
@@ -122,7 +122,7 @@ const throwerModal = useModal(ThrowerModal, { parent: '#sketchpad-container' })
 const rankModal = useModal(RankModal, { parent: '#sketchpad-container' })
 const { playSound } = useSound()
 
-const _players = computed(() => roomInfo.players.filter((p) => p !== null))
+const _players = computed(() => room.players.filter((p) => p !== null))
 const drawingPlayer = computed(() => _players.value.find((p) => p.id === gameStore.state.drawer))
 
 // --- 画布操作编排（游戏阶段 + WS 桥梁命令 → Sketchpad） ---

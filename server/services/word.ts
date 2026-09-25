@@ -192,28 +192,28 @@ export const useWordManager = () => {
 
   /**
    * 2. 随机选取词汇
-   * @param libIds 指定从哪些词库中随机 (如果不传，则从所有词库中随机)
+   * @param wordLibIds 指定从哪些词库中随机 (如果不传，则从所有词库中随机)
    */
-  const pickWord = async (libIds?: string[]): Promise<WordItem | null> => {
-    let targetLibIds = libIds
+  const pickWord = async (wordLibIds?: string[]): Promise<WordItem | null> => {
+    let targetWordLibIds = wordLibIds
 
     // 如果未指定，则获取所有 ID
-    if (!targetLibIds || targetLibIds.length === 0) {
-      targetLibIds = await getLibraryIndex()
+    if (!targetWordLibIds || targetWordLibIds.length === 0) {
+      targetWordLibIds = await getLibraryIndex()
     }
 
-    if (targetLibIds.length === 0) return null
+    if (targetWordLibIds.length === 0) return null
 
     // 策略：先随机选一个库，再从库里随机选一个词
     // (这种策略比起“把所有词合并再随机”性能更好，不需要加载所有数据)
-    const randomLibId = targetLibIds[Math.floor(Math.random() * targetLibIds.length)]!
+    const randomLibId = targetWordLibIds[Math.floor(Math.random() * targetWordLibIds.length)]!
     const lib = await getLibraryById(randomLibId)
 
     if (!lib || lib.words.length === 0) {
       // 如果运气不好选到了空库，递归重试（或者简单返回 null）
       // 为防止死循环，实际业务建议做更复杂的池化处理，这里简单处理：
-      if (targetLibIds.length > 1) {
-        const remainingIds = targetLibIds.filter((id) => id !== randomLibId)
+      if (targetWordLibIds.length > 1) {
+        const remainingIds = targetWordLibIds.filter((id) => id !== randomLibId)
         return pickWord(remainingIds)
       }
       return null

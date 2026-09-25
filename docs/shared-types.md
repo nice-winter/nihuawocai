@@ -11,7 +11,7 @@ shared/
 │   ├── ws.ts           ← 辅助泛型（ServerEvent/ClientResponse 等）
 │   ├── game.ts         ← 游戏状态机（GamePhase/TurnPhase/道具/计分）
 │   ├── player.ts       ← Player = UserData 别名，PlayerState
-│   ├── room.ts         ← RoomInfo（列表）/ Room（完整）
+│   ├── room.ts         ← RoomSummary（列表）/ Room（完整）
 │   ├── user.ts         ← 第三方用户（GitHub/Steam/X）
 │   ├── userData.ts     ← 用户数据结构（DB 存储）
 │   ├── appConfig.ts    ← 应用配置类型
@@ -75,7 +75,7 @@ shared/
 ```
 UserData → Player (别名) → LoggedInPlayer (Player & PlayerState)
                               ↓
-                    RoomInfo.players / Room.players
+                    RoomSummary.players / Room.players
 ```
 
 ## 使用方式

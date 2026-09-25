@@ -5,7 +5,7 @@
         <UiGameMainLobbyRoomListItem
           v-for="room in roomStore.currentPageRooms"
           :key="room.id"
-          :room-info="room"
+          :room="room"
           @join-button-click="() => tryJoin(room.id, room.roomNumber)"
           @look-button-click="() => tryJoin(room.id, room.roomNumber)"
         />

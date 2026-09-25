@@ -30,7 +30,7 @@
 
 import type { GamePhase, TurnPhase, InteractionReason, ItemType, ItemCounts, ItemUse, ScoreDelta } from './game'
 import type { Player, LoggedInPlayer, PlayerState } from './player'
-import type { Room, RoomInfo } from './room'
+import type { Room, RoomSummary } from './room'
 
 // ================================================================
 //                     Server → Client 事件
@@ -78,7 +78,7 @@ export interface ServerEventMap {
   'room:event:create': {
     roomId: string
     roomNumber: number
-    room: RoomInfo
+    room: RoomSummary
   }
   'room:event:destroy': {
     roomId: string
@@ -304,7 +304,7 @@ export interface ClientEventMap {
   'room:quick_match': Record<string, never>
   'room:create': {
     openSeatCount: number
-    options: { password: string; maxOnlookers: number }
+    joinOptions: { password: string; maxOnlookers: number }
   }
   'room:join': {
     roomNumber: number
@@ -374,12 +374,12 @@ export interface ClientEventMap {
  *
  * @example
  * const res = await send({ type: 'room:list_pull' }) as ClientResponse<'room:list_pull'>
- * res.room_list   // ✅ RoomInfo[]
+ * res.room_list   // ✅ RoomSummary[]
  * res.successful  // ✅ boolean (来自 WS_RECV)
  */
 export interface ClientResponseMap {
   'room:list_pull': {
-    room_list: RoomInfo[]
+    room_list: RoomSummary[]
   }
   'room:quick_match': {
     room: Room

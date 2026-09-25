@@ -11,7 +11,7 @@ export const useRoomStore = defineStore('room', () => {
 
   // State
   /** 所有房间的映射表，键为 room.id（身份键，同号房间不会互相覆盖） */
-  const rooms = reactive(new Map<string, RoomInfo>())
+  const rooms = reactive(new Map<string, RoomSummary>())
   const currentPageNumber = ref(0) // 当前页码
   const showOnlyWaitingRooms = ref(false) // 是否只显示等待中的房间
   const currentRoom = ref<Room | null>(null) // 玩家当前所在的房间
@@ -209,7 +209,7 @@ export const useRoomStore = defineStore('room', () => {
       case 'room:event:password_change':
         // 按身份 ID 比较，防同号误判
         if (currentRoom.value && event.roomId === playerStore.currentRoomId) {
-          currentRoom.value.options.password = event.password
+          currentRoom.value.joinOptions.password = event.password
           currentRoom.value.hasPassword = event.hasPassword
 
           eventBus.emit('current:room:event:password_change', {
@@ -426,11 +426,11 @@ export const useRoomStore = defineStore('room', () => {
   /**
    * 创建新房间
    */
-  const createRoom = (openSeatCount: number, options: { password: string; maxOnlookers: number }) => {
+  const createRoom = (openSeatCount: number, joinOptions: { password: string; maxOnlookers: number }) => {
     send({
       type: 'room:create',
       openSeatCount,
-      options
+      joinOptions
     })
   }
 
