@@ -244,14 +244,14 @@ WebSocket 连接 (crossws hooks)
 ### 客户端 → 服务端（Handler）
 
 - `room:list_pull` / `room:create` / `room:join` / `room:leave` / `room:sit` / `room:seat_switch` / `room:password_change` / `room:broadcast` / `room:invite` / `room:game_start` / `room:quick_match`
-- `game:drawing:give_up` / `game:drawing:sketchpad` / `game:interaction:gift`
+- `game:drawing:give_up` / `game:drawing:sketchpad` / `game:interaction:item`
 - `player:get_profile` / `player:lobby_players_pull`
 - `chat:say`
 
 ### 服务端 → 客户端（Event）
 
 - `room:event:create` / `room:event:destroy` / `room:event:player_join` / `room:event:player_leave` / `room:event:onlooker_join` / `room:event:onlooker_sit` / `room:event:onlooker_leave` / `room:event:stage_update` / `room:event:seat_switch` / `room:event:locked_state_change` / `room:event:password_change` / `room:event:broadcast` / `room:event:invite` / `room:event:info` / `room:event:owner_change`
-- `game:event:start` / `game:event:end` / `game:event:settlement` / `game:event:state` / `game:event:round:prepare` / `game:event:drawing:start` / `game:event:interaction:start` / `game:event:round:end` / `game:event:word` / `game:event:prompt` / `game:event:timer:update` / `game:event:sketchpad` / `game:event:guess:bingo` / `game:event:interaction:gift` / `game:event:notice`
+- `game:event:start` / `game:event:end` / `game:event:settlement` / `game:event:state` / `game:event:round:prepare` / `game:event:drawing:start` / `game:event:interaction:start` / `game:event:round:end` / `game:event:word` / `game:event:prompt` / `game:event:timer:update` / `game:event:sketchpad` / `game:event:guess:bingo` / `game:event:interaction:item` / `game:event:notice`
 - `player:event:logged_in` / `player:event:state_update` / `player:event:lobby_players_add` / `player:event:lobby_players_remove`
 - `chat:event:say`
 
@@ -349,8 +349,8 @@ useEventBus('game:event:guess:bingo', ({ guesser, score_delta }) => {
   addChatSystemMessage(`${guesser.nickname} 猜对了！+${score_delta.guesserGain}`)
 })
 
-useEventBus('game:event:interaction:gift', ({ sender, item_type }) => {
-  playThrowAnimation(sender.id, item_type)
+useEventBus('game:event:interaction:item', ({ sender, itemType }) => {
+  playThrowAnimation(sender.id, itemType)
 })
 ```
 

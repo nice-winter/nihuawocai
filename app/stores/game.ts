@@ -9,7 +9,7 @@ import { usePlayerStore } from './player'
 export interface SettlementData {
   scores: Record<string, number>
   itemCounts: Record<string, ItemCounts>
-  giftHistory: GiftRecord[]
+  itemUses: ItemUse[]
   seconds: number
 }
 
@@ -104,7 +104,7 @@ export const useGameStore = defineStore('game', () => {
         state.settlementData = {
           scores: payload.scores,
           itemCounts: payload.item_counts,
-          giftHistory: payload.gift_history,
+          itemUses: payload.itemUses,
           seconds: payload.seconds
         }
         state.timeLeft = payload.seconds
@@ -271,18 +271,18 @@ export const useGameStore = defineStore('game', () => {
         break
       }
 
-      case 'game:event:interaction:gift': {
+      case 'game:event:interaction:item': {
         const { payload } = msg
 
         if (!state.itemCounts[payload.targetId]) {
           state.itemCounts[payload.targetId] = { flower: 0, egg: 0, slipper: 0 }
         } else {
-          state.itemCounts[payload.targetId]![payload.item_type] += payload.count
+          state.itemCounts[payload.targetId]![payload.itemType] += payload.count
         }
 
         // !!! ⚡ UI 广播点 ⚡ !!!
         // 播放抛物线动画: sender -> target
-        eventBus.emit('game:event:interaction:gift', {
+        eventBus.emit('game:event:interaction:item', {
           ...payload,
           sender: getPlayerFromCurrentRoom(payload.senderId)!,
           target: getPlayerFromCurrentRoom(payload.targetId)
@@ -301,10 +301,10 @@ export const useGameStore = defineStore('game', () => {
     })
   }
 
-  const sendGift = async (itemType: ItemType) => {
+  const sendItem = async (itemType: ItemType) => {
     return await send({
-      type: 'game:interaction:gift',
-      item_type: itemType,
+      type: 'game:interaction:item',
+      itemType,
       count: 1
     })
   }
@@ -316,6 +316,6 @@ export const useGameStore = defineStore('game', () => {
     resetState,
     resetRoundState,
     giveUp,
-    sendGift
+    sendItem
   }
 })

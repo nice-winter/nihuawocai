@@ -57,7 +57,7 @@ export interface ThrowerModalProps {
 
 const { parent = undefined, answer = '', reason = '', seconds = 5, showThrowItem = true } = defineProps<ThrowerModalProps>()
 
-const { sendGift } = useGameStore()
+const { sendItem } = useGameStore()
 
 const baseModal = useTemplateRef('baseModal')
 const modalRef = ref<HTMLDivElement | null>(null)
@@ -68,7 +68,7 @@ const { t, start } = useCountdown(seconds, () => baseModal.value?.close())
 
 const throwItemClick = (type: 'egg' | 'flower' | 'slipper') => {
   isThrowed.value = true
-  sendGift(type)
+  sendItem(type)
 }
 
 const open = (): Promise<void> => {

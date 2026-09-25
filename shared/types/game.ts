@@ -25,7 +25,7 @@ export interface ItemCounts {
   slipper: number
 }
 
-export interface GiftRecord {
+export interface ItemUse {
   /** 送道具者玩家 ID */
   senderId: string
   /** 接收者玩家 ID（固定为当回合画者） */

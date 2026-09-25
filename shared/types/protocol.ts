@@ -28,7 +28,7 @@
  * @see shared/types/ws.ts — ServerMessage, ServerEvent, ClientResponse 等辅助类型
  */
 
-import type { GamePhase, RoundPhase, InteractionReason, ItemType, ItemCounts, GiftRecord, ScoreDelta } from './game'
+import type { GamePhase, RoundPhase, InteractionReason, ItemType, ItemCounts, ItemUse, ScoreDelta } from './game'
 import type { Player, LoggedInPlayer, PlayerState } from './player'
 import type { Room, RoomInfo } from './room'
 
@@ -182,7 +182,7 @@ export interface ServerEventMap {
     payload: {
       scores: Record<string, number>
       item_counts: Record<string, ItemCounts>
-      gift_history: GiftRecord[]
+      itemUses: ItemUse[]
       seconds: number
     }
   }
@@ -265,13 +265,13 @@ export interface ServerEventMap {
       reason: string
     }
   }
-  'game:event:interaction:gift': {
+  'game:event:interaction:item': {
     payload: {
       /** 送道具者玩家 ID */
       senderId: string
       /** 接收者玩家 ID（固定为当回合画者） */
       targetId: string
-      item_type: ItemType
+      itemType: ItemType
       count: number
     }
   }
@@ -295,7 +295,7 @@ export interface ServerEventMap {
  *
  * @example
  * await send({ type: 'room:join', roomNumber: 1234, password: 'xxx' })
- * await send({ type: 'game:interaction:gift', item_type: 'flower', count: 1 })
+ * await send({ type: 'game:interaction:item', itemType: 'flower', count: 1 })
  */
 export interface ClientEventMap {
   // --- 房间操作 ---
@@ -342,8 +342,8 @@ export interface ClientEventMap {
     command: 'pencil_switch' | 'pencil_options_update' | 'draw' | 'undo' | 'redo' | 'clear'
     payload: unknown
   }
-  'game:interaction:gift': {
-    item_type: ItemType
+  'game:interaction:item': {
+    itemType: ItemType
     count: number
   }
 
@@ -435,6 +435,6 @@ export interface ClientResponseMap {
   }
   'game:drawing:give_up': Record<string, never>
   'game:drawing:sketchpad': Record<string, never>
-  'game:interaction:gift': Record<string, never>
+  'game:interaction:item': Record<string, never>
   'chat:say': Record<string, never>
 }

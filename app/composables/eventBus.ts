@@ -66,7 +66,7 @@ type Events = {
   'game:event:settlement': {
     scores: Record<string, number>
     item_counts: Record<string, ItemCounts>
-    gift_history: GiftRecord[]
+    itemUses: ItemUse[]
     seconds: number
   }
   'game:event:state': {
@@ -129,7 +129,7 @@ type Events = {
     seconds: number
     reason: string
   }
-  'game:event:interaction:gift': {
+  'game:event:interaction:item': {
     /** 送道具者玩家 ID */
     senderId: string
     /** 送道具者（前端富化） */
@@ -138,7 +138,7 @@ type Events = {
     targetId: string
     /** 接收者（前端富化，画手可能已离场） */
     target: Player | undefined
-    item_type: ItemType
+    itemType: ItemType
     count: number
   }
   'game:event:sketchpad:draw': unknown

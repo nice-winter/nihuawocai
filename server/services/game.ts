@@ -24,7 +24,7 @@ const logger = createLogger('GameService')
 //                          类型定义 (从 shared/types/game 导入)
 // ----------------------------------------------------------------
 
-// GamePhase, RoundPhase, ItemCounts, GiftRecord, InteractionReason, ItemType, ScoreDelta
+// GamePhase, RoundPhase, ItemCounts, ItemUse, InteractionReason, ItemType, ScoreDelta
 // 已统一定义在 shared/types/game.ts，通过 Nuxt 自动导入可用
 
 export interface GameState {
@@ -55,8 +55,8 @@ export interface GameState {
   // --- 统计数据 ---
   scores: Record<string, number> // 玩家 ID -> 积分 (包含已离场玩家)
   itemCounts: Record<string, ItemCounts> // 玩家 ID -> 收到道具总数 (包含已离场玩家)
-  giftHistory: GiftRecord[] // 全局送道具记录
-  roundGiftSenders: Set<string> // 本回合已送道具的玩家 ID 集合
+  itemUses: ItemUse[] // 全局送道具记录
+  roundItemSenders: Set<string> // 本回合已送道具的玩家 ID 集合
 
   // --- 辅助状态 ---
   revealedPrompts: number
@@ -140,8 +140,8 @@ const gameStart = async (roomId: string, room: Room) => {
     bingoPlayers: [],
     scores: initialScores,
     itemCounts: initialItems,
-    giftHistory: [], // 初始化道具记录
-    roundGiftSenders: new Set(), // 初始化每回合送道具集合
+    itemUses: [], // 初始化道具记录
+    roundItemSenders: new Set(), // 初始化每回合送道具集合
     revealedPrompts: 0,
     drawingStartAt: 0,
     lastDrawTime: 0,
@@ -247,7 +247,7 @@ const enterSettlementPhase = (roomId: string, st: GameState) => {
       payload: {
         scores: finalScores,
         item_counts: finalItemCounts,
-        gift_history: st.giftHistory, // 包含道具记录
+        itemUses: st.itemUses, // 包含道具记录
         seconds: waitSeconds
       }
     },
@@ -295,7 +295,7 @@ const startRound = async (roomId: string) => {
   st.bingoPlayers = []
   st.guesses = {}
   st.revealedPrompts = 0
-  st.roundGiftSenders.clear() // 重置送道具记录
+  st.roundItemSenders.clear() // 重置送道具记录
 
   // 确定画手
   const drawerId = st.drawerQueue[st.currentRoundIndex % st.drawerQueue.length] ?? null
@@ -647,7 +647,7 @@ const handleGuess = (roomId: string, guesserId: string, guessContent: string): b
 /**
  * 赠送道具
  */
-const handleGift = (playerId: string, itemType: ItemType) => {
+const handleItem = (playerId: string, itemType: ItemType) => {
   const player = getPlayer(playerId)
   if (!player || !checkPlayerIsInRoom(playerId)) throw new Error('你已离线或当前不在房间内')
 
@@ -659,7 +659,7 @@ const handleGift = (playerId: string, itemType: ItemType) => {
   if (st.drawer === playerId) throw new Error('不能给自己送道具')
 
   // --- 限制逻辑 ---
-  if (st.roundGiftSenders.has(playerId)) {
+  if (st.roundItemSenders.has(playerId)) {
     throw new Error('本回合你已经送过了')
   }
 
@@ -672,10 +672,10 @@ const handleGift = (playerId: string, itemType: ItemType) => {
   }
   st.itemCounts[targetId][itemType]++
 
-  st.roundGiftSenders.add(playerId) // 标记本回合已送
+  st.roundItemSenders.add(playerId) // 标记本回合已送
 
   // 记录流水
-  st.giftHistory.push({
+  st.itemUses.push({
     senderId: playerId,
     targetId,
     itemType,
@@ -685,11 +685,11 @@ const handleGift = (playerId: string, itemType: ItemType) => {
 
   sendToRoom(
     {
-      type: 'game:event:interaction:gift',
+      type: 'game:event:interaction:item',
       payload: {
         senderId: playerId,
         targetId,
-        item_type: itemType,
+        itemType,
         count: 1
       }
     },
@@ -902,7 +902,7 @@ export {
   handleSketchpad,
   handleGiveUp,
   handleGuess,
-  handleGift,
+  handleItem,
   forceEndRound,
   getChatContext,
   GameStateRecord

@@ -210,8 +210,8 @@ useEventBus(
     })
   }
 )
-useEventBus('game:event:interaction:gift', async ({ item_type }) => {
-  switch (item_type) {
+useEventBus('game:event:interaction:item', async ({ itemType }) => {
+  switch (itemType) {
     case 'flower':
       throwerRef.value?.throwFlower(1, -400, -50)
       playSound('flower')

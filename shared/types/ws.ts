@@ -90,9 +90,9 @@ export type ServerEvent = {
  * 适用场景：构造发送给服务端的消息时，确保参数类型正确
  *
  * @example
- * const msg: ClientMessage<'game:interaction:gift'> = {
- *   type: 'game:interaction:gift',
- *   item_type: 'flower',
+ * const msg: ClientMessage<'game:interaction:item'> = {
+ *   type: 'game:interaction:item',
+ *   itemType: 'flower',
  *   count: 1
  * }
  */

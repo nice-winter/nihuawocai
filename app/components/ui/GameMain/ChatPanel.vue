@@ -251,8 +251,8 @@ useEventBus('game:event:interaction:start', ({ drawerPlayer, reason, bingo_playe
     msg: '回合结束'
   })
 })
-useEventBus('game:event:interaction:gift', ({ sender, item_type }) => {
-  switch (item_type) {
+useEventBus('game:event:interaction:item', ({ sender, itemType }) => {
+  switch (itemType) {
     case 'flower': {
       ChatPanelMessageListRef.value?.addMessage({
         type: 'action',

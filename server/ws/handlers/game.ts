@@ -1,5 +1,5 @@
 import { defineWsHandlers } from '~~/server/ws/utils'
-import { handleGiveUp, handleGift, handleSketchpad } from '~~/server/services/game'
+import { handleGiveUp, handleItem, handleSketchpad } from '~~/server/services/game'
 import { createLogger } from '~~/server/utils/logger'
 
 const logger = createLogger('GameHandler')
@@ -17,12 +17,12 @@ export default defineWsHandlers({
     if (command === 'draw') return NON_RESPONSE // 画板坐标传输协议，不返回任何内容
     return res
   },
-  'game:interaction:gift': async ({ msg, user }) => {
-    const { item_type } = msg as WebsocketMessage<{
-      item_type: ItemType
+  'game:interaction:item': async ({ msg, user }) => {
+    const { itemType } = msg as WebsocketMessage<{
+      itemType: ItemType
       count: number
     }>
 
-    return handleGift(user.id, item_type)
+    return handleItem(user.id, itemType)
   }
 })
