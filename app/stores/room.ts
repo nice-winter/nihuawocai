@@ -16,7 +16,7 @@ export const useRoomStore = defineStore('room', () => {
   const showOnlyWaitingRooms = ref(false) // 是否只显示等待中的房间
   const currentRoom = ref<Room | null>(null) // 玩家当前所在的房间
   const inviteRecord = reactive<Map<string, number>>(new Map()) // 邀请记录
-  const lobbyInviteRecord = reactive<Map<string, number>>(new Map()) // 广播记录
+  const lobbyBroadcastRecord = reactive<Map<string, number>>(new Map()) // 广播记录
 
   // Computed
   /**
@@ -291,8 +291,8 @@ export const useRoomStore = defineStore('room', () => {
         break
 
       // 房间广播相关事件
-      case 'room:event:lobby_invite':
-        eventBus.emit('room:event:lobby_invite', {
+      case 'room:event:lobby_broadcast':
+        eventBus.emit('room:event:lobby_broadcast', {
           roomNumber: event.roomNumber,
           roomId: event.roomId,
           password: event.password,
@@ -302,10 +302,10 @@ export const useRoomStore = defineStore('room', () => {
         })
         // 记录该房间广播过期时间，广播按钮根据此记录判断是否冷却，防止频繁广播
         // 键用 roomId，避免同号新房误继承旧房冷却
-        lobbyInviteRecord.set(event.roomId, event.expiresAt)
+        lobbyBroadcastRecord.set(event.roomId, event.expiresAt)
         // 清除过期的房间广播记录
         setTimeout(() => {
-          lobbyInviteRecord.delete(event.roomId)
+          lobbyBroadcastRecord.delete(event.roomId)
         }, event.expiresAt - Date.now())
         break
     }
@@ -393,9 +393,9 @@ export const useRoomStore = defineStore('room', () => {
   /**
    * 发送广播
    */
-  const sendLobbyInvite = async () => {
+  const sendLobbyBroadcast = async () => {
     await send({
-      type: 'room:lobby_invite'
+      type: 'room:lobby_broadcast'
     })
   }
 
@@ -465,7 +465,7 @@ export const useRoomStore = defineStore('room', () => {
     isCurrentRoomOwner,
     isOwner: isCurrentRoomOwner,
     inviteRecord,
-    lobbyInviteRecord,
+    lobbyBroadcastRecord,
 
     // Computed
     currentPageRooms,
@@ -478,7 +478,7 @@ export const useRoomStore = defineStore('room', () => {
     sit,
     setSeatOpen,
     changeRoomPassword,
-    sendLobbyInvite,
+    sendLobbyBroadcast,
     invite,
     start,
     prevPage,

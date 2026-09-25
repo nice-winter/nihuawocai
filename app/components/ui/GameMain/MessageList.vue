@@ -96,7 +96,7 @@
               />
             </li>
 
-            <li v-else-if="item.type === 'lobbyInvite'" class="first:pt-0 last:pb-0 py-1">
+            <li v-else-if="item.type === 'lobbyBroadcast'" class="first:pt-0 last:pb-0 py-1">
               <span class="text-sm2">
                 <UiAvatar class="size-6.5 align-top" :player="item.sender" />
                 <span class="ml-2">{{ item.sender.nickname }}</span>
@@ -160,7 +160,7 @@ type IMessage =
       style?: TextStyle
     }
   | {
-      type: 'lobbyInvite'
+      type: 'lobbyBroadcast'
       sender: Player
       roomNumber: number
       roomId: string

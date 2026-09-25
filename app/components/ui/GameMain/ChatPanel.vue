@@ -122,12 +122,12 @@ useEventBus('chat:event:say', ({ message, sender, timestamp }) => {
   })
 })
 
-useEventBus('room:event:lobby_invite', ({ roomId, roomNumber, password, sender, timestamp }) => {
+useEventBus('room:event:lobby_broadcast', ({ roomId, roomNumber, password, sender, timestamp }) => {
   // 非游戏状态下，才显示广播信息
   // 当然这里在服务端不要推送就好了，前端也顺手过滤下呗
   if (!currentRoom.value?.isPlaying) {
     ChatPanelMessageListRef.value?.addMessage({
-      type: 'lobbyInvite',
+      type: 'lobbyBroadcast',
       sender,
       roomNumber,
       roomId,

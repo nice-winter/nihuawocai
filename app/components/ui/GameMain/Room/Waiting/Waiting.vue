@@ -53,10 +53,10 @@
       <div class="grid grid-cols-2 grid-rows-2 gap-tight">
         <UiButton
           color="green"
-          :disabled="Boolean(lobbyInviteRecord.get(room.id))"
-          @click="sendLobbyInvite"
+          :disabled="Boolean(lobbyBroadcastRecord.get(room.id))"
+          @click="sendLobbyBroadcast"
         >
-          {{ !lobbyInviteRecord.get(room.id) ? '广播邀请' : '已广播' }}
+          {{ !lobbyBroadcastRecord.get(room.id) ? '广播邀请' : '已广播' }}
         </UiButton>
 
         <UiButton color="blue"> 邀请好友 </UiButton>
@@ -145,8 +145,8 @@ const playerStore = usePlayerStore()
 const { isSelf } = playerStore
 const { loggedInPlayer, isOnlooker } = storeToRefs(playerStore)
 const roomStore = useRoomStore()
-const { sit, setSeatOpen, changeRoomPassword, sendLobbyInvite, start } = roomStore
-const { isCurrentRoomOwner, lobbyInviteRecord } = storeToRefs(roomStore)
+const { sit, setSeatOpen, changeRoomPassword, sendLobbyBroadcast, start } = roomStore
+const { isCurrentRoomOwner, lobbyBroadcastRecord } = storeToRefs(roomStore)
 
 const passwordUInputRef = useTemplateRef('passwordUInputRef')
 const RoomEventsRef = useTemplateRef('RoomEvents')

@@ -45,8 +45,8 @@ type Events = {
     password: string
   }
 
-  // room lobby_invite
-  'room:event:lobby_invite': {
+  // room lobby_broadcast
+  'room:event:lobby_broadcast': {
     roomNumber: number
     roomId: string
     password: string

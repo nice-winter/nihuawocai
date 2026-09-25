@@ -78,8 +78,8 @@ const say = async (user: UserData, message: string) => {
   const config = await getAppConfig()
 
   const intervalSec = checkPlayerIsInRoom(player.id)
-    ? config.game.room.time.chatIntervalTimeSecond
-    : config.game.lobby.time.chatIntervalTimeSecond
+    ? config.game.room.time.chatIntervalSeconds
+    : config.game.lobby.time.chatIntervalSeconds
   const intervalMs = intervalSec * 1000
 
   const nextAllowed = chatIntervalRecord.get(user.id) ?? 0

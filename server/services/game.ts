@@ -216,7 +216,7 @@ const enterSettlementPhase = (roomId: string, st: GameState) => {
   let finalItemCounts = st.itemCounts
 
   // 如果不允许包含离场玩家，则进行过滤
-  if (!st.gameRules.cycle.scoreRule.includeLeaversInSettlement) {
+  if (!st.gameRules.cycle.scoreRules.includeLeaversInSettlement) {
     const activePlayers = new Set(st.drawerQueue) // drawerQueue 始终代表当前在线玩家
 
     finalScores = Object.fromEntries(
@@ -309,7 +309,7 @@ const startRound = async (roomId: string) => {
   }
 
   st.currentWord = await wordManager.pickWord(st.joinOptions.wordLibIds)
-  const prepareSeconds = st.gameRules.cycle.time.turnStartWaitTimeSecond
+  const prepareSeconds = st.gameRules.cycle.time.turnStartWaitSeconds
   setupTimer(st, prepareSeconds)
 
   logger.debug(
@@ -382,7 +382,7 @@ const enterDrawingPhase = (roomId: string, st: GameState) => {
   st.drawingStartAt = Date.now()
   st.lastDrawTime = 0
 
-  const drawingSeconds = st.gameRules.cycle.time.turnDrawingTimeSecond
+  const drawingSeconds = st.gameRules.cycle.time.turnDrawingDurationSeconds
   setupTimer(st, drawingSeconds)
 
   sendToRoom(
@@ -401,7 +401,7 @@ const handleDrawingTick = (roomId: string, st: GameState, now: number) => {
   const elapsedSeconds = Math.floor((now - st.timers.startTime) / 1000)
 
   // 1. AFK 检测
-  const afkThresholdMs = st.gameRules.cycle.time.turnDrawingTimeoutSecond * 1000
+  const afkThresholdMs = st.gameRules.cycle.time.turnDrawingTimeoutSeconds * 1000
   if (st.lastDrawTime === 0 && now - st.drawingStartAt > afkThresholdMs) {
     sendToRoom(
       {
@@ -415,7 +415,7 @@ const handleDrawingTick = (roomId: string, st: GameState, now: number) => {
   }
 
   // 2. 提示词逻辑
-  const hintTimes = st.gameRules.cycle.time.hintTimeOffsets
+  const hintTimes = st.gameRules.cycle.time.hintOffsetSeconds
   if (st.revealedHints < hintTimes.length) {
     if (st.bingoPlayers.length > 0) return // 如果已有玩家猜对，则后续不再弹出提示词
     const nextHintTime = hintTimes[st.revealedHints]!
@@ -448,7 +448,7 @@ const enterInteractionPhase = (
   reason: InteractionReason = 'timeout'
 ) => {
   st.turnPhase = 'interaction'
-  const waitSeconds = st.gameRules.cycle.time.turnEndWaitTimeSecond
+  const waitSeconds = st.gameRules.cycle.time.turnEndWaitSeconds
   setupTimer(st, waitSeconds)
 
   sendToRoom(
@@ -789,7 +789,7 @@ const handlePlayerLeave = (roomId: string, playerId: string) => {
  * @returns 返回本次变动的分数，用于前端展示 "+10" 动画
  */
 const applyScoreOnBingo = (st: GameState, guesserId: string) => {
-  const rules = st.gameRules.cycle.scoreRule
+  const rules = st.gameRules.cycle.scoreRules
   const drawerId = st.drawerId
 
   // 容错：如果没有画手信息，直接返回 0
@@ -802,10 +802,10 @@ const applyScoreOnBingo = (st: GameState, guesserId: string) => {
   const isFirstBingo = st.bingoPlayers.length === 1
 
   // 1. 计算猜题者得分
-  const guesserGain = isFirstBingo ? rules.player.firstBingo : rules.player.bingo
+  const guesserGain = isFirstBingo ? rules.guesser.firstBingo : rules.guesser.bingo
 
   // 2. 计算画手得分
-  const drawerGain = isFirstBingo ? rules.drawingPlayer.firstBingo : rules.drawingPlayer.bingo
+  const drawerGain = isFirstBingo ? rules.drawer.firstBingo : rules.drawer.bingo
 
   // 3. 应用分数到总分池
   st.scores[guesserId] = (st.scores[guesserId] || 0) + guesserGain

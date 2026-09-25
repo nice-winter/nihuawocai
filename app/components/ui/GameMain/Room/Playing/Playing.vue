@@ -3,7 +3,7 @@
     <div class="flex h-16 min-h-16 items-center justify-between px-1">
       <div class="flex w-20 flex-col items-center justify-center">
         <UiAvatar
-          :player="drawingPlayer"
+          :player="drawer"
           class="size-10 overflow-hidden rounded-md"
           :verified-icon="{ show: true, size: 12 }"
         />
@@ -32,7 +32,7 @@
         <span v-else>
           由
           <span class="text-red-600">
-            {{ drawingPlayer?.nickname }}
+            {{ drawer?.nickname }}
           </span>
           作画
         </span>
@@ -123,7 +123,7 @@ const rankModal = useModal(RankModal, { parent: '#sketchpad-container' })
 const { playSound } = useSound()
 
 const _players = computed(() => room.players.filter((p) => p !== null))
-const drawingPlayer = computed(() => _players.value.find((p) => p.id === gameStore.state.drawerId))
+const drawer = computed(() => _players.value.find((p) => p.id === gameStore.state.drawerId))
 
 // --- 画布操作编排（游戏阶段 + WS 桥梁命令 → Sketchpad） ---
 

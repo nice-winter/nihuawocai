@@ -162,7 +162,7 @@ export interface ServerEventMap {
     password: string
     expiresAt: number
   }
-  'room:event:lobby_invite': {
+  'room:event:lobby_broadcast': {
     roomId: string
     roomNumber: number
     password: string
@@ -337,7 +337,7 @@ export interface ClientEventMap {
   'room:password_change': {
     password: string
   }
-  'room:lobby_invite': Record<string, never>
+  'room:lobby_broadcast': Record<string, never>
   'room:invite': {
     /** 被邀请玩家 ID */
     targetId: string
@@ -420,7 +420,7 @@ export interface ClientResponseMap {
     hasPassword: boolean
     password: string
   }
-  'room:lobby_invite': {
+  'room:lobby_broadcast': {
     roomId: string
     roomNumber: number
     password: string
