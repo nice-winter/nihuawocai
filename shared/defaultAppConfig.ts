@@ -177,14 +177,14 @@ export const defaultAppConfig: AppConfig = {
       cycle: {
         count: 2,
         time: {
-          roundStartWaitTimeSecond: 5,
-          roundDrawingTimeoutSecond: 20,
-          roundDrawingTimeSecond: 60,
-          maxRoundDrawingTimeSecond: 120,
+          turnStartWaitTimeSecond: 5,
+          turnDrawingTimeoutSecond: 20,
+          turnDrawingTimeSecond: 60,
+          maxTurnDrawingTimeSecond: 120,
           roundPromptTimeSecond: [20, 40],
-          roundBingoTimeSecond: 20,
-          roundEndWaitTimeSecond: 5,
-          cycleEndWaitTimeSecond: 8
+          bingoShortenToSeconds: 20,
+          turnEndWaitTimeSecond: 5,
+          settlementDisplaySeconds: 8
         },
         scoreRule: {
           drawingPlayer: {

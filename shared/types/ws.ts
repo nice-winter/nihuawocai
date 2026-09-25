@@ -51,7 +51,7 @@ export const NON_RESPONSE = 'NON_RESPONSE'
  * @example
  * // 在 store 中处理已知类型的事件
  * const event = msg as ServerMessage<'game:event:start'>
- * event.payload.total_rounds // ✅ number
+ * event.payload.totalTurns // ✅ number
  *
  * @example
  * // 处理画板事件
@@ -72,7 +72,7 @@ export type ServerMessage<T extends keyof ServerEventMap> = WebsocketMessage<Ser
  *   const event = msg as ServerEvent
  *   switch (event.type) {
  *     case 'game:event:start':
- *       event.payload.total_rounds // ✅ 自动窄化为 number
+ *       event.payload.totalTurns // ✅ 自动窄化为 number
  *       break
  *     case 'game:event:notice':
  *       event.payload.message // ✅ 自动窄化为 string

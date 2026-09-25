@@ -56,7 +56,7 @@ const onPointerLeave = () => {
 const showBrushIcon = computed(() => {
   if (gameStore.state.draw) return !isOutside.value
 
-  if (gameStore.state.roundPhase === 'drawing') {
+  if (gameStore.state.turnPhase === 'drawing') {
     return (
       drawerLastXY.x >= 0 &&
       drawerLastXY.y >= 0 &&
@@ -78,7 +78,7 @@ const animate = () => {
   if (gameStore.state.draw && !isOutside.value) {
     x = localX
     y = localY
-  } else if (gameStore.state.roundPhase === 'drawing') {
+  } else if (gameStore.state.turnPhase === 'drawing') {
     x = drawerLastXY.x
     y = drawerLastXY.y
   }

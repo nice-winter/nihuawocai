@@ -85,21 +85,21 @@ export interface AppConfig {
         /** 时间相关设置 */
         time: {
           /** 开始绘画前的等待时间 @default 5 */
-          roundStartWaitTimeSecond: number
+          turnStartWaitTimeSecond: number
           /** 绘画开始后，N 秒内仍未有任何动作，则判定为绘画超时，直接结束当前回合 @default 20 */
-          roundDrawingTimeoutSecond: number
+          turnDrawingTimeoutSecond: number
           /** 绘画时间 @default 60 */
-          roundDrawingTimeSecond: number
+          turnDrawingTimeSecond: number
           /** 最大绘画时间，预留给加时卡道具等使用 @default 120 */
-          maxRoundDrawingTimeSecond: number
+          maxTurnDrawingTimeSecond: number
           /** 绘画过程中弹出提示词的时间节点（相对于起始绘画时间） @default [20,40] */
           roundPromptTimeSecond: number[]
           /** 绘画时，若有人猜对，直接将剩余时间缩短为至此值 @default 20 */
-          roundBingoTimeSecond: number
+          bingoShortenToSeconds: number
           /** 小回合结束时的互动的等待时间 @default 5 */
-          roundEndWaitTimeSecond: number
+          turnEndWaitTimeSecond: number
           /** 最终结算面板的显示时间 @default 8 */
-          cycleEndWaitTimeSecond: number
+          settlementDisplaySeconds: number
         }
         /** 回合计分规则 */
         scoreRule: {

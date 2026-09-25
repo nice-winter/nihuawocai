@@ -5,15 +5,15 @@
 
 export type GamePhase =
   | 'game_start' // 游戏初始化
-  | 'game_round' // 游戏进行回合中
+  | 'game_turn' // 游戏进行回合中
   | 'game_settlement' // 最终结算 (展示积分结算榜)
   | 'game_end' // 游戏完全结束 (清理资源)
 
-export type RoundPhase =
-  | 'round_prepare' // 准备/倒计时
+export type TurnPhase =
+  | 'turn_prepare' // 准备/倒计时
   | 'drawing' // 绘画中
   | 'interaction' // 互动 (答案展示/送花)
-  | 'round_end' // 回合结束
+  | 'turn_end' // 回合结束
 
 export type ItemType = 'flower' | 'egg' | 'slipper'
 

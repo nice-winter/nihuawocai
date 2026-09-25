@@ -165,7 +165,7 @@ useEventBus('current:room:event:onlooker_leave', ({ player }) => {
 })
 
 // 游戏事件通知
-useEventBus('game:event:round:prepare', ({ drawerPlayer }) => {
+useEventBus('game:event:turn:prepare', ({ drawerPlayer }) => {
   ChatPanelMessageListRef.value?.addMessage({
     type: 'system',
     msg: '回合开始'

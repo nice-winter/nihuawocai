@@ -9,7 +9,7 @@ shared/
 ├── types/
 │   ├── protocol.ts     ← 🌟 唯一类型契约：三个事件映射表
 │   ├── ws.ts           ← 辅助泛型（ServerEvent/ClientResponse 等）
-│   ├── game.ts         ← 游戏状态机（GamePhase/RoundPhase/道具/计分）
+│   ├── game.ts         ← 游戏状态机（GamePhase/TurnPhase/道具/计分）
 │   ├── player.ts       ← Player = UserData 别名，PlayerState
 │   ├── room.ts         ← RoomInfo（列表）/ Room（完整）
 │   ├── user.ts         ← 第三方用户（GitHub/Steam/X）
@@ -66,8 +66,8 @@ shared/
 
 ## 游戏状态机（game.ts）
 
-- **GamePhase**: `game_start` → `game_round` → `game_settlement` → `game_end`
-- **RoundPhase**: `round_prepare` → `drawing` → `interaction` → `round_end`
+- **GamePhase**: `game_start` → `game_turn` → `game_settlement` → `game_end`
+- **TurnPhase**: `turn_prepare` → `drawing` → `interaction` → `turn_end`
 - **ItemType**: `flower` | `egg` | `slipper`
 
 ## 类型继承链

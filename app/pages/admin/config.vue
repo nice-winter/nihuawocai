@@ -238,22 +238,22 @@ const addGender = () => {
             <h4 class="font-medium text-highlighted">回合时间设置</h4>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
               <UFormField label="准备等待时间（秒）">
-                <UInput v-model="editingConfig.game.room.cycle.time.roundStartWaitTimeSecond" type="number" :min="1" />
+                <UInput v-model="editingConfig.game.room.cycle.time.turnStartWaitTimeSecond" type="number" :min="1" />
               </UFormField>
               <UFormField label="绘画超时时间（秒）">
-                <UInput v-model="editingConfig.game.room.cycle.time.roundDrawingTimeoutSecond" type="number" :min="5" />
+                <UInput v-model="editingConfig.game.room.cycle.time.turnDrawingTimeoutSecond" type="number" :min="5" />
               </UFormField>
               <UFormField label="绘画时间（秒）">
-                <UInput v-model="editingConfig.game.room.cycle.time.roundDrawingTimeSecond" type="number" :min="10" />
+                <UInput v-model="editingConfig.game.room.cycle.time.turnDrawingTimeSecond" type="number" :min="10" />
               </UFormField>
               <UFormField label="猜对后剩余时间（秒）">
-                <UInput v-model="editingConfig.game.room.cycle.time.roundBingoTimeSecond" type="number" :min="5" />
+                <UInput v-model="editingConfig.game.room.cycle.time.bingoShortenToSeconds" type="number" :min="5" />
               </UFormField>
               <UFormField label="回合结束等待时间（秒）">
-                <UInput v-model="editingConfig.game.room.cycle.time.roundEndWaitTimeSecond" type="number" :min="1" />
+                <UInput v-model="editingConfig.game.room.cycle.time.turnEndWaitTimeSecond" type="number" :min="1" />
               </UFormField>
               <UFormField label="结算展示时间（秒）">
-                <UInput v-model="editingConfig.game.room.cycle.time.cycleEndWaitTimeSecond" type="number" :min="3" />
+                <UInput v-model="editingConfig.game.room.cycle.time.settlementDisplaySeconds" type="number" :min="3" />
               </UFormField>
             </div>
           </div>

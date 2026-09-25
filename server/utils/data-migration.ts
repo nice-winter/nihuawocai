@@ -25,7 +25,15 @@ interface KeyMigration {
 
 const KEY_MIGRATIONS: KeyMigration[] = [
   // --- app_config ---
-  { table: 'app', parent: 'game.room', from: 'passwordMaxLengh', to: 'passwordMaxLength' }
+  { table: 'app', parent: 'game.room', from: 'passwordMaxLengh', to: 'passwordMaxLength' },
+  // 轮次词汇 round→turn（cycle.time 下的计时配置）
+  { table: 'app', parent: 'game.room.cycle.time', from: 'roundStartWaitTimeSecond', to: 'turnStartWaitTimeSecond' },
+  { table: 'app', parent: 'game.room.cycle.time', from: 'roundDrawingTimeoutSecond', to: 'turnDrawingTimeoutSecond' },
+  { table: 'app', parent: 'game.room.cycle.time', from: 'roundDrawingTimeSecond', to: 'turnDrawingTimeSecond' },
+  { table: 'app', parent: 'game.room.cycle.time', from: 'maxRoundDrawingTimeSecond', to: 'maxTurnDrawingTimeSecond' },
+  { table: 'app', parent: 'game.room.cycle.time', from: 'roundBingoTimeSecond', to: 'bingoShortenToSeconds' },
+  { table: 'app', parent: 'game.room.cycle.time', from: 'roundEndWaitTimeSecond', to: 'turnEndWaitTimeSecond' },
+  { table: 'app', parent: 'game.room.cycle.time', from: 'cycleEndWaitTimeSecond', to: 'settlementDisplaySeconds' }
 ]
 
 /** 沿父路径定位目标对象，`*` 会展开为数组的每一项 */

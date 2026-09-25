@@ -71,9 +71,9 @@ type Events = {
   }
   'game:event:state': {
     game_phase: GamePhase
-    round_phase: RoundPhase
-    round_index: number
-    total_rounds: number
+    turnPhase: TurnPhase
+    turnIndex: number
+    totalTurns: number
     drawer: string | null
     remaining_seconds: number
     bingo_players: string[]
@@ -84,8 +84,8 @@ type Events = {
     message: string
   }
   // game round
-  'game:event:round:prepare': {
-    round_index: number
+  'game:event:turn:prepare': {
+    turnIndex: number
     drawer: string
     drawerPlayer: Player
     seconds: number
@@ -103,8 +103,8 @@ type Events = {
     seconds: number
     reason: InteractionReason
   }
-  'game:event:round:end': {
-    round: number
+  'game:event:turn:end': {
+    turnIndex: number
     scores: Record<string, number>
   }
   // game 互动
@@ -159,7 +159,7 @@ type EventHandler<K extends EventKeys> = (payload: Events[K]) => void
  * @param handler - 事件处理函数，payload 类型自动推导
  *
  * @example
- * useEventBus('game:event:round:prepare', ({ seconds, drawerPlayer }) => {
+ * useEventBus('game:event:turn:prepare', ({ seconds, drawerPlayer }) => {
  *   // 秒级类型安全，无需手动 on/off
  * })
  */

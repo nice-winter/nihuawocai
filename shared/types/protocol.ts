@@ -28,7 +28,7 @@
  * @see shared/types/ws.ts — ServerMessage, ServerEvent, ClientResponse 等辅助类型
  */
 
-import type { GamePhase, RoundPhase, InteractionReason, ItemType, ItemCounts, ItemUse, ScoreDelta } from './game'
+import type { GamePhase, TurnPhase, InteractionReason, ItemType, ItemCounts, ItemUse, ScoreDelta } from './game'
 import type { Player, LoggedInPlayer, PlayerState } from './player'
 import type { Room, RoomInfo } from './room'
 
@@ -43,7 +43,7 @@ import type { Room, RoomInfo } from './room'
  * value: 事件携带的数据结构（不含 type，由框架补充）
  *
  * 两种数据结构约定：
- * - 带 `payload` 的：游戏事件，如 `{ payload: { total_rounds } }`
+ * - 带 `payload` 的：游戏事件，如 `{ payload: { totalTurns } }`
  * - 不带 `payload` 的：房间/玩家事件，字段直接平铺在消息上
  *
  * 房间事件 envelope 统一携带 `roomId` + `roomNumber`（寻址用 roomId），
@@ -53,7 +53,7 @@ import type { Room, RoomInfo } from './room'
  * // 前端接收并自动窄化
  * const event = msg as ServerEvent
  * if (event.type === 'game:event:start') {
- *   event.payload.total_rounds // ✅
+ *   event.payload.totalTurns // ✅
  * }
  */
 export interface ServerEventMap {
@@ -175,7 +175,7 @@ export interface ServerEventMap {
   // --- 游戏核心生命周期 ---
   'game:event:start': {
     payload: {
-      total_rounds: number
+      totalTurns: number
     }
   }
   'game:event:settlement': {
@@ -192,9 +192,9 @@ export interface ServerEventMap {
   'game:event:state': {
     payload: {
       game_phase: GamePhase
-      round_phase: RoundPhase
-      round_index: number
-      total_rounds: number
+      turnPhase: TurnPhase
+      turnIndex: number
+      totalTurns: number
       drawer: string | null
       remaining_seconds: number
       bingo_players: string[]
@@ -209,9 +209,9 @@ export interface ServerEventMap {
   }
 
   // --- 回合流程控制 ---
-  'game:event:round:prepare': {
+  'game:event:turn:prepare': {
     payload: {
-      round_index: number
+      turnIndex: number
       drawer: string
       seconds: number
     }
@@ -230,9 +230,9 @@ export interface ServerEventMap {
       reason: InteractionReason
     }
   }
-  'game:event:round:end': {
+  'game:event:turn:end': {
     payload: {
-      round: number
+      turnIndex: number
       scores: Record<string, number>
     }
   }

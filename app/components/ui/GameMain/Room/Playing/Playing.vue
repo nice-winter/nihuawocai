@@ -12,7 +12,7 @@
       <div class="h-full w-11"/>
 
       <div class="flex w-64 flex-col items-center justify-center gap-2 p-2 text-sm2 select-none">
-        <span> 第 {{ gameStore.state.currentRound }}/{{ gameStore.state.totalRounds }} 回合 </span>
+        <span> 第 {{ gameStore.state.currentTurn }}/{{ gameStore.state.totalTurns }} 回合 </span>
 
         <span v-if="gameStore.isMyTurn && gameStore.state.currentWord !== null">
           题目是：
@@ -54,7 +54,7 @@
       <div class="flex w-20 flex-col items-center justify-center">
         <UiGameMainRoomTimer
           v-show="
-            gameStore.state.roundPhase === 'drawing' &&
+            gameStore.state.turnPhase === 'drawing' &&
             gameStore.state.gamePhase !== 'game_settlement'
           "
           ref="Timer"
@@ -128,7 +128,7 @@ const drawingPlayer = computed(() => _players.value.find((p) => p.id === gameSto
 // --- 画布操作编排（游戏阶段 + WS 桥梁命令 → Sketchpad） ---
 
 // 游戏阶段 → 画布状态
-useEventBus('game:event:round:prepare', () => {
+useEventBus('game:event:turn:prepare', () => {
   sketchpadRef.value?.clear()
 })
 useEventBus('game:event:drawing:start', () => {
@@ -154,7 +154,7 @@ useEventBus('sketchpad:clear', () => sketchpadRef.value?.clear())
 useEventBus('chat:event:say', ({ message, sender }) => {
   show(sender.id, message)
 })
-useEventBus('game:event:round:prepare', async ({ seconds }) => {
+useEventBus('game:event:turn:prepare', async ({ seconds }) => {
   await countdownModal.open({ seconds })
 })
 useEventBus('game:event:drawing:start', () => {

@@ -15,9 +15,9 @@ export interface SettlementData {
 
 export interface GameState {
   gamePhase: GamePhase
-  roundPhase: RoundPhase
-  currentRound: number
-  totalRounds: number
+  turnPhase: TurnPhase
+  currentTurn: number
+  totalTurns: number
   drawer: string | null
   currentWord: string | null
   prompts: string[]
@@ -37,9 +37,9 @@ export const useGameStore = defineStore('game', () => {
 
   const defaultState: GameState = {
     gamePhase: 'game_start',
-    roundPhase: 'round_prepare',
-    currentRound: 0,
-    totalRounds: 0,
+    turnPhase: 'turn_prepare',
+    currentTurn: 0,
+    totalTurns: 0,
     drawer: null,
     currentWord: null,
     prompts: [],
@@ -55,7 +55,7 @@ export const useGameStore = defineStore('game', () => {
   const state = reactive<GameState>({ ...defaultState })
 
   const isMyTurn = computed(() => state.drawer === myId.value)
-  const isDrawing = computed(() => state.roundPhase === 'drawing' && isMyTurn.value)
+  const isDrawing = computed(() => state.turnPhase === 'drawing' && isMyTurn.value)
 
   const resetState = () => {
     Object.assign(state, defaultState)
@@ -63,8 +63,8 @@ export const useGameStore = defineStore('game', () => {
     state.scores = {}
   }
 
-  const resetRoundState = () => {
-    state.roundPhase = 'round_prepare'
+  const resetTurnState = () => {
+    state.turnPhase = 'turn_prepare'
     state.currentWord = null
     state.prompts = []
     state.bingoPlayers = []
@@ -88,7 +88,7 @@ export const useGameStore = defineStore('game', () => {
         const { payload } = msg
 
         state.gamePhase = 'game_start'
-        state.totalRounds = payload.total_rounds
+        state.totalTurns = payload.totalTurns
         state.scores = {}
         state.itemCounts = {}
 
@@ -131,9 +131,9 @@ export const useGameStore = defineStore('game', () => {
         const { payload } = msg
 
         state.gamePhase = payload.game_phase
-        state.roundPhase = payload.round_phase
-        state.currentRound = payload.round_index
-        state.totalRounds = payload.total_rounds
+        state.turnPhase = payload.turnPhase
+        state.currentTurn = payload.turnIndex
+        state.totalTurns = payload.totalTurns
         state.drawer = payload.drawer
         state.timeLeft = payload.remaining_seconds
         state.bingoPlayers = payload.bingo_players || []
@@ -152,19 +152,19 @@ export const useGameStore = defineStore('game', () => {
       //       回合流程控制事件
       // ==============================
 
-      case 'game:event:round:prepare': {
+      case 'game:event:turn:prepare': {
         const { payload } = msg
 
-        resetRoundState()
-        state.gamePhase = 'game_round'
-        state.roundPhase = 'round_prepare'
-        state.currentRound = payload.round_index
+        resetTurnState()
+        state.gamePhase = 'game_turn'
+        state.turnPhase = 'turn_prepare'
+        state.currentTurn = payload.turnIndex
         state.drawer = payload.drawer
         state.timeLeft = payload.seconds
 
         // !!! ⚡ UI 广播点 ⚡ !!!
         // 显示 "第X轮开始" 过场动画
-        eventBus.emit('game:event:round:prepare', {
+        eventBus.emit('game:event:turn:prepare', {
           ...payload,
           drawerPlayer: getPlayerFromCurrentRoom(payload.drawer)!
         })
@@ -174,7 +174,7 @@ export const useGameStore = defineStore('game', () => {
       case 'game:event:drawing:start': {
         const { payload } = msg
 
-        state.roundPhase = 'drawing'
+        state.turnPhase = 'drawing'
         state.timeLeft = payload.seconds
 
         // !!! ⚡ UI 广播点 ⚡ !!!
@@ -190,7 +190,7 @@ export const useGameStore = defineStore('game', () => {
       case 'game:event:interaction:start': {
         const { payload } = msg
 
-        state.roundPhase = 'interaction'
+        state.turnPhase = 'interaction'
         state.timeLeft = payload.seconds
         if (payload.answer) {
           state.currentWord = payload.answer
@@ -210,10 +210,10 @@ export const useGameStore = defineStore('game', () => {
         break
       }
 
-      case 'game:event:round:end': {
+      case 'game:event:turn:end': {
         const { payload } = msg
 
-        state.roundPhase = 'round_end'
+        state.turnPhase = 'turn_end'
         state.scores = payload.scores
         break
       }
@@ -314,7 +314,7 @@ export const useGameStore = defineStore('game', () => {
     isMyTurn,
     isDrawing,
     resetState,
-    resetRoundState,
+    resetTurnState,
     giveUp,
     sendItem
   }

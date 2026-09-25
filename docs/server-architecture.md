@@ -141,9 +141,9 @@ WebSocket 连接 (crossws hooks)
 
 ### 4. 游戏状态机
 
-**GamePhase**: `game_start` → `game_round` → `game_settlement` → `game_end`
+**GamePhase**: `game_start` → `game_turn` → `game_settlement` → `game_end`
 
-**RoundPhase**: `round_prepare` → `drawing` → `interaction` → `round_end`
+**TurnPhase**: `turn_prepare` → `drawing` → `interaction` → `turn_end`
 
 核心流程：
 
@@ -251,7 +251,7 @@ WebSocket 连接 (crossws hooks)
 ### 服务端 → 客户端（Event）
 
 - `room:event:create` / `room:event:destroy` / `room:event:player_join` / `room:event:player_leave` / `room:event:onlooker_join` / `room:event:onlooker_sit` / `room:event:onlooker_leave` / `room:event:stage_update` / `room:event:seat_switch` / `room:event:locked_state_change` / `room:event:password_change` / `room:event:broadcast` / `room:event:invite` / `room:event:info` / `room:event:owner_change`
-- `game:event:start` / `game:event:end` / `game:event:settlement` / `game:event:state` / `game:event:round:prepare` / `game:event:drawing:start` / `game:event:interaction:start` / `game:event:round:end` / `game:event:word` / `game:event:prompt` / `game:event:timer:update` / `game:event:sketchpad` / `game:event:guess:bingo` / `game:event:interaction:item` / `game:event:notice`
+- `game:event:start` / `game:event:end` / `game:event:settlement` / `game:event:state` / `game:event:turn:prepare` / `game:event:drawing:start` / `game:event:interaction:start` / `game:event:turn:end` / `game:event:word` / `game:event:prompt` / `game:event:timer:update` / `game:event:sketchpad` / `game:event:guess:bingo` / `game:event:interaction:item` / `game:event:notice`
 - `player:event:logged_in` / `player:event:state_update` / `player:event:lobby_players_add` / `player:event:lobby_players_remove`
 - `chat:event:say`
 
