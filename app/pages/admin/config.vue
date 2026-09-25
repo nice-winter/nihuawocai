@@ -168,7 +168,7 @@ const addGender = () => {
                 <UInput v-model="editingConfig.game.room.cycle.count" type="number" :min="1" :max="10" />
               </UFormField>
               <UFormField label="最大旁观人数">
-                <UInput v-model="editingConfig.game.room.feature.kick" type="number" :min="0" :max="20" />
+                <UInput v-model="editingConfig.game.room.maxOnlookers" type="number" :min="0" :max="20" />
               </UFormField>
               <UFormField label="房间密码最大长度">
                 <UInput v-model="editingConfig.game.room.passwordMaxLength" type="number" :min="0" :max="20" />
@@ -182,19 +182,19 @@ const addGender = () => {
             <h4 class="font-medium text-highlighted">功能开关</h4>
             <div class="space-y-3">
               <USwitch
-                v-model="editingConfig.game.room.feature.kick"
+                v-model="editingConfig.game.room.features.kick"
                 label="踢人功能"
                 description="允许房主踢出房间内的玩家"
                 class="p-3 rounded-lg bg-elevated"
               />
               <USwitch
-                v-model="editingConfig.game.room.feature.lobbyInvite"
+                v-model="editingConfig.game.room.features.lobbyBroadcast"
                 label="广播功能"
                 description="允许房间内发送广播消息"
                 class="p-3 rounded-lg bg-elevated"
               />
               <USwitch
-                v-model="editingConfig.game.room.feature.invite.idle"
+                v-model="editingConfig.game.room.features.invite.canInviteIdle"
                 label="邀请空闲玩家"
                 description="允许邀请大厅中的空闲玩家"
                 class="p-3 rounded-lg bg-elevated"
@@ -208,7 +208,7 @@ const addGender = () => {
           <div class="space-y-4">
             <h4 class="font-medium text-highlighted">大厅设置</h4>
             <UFormField label="聊天消息发送间隔（秒）">
-              <UInput v-model="editingConfig.game.lobby.time.chatIntervalTimeSecond" type="number" :min="0" />
+              <UInput v-model="editingConfig.game.lobby.time.chatIntervalSeconds" type="number" :min="0" />
             </UFormField>
           </div>
 
@@ -218,16 +218,16 @@ const addGender = () => {
             <h4 class="font-medium text-highlighted">房间时间设置</h4>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
               <UFormField label="广播消息间隔（秒）">
-                <UInput v-model="editingConfig.game.room.time.lobbyInviteIntervalTimeSecond" type="number" :min="0" />
+                <UInput v-model="editingConfig.game.room.time.lobbyBroadcastIntervalSeconds" type="number" :min="0" />
               </UFormField>
               <UFormField label="聊天消息间隔（秒）">
-                <UInput v-model="editingConfig.game.room.time.chatIntervalTimeSecond" type="number" :min="0" />
+                <UInput v-model="editingConfig.game.room.time.chatIntervalSeconds" type="number" :min="0" />
               </UFormField>
               <UFormField label="邀请有效时间（秒）">
-                <UInput v-model="editingConfig.game.room.time.invitationValidTimeSecond" type="number" :min="5" />
+                <UInput v-model="editingConfig.game.room.time.inviteValidSeconds" type="number" :min="5" />
               </UFormField>
               <UFormField label="挂机判定超时（秒）">
-                <UInput v-model="editingConfig.game.room.time.afkTimeSecond" type="number" :min="30" />
+                <UInput v-model="editingConfig.game.room.time.afkTimeoutSeconds" type="number" :min="30" />
               </UFormField>
             </div>
           </div>
@@ -238,19 +238,19 @@ const addGender = () => {
             <h4 class="font-medium text-highlighted">回合时间设置</h4>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
               <UFormField label="准备等待时间（秒）">
-                <UInput v-model="editingConfig.game.room.cycle.time.turnStartWaitTimeSecond" type="number" :min="1" />
+                <UInput v-model="editingConfig.game.room.cycle.time.turnStartWaitSeconds" type="number" :min="1" />
               </UFormField>
               <UFormField label="绘画超时时间（秒）">
-                <UInput v-model="editingConfig.game.room.cycle.time.turnDrawingTimeoutSecond" type="number" :min="5" />
+                <UInput v-model="editingConfig.game.room.cycle.time.turnDrawingTimeoutSeconds" type="number" :min="5" />
               </UFormField>
               <UFormField label="绘画时间（秒）">
-                <UInput v-model="editingConfig.game.room.cycle.time.turnDrawingTimeSecond" type="number" :min="10" />
+                <UInput v-model="editingConfig.game.room.cycle.time.turnDrawingDurationSeconds" type="number" :min="10" />
               </UFormField>
               <UFormField label="猜对后剩余时间（秒）">
                 <UInput v-model="editingConfig.game.room.cycle.time.bingoShortenToSeconds" type="number" :min="5" />
               </UFormField>
               <UFormField label="回合结束等待时间（秒）">
-                <UInput v-model="editingConfig.game.room.cycle.time.turnEndWaitTimeSecond" type="number" :min="1" />
+                <UInput v-model="editingConfig.game.room.cycle.time.turnEndWaitSeconds" type="number" :min="1" />
               </UFormField>
               <UFormField label="结算展示时间（秒）">
                 <UInput v-model="editingConfig.game.room.cycle.time.settlementDisplaySeconds" type="number" :min="3" />
@@ -265,10 +265,10 @@ const addGender = () => {
             <h4 class="font-medium text-highlighted">画手计分</h4>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
               <UFormField label="首次被猜对得分">
-                <UInput v-model="editingConfig.game.room.cycle.scoreRule.drawingPlayer.firstBingo" type="number" :min="0" />
+                <UInput v-model="editingConfig.game.room.cycle.scoreRules.drawer.firstBingo" type="number" :min="0" />
               </UFormField>
               <UFormField label="后续被猜对得分">
-                <UInput v-model="editingConfig.game.room.cycle.scoreRule.drawingPlayer.bingo" type="number" :min="0" />
+                <UInput v-model="editingConfig.game.room.cycle.scoreRules.drawer.bingo" type="number" :min="0" />
               </UFormField>
             </div>
           </div>
@@ -279,10 +279,10 @@ const addGender = () => {
             <h4 class="font-medium text-highlighted">猜题者计分</h4>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
               <UFormField label="首答得分">
-                <UInput v-model="editingConfig.game.room.cycle.scoreRule.player.firstBingo" type="number" :min="0" />
+                <UInput v-model="editingConfig.game.room.cycle.scoreRules.guesser.firstBingo" type="number" :min="0" />
               </UFormField>
               <UFormField label="后续猜对得分">
-                <UInput v-model="editingConfig.game.room.cycle.scoreRule.player.bingo" type="number" :min="0" />
+                <UInput v-model="editingConfig.game.room.cycle.scoreRules.guesser.bingo" type="number" :min="0" />
               </UFormField>
             </div>
           </div>
@@ -292,7 +292,7 @@ const addGender = () => {
           <div class="space-y-4">
             <h4 class="font-medium text-highlighted">结算规则</h4>
             <USwitch
-              v-model="editingConfig.game.room.cycle.scoreRule.includeLeaversInSettlement"
+              v-model="editingConfig.game.room.cycle.scoreRules.includeLeaversInSettlement"
               label="包含离场玩家"
               description="最终结算时是否包含中途退出的玩家"
               class="p-3 rounded-lg bg-elevated"
