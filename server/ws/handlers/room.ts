@@ -23,7 +23,7 @@ import {
 } from '~~/server/ws/schemas/room'
 
 export default defineWsHandlers({
-  'room:list_pull': async () => {
+  'room:get_rooms': async () => {
     const roomList = getRoomList()
     return { rooms: roomList }
   },

@@ -31,10 +31,10 @@ export const usePlayerStore = defineStore('player', () => {
           loggedInPlayer.value.state = event.state
         }
         break
-      case 'player:event:lobby_players_add':
+      case 'player:event:lobby_join':
         lobbyPlayers.set(event.player.id, event.player)
         break
-      case 'player:event:lobby_players_remove':
+      case 'player:event:lobby_leave':
         lobbyPlayers.delete(event.player.id)
         break
     }
@@ -46,8 +46,8 @@ export const usePlayerStore = defineStore('player', () => {
 
   const getLobbyPlayers = async () => {
     const res = (await send({
-      type: 'player:lobby_players_pull'
-    })) as ClientResponse<'player:lobby_players_pull'>
+      type: 'player:get_lobby_players'
+    })) as ClientResponse<'player:get_lobby_players'>
 
     lobbyPlayers.clear()
     res.lobbyPlayers.forEach((p) => lobbyPlayers.set(p.id, p))

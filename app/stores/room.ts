@@ -317,8 +317,8 @@ export const useRoomStore = defineStore('room', () => {
    */
   const pullRoomList = async () => {
     const res = (await send({
-      type: 'room:list_pull'
-    })) as ClientResponse<'room:list_pull'>
+      type: 'room:get_rooms'
+    })) as ClientResponse<'room:get_rooms'>
 
     rooms.clear()
     res.rooms.forEach((room) => rooms.set(room.id, room))

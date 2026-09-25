@@ -21,6 +21,7 @@ export const WS_MESSAGE_PONG: WebsocketMessage = {
   type: 'pong'
 }
 
+// @TODO: duplicate_login 声明了但从未发送——顶号目前走 peer.close(4001)；要么接线发送本事件，要么删除
 export const WS_MESSAGE_DUPLICATE_LOGIN: WebsocketMessage = {
   type: 'duplicate_login'
 }
@@ -105,7 +106,7 @@ export type ClientMessage<T extends keyof ClientEventMap> = WebsocketMessage<{ t
  *
  * @example
  * // 拉取房间列表
- * const res = await send({ type: 'room:list_pull' }) as ClientResponse<'room:list_pull'>
+ * const res = await send({ type: 'room:get_rooms' }) as ClientResponse<'room:get_rooms'>
  * res.rooms // ✅ RoomSummary[]
  *
  * @example

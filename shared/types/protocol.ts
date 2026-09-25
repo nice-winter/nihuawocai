@@ -66,6 +66,7 @@ export interface ServerEventMap {
   // --- 基础协议 ---
   ping: Record<string, never>
   pong: Record<string, never>
+  /** @TODO 未接线（顶号走 peer.close(4001)），且是唯一无模块前缀的业务事件；接线或删除 */
   duplicate_login: Record<string, never>
 
   // --- 玩家事件 ---
@@ -73,10 +74,10 @@ export interface ServerEventMap {
     player: LoggedInPlayer
   }
   'player:event:state_update': PlayerState
-  'player:event:lobby_players_add': {
+  'player:event:lobby_join': {
     player: Player
   }
-  'player:event:lobby_players_remove': {
+  'player:event:lobby_leave': {
     player: Player
   }
 
@@ -311,7 +312,7 @@ export interface ServerEventMap {
  */
 export interface ClientEventMap {
   // --- 房间操作 ---
-  'room:list_pull': Record<string, never>
+  'room:get_rooms': Record<string, never>
   'room:quick_match': Record<string, never>
   'room:create': {
     openSeatCount: number
@@ -344,7 +345,7 @@ export interface ClientEventMap {
   'room:game_start': Record<string, never>
 
   // --- 玩家操作 ---
-  'player:lobby_players_pull': Record<string, never>
+  'player:get_lobby_players': Record<string, never>
   'player:get_profile': {
     playerId: string
   }
@@ -385,12 +386,12 @@ export interface ClientEventMap {
  * 注意：handler 必须返回 object 才能携带业务字段；返回裸 number/string 会被回包机制吞掉。
  *
  * @example
- * const res = await send({ type: 'room:list_pull' }) as ClientResponse<'room:list_pull'>
+ * const res = await send({ type: 'room:get_rooms' }) as ClientResponse<'room:get_rooms'>
  * res.rooms   // ✅ RoomSummary[]
  * res.successful  // ✅ boolean (来自 WS_RECV)
  */
 export interface ClientResponseMap {
-  'room:list_pull': {
+  'room:get_rooms': {
     rooms: RoomSummary[]
   }
   'room:quick_match': {
@@ -438,7 +439,7 @@ export interface ClientResponseMap {
     expiresAt: number
   }
   'room:game_start': Record<string, never>
-  'player:lobby_players_pull': {
+  'player:get_lobby_players': {
     lobbyPlayers: Player[]
   }
   'player:get_profile': {

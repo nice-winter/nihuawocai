@@ -16,7 +16,7 @@ export default defineWsHandlers({
       profile: await getUserData(playerId)
     }
   },
-  'player:lobby_players_pull': async ({ msg, user }) => {
+  'player:get_lobby_players': async ({ msg, user }) => {
     return {
       lobbyPlayers: getLobbyPlayers()
     }

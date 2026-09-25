@@ -73,6 +73,7 @@ export const hooks = defineHooks({
       })
     } catch (e) {
       logger.warn('消息处理错误:', e)
+      // @TODO: type 'error' 未在协议映射表声明且前端无消费，应并入 successful: false 回包机制
       reply(peer)({ type: 'error', message: 'Invalid message' })
     }
   },
