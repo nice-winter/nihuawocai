@@ -24,6 +24,8 @@ interface KeyMigration {
 }
 
 const KEY_MIGRATIONS: KeyMigration[] = [
+  // --- word 词库（WordItem.prompts → hints，嵌套在 words 数组内）---
+  { table: 'word', parent: 'words.*', from: 'prompts', to: 'hints' },
   // --- app_config ---
   { table: 'app', parent: 'game.room', from: 'passwordMaxLengh', to: 'passwordMaxLength' },
   // 轮次词汇 round→turn（cycle.time 下的计时配置）
@@ -31,6 +33,7 @@ const KEY_MIGRATIONS: KeyMigration[] = [
   { table: 'app', parent: 'game.room.cycle.time', from: 'roundDrawingTimeoutSecond', to: 'turnDrawingTimeoutSecond' },
   { table: 'app', parent: 'game.room.cycle.time', from: 'roundDrawingTimeSecond', to: 'turnDrawingTimeSecond' },
   { table: 'app', parent: 'game.room.cycle.time', from: 'maxRoundDrawingTimeSecond', to: 'maxTurnDrawingTimeSecond' },
+  { table: 'app', parent: 'game.room.cycle.time', from: 'roundPromptTimeSecond', to: 'hintTimeOffsets' },
   { table: 'app', parent: 'game.room.cycle.time', from: 'roundBingoTimeSecond', to: 'bingoShortenToSeconds' },
   { table: 'app', parent: 'game.room.cycle.time', from: 'roundEndWaitTimeSecond', to: 'turnEndWaitTimeSecond' },
   { table: 'app', parent: 'game.room.cycle.time', from: 'cycleEndWaitTimeSecond', to: 'settlementDisplaySeconds' }

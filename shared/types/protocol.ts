@@ -244,10 +244,11 @@ export interface ServerEventMap {
       category: string
     }
   }
-  'game:event:prompt': {
+  'game:event:hint': {
     payload: {
-      content: string
-      index: number
+      hintText: string
+      /** 第几条提示（1-based） */
+      hintIndex: number
     }
   }
   'game:event:guess:bingo': {

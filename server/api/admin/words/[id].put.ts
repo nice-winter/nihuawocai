@@ -47,10 +47,10 @@ export default defineEventHandler(async (event) => {
 
     // 验证每个词汇的格式
     for (const word of body.words) {
-      if (!word.word || !Array.isArray(word.prompts)) {
+      if (!word.word || !Array.isArray(word.hints)) {
         throw createError({
           statusCode: 400,
-          statusMessage: '词汇格式错误，需要 { word: string, prompts: string[] }'
+          statusMessage: '词汇格式错误，需要 { word: string, hints: string[] }'
         })
       }
     }

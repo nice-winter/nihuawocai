@@ -60,22 +60,22 @@ const openEditModal = async (libraryId: string) => {
 
 const addWord = () => {
   if (!editingLibrary.value.words) editingLibrary.value.words = []
-  editingLibrary.value.words.push({ word: '', prompts: [] })
+  editingLibrary.value.words.push({ word: '', hints: [] })
 }
 
 const removeWord = (index: number) => {
   editingLibrary.value.words.splice(index, 1)
 }
 
-const addPrompt = (wordIndex: number) => {
+const addHint = (wordIndex: number) => {
   const word = editingLibrary.value?.words?.[wordIndex]
   if (!word) return
-  if (!word.prompts) word.prompts = []
-  word.prompts.push('')
+  if (!word.hints) word.hints = []
+  word.hints.push('')
 }
 
-const removePrompt = (wordIndex: number, promptIndex: number) => {
-  editingLibrary.value?.words?.[wordIndex]?.prompts?.splice(promptIndex, 1)
+const removeHint = (wordIndex: number, hintIndex: number) => {
+  editingLibrary.value?.words?.[wordIndex]?.hints?.splice(hintIndex, 1)
 }
 
 const toast = useToast()
@@ -141,7 +141,7 @@ const handleDelete = async () => {
 const wordColumns = [
   { accessorKey: '_index', header: '序号' },
   { accessorKey: 'word', header: '词汇' },
-  { accessorKey: 'prompts', header: '提示词' },
+  { accessorKey: 'hints', header: '提示词' },
   { id: 'actions', header: '操作' }
 ]
 </script>
@@ -233,23 +233,23 @@ const wordColumns = [
                     @update:model-value="(v: string) => { const w = editingLibrary?.words?.[row.original._index!]; if (w) w.word = v }"
                   />
                 </template>
-                <template #prompts-cell="{ row }">
+                <template #hints-cell="{ row }">
                   <div class="flex flex-wrap gap-1">
                     <UBadge
-                      v-for="(prompt, pIdx) in (editingLibrary.words[row.original._index!]?.prompts || [])"
+                      v-for="(hint, pIdx) in (editingLibrary.words[row.original._index!]?.hints || [])"
                       :key="pIdx"
                       variant="soft"
                       color="neutral"
                       size="sm"
                     >
-                      {{ prompt }}
+                      {{ hint }}
                     </UBadge>
                     <UButton
                       icon="i-lucide-plus"
                       size="xs"
                       variant="ghost"
                       color="neutral"
-                      @click="addPrompt(row.original._index!)"
+                      @click="addHint(row.original._index!)"
                     />
                   </div>
                 </template>

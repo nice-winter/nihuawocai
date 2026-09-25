@@ -182,11 +182,11 @@ useEventBus('game:event:drawing:start', ({ drawerPlayer }) => {
     msg: `开始作画...`
   })
 })
-useEventBus('game:event:prompt', ({ index, content }) => {
+useEventBus('game:event:hint', ({ hintIndex, hintText }) => {
   ChatPanelMessageListRef.value?.addMessage({
-    type: 'prompt',
-    index,
-    content
+    type: 'hint',
+    hintIndex,
+    hintText
   })
 })
 useEventBus('game:event:guess:bingo', ({ guesser }) => {

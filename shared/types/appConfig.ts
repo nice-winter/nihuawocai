@@ -93,7 +93,7 @@ export interface AppConfig {
           /** 最大绘画时间，预留给加时卡道具等使用 @default 120 */
           maxTurnDrawingTimeSecond: number
           /** 绘画过程中弹出提示词的时间节点（相对于起始绘画时间） @default [20,40] */
-          roundPromptTimeSecond: number[]
+          hintTimeOffsets: number[]
           /** 绘画时，若有人猜对，直接将剩余时间缩短为至此值 @default 20 */
           bingoShortenToSeconds: number
           /** 小回合结束时的互动的等待时间 @default 5 */

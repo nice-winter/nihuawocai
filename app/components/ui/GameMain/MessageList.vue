@@ -72,7 +72,7 @@
             </li>
 
             <li
-              v-if="item.type === 'prompt'"
+              v-if="item.type === 'hint'"
               class="message-item"
               :class="[`message-item-${item.type}`]"
               :style="{
@@ -81,8 +81,8 @@
                 fontWeight: item.style?.fontWeight || 'normal'
               }"
             >
-              <span>提示{{ item.index }}：</span>
-              <span class="text-red-600">{{ item.content }}</span>
+              <span>提示{{ item.hintIndex }}：</span>
+              <span class="text-red-600">{{ item.hintText }}</span>
             </li>
 
             <li v-else-if="item.type === 'system'">
@@ -154,9 +154,9 @@ type IMessage =
       style?: TextStyle
     }
   | {
-      type: 'prompt'
-      index: number
-      content: string
+      type: 'hint'
+      hintIndex: number
+      hintText: string
       style?: TextStyle
     }
   | {

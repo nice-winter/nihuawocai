@@ -181,7 +181,7 @@ export const defaultAppConfig: AppConfig = {
           turnDrawingTimeoutSecond: 20,
           turnDrawingTimeSecond: 60,
           maxTurnDrawingTimeSecond: 120,
-          roundPromptTimeSecond: [20, 40],
+          hintTimeOffsets: [20, 40],
           bingoShortenToSeconds: 20,
           turnEndWaitTimeSecond: 5,
           settlementDisplaySeconds: 8

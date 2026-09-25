@@ -20,7 +20,7 @@ export interface GameState {
   totalTurns: number
   drawer: string | null
   currentWord: string | null
-  prompts: string[]
+  hints: string[]
   bingoPlayers: string[]
   timeLeft: number
   scores: Record<string, number>
@@ -42,7 +42,7 @@ export const useGameStore = defineStore('game', () => {
     totalTurns: 0,
     drawer: null,
     currentWord: null,
-    prompts: [],
+    hints: [],
     bingoPlayers: [],
     timeLeft: 0,
     scores: {},
@@ -66,7 +66,7 @@ export const useGameStore = defineStore('game', () => {
   const resetTurnState = () => {
     state.turnPhase = 'turn_prepare'
     state.currentWord = null
-    state.prompts = []
+    state.hints = []
     state.bingoPlayers = []
 
     state.draw = false
@@ -229,14 +229,14 @@ export const useGameStore = defineStore('game', () => {
         break
       }
 
-      case 'game:event:prompt': {
+      case 'game:event:hint': {
         const { payload } = msg
 
-        state.prompts.push(payload.content)
+        state.hints.push(payload.hintText)
 
         // !!! ⚡ UI 广播点 ⚡ !!!
         // 顶部提示栏闪烁
-        eventBus.emit('game:event:prompt', {
+        eventBus.emit('game:event:hint', {
           ...payload
         })
         break

@@ -59,7 +59,7 @@ export interface GameState {
   turnItemSenders: Set<string> // 本回合已送道具的玩家 ID 集合
 
   // --- 辅助状态 ---
-  revealedPrompts: number
+  revealedHints: number
   drawingStartAt: number // 本轮开始作画的时间戳
   lastDrawTime: number // 上次收到画笔数据的时间戳 (用于 AFK 检测)
 
@@ -142,7 +142,7 @@ const gameStart = async (roomId: string, room: Room) => {
     itemCounts: initialItems,
     itemUses: [], // 初始化道具记录
     turnItemSenders: new Set(), // 初始化每回合送道具集合
-    revealedPrompts: 0,
+    revealedHints: 0,
     drawingStartAt: 0,
     lastDrawTime: 0,
     timers: { startTime: Date.now(), endTime: Date.now(), duration: 0 }
@@ -294,7 +294,7 @@ const startRound = async (roomId: string) => {
   st.turnPhase = 'turn_prepare'
   st.bingoPlayers = []
   st.guesses = {}
-  st.revealedPrompts = 0
+  st.revealedHints = 0
   st.turnItemSenders.clear() // 重置送道具记录
 
   // 确定画手
@@ -415,26 +415,26 @@ const handleDrawingTick = (roomId: string, st: GameState, now: number) => {
   }
 
   // 2. 提示词逻辑
-  const promptTimes = st.config.cycle.time.roundPromptTimeSecond
-  if (st.revealedPrompts < promptTimes.length) {
+  const hintTimes = st.config.cycle.time.hintTimeOffsets
+  if (st.revealedHints < hintTimes.length) {
     if (st.bingoPlayers.length > 0) return // 如果已有玩家猜对，则后续不再弹出提示词
-    const nextPromptTime = promptTimes[st.revealedPrompts]!
-    if (elapsedSeconds >= nextPromptTime) {
-      const promptIndex = st.revealedPrompts
-      const promptContent =
-        promptIndex === 0
+    const nextHintTime = hintTimes[st.revealedHints]!
+    if (elapsedSeconds >= nextHintTime) {
+      const hintIndex = st.revealedHints
+      const hintText =
+        hintIndex === 0
           ? `${st.currentWord!.word.length}个字`
-          : st.currentWord!.prompts[promptIndex - 1] || '没有提示了'
+          : st.currentWord!.hints[hintIndex - 1] || '没有提示了'
 
       sendToRoom(
         {
-          type: 'game:event:prompt',
-          payload: { content: promptContent, index: promptIndex + 1 }
+          type: 'game:event:hint',
+          payload: { hintText, hintIndex: hintIndex + 1 }
         },
         roomId
       )
 
-      st.revealedPrompts++
+      st.revealedHints++
     }
   }
 }

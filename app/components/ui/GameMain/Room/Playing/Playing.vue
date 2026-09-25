@@ -21,11 +21,11 @@
           </span>
         </span>
 
-        <span v-else-if="gameStore.state.prompts.length" class="w-full text-center truncate">
+        <span v-else-if="gameStore.state.hints.length" class="w-full text-center truncate">
           提示：
-          <template v-for="(prompt, index) in gameStore.state.prompts" :key="index">
-            <span class="text-red-600">{{ prompt }}</span>
-            <span v-if="index < gameStore.state.prompts.length - 1">，</span>
+          <template v-for="(hint, index) in gameStore.state.hints" :key="index">
+            <span class="text-red-600">{{ hint }}</span>
+            <span v-if="index < gameStore.state.hints.length - 1">，</span>
           </template>
         </span>
 
@@ -160,7 +160,7 @@ useEventBus('game:event:turn:prepare', async ({ seconds }) => {
 useEventBus('game:event:drawing:start', () => {
   timerRef.value?.play()
 })
-useEventBus('game:event:prompt', () => {
+useEventBus('game:event:hint', () => {
   playSound('pop') // 弹出提示词时，发出泡泡音效
 })
 useEventBus('game:event:guess:bingo', ({ score_delta }) => {

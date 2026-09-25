@@ -112,9 +112,9 @@ type Events = {
     word: string
     category: string
   }
-  'game:event:prompt': {
-    content: string
-    index: number
+  'game:event:hint': {
+    hintText: string
+    hintIndex: number
   }
   'game:event:guess:bingo': {
     /** 猜中者玩家 ID */
