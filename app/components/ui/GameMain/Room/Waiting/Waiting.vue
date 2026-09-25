@@ -5,7 +5,7 @@
 
       <span class="relative inline-flex items-center gap-1 pl-1 align-text-bottom">
         <UCheckbox
-          v-model="lockedLocal"
+          v-model="hasPasswordLocal"
           size="sm"
           icon="ph:check-bold"
           class="game-checkbox"
@@ -62,7 +62,7 @@
         <UiButton color="blue"> 邀请好友 </UiButton>
 
         <div>
-          <UiButton v-if="isCurrentRoomOwner && !roomInfo.locked && canStart"> 再等一会 </UiButton>
+          <UiButton v-if="isCurrentRoomOwner && !roomInfo.hasPassword && canStart"> 再等一会 </UiButton>
         </div>
 
         <div>
@@ -75,7 +75,7 @@
 
     <div class="flex flex-1 flex-col items-center justify-center">
       <UiGameMainRoomTimer
-        v-if="!roomInfo.locked && canStart"
+        v-if="!roomInfo.hasPassword && canStart"
         ref="Timer"
         v-model:seconds="prepareStartSeconds"
       />
@@ -168,23 +168,23 @@ const seatMode = computed(() => {
 })
 
 // 本地状态：由 prop 同步（房主可以修改）
-const lockedLocal = ref(roomInfo.locked)
+const hasPasswordLocal = ref(roomInfo.hasPassword)
 const editing = ref(false)
 
 // pendingPassword：编辑时的临时值；originalPassword：来自 roomInfo 的当前密码（只读）
-const pendingPassword = ref(roomInfo.locked ? roomInfo.options.password || '' : '')
-const originalPassword = computed(() => (roomInfo.locked ? roomInfo.options.password || '' : ''))
+const pendingPassword = ref(roomInfo.hasPassword ? roomInfo.options.password || '' : '')
+const originalPassword = computed(() => (roomInfo.hasPassword ? roomInfo.options.password || '' : ''))
 
 const displayHasPassword = computed(
   () =>
-    lockedLocal.value &&
+    hasPasswordLocal.value &&
     (isCurrentRoomOwner.value
       ? pendingPassword.value !== '' || originalPassword.value !== ''
       : originalPassword.value !== '')
 )
 
 const displayText = computed(() => {
-  if (!lockedLocal.value) return '密码'
+  if (!hasPasswordLocal.value) return '密码'
   // 房主看到自己设置的 pending（编辑中）或真实密码；别人只看到真实密码
   if (isCurrentRoomOwner.value) {
     const pwd = editing.value
@@ -198,10 +198,10 @@ const displayText = computed(() => {
 
 // 同步外部变更（当 roomInfo 改变时，非房主应跟随）
 watch(
-  () => roomInfo.locked,
+  () => roomInfo.hasPassword,
   (val) => {
     if (!isCurrentRoomOwner.value) {
-      lockedLocal.value = val
+      hasPasswordLocal.value = val
       pendingPassword.value = originalPassword.value
     }
   }
@@ -229,7 +229,7 @@ const enterEditMode = () => {
 
 // 当锁状态由房主改变时的副作用：若开锁且没有密码，生成随机并进入编辑；若取消则提交空密码
 watch(
-  () => lockedLocal.value,
+  () => hasPasswordLocal.value,
   (checked) => {
     if (!isCurrentRoomOwner.value) return
 
@@ -249,8 +249,8 @@ watch(
 // 开始编辑（点击密码文字）
 const startEdit = () => {
   if (!isCurrentRoomOwner.value) return
-  if (!lockedLocal.value) {
-    lockedLocal.value = true // 触发 watcher -> enterEditMode
+  if (!hasPasswordLocal.value) {
+    hasPasswordLocal.value = true // 触发 watcher -> enterEditMode
   } else {
     enterEditMode()
   }
@@ -264,11 +264,11 @@ const onCommit = () => {
   const val = (pendingPassword.value || '').trim()
   if (!val) {
     // 空密码 => 取消上锁，由 watcher 统一调用 changeRoomPassword
-    lockedLocal.value = false
+    hasPasswordLocal.value = false
   } else if (val !== roomInfo.options.password) {
     // 有值且与原密码不同 => 提交
     changeRoomPassword(val)
-    lockedLocal.value = true
+    hasPasswordLocal.value = true
   }
 }
 
@@ -278,7 +278,7 @@ const onCancel = () => {
   // 恢复为外部密码（如果存在）或清空（如果原来无密码）
   pendingPassword.value = originalPassword.value || ''
   if (!originalPassword.value) {
-    lockedLocal.value = false
+    hasPasswordLocal.value = false
   }
 }
 
@@ -299,8 +299,8 @@ const onSeatSit = (seat?: number | string) => {
   sit(Number(seat) - 1)
 }
 
-useEventBus('current:room:event:password_change', ({ locked, password }) => {
-  if (locked) {
+useEventBus('current:room:event:password_change', ({ hasPassword, password }) => {
+  if (hasPassword) {
     RoomEventsRef.value?.addMessage({
       type: 'text',
       msg: `房主将房间密码设置为：${password}`

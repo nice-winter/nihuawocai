@@ -147,7 +147,7 @@ WebSocket 连接 (crossws hooks)
 
 核心流程：
 
-1. 房主调用 `room:game_start` → room 服务设置 `playing=true` → 触发 `room:event:game_start`
+1. 房主调用 `room:game_start` → room 服务设置 `isPlaying=true` → 触发 `room:event:game_start`
 2. game 服务监听事件 → `gameStart()` 初始化 GameState → 开始回合循环
 3. 每回合：准备倒计时 → 画手收到答案 → 绘画阶段（AFK 检测 + 提示词渐显）→ 猜词/超时进入互动阶段 → 回合结束
 4. 所有轮次完成 → 结算阶段（展示积分榜）→ 游戏结束
@@ -250,7 +250,7 @@ WebSocket 连接 (crossws hooks)
 
 ### 服务端 → 客户端（Event）
 
-- `room:event:create` / `room:event:destroy` / `room:event:player_join` / `room:event:player_leave` / `room:event:onlooker_join` / `room:event:onlooker_sit` / `room:event:onlooker_leave` / `room:event:stage_update` / `room:event:seat_open_change` / `room:event:locked_state_change` / `room:event:password_change` / `room:event:broadcast` / `room:event:invite` / `room:event:info` / `room:event:owner_change`
+- `room:event:create` / `room:event:destroy` / `room:event:player_join` / `room:event:player_leave` / `room:event:onlooker_join` / `room:event:onlooker_sit` / `room:event:onlooker_leave` / `room:event:playing_change` / `room:event:seat_open_change` / `room:event:has_password_change` / `room:event:password_change` / `room:event:broadcast` / `room:event:invite` / `room:event:info` / `room:event:owner_change`
 - `game:event:start` / `game:event:end` / `game:event:settlement` / `game:event:state` / `game:event:turn:prepare` / `game:event:drawing:start` / `game:event:interaction:start` / `game:event:turn:end` / `game:event:word` / `game:event:hint` / `game:event:timer:update` / `game:event:sketchpad` / `game:event:guess:bingo` / `game:event:interaction:item` / `game:event:notice`
 - `player:event:logged_in` / `player:event:state_update` / `player:event:lobby_players_add` / `player:event:lobby_players_remove`
 - `chat:event:say`

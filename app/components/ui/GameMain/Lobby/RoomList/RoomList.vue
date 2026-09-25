@@ -100,7 +100,7 @@ const tryJoin = async (
     ? rooms.get(roomId)
     : [...rooms.values()].find((r) => r.roomNumber === roomNumber)
 
-  if (room?.locked) {
+  if (room?.hasPassword) {
     try {
       const password = await passwordModal.open()
       join(roomNumber, password, roomId)

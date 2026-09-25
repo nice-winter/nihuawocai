@@ -28,8 +28,8 @@ interface RoomInfo {
   players: RoomPlayers
   onlookers: Player[]
   seatOpenFlags: boolean[]
-  playing: boolean
-  locked: boolean
+  isPlaying: boolean
+  hasPassword: boolean
 }
 
 /**

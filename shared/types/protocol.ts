@@ -95,10 +95,10 @@ export interface ServerEventMap {
     /** 新房主玩家 ID */
     newOwnerId: string
   }
-  'room:event:stage_update': {
+  'room:event:playing_change': {
     roomId: string
     roomNumber: number
-    playing: boolean
+    isPlaying: boolean
   }
   'room:event:seat_open_change': {
     roomId: string
@@ -106,16 +106,16 @@ export interface ServerEventMap {
     seat: number
     isOpen: boolean
   }
-  'room:event:locked_state_change': {
+  'room:event:has_password_change': {
     roomId: string
     roomNumber: number
-    locked: boolean
+    hasPassword: boolean
   }
   'room:event:password_change': {
     roomId: string
     roomNumber: number
     password: string
-    locked: boolean
+    hasPassword: boolean
   }
   'room:event:player_join': {
     roomId: string
@@ -154,14 +154,14 @@ export interface ServerEventMap {
     roomNumber: number
     password: string
     duration: number
-    expAt: number
+    expiresAt: number
   }
   'room:event:broadcast': {
     roomId: string
     roomNumber: number
     password: string
     sender: Player
-    expAt: number
+    expiresAt: number
     timestamp: number
   }
 
@@ -404,7 +404,7 @@ export interface ClientResponseMap {
   'room:password_change': {
     roomId: string
     roomNumber: number
-    locked: boolean
+    hasPassword: boolean
     password: string
   }
   'room:broadcast': {
@@ -412,7 +412,7 @@ export interface ClientResponseMap {
     roomNumber: number
     password: string
     sender: Player
-    expAt: number
+    expiresAt: number
     timestamp: number
   }
   'room:invite': {
@@ -424,7 +424,7 @@ export interface ClientResponseMap {
     roomNumber: number
     password: string
     duration: number
-    expAt: number
+    expiresAt: number
   }
   'room:game_start': Record<string, never>
   'player:lobby_players_pull': {

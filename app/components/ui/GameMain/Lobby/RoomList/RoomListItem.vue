@@ -7,7 +7,7 @@
         <div class="relative flex-1">
           <UTooltip text="非公开房间" :delay-duration="500" :content="{ side: 'right' }" :ui="{ content: 'game-tooltip' }">
             <UIcon
-              v-show="roomInfo.locked"
+              v-show="roomInfo.hasPassword"
               name="ph:lock-simple-fill"
               class="absolute left-0 top-0 size-4 text-amber-400"
             />
@@ -39,7 +39,7 @@
 
       <div class="flex justify-center">
         <UiButton
-          v-if="!roomInfo.playing"
+          v-if="!roomInfo.isPlaying"
           size="xl"
           color="red"
           :disabled="totalPlayerCount >= openSeatCount"

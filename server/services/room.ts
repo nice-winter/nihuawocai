@@ -85,12 +85,12 @@ const rooms = new Map<string, Room>()
 /**
  * 玩家邀请记录
  */
-const inviteRecord = new Map<string, { expAt: number }>()
+const inviteRecord = new Map<string, { expiresAt: number }>()
 
 /**
  * 房间广播记录，键为 room.id
  */
-const broadcastRecord = new Map<string, { expAt: number }>()
+const broadcastRecord = new Map<string, { expiresAt: number }>()
 
 // ---------------------- Player Events ----------------------
 // 延迟初始化事件监听，避免循环依赖
@@ -180,7 +180,7 @@ const createRoom = async (
     roomConfig = config ?? null,
     roomNumber = getNextRoomNumber(),
     seatOpenFlags = Array.from({ length: 7 }, (_, i) => i === 0 || i <= (openSeatCount || 0)),
-    locked = roomOptions.password.trim() !== ''
+    hasPassword = roomOptions.password.trim() !== ''
 
   const room: Room = {
     id: nanoid(),
@@ -189,10 +189,10 @@ const createRoom = async (
     roomNumber,
     ownerId,
     seatOpenFlags,
-    locked,
+    hasPassword,
     players: new Array(7).fill(null),
     onlookers: [],
-    playing: false,
+    isPlaying: false,
     createdById: ownerId,
     createdAt: Date.now()
   }
@@ -352,7 +352,7 @@ const joinRoom = async (roomId: string, playerId: string, password?: string) => 
       }
     }
 
-    if (room.playing) {
+    if (room.isPlaying) {
       tryJoinAsOnlooker()
     } else {
       tryJoinAsPlayer()
@@ -394,7 +394,7 @@ const sit = async (playerId: string, seat: number) => {
   const user = await getUserData(playerId)
   const room = rooms.get(roomId)
   if (room) {
-    if (room.playing) throw new Error('游戏中无法坐下')
+    if (room.isPlaying) throw new Error('游戏中无法坐下')
     if (room.players[seat] === null) {
       if (!room.seatOpenFlags[seat]) throw new Error('房主关掉了这个坑位')
       // 从旁观者列表移除
@@ -485,22 +485,22 @@ const changePassword = (playerId: string, password: string) => {
 
     if (password !== '') {
       room.options.password = pwd
-      room.locked = true
+      room.hasPassword = true
     } else {
       room.options.password = ''
-      room.locked = false
+      room.hasPassword = false
     }
 
     updateRoom(roomId, room)
 
-    logger.debug(`房间密码变更: 房间 ${colors.cyan('#' + room.roomNumber)}，操作者 ${colors.cyan(playerId)}，锁定 ${room.locked}`)
+    logger.debug(`房间密码变更: 房间 ${colors.cyan('#' + room.roomNumber)}，操作者 ${colors.cyan(playerId)}，锁定 ${room.hasPassword}`)
 
     // 广播房间锁定状态变更事件
     sendToAllPlayer({
-      type: 'room:event:locked_state_change',
+      type: 'room:event:has_password_change',
       roomId: room.id,
       roomNumber: room.roomNumber,
-      locked: room.locked
+      hasPassword: room.hasPassword
     })
 
     // 向房间内的玩家广播密码变更事件
@@ -510,7 +510,7 @@ const changePassword = (playerId: string, password: string) => {
         roomId: room.id,
         roomNumber: room.roomNumber,
         password,
-        locked: room.locked
+        hasPassword: room.hasPassword
       },
       roomId
     )
@@ -518,7 +518,7 @@ const changePassword = (playerId: string, password: string) => {
     return {
       roomId: room.id,
       roomNumber: room.roomNumber,
-      locked: room.locked,
+      hasPassword: room.hasPassword,
       password
     }
   }
@@ -538,31 +538,31 @@ const broadcast = async (playerId: string) => {
   if (!room) throw new Error('房间不存在')
 
   const appConfig = await getAppConfig()
-  const intervalTime = appConfig.game.room.time.broadcastIntervalTimeSecond
+  const intervalMs = appConfig.game.room.time.broadcastIntervalTimeSecond * 1000
 
-  const now = Math.floor(Date.now() / 1000)
-  const expAt = now + intervalTime
+  const now = Date.now()
+  const expiresAt = now + intervalMs
 
   // 防止重复广播（按房间冷却）
   const existing = broadcastRecord.get(roomId)
-  if (existing && existing.expAt > now) {
-    const remain = existing.expAt - now
-    throw new Error(`广播过于频繁，请 ${remain} 秒后再试`)
+  if (existing && existing.expiresAt > now) {
+    const remainSeconds = Math.ceil((existing.expiresAt - now) / 1000)
+    throw new Error(`广播过于频繁，请 ${remainSeconds} 秒后再试`)
   }
 
   // 记录冷却
-  broadcastRecord.set(roomId, { expAt })
+  broadcastRecord.set(roomId, { expiresAt })
   setTimeout(() => {
     broadcastRecord.delete(roomId)
-  }, intervalTime * 1000)
+  }, intervalMs)
 
-  // 构造消息（expAt 毫秒时间戳）
+  // 构造消息（expiresAt 毫秒时间戳）
   const msg = {
     roomNumber: room.roomNumber,
     roomId: room.id,
     password: room.options.password,
     sender: await getUserData(playerId),
-    expAt: expAt * 1000, // 前端一般用到毫秒
+    expiresAt, // 毫秒时间戳
     timestamp: Date.now()
   }
 
@@ -590,9 +590,9 @@ const invite = async (playerId: string, targetId: string) => {
   if (!room) throw new Error('房间不存在')
 
   const appConfig = await getAppConfig()
-  const expSeconds = appConfig.game.room.time.invitationValidTimeSecond
-  const now = Math.floor(Date.now() / 1000)
-  const expAt = now + expSeconds
+  const validMs = appConfig.game.room.time.invitationValidTimeSecond * 1000
+  const now = Date.now()
+  const expiresAt = now + validMs
 
   // 检查目标玩家
   if (!checkPlayerIsInLobby(targetId)) {
@@ -602,17 +602,17 @@ const invite = async (playerId: string, targetId: string) => {
   // 防止重复邀请
   const key = `${playerId}:${targetId}`
   const existing = inviteRecord.get(key)
-  if (existing && existing.expAt > now) {
-    const remain = existing.expAt - now
-    throw new Error(`已邀请该玩家，请 ${remain} 秒后再试`)
+  if (existing && existing.expiresAt > now) {
+    const remainSeconds = Math.ceil((existing.expiresAt - now) / 1000)
+    throw new Error(`已邀请该玩家，请 ${remainSeconds} 秒后再试`)
   }
 
   // 记录邀请状态
-  inviteRecord.set(key, { expAt })
+  inviteRecord.set(key, { expiresAt })
   // 清理过期记录
   setTimeout(() => {
     inviteRecord.delete(key)
-  }, expSeconds * 1000)
+  }, validMs)
 
   const msg = {
     sender: await getUserData(playerId),
@@ -621,13 +621,13 @@ const invite = async (playerId: string, targetId: string) => {
     roomId: room.id,
     password: room.options.password,
     duration: 20, // toast 显示时间（秒）
-    expAt: expAt * 1000 // 过期时间（Unix 时间戳毫秒）
+    expiresAt // 过期时间（Unix 时间戳毫秒）
   }
 
   // 广播邀请
   sendToPlayer({ type: 'room:event:invite', ...msg }, targetId)
 
-  logger.debug(`玩家 ${playerId} 邀请了 ${targetId} 加入房间 ${room.roomNumber}，有效期 ${expSeconds} 秒`)
+  logger.debug(`玩家 ${playerId} 邀请了 ${targetId} 加入房间 ${room.roomNumber}，有效期 ${validMs / 1000} 秒`)
 
   return msg
 }
@@ -642,17 +642,17 @@ const start = async (playerId: string) => {
     const roomId = player.state.roomId ?? undefined
     if (typeof roomId !== 'undefined' && checkPlayerIsInRoom(player.id)) {
       const room = getRoom(roomId)!
-      if (!room.playing) {
-        room.playing = true
+      if (!room.isPlaying) {
+        room.isPlaying = true
         updateRoom(roomId, room)
 
         logger.info(`游戏开始: 房间 ${colors.cyan('#' + room.roomNumber)}，发起者 ${colors.cyan(playerId)}`)
 
         const msg = {
-          type: 'room:event:stage_update',
+          type: 'room:event:playing_change',
           roomId: room.id,
           roomNumber: room.roomNumber,
-          playing: true
+          isPlaying: true
         }
 
         sendToAllPlayer(msg)
@@ -673,17 +673,17 @@ const start = async (playerId: string) => {
 const end = (roomId: string) => {
   const room = getRoom(roomId)
   if (room) {
-    if (room.playing) {
-      room.playing = false
+    if (room.isPlaying) {
+      room.isPlaying = false
       updateRoom(roomId, room)
 
       logger.info(`游戏结束: 房间 ${colors.cyan('#' + room.roomNumber)}`)
 
       const msg = {
-        type: 'room:event:stage_update',
+        type: 'room:event:playing_change',
         roomId: room.id,
         roomNumber: room.roomNumber,
-        playing: false
+        isPlaying: false
       }
 
       sendToAllPlayer(msg)
@@ -842,8 +842,8 @@ const quickMatch = async (playerId: string) => {
 
   // 1. 筛选可加入房间
   const candidates = rooms.filter((room) => {
-    if (room.locked) return false // 上锁 → 不可加入
-    if (room.playing) return false // 正在游戏中 → 不可加入
+    if (room.hasPassword) return false // 上锁 → 不可加入
+    if (room.isPlaying) return false // 正在游戏中 → 不可加入
 
     // 判断是否存在 “空位且启用的 seat”
     const hasValidSeat = room.players.some((p, idx) => {

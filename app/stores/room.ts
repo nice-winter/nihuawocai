@@ -25,7 +25,7 @@ export const useRoomStore = defineStore('room', () => {
   const { currentPageItems, prevPage, nextPage } = usePaginatedMap(rooms, 6)
   const currentPageRooms = computed(() => {
     return currentPageItems.value.filter((room) => {
-      return showOnlyWaitingRooms.value ? !room.playing : true
+      return showOnlyWaitingRooms.value ? !room.isPlaying : true
     })
   })
 
@@ -172,15 +172,15 @@ export const useRoomStore = defineStore('room', () => {
         }
         break
       }
-      case 'room:event:stage_update': {
+      case 'room:event:playing_change': {
         const room = rooms.get(event.roomId)
         if (room) {
-          room.playing = event.playing
+          room.isPlaying = event.isPlaying
           rooms.set(event.roomId, room)
         }
         // 如果阶段变更的是当前房间，同步更新（按身份 ID 比较）
         if (event.roomId === playerStore.currentRoomId && currentRoom.value) {
-          currentRoom.value.playing = event.playing
+          currentRoom.value.isPlaying = event.isPlaying
         }
         break
       }
@@ -198,10 +198,10 @@ export const useRoomStore = defineStore('room', () => {
         }
         break
       }
-      case 'room:event:locked_state_change': {
+      case 'room:event:has_password_change': {
         const room = rooms.get(event.roomId)
         if (room) {
-          room.locked = event.locked
+          room.hasPassword = event.hasPassword
           rooms.set(event.roomId, room)
         }
         break
@@ -210,10 +210,10 @@ export const useRoomStore = defineStore('room', () => {
         // 按身份 ID 比较，防同号误判
         if (currentRoom.value && event.roomId === playerStore.currentRoomId) {
           currentRoom.value.options.password = event.password
-          currentRoom.value.locked = event.locked
+          currentRoom.value.hasPassword = event.hasPassword
 
           eventBus.emit('current:room:event:password_change', {
-            locked: event.locked,
+            hasPassword: event.hasPassword,
             password: event.password
           })
         }
@@ -297,16 +297,16 @@ export const useRoomStore = defineStore('room', () => {
           roomId: event.roomId,
           password: event.password,
           sender: event.sender,
-          expAt: event.expAt,
+          expiresAt: event.expiresAt,
           timestamp: event.timestamp
         })
         // 记录该房间广播过期时间，广播按钮根据此记录判断是否冷却，防止频繁广播
         // 键用 roomId，避免同号新房误继承旧房冷却
-        broadcastRecord.set(event.roomId, event.expAt)
+        broadcastRecord.set(event.roomId, event.expiresAt)
         // 清除过期的房间广播记录
         setTimeout(() => {
           broadcastRecord.delete(event.roomId)
-        }, event.expAt - Date.now())
+        }, event.expiresAt - Date.now())
         break
     }
   })
@@ -403,15 +403,15 @@ export const useRoomStore = defineStore('room', () => {
     })
 
     if (typeof (msg as WebsocketMessage<WS_RECV>).successful === 'undefined') return
-    const { target, expAt } = msg as ClientResponse<'room:invite'>
+    const { target, expiresAt } = msg as ClientResponse<'room:invite'>
 
     // 键是被邀请者玩家 ID（InvitePanel 按 player.id 查询冷却状态）
-    inviteRecord.set(target.id, expAt)
+    inviteRecord.set(target.id, expiresAt)
 
     // 清除过期的邀请信息
     setTimeout(() => {
       inviteRecord.delete(target.id)
-    }, expAt - Date.now())
+    }, expiresAt - Date.now())
   }
 
   /**

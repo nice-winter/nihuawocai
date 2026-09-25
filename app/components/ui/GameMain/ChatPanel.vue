@@ -108,7 +108,7 @@ const sendChatMessage = () => {
 }
 
 watch(
-  () => currentRoom.value?.playing,
+  () => currentRoom.value?.isPlaying,
   () => {
     ChatPanelMessageListRef.value?.clear()
   }
@@ -125,7 +125,7 @@ useEventBus('chat:event:say', ({ message, sender, timestamp }) => {
 useEventBus('room:event:broadcast', ({ roomId, roomNumber, password, sender, timestamp }) => {
   // 非游戏状态下，才显示广播信息
   // 当然这里在服务端不要推送就好了，前端也顺手过滤下呗
-  if (!currentRoom.value?.playing) {
+  if (!currentRoom.value?.isPlaying) {
     ChatPanelMessageListRef.value?.addMessage({
       type: 'broadcast',
       sender,
@@ -137,7 +137,7 @@ useEventBus('room:event:broadcast', ({ roomId, roomNumber, password, sender, tim
 })
 
 useEventBus('current:room:event:player_leave', ({ player }) => {
-  if (!currentRoom.value?.playing) return // 非游戏状态下不显示
+  if (!currentRoom.value?.isPlaying) return // 非游戏状态下不显示
   if (isSelf(player.id)) return // 如果是自己，则不显要显示事件，因为自己离开之后会闪一下
   ChatPanelMessageListRef.value?.addMessage({
     type: 'action',
@@ -147,7 +147,7 @@ useEventBus('current:room:event:player_leave', ({ player }) => {
 })
 
 useEventBus('current:room:event:onlooker_join', ({ player }) => {
-  if (!currentRoom.value?.playing) return // 非游戏状态下不显示
+  if (!currentRoom.value?.isPlaying) return // 非游戏状态下不显示
   ChatPanelMessageListRef.value?.addMessage({
     type: 'action',
     sender: player,
@@ -156,7 +156,7 @@ useEventBus('current:room:event:onlooker_join', ({ player }) => {
 })
 
 useEventBus('current:room:event:onlooker_leave', ({ player }) => {
-  if (!currentRoom.value?.playing) return // 非游戏状态下不显示
+  if (!currentRoom.value?.isPlaying) return // 非游戏状态下不显示
   ChatPanelMessageListRef.value?.addMessage({
     type: 'action',
     sender: player,

@@ -41,7 +41,7 @@ type Events = {
     player: Player
   }
   'current:room:event:password_change': {
-    locked: boolean
+    hasPassword: boolean
     password: string
   }
 
@@ -51,7 +51,7 @@ type Events = {
     roomId: string
     password: string
     sender: Player
-    expAt: number
+    expiresAt: number
     timestamp: number
   }
 

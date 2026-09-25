@@ -116,6 +116,6 @@ export type ClientMessage<T extends keyof ClientEventMap> = WebsocketMessage<{ t
  * @example
  * // 邀请玩家
  * const res = await send({ type: 'room:invite', targetId }) as ClientResponse<'room:invite'>
- * res.expAt // ✅ number
+ * res.expiresAt // ✅ number
  */
 export type ClientResponse<T extends keyof ClientResponseMap> = WS_RECV<ClientResponseMap[T]>
