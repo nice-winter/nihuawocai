@@ -5,6 +5,7 @@
 - 改完代码不要着急提交，先询问用户确认
 - 只有在用户明确确认或明确指示"完成后直接提交"时才提交改动
 - 如果误提交了，立即用 `git reset --soft HEAD~1` 撤回
+- 合并分支回主线时保留 merge commit（`git merge --no-ff`），不要快进合并
 
 ### Commit Message 格式
 
