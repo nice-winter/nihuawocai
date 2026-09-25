@@ -62,7 +62,7 @@ export interface AppConfig {
       /** 每分钟聊天消息限制条数，0 为不限制 @default 0 */
       perMinuteChatCount: number
       /** 房间密码最大长度 @default 4 */
-      passwordMaxLengh: number
+      passwordMaxLength: number
       /** 时间相关设置 */
       time: {
         /** 广播消息发送间隔时间（秒） @default 300 */

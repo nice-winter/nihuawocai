@@ -171,7 +171,7 @@ const addGender = () => {
                 <UInput v-model="editingConfig.game.room.feature.kick" type="number" :min="0" :max="20" />
               </UFormField>
               <UFormField label="房间密码最大长度">
-                <UInput v-model="editingConfig.game.room.passwordMaxLengh" type="number" :min="0" :max="20" />
+                <UInput v-model="editingConfig.game.room.passwordMaxLength" type="number" :min="0" :max="20" />
               </UFormField>
             </div>
           </div>

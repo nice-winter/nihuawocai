@@ -37,7 +37,7 @@ export type WS_RECV<T = object> = WebsocketMessage<{
 
 export type WebsocketMessageType = 'ping' | 'pong' | string
 
-export const NON_REPONSE = 'NON_REPONSE'
+export const NON_RESPONSE = 'NON_RESPONSE'
 
 // ----------------------------------------------------------------
 //           共享协议辅助类型 (Server ↔ Client)

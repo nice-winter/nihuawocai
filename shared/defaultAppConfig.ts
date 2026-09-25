@@ -165,7 +165,7 @@ export const defaultAppConfig: AppConfig = {
       },
       maxBroadcastCount: 0,
       perMinuteChatCount: 0,
-      passwordMaxLengh: 4,
+      passwordMaxLength: 4,
       time: {
         broadcastIntervalTimeSecond: 300,
         chatIntervalTimeSecond: 1,
