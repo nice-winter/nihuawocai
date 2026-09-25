@@ -29,8 +29,8 @@ export type WebsocketMessage<T = object> = BaseWebsocketMessage & T
 
 export type WS_RECV<T = object> = WebsocketMessage<{
   _reply: boolean
-  _rid: string
-  _t: number
+  _requestId: string
+  _timestamp: number
   successful?: boolean
 }> &
   T

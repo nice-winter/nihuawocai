@@ -196,7 +196,7 @@ useEventBus('game:event:guess:bingo', ({ guesser }) => {
     msg: `猜对了答案！`
   })
 })
-useEventBus('game:event:interaction:start', ({ drawerPlayer, reason, bingo_players }) => {
+useEventBus('game:event:interaction:start', ({ drawerPlayer, reason, bingoPlayerIds }) => {
   switch (reason) {
     case 'afk': {
       ChatPanelMessageListRef.value?.addMessage({
@@ -236,9 +236,9 @@ useEventBus('game:event:interaction:start', ({ drawerPlayer, reason, bingo_playe
     }
     case 'timeout': {
       let msg = ''
-      if (bingo_players.length === 0) msg = '没有人猜对。'
-      if (bingo_players.length === 1) msg = '只有1人猜对。'
-      if (bingo_players.length > 1) msg = `共有${bingo_players.length}人猜对。`
+      if (bingoPlayerIds.length === 0) msg = '没有人猜对。'
+      if (bingoPlayerIds.length === 1) msg = '只有1人猜对。'
+      if (bingoPlayerIds.length > 1) msg = `共有${bingoPlayerIds.length}人猜对。`
       ChatPanelMessageListRef.value?.addMessage({
         type: 'text',
         msg: `作画时间到，${msg}`

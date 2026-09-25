@@ -81,9 +81,9 @@
               class="size-18 overflow-hidden rounded-lg"
               :class="{
                 bingo: gameStore.state.bingoPlayers.includes(player.id),
-                drawing: player.id === gameStore.state.drawer,
+                drawing: player.id === gameStore.state.drawerId,
                 'drawing-bingo':
-                  player.id === gameStore.state.drawer && gameStore.state.bingoPlayers.length > 0
+                  player.id === gameStore.state.drawerId && gameStore.state.bingoPlayers.length > 0
               }"
               :verified-icon="{ show: true, size: 12, bottom: 2, right: 2 }"
             />
@@ -123,7 +123,7 @@ const rankModal = useModal(RankModal, { parent: '#sketchpad-container' })
 const { playSound } = useSound()
 
 const _players = computed(() => room.players.filter((p) => p !== null))
-const drawingPlayer = computed(() => _players.value.find((p) => p.id === gameStore.state.drawer))
+const drawingPlayer = computed(() => _players.value.find((p) => p.id === gameStore.state.drawerId))
 
 // --- 画布操作编排（游戏阶段 + WS 桥梁命令 → Sketchpad） ---
 
@@ -163,9 +163,9 @@ useEventBus('game:event:drawing:start', () => {
 useEventBus('game:event:hint', () => {
   playSound('pop') // 弹出提示词时，发出泡泡音效
 })
-useEventBus('game:event:guess:bingo', ({ score_delta }) => {
-  show(score_delta.drawerId, `+${score_delta.drawerGain}`)
-  show(score_delta.guesserId, `+${score_delta.guesserGain}`)
+useEventBus('game:event:guess:bingo', ({ scoreChange }) => {
+  show(scoreChange.drawerId, `+${scoreChange.drawerGain}`)
+  show(scoreChange.guesserId, `+${scoreChange.guesserGain}`)
   playSound('bingo')
 })
 useEventBus(

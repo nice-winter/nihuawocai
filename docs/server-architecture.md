@@ -85,8 +85,8 @@ server/
 - **入口**: `server/routes/_ws/server.ts` → `server/ws/index.ts` 的 `hooks`
 - **心跳**: 30 秒 Ping/Pong，超时断开
 - **消息路由**: `wsEventBus`（mitt）→ `handlers/index.ts` 按 `msg.type` 分发到对应 handler
-- **消息格式**: `WebsocketMessage<T>` 包含 `type`、`payload`、`rid`（请求 ID 用于 reply）
-- **回复机制**: `reply(peer, rid)` 返回一个函数，自动附加 `_reply: true` 和 `_rid`
+- **消息格式**: `WebsocketMessage<T>` 包含 `type`、`payload`、`requestId`（请求 ID 用于 reply）
+- **回复机制**: `reply(peer, requestId)` 返回一个函数，自动附加 `_reply: true` 和 `_requestId`
 
 ### 2. 事件驱动架构
 
@@ -293,7 +293,7 @@ WebSocket Worker (二进制 CBOR 流)
 wsEventBus.on('ws:message', (msg) => {
   if (msg.type.startsWith('game:')) {
     // 角色 A：更新 reactive state → Vue 模板自动响应（持续状态）
-    state.bingoPlayers = payload.bingo_players
+    state.bingoPlayers = payload.bingoPlayerIds
     state.scores = payload.scores
 
     // 角色 B：emit 到 eventBus → UI 组件监听（一次性效果）
@@ -317,7 +317,7 @@ wsEventBus.on('ws:message', (msg) => {
 
 ```ts
 // 后端发的是 ID
-payload: { guesserId: 'abc', drawer: 'xyz', bingo_players: ['abc'] }
+payload: { guesserId: 'abc', drawerId: 'xyz', bingoPlayerIds: ['abc'] }
 
 // store 转发时富化为 Player 对象
 eventBus.emit('game:event:guess:bingo', {
@@ -327,8 +327,8 @@ eventBus.emit('game:event:guess:bingo', {
 
 eventBus.emit('game:event:interaction:start', {
   ...payload,
-  drawerPlayer: getPlayerFromCurrentRoom(state.drawer!)!,
-  bingoPlayers: payload.bingo_players
+  drawerPlayer: getPlayerFromCurrentRoom(state.drawerId!)!,
+  bingoPlayers: payload.bingoPlayerIds
     .map(id => getPlayerFromCurrentRoom(id))
     .filter(Boolean)
 })
@@ -344,9 +344,9 @@ eventBus.emit('game:event:interaction:start', {
 
 ```ts
 // 自动在 onBeforeMount 订阅、onUnmounted 取消
-useEventBus('game:event:guess:bingo', ({ guesser, score_delta }) => {
+useEventBus('game:event:guess:bingo', ({ guesser, scoreChange }) => {
   playBingoSound()
-  addChatSystemMessage(`${guesser.nickname} 猜对了！+${score_delta.guesserGain}`)
+  addChatSystemMessage(`${guesser.nickname} 猜对了！+${scoreChange.guesserGain}`)
 })
 
 useEventBus('game:event:interaction:item', ({ sender, itemType }) => {

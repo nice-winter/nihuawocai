@@ -5,9 +5,9 @@ export const usePlayerStore = defineStore('player', () => {
   const lobbyPlayers = reactive<Map<string, Player>>(new Map())
 
   const myId = computed(() => loggedInPlayer.value?.id ?? null)
-  // 身份判断只看 state.type；roomNumber 仅供展示，roomId 仅供身份比较
-  const isInRoom = computed(() => loggedInPlayer.value?.state.type === 'in_room')
-  const isInLobby = computed(() => loggedInPlayer.value?.state.type === 'lobby')
+  // 身份判断只看 state.presence；roomNumber 仅供展示，roomId 仅供身份比较
+  const isInRoom = computed(() => loggedInPlayer.value?.state.presence === 'inRoom')
+  const isInLobby = computed(() => loggedInPlayer.value?.state.presence === 'lobby')
   const isOnlooker = computed(() => loggedInPlayer.value?.state.isOnlooker)
   const currentRoomNumber = computed(() => loggedInPlayer.value?.state.roomNumber)
   const currentRoomId = computed(() => loggedInPlayer.value?.state.roomId)

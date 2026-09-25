@@ -92,7 +92,7 @@ const checkDuplicateLogin = (playerId: string) => {
  * @param playerId 玩家 ID
  */
 const checkPlayerIsInRoom = (playerId: string) => {
-  return getPlayer(playerId)?.state.type === 'in_room' && getPlayer(playerId)?.state.roomId !== null
+  return getPlayer(playerId)?.state.presence === 'inRoom' && getPlayer(playerId)?.state.roomId !== null
 }
 
 /**
@@ -100,7 +100,7 @@ const checkPlayerIsInRoom = (playerId: string) => {
  * @param playerId 玩家 ID
  */
 const checkPlayerIsInLobby = (playerId: string) => {
-  return getPlayer(playerId)?.state.type === 'lobby'
+  return getPlayer(playerId)?.state.presence === 'lobby'
 }
 
 /**
@@ -120,7 +120,7 @@ const addPlayer = async (user: UserData & { peer: WsPeer }) => {
   const player: ServerPlayer = {
     ...user,
     state: {
-      type: 'lobby',
+      presence: 'lobby',
       roomNumber: null,
       roomId: null,
       isOnlooker: false
@@ -165,7 +165,7 @@ const updatePlayerState = (playerId: string, roomId?: string, isOnlooker?: boole
     }
 
     if (typeof roomId === 'undefined' || roomId === '') {
-      player.state.type = 'lobby'
+      player.state.presence = 'lobby'
       player.state.roomNumber = null
       player.state.roomId = null
       player.state.isOnlooker = false
@@ -180,7 +180,7 @@ const updatePlayerState = (playerId: string, roomId?: string, isOnlooker?: boole
       })
     } else {
       const room = getRoom(roomId)
-      player.state.type = 'in_room'
+      player.state.presence = 'inRoom'
       player.state.roomNumber = room?.roomNumber ?? null
       player.state.roomId = roomId
       player.state.isOnlooker = isOnlooker ?? false

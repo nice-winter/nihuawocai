@@ -85,7 +85,7 @@ export const useWsStore = defineStore('ws', () => {
     worker?.postMessage({ type: 'CLOSE', code, reason })
   }
 
-  const handleIncomingMessage = (msg: WebsocketMessage & { _rid?: string; _reply?: boolean }) => {
+  const handleIncomingMessage = (msg: WebsocketMessage & { _requestId?: string; _reply?: boolean }) => {
     // 错误处理弹窗逻辑
     const { successful, message } = msg as WebsocketMessage<WS_RECV & { message?: string }>
     if (successful === false && typeof message === 'string') {
@@ -101,12 +101,12 @@ export const useWsStore = defineStore('ws', () => {
     }
 
     // 请求/响应 Promise 处理
-    if (msg._reply && msg._rid) {
-      const rid = msg._rid
-      const pending = pendingRequests.get(rid)
+    if (msg._reply && msg._requestId) {
+      const requestId = msg._requestId
+      const pending = pendingRequests.get(requestId)
       if (pending) {
         clearTimeout(pending.timer)
-        pendingRequests.delete(rid)
+        pendingRequests.delete(requestId)
         pending.resolve(msg)
       }
     }
@@ -121,7 +121,7 @@ export const useWsStore = defineStore('ws', () => {
     }
 
     // 拒绝所有 pending 请求
-    for (const [rid, pending] of pendingRequests) {
+    for (const [requestId, pending] of pendingRequests) {
       clearTimeout(pending.timer)
       pending.reject(new Error(`WebSocket disconnected (code: ${e.code})`))
     }
@@ -136,19 +136,19 @@ export const useWsStore = defineStore('ws', () => {
     msg: WebsocketMessage<T>,
     opts?: { timeout?: number }
   ): Promise<R> => {
-    const rid = nanoid(8) // 生成请求唯一标识
-    const _msg = { ...(msg as object), rid } as WebsocketMessage & { rid: string }
+    const requestId = nanoid(8) // 生成请求唯一标识
+    const _msg = { ...(msg as object), requestId } as WebsocketMessage & { requestId: string }
     const timeout = opts?.timeout ?? 5000 // 默认 5s 超时
 
     return new Promise<R>((resolve, reject) => {
       // 1. 注册 Pending
       const timer = window.setTimeout(() => {
-        pendingRequests.delete(rid)
+        pendingRequests.delete(requestId)
         reject(new Error('WS request timeout'))
         logger.error.raw('请求超时未响应', msg)
       }, timeout)
 
-      pendingRequests.set(rid, {
+      pendingRequests.set(requestId, {
         resolve: (v) => resolve(v as unknown as R),
         reject,
         timer
@@ -161,7 +161,7 @@ export const useWsStore = defineStore('ws', () => {
       } else {
         // 如果连接未打开，直接失败
         clearTimeout(timer)
-        pendingRequests.delete(rid)
+        pendingRequests.delete(requestId)
         reject(new Error('WebSocket is not open'))
       }
     })

@@ -24,7 +24,7 @@ const logger = createLogger('GameService')
 //                          类型定义 (从 shared/types/game 导入)
 // ----------------------------------------------------------------
 
-// GamePhase, TurnPhase, ItemCounts, ItemUse, InteractionReason, ItemType, ScoreDelta
+// GamePhase, TurnPhase, ItemCounts, ItemUse, InteractionReason, ItemType, ScoreChange
 // 已统一定义在 shared/types/game.ts，通过 Nuxt 自动导入可用
 
 export interface GameState {
@@ -44,7 +44,7 @@ export interface GameState {
   // --- 进度控制 ---
   currentTurnIndex: number
   totalTurns: number
-  drawer: string | null
+  drawerId: string | null
   drawerQueue: string[] // 当前在座玩家 ID 队列
 
   // --- 游戏数据 ---
@@ -133,7 +133,7 @@ const gameStart = async (roomId: string, room: Room) => {
     turnPhase: 'turn_prepare',
     currentTurnIndex: 0,
     totalTurns,
-    drawer: null,
+    drawerId: null,
     drawerQueue,
     currentWord: null,
     guesses: {},
@@ -299,7 +299,7 @@ const startRound = async (roomId: string) => {
 
   // 确定画手
   const drawerId = st.drawerQueue[st.currentTurnIndex % st.drawerQueue.length] ?? null
-  st.drawer = drawerId
+  st.drawerId = drawerId
 
   // 如果算出来的画手不在了，直接开启新回合
   if (!drawerId) {
@@ -322,7 +322,7 @@ const startRound = async (roomId: string) => {
       type: 'game:event:turn:prepare',
       payload: {
         turnIndex: st.currentTurnIndex + 1,
-        drawer: st.drawer,
+        drawerId: st.drawerId,
         durationSeconds: prepareSeconds
       }
     },
@@ -330,13 +330,13 @@ const startRound = async (roomId: string) => {
   )
 
   // 下发答案给画手
-  if (st.drawer) {
+  if (st.drawerId) {
     sendToPlayer(
       {
         type: 'game:event:word',
         payload: { word: st.currentWord!.word, category: '默认' }
       },
-      st.drawer
+      st.drawerId
     )
   }
 
@@ -388,7 +388,7 @@ const enterDrawingPhase = (roomId: string, st: GameState) => {
   sendToRoom(
     {
       type: 'game:event:drawing:start',
-      payload: { drawer: st.drawer, durationSeconds: drawingSeconds }
+      payload: { drawerId: st.drawerId, durationSeconds: drawingSeconds }
     },
     roomId
   )
@@ -456,7 +456,7 @@ const enterInteractionPhase = (
       type: 'game:event:interaction:start',
       payload: {
         answer: st.currentWord?.word,
-        bingo_players: st.bingoPlayers,
+        bingoPlayerIds: st.bingoPlayers,
         durationSeconds: waitSeconds,
         reason
       }
@@ -508,7 +508,7 @@ const handleSketchpad = async (
   // 如果不是 drawing 阶段，忽略
   if (st.turnPhase !== 'drawing') throw new Error('当前不是绘画阶段')
   // 判断当前画手是否是调用者
-  if (st.drawer !== playerId) throw new Error('当前不是你在画画')
+  if (st.drawerId !== playerId) throw new Error('当前不是你在画画')
 
   switch (command) {
     // 切换笔触
@@ -560,7 +560,7 @@ const handleGiveUp = (playerId: string) => {
   // 如果不是 drawing 阶段，忽略
   if (st.turnPhase !== 'drawing') throw new Error('当前不是绘画阶段')
   // 判断当前画手是否是调用者
-  if (st.drawer !== playerId) throw new Error('当前不是你在画画')
+  if (st.drawerId !== playerId) throw new Error('当前不是你在画画')
 
   sendToRoom(
     {
@@ -584,7 +584,7 @@ const handleGiveUp = (playerId: string) => {
 const handleGuess = (roomId: string, guesserId: string, guessContent: string): boolean => {
   const st = GameStateRecord.get(roomId)
   if (!st || st.turnPhase !== 'drawing' || !st.currentWord) return false
-  if (guesserId === st.drawer) return false
+  if (guesserId === st.drawerId) return false
   if (st.bingoPlayers.includes(guesserId)) return false
 
   const normalizedGuess = guessContent.trim().toLowerCase()
@@ -596,15 +596,15 @@ const handleGuess = (roomId: string, guesserId: string, guessContent: string): b
       `猜对! 房间 ${colors.cyan('#' + st.roomNumber)}，玩家 ${colors.cyan(guesserId)}，第 ${st.bingoPlayers.length} 个猜对`
     )
 
-    const scoreDelta = applyScoreOnBingo(st, guesserId)
+    const scoreChange = applyScoreOnBingo(st, guesserId)
 
     sendToRoom(
       {
         type: 'game:event:guess:bingo',
         payload: {
           guesserId,
-          score_delta: scoreDelta,
-          bingo_players: st.bingoPlayers,
+          scoreChange: scoreChange,
+          bingoPlayerIds: st.bingoPlayers,
           scores: st.scores
         }
       },
@@ -656,14 +656,14 @@ const handleItem = (playerId: string, itemType: ItemType) => {
   if (!st) throw new Error('找不到游戏')
 
   if (st.turnPhase !== 'interaction') throw new Error('非互动时间，无法赠送')
-  if (st.drawer === playerId) throw new Error('不能给自己送道具')
+  if (st.drawerId === playerId) throw new Error('不能给自己送道具')
 
   // --- 限制逻辑 ---
   if (st.turnItemSenders.has(playerId)) {
     throw new Error('本回合你已经送过了')
   }
 
-  const targetId = st.drawer
+  const targetId = st.drawerId
   if (!targetId) throw new Error('目标玩家不存在')
 
   // --- 记录数据 ---
@@ -719,9 +719,9 @@ const handleOnlookerJoin = (roomId: string, playerId: string) => {
         turnPhase: st.turnPhase,
         turnIndex: st.currentTurnIndex + 1,
         totalTurns: st.totalTurns,
-        drawer: st.drawer,
+        drawerId: st.drawerId,
         remaining_seconds: Math.ceil(remainingMs / 1000),
-        bingo_players: st.bingoPlayers,
+        bingoPlayerIds: st.bingoPlayers,
         scores: st.scores,
         item_counts: st.itemCounts
       }
@@ -772,7 +772,7 @@ const handlePlayerLeave = (roomId: string, playerId: string) => {
   }
 
   // 4. 如果离开的是当前画手，直接快进
-  if (st.drawer === playerId) {
+  if (st.drawerId === playerId) {
     sendToRoom(
       {
         type: 'game:event:notice',
@@ -790,10 +790,10 @@ const handlePlayerLeave = (roomId: string, playerId: string) => {
  */
 const applyScoreOnBingo = (st: GameState, guesserId: string) => {
   const rules = st.gameRules.cycle.scoreRule
-  const drawerId = st.drawer
+  const drawerId = st.drawerId
 
   // 容错：如果没有画手信息，直接返回 0
-  // TODO: 此处返回缺 guesserId/drawerId，与 ScoreDelta 类型不完全一致，后续补齐
+  // TODO: 此处返回缺 guesserId/drawerId，与 ScoreChange 类型不完全一致，后续补齐
   if (!drawerId) return { guesserGain: 0, drawerGain: 0 }
 
   // 判断是否是首杀 (First Blood)
@@ -847,9 +847,9 @@ const broadcastState = (roomId: string) => {
         turnPhase: st.turnPhase,
         turnIndex: st.currentTurnIndex + 1,
         totalTurns: st.totalTurns,
-        drawer: st.drawer,
+        drawerId: st.drawerId,
         remaining_seconds: Math.ceil(remainingMs / 1000),
-        bingo_players: st.bingoPlayers,
+        bingoPlayerIds: st.bingoPlayers,
         scores: st.scores,
         item_counts: st.itemCounts
       }
@@ -888,7 +888,7 @@ const getChatContext = (roomId: string, playerId: string): ChatContext | null =>
   const st = GameStateRecord.get(roomId)
   if (!st) return null
 
-  const isDrawer = playerId === st.drawer
+  const isDrawer = playerId === st.drawerId
   const hasBingoed = st.bingoPlayers.includes(playerId)
 
   const shouldAttemptGuess = st.turnPhase === 'drawing' && !isDrawer && !hasBingoed

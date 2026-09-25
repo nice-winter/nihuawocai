@@ -50,8 +50,8 @@ shared/
 | `type`       | 事件/消息名                                        |
 | `_scope`     | 投递范围：`'player' \| 'all' \| 'room' \| 'lobby'` |
 | `_reply`     | 是否为请求-响应的回包                              |
-| `_rid`       | 请求 ID，用于匹配回包                              |
-| `_t`         | 服务端时间戳（`pong` 不带）                        |
+| `_requestId` | 请求 ID，用于匹配回包                              |
+| `_timestamp` | 服务端时间戳（`pong` 不带）                        |
 | `successful` | 请求是否成功（仅回包）                             |
 
 ## 辅助泛型（ws.ts）

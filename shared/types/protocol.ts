@@ -28,7 +28,7 @@
  * @see shared/types/ws.ts — ServerMessage, ServerEvent, ClientResponse 等辅助类型
  */
 
-import type { GamePhase, TurnPhase, InteractionReason, ItemType, ItemCounts, ItemUse, ScoreDelta } from './game'
+import type { GamePhase, TurnPhase, InteractionReason, ItemType, ItemCounts, ItemUse, ScoreChange, TimerChangeCause } from './game'
 import type { Player, LoggedInPlayer, PlayerState } from './player'
 import type { Room, RoomSummary } from './room'
 
@@ -195,9 +195,9 @@ export interface ServerEventMap {
       turnPhase: TurnPhase
       turnIndex: number
       totalTurns: number
-      drawer: string | null
+      drawerId: string | null
       remaining_seconds: number
-      bingo_players: string[]
+      bingoPlayerIds: string[]
       scores: Record<string, number>
       item_counts: Record<string, ItemCounts>
     }
@@ -212,14 +212,14 @@ export interface ServerEventMap {
   'game:event:turn:prepare': {
     payload: {
       turnIndex: number
-      drawer: string
+      drawerId: string
       /** 准备阶段总时长 */
       durationSeconds: number
     }
   }
   'game:event:drawing:start': {
     payload: {
-      drawer: string
+      drawerId: string
       /** 绘画阶段总时长 */
       durationSeconds: number
     }
@@ -227,7 +227,7 @@ export interface ServerEventMap {
   'game:event:interaction:start': {
     payload: {
       answer?: string
-      bingo_players: string[]
+      bingoPlayerIds: string[]
       /** 互动阶段总时长 */
       durationSeconds: number
       reason: InteractionReason
@@ -258,8 +258,8 @@ export interface ServerEventMap {
     payload: {
       /** 猜中者玩家 ID */
       guesserId: string
-      score_delta: ScoreDelta
-      bingo_players: string[]
+      scoreChange: ScoreChange
+      bingoPlayerIds: string[]
       scores: Record<string, number>
     }
   }
@@ -267,7 +267,8 @@ export interface ServerEventMap {
     payload: {
       /** 调整后的新剩余时长 */
       remainingSeconds: number
-      reason: string
+      /** 计时被改写的原因 */
+      cause: TimerChangeCause
     }
   }
   'game:event:interaction:item': {
@@ -367,12 +368,12 @@ export interface ClientEventMap {
  * 客户端请求 → 服务端响应类型映射
  *
  * key: 请求名（与 ClientEventMap 对应）
- * value: 服务端返回的数据结构（不含 _reply/_rid/_t/_scope/successful 等传输字段，由 WS_RECV 补充）
+ * value: 服务端返回的数据结构（不含 _reply/_requestId/_timestamp/_scope/successful 等传输字段，由 WS_RECV 补充）
  *
  * 工作原理：
  * 1. 客户端 send({ type }) 发起请求
  * 2. 服务端 handler 返回数据对象
- * 3. 框架自动包装为 { type, ...data, successful, _reply, _rid, _t } 回传
+ * 3. 框架自动包装为 { type, ...data, successful, _reply, _requestId, _timestamp } 回传
  * 4. 客户端用 as ClientResponse<'xxx'> 取到类型安全的响应
  *
  * 注意：handler 必须返回 object 才能携带业务字段；返回裸 number/string 会被回包机制吞掉。

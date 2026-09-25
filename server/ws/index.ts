@@ -47,7 +47,7 @@ export const hooks = defineHooks({
 
   async message(peer, message) {
     try {
-      const msg = decode(message.uint8Array()) as WebsocketMessage<{ rid?: string }>
+      const msg = decode(message.uint8Array()) as WebsocketMessage<{ requestId?: string }>
 
       if (!msg || !msg.type) return
 
@@ -69,7 +69,7 @@ export const hooks = defineHooks({
         peer,
         msg,
         user: userData,
-        reply: reply(peer, msg.rid?.substring(0, 36))
+        reply: reply(peer, msg.requestId?.substring(0, 36))
       })
     } catch (e) {
       logger.warn('消息处理错误:', e)

@@ -18,7 +18,7 @@ export interface GameState {
   turnPhase: TurnPhase
   currentTurn: number
   totalTurns: number
-  drawer: string | null
+  drawerId: string | null
   currentWord: string | null
   hints: string[]
   bingoPlayers: string[]
@@ -40,7 +40,7 @@ export const useGameStore = defineStore('game', () => {
     turnPhase: 'turn_prepare',
     currentTurn: 0,
     totalTurns: 0,
-    drawer: null,
+    drawerId: null,
     currentWord: null,
     hints: [],
     bingoPlayers: [],
@@ -54,7 +54,7 @@ export const useGameStore = defineStore('game', () => {
 
   const state = reactive<GameState>({ ...defaultState })
 
-  const isMyTurn = computed(() => state.drawer === myId.value)
+  const isMyTurn = computed(() => state.drawerId === myId.value)
   const isDrawing = computed(() => state.turnPhase === 'drawing' && isMyTurn.value)
 
   const resetState = () => {
@@ -134,9 +134,9 @@ export const useGameStore = defineStore('game', () => {
         state.turnPhase = payload.turnPhase
         state.currentTurn = payload.turnIndex
         state.totalTurns = payload.totalTurns
-        state.drawer = payload.drawer
+        state.drawerId = payload.drawerId
         state.timeLeft = payload.remaining_seconds
-        state.bingoPlayers = payload.bingo_players || []
+        state.bingoPlayers = payload.bingoPlayerIds || []
         state.scores = payload.scores || {}
         state.itemCounts = payload.item_counts || {}
         break
@@ -159,14 +159,14 @@ export const useGameStore = defineStore('game', () => {
         state.gamePhase = 'game_turn'
         state.turnPhase = 'turn_prepare'
         state.currentTurn = payload.turnIndex
-        state.drawer = payload.drawer
+        state.drawerId = payload.drawerId
         state.timeLeft = payload.durationSeconds
 
         // !!! ⚡ UI 广播点 ⚡ !!!
         // 显示 "第X轮开始" 过场动画
         eventBus.emit('game:event:turn:prepare', {
           ...payload,
-          drawerPlayer: getPlayerFromCurrentRoom(payload.drawer)!
+          drawerPlayer: getPlayerFromCurrentRoom(payload.drawerId)!
         })
         break
       }
@@ -182,7 +182,7 @@ export const useGameStore = defineStore('game', () => {
         if (isMyTurn.value) state.draw = true
         eventBus.emit('game:event:drawing:start', {
           ...payload,
-          drawerPlayer: getPlayerFromCurrentRoom(payload.drawer)!
+          drawerPlayer: getPlayerFromCurrentRoom(payload.drawerId)!
         })
         break
       }
@@ -198,12 +198,12 @@ export const useGameStore = defineStore('game', () => {
 
         // !!! ⚡ UI 广播点 ⚡ !!!
         // 1. 弹窗显示答案
-        // 2. 显示本轮猜对的人 payload.bingo_players
+        // 2. 显示本轮猜对的人 payload.bingoPlayerIds
         state.draw = false
         eventBus.emit('game:event:interaction:start', {
           ...payload,
-          drawerPlayer: getPlayerFromCurrentRoom(state.drawer!)!,
-          bingoPlayers: payload.bingo_players
+          drawerPlayer: getPlayerFromCurrentRoom(state.drawerId!)!,
+          bingoPlayers: payload.bingoPlayerIds
             .map((p) => getPlayerFromCurrentRoom(p))
             .filter((p) => typeof p !== 'undefined')
         })
@@ -245,7 +245,7 @@ export const useGameStore = defineStore('game', () => {
       case 'game:event:guess:bingo': {
         const { payload } = msg
 
-        state.bingoPlayers = payload.bingo_players
+        state.bingoPlayers = payload.bingoPlayerIds
         state.scores = payload.scores
 
         // !!! ⚡ UI 广播点 ⚡ !!!

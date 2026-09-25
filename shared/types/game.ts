@@ -19,6 +19,9 @@ export type ItemType = 'flower' | 'egg' | 'slipper'
 
 export type InteractionReason = 'give_up' | 'bingo_all' | 'timeout' | 'afk' | 'force' | 'leave'
 
+/** 计时被改写的原因 */
+export type TimerChangeCause = 'bingo_shorten'
+
 export interface ItemCounts {
   flower: number
   egg: number
@@ -35,7 +38,7 @@ export interface ItemUse {
   timestamp: number // 赠送时间
 }
 
-export interface ScoreDelta {
+export interface ScoreChange {
   drawerId: string
   drawerGain: number
   guesserId: string

@@ -74,9 +74,9 @@ type Events = {
     turnPhase: TurnPhase
     turnIndex: number
     totalTurns: number
-    drawer: string | null
+    drawerId: string | null
     remaining_seconds: number
-    bingo_players: string[]
+    bingoPlayerIds: string[]
     scores: Record<string, number>
     item_counts: Record<string, ItemCounts>
   }
@@ -86,12 +86,12 @@ type Events = {
   // game round
   'game:event:turn:prepare': {
     turnIndex: number
-    drawer: string
+    drawerId: string
     drawerPlayer: Player
     durationSeconds: number
   }
   'game:event:drawing:start': {
-    drawer: string
+    drawerId: string
     drawerPlayer: Player
     durationSeconds: number
   }
@@ -99,7 +99,7 @@ type Events = {
     drawerPlayer: Player
     bingoPlayers: Player[]
     answer?: string
-    bingo_players: string[]
+    bingoPlayerIds: string[]
     durationSeconds: number
     reason: InteractionReason
   }
@@ -121,13 +121,13 @@ type Events = {
     guesserId: string
     /** 猜中者（前端富化） */
     guesser: Player
-    score_delta: ScoreDelta
-    bingo_players: string[]
+    scoreChange: ScoreChange
+    bingoPlayerIds: string[]
     scores: Record<string, number>
   }
   'game:event:timer:update': {
     remainingSeconds: number
-    reason: string
+    cause: TimerChangeCause
   }
   'game:event:interaction:item': {
     /** 送道具者玩家 ID */

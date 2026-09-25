@@ -126,7 +126,7 @@ export const useRoomStore = defineStore('room', () => {
   watch(
     () => playerStore.loggedInPlayer?.state,
     (newState) => {
-      if (newState?.type !== 'in_room') clearCurrentRoom()
+      if (newState?.presence !== 'inRoom') clearCurrentRoom()
     }
   )
 
