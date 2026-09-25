@@ -17,8 +17,14 @@
  * 1. **作用域房间** —— `room:*` 事件 envelope 必带 `roomId: string`（身份键，nanoid 不可复用）
  *    与 `roomNumber: number`（用户句柄，0-999 会回收复用，仅供 UI 展示与「按号加入」入口）。
  *    **身份比较只允许用 `roomId`，禁止用 `roomNumber`。**
- * 2. **人的发起者/目标** —— Player 对象用 `sender` / `target`；id 字符串用 `senderId` / `targetId`。
+ * 2. **人的发起者/目标** —— Player 对象用 `sender` / `target`；id 字符串用 `senderId` / `targetId`
+ *    （游戏内猜中者用 `guesser` / `guesserId`，作画者用 `drawerId`）。
  * 3. **全协议禁用 `from` / `to` 字段名**（历史遗留的一词多义已清除）。
+ * 4. **ID 字段带 `Id` 后缀**，数组装 ID 用 `*Ids`；内部字段一律 camelCase（外部 DTO 保留上游 snake）。
+ * 5. **时间戳用 `*At`（毫秒）**，时长/剩余秒数用 `*Seconds`（duration/remaining/display 按语义区分）。
+ * 6. **词表统一** —— turn=单人回合（cycle=全员一轮）、hint=提示词、item=互动道具、presence=玩家位置；
+ *    布尔字段用 `is*` / `has*` 前缀。
+ * @see docs/shared-types.md — 完整命名约定
  *
  * 添加新事件的步骤：
  * 1. 在 ServerEventMap 或 ClientEventMap 中添加条目
