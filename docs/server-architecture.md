@@ -64,7 +64,7 @@ server/
     │   ├── channel.ts    # Pub/Sub 频道管理（roomTopic(roomId) 房间频道主通道）
     │   ├── connection.ts # 从 peer 解析用户 session
     │   ├── events.ts     # mitt 事件总线（ws:connect/message/disconnect/error）
-    │   └── sender.ts     # 发送工具（sendToAll/sendToChannel/sendToUser）
+    │   └── sender.ts     # 发送工具（sendToAll/sendToChannel）
     ├── handlers/     # WS 消息处理器（按领域拆分）
     │   ├── index.ts      # 统一注册所有 handler
     │   ├── room.ts       # 房间操作（创建/加入/离开/坐下/换位/密码/广播/邀请/开始/快速匹配）
@@ -110,13 +110,15 @@ WebSocket 连接 (crossws hooks)
             ▼  roomEventBus.emit('room:event:create/destroy/player_join/...')
 ┌──────────────────────────┐
 │  Layer 3: roomEventBus   │  services/room.ts
-│  房间层：房间生命周期      │
-└───────────┬──────────────┘
-            │ game.ts 监听 game_start/player_leave/onlooker_join
-            ▼
-┌──────────────────────────┐
-│  game.ts (纯消费者)       │  services/game.ts
-│  游戏层：状态机驱动        │
+│  房间层：房间生命周期      │◄────────┐
+└───────────┬──────────────┘         │
+            │ game.ts 监听            │ 'game:ended'（game → room 反向信号：
+            │ game_start/player_leave/ │  游戏流程结束，room 调用 end() 重置）
+            │ onlooker_join            │
+            ▼                        │
+┌──────────────────────────┐         │
+│  game.ts (纯消费者)       │─────────┘
+│  游戏层：状态机驱动        │  emit('game:ended')
 └──────────────────────────┘
 ```
 
@@ -127,8 +129,9 @@ WebSocket 连接 (crossws hooks)
 | L1   | `wsEventBus`     | `ws:connect` `ws:message` `ws:disconnect` `ws:error`                                                                                                                                                                       | ws/index.ts | handlers/index.ts, player.ts |
 | L2   | `playerEventBus` | `player:connect` `player:beforeDisconnect` `player:disconnected`                                                                                                                                                           | player.ts   | room.ts                      |
 | L3   | `roomEventBus`   | `room:event:create` `room:event:destroy` `room:event:player_join` `room:event:player_leave` `room:event:onlooker_join` `room:event:onlooker_sit` `room:event:onlooker_leave` `room:event:game_start` `room:event:game_end` | room.ts     | game.ts                      |
+| L3   | `roomEventBus`   | `game:ended`（game → room 反向信号，游戏流程结束后重置房间）                                                                                                                                                               | game.ts     | room.ts                      |
 
-**设计原则：game.ts 是纯下游消费者**——添加游戏模块时只需在 game.ts 里 `roomEventBus.on(...)` 即可，无需修改 room.ts 任何代码。
+**设计原则：game.ts 是纯消费者**——只通过事件与 room 通信：`roomEventBus.on(...)` 感知房间生命周期，`roomEventBus.emit('game:ended')` 通知游戏结束，不直接调用 room 的任何函数。添加游戏模块时只需在 game.ts 里监听事件即可，无需修改 room.ts。
 
 ### 3. 消息广播分层
 
@@ -150,7 +153,7 @@ WebSocket 连接 (crossws hooks)
 1. 房主调用 `room:game_start` → room 服务设置 `isPlaying=true` → 触发 `room:event:game_start`
 2. game 服务监听事件 → `gameStart()` 初始化 GameState → 开始回合循环
 3. 每回合：准备倒计时 → 画手收到答案 → 绘画阶段（AFK 检测 + 提示词渐显）→ 猜词/超时进入互动阶段 → 回合结束
-4. 所有轮次完成 → 结算阶段（展示积分榜）→ 游戏结束
+4. 所有轮次完成 → 结算阶段（展示积分榜）→ 游戏结束 → 发出 `game:ended`，room 重置 `isPlaying`
 
 **计分规则**: 首答(firstBingo)和后续答(bingo)有不同分值，画手和猜题者都得分。
 
