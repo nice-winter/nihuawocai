@@ -273,7 +273,7 @@ export const useRoomStore = defineStore('room', () => {
           avatar: {
             src: event.sender.avatar_url
           },
-          duration: event.duration * 1000,
+          duration: 20 * 1000, // toast 显示时长由前端自理
           orientation: 'horizontal',
           actions: [
             {
@@ -332,13 +332,20 @@ export const useRoomStore = defineStore('room', () => {
    * @param roomNumber 房间号（用户句柄）
    * @param password 房间密码
    * @param roomId 房间身份 ID（邀请/广播携带时一并传入，服务端校验防串房）
+   * @param asOnlooker 指定以旁观身份加入
    */
-  const join = async (roomNumber: number, password?: string, roomId?: string) => {
+  const join = async (
+    roomNumber: number,
+    password?: string,
+    roomId?: string,
+    asOnlooker?: boolean
+  ) => {
     await send({
       type: 'room:join',
       roomNumber,
       roomId,
-      password
+      password,
+      asOnlooker
     })
   }
 

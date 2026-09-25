@@ -153,7 +153,6 @@ export interface ServerEventMap {
     roomId: string
     roomNumber: number
     password: string
-    duration: number
     expiresAt: number
   }
   'room:event:lobby_invite': {
@@ -316,7 +315,8 @@ export interface ClientEventMap {
     /** 可选：邀请/广播/列表携带的房间身份 ID，服务端校验与 roomNumber 对应，防止旧引用误入同号新房 */
     roomId?: string
     password?: string | null
-    look?: boolean
+    /** 指定以旁观身份加入（缺省则优先入座，坐满时自动转旁观） */
+    asOnlooker?: boolean
   }
   'room:leave': Record<string, never>
   'room:sit': {
@@ -428,7 +428,6 @@ export interface ClientResponseMap {
     roomId: string
     roomNumber: number
     password: string
-    duration: number
     expiresAt: number
   }
   'room:game_start': Record<string, never>

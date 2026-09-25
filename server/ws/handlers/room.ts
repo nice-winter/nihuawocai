@@ -38,14 +38,14 @@ export default defineWsHandlers({
   },
   'room:join': async ({ msg, user }) => {
     const validData = roomJoinSchema.parse(msg)
-    const { roomNumber, roomId, password } = validData
+    const { roomNumber, roomId, password, asOnlooker } = validData
 
     const room = getRoomByNumber(Number(roomNumber))
     if (!room) throw new Error('房间不存在')
     // 邀请/广播携带 roomId 时校验身份，防止旧引用误入同号新房
     if (roomId && room.id !== roomId) throw new Error('房间已解散或不存在')
 
-    return await joinRoom(room.id, user.id, password?.trim().substring(0, 16) || '')
+    return await joinRoom(room.id, user.id, password?.trim().substring(0, 16) || '', asOnlooker)
   },
   'room:leave': async ({ user }) => {
     return leaveRoom(user.id)

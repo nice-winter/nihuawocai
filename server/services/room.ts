@@ -277,7 +277,12 @@ const updateRoom = (roomId: string, room: Room) => {
   rooms.set(roomId, room)
 }
 
-const joinRoom = async (roomId: string, playerId: string, password?: string) => {
+const joinRoom = async (
+  roomId: string,
+  playerId: string,
+  password?: string,
+  asOnlooker?: boolean
+) => {
   if (checkPlayerIsInRoom(playerId)) throw new Error('当前已在房间内')
 
   const room = rooms.get(roomId)
@@ -352,7 +357,10 @@ const joinRoom = async (roomId: string, playerId: string, password?: string) => 
       }
     }
 
-    if (room.isPlaying) {
+    if (asOnlooker) {
+      // 显式指定旁观：直接进旁观席
+      tryJoinAsOnlooker()
+    } else if (room.isPlaying) {
       tryJoinAsOnlooker()
     } else {
       tryJoinAsPlayer()
@@ -620,7 +628,6 @@ const invite = async (playerId: string, targetId: string) => {
     roomNumber: room.roomNumber,
     roomId: room.id,
     password: room.joinOptions.password,
-    duration: 20, // toast 显示时间（秒）
     expiresAt // 过期时间（Unix 时间戳毫秒）
   }
 

@@ -17,7 +17,7 @@ export const roomJoinSchema = z.object({
   /** 可选：邀请/广播携带的房间身份 ID，服务端校验与 roomNumber 对应 */
   roomId: z.string().optional(),
   password: z.string().optional().nullable(),
-  look: z.boolean().optional()
+  asOnlooker: z.boolean().optional()
 })
 
 // Room sit schema

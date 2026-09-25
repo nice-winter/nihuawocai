@@ -53,7 +53,7 @@
           size="xl"
           color="playing"
           :disabled="room.onlookers.length >= room.joinOptions.maxOnlookers"
-          @click="emit('lookButtonClick', room.id, room.roomNumber)"
+          @click="emit('onlookerButtonClick', room.id, room.roomNumber)"
         >
           旁观ㅤ{{ room.onlookers.length }}/{{ room.joinOptions.maxOnlookers }}
         </UiButton>
@@ -78,6 +78,6 @@ const totalPlayerCount = computed(() => room.players.filter((p) => p).length)
 const openSeatCount = computed(() => room.seatOpenFlags.filter((s) => s).length)
 
 const emit = defineEmits<{
-  (e: 'joinButtonClick' | 'lookButtonClick', roomId: string, roomNumber: number): void
+  (e: 'joinButtonClick' | 'onlookerButtonClick', roomId: string, roomNumber: number): void
 }>()
 </script>
