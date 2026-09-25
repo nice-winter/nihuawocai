@@ -142,9 +142,9 @@ export const defaultAppConfig: AppConfig = {
       { level: 60, minScore: 800000, title: '空前绝后' }
     ],
     lobby: {
-      perMinuteChatCount: 0,
+      maxChatPerMinute: 0,
       time: {
-        chatIntervalTimeSecond: 5
+        chatIntervalSeconds: 5
       }
     },
     room: {
@@ -152,46 +152,47 @@ export const defaultAppConfig: AppConfig = {
         {
           imgUrl: 'https://free.picui.cn/free/2025/11/04/6908e810591bf.jpg',
           description: '',
-          url: '#'
+          linkUrl: '#'
         }
       ],
-      feature: {
+      features: {
         kick: true,
-        lobbyInvite: true,
+        lobbyBroadcast: true,
         invite: {
-          idle: true,
-          sameCity: false
+          canInviteIdle: true,
+          canInviteSameCity: false
         }
       },
-      maxLobbyInviteCount: 0,
-      perMinuteChatCount: 0,
+      maxLobbyBroadcastCount: 0,
+      maxChatPerMinute: 0,
       passwordMaxLength: 4,
+      maxOnlookers: 5,
       time: {
-        lobbyInviteIntervalTimeSecond: 300,
-        chatIntervalTimeSecond: 1,
-        preStartTimeSecond: 30,
-        maxPreStartTimeSecond: 60,
-        invitationValidTimeSecond: 15,
-        afkTimeSecond: 300
+        lobbyBroadcastIntervalSeconds: 300,
+        chatIntervalSeconds: 1,
+        preStartWaitSeconds: 30,
+        maxPreStartWaitSeconds: 60,
+        inviteValidSeconds: 15,
+        afkTimeoutSeconds: 300
       },
       cycle: {
         count: 2,
         time: {
-          turnStartWaitTimeSecond: 5,
-          turnDrawingTimeoutSecond: 20,
-          turnDrawingTimeSecond: 60,
-          maxTurnDrawingTimeSecond: 120,
-          hintTimeOffsets: [20, 40],
+          turnStartWaitSeconds: 5,
+          turnDrawingTimeoutSeconds: 20,
+          turnDrawingDurationSeconds: 60,
+          maxTurnDrawingDurationSeconds: 120,
+          hintOffsetSeconds: [20, 40],
           bingoShortenToSeconds: 20,
-          turnEndWaitTimeSecond: 5,
+          turnEndWaitSeconds: 5,
           settlementDisplaySeconds: 8
         },
-        scoreRule: {
-          drawingPlayer: {
+        scoreRules: {
+          drawer: {
             firstBingo: 3,
             bingo: 2
           },
-          player: {
+          guesser: {
             firstBingo: 2,
             bingo: 1
           },
