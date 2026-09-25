@@ -90,7 +90,7 @@ const inviteRecord = new Map<string, { expiresAt: number }>()
 /**
  * 房间广播记录，键为 room.id
  */
-const lobbyInviteRecord = new Map<string, { expiresAt: number }>()
+const lobbyBroadcastRecord = new Map<string, { expiresAt: number }>()
 
 // ---------------------- Player Events ----------------------
 // 延迟初始化事件监听，避免循环依赖
@@ -170,9 +170,10 @@ const createRoom = async (
 
   if (checkPlayerIsInRoom(ownerId)) throw new Error('当前已在房间内')
 
+  const appConfig = await getAppConfig()
   const defaultJoinOptions: JoinOptions = {
     password: '',
-    maxOnlookers: 5,
+    maxOnlookers: appConfig.game.room.maxOnlookers,
     wordLibIds: []
   }
 
@@ -536,7 +537,7 @@ const changePassword = (playerId: string, password: string) => {
  * 发送广播
  * @param playerId 发起玩家 ID
  */
-const sendLobbyInvite = async (playerId: string) => {
+const sendLobbyBroadcast = async (playerId: string) => {
   const player = getPlayer(playerId)
   if (!player) throw new Error('用户不存在')
   if (!checkPlayerIsInRoom(playerId)) throw new Error('你必须在房间中才能发送房间广播')
@@ -546,22 +547,22 @@ const sendLobbyInvite = async (playerId: string) => {
   if (!room) throw new Error('房间不存在')
 
   const appConfig = await getAppConfig()
-  const intervalMs = appConfig.game.room.time.lobbyInviteIntervalTimeSecond * 1000
+  const intervalMs = appConfig.game.room.time.lobbyBroadcastIntervalSeconds * 1000
 
   const now = Date.now()
   const expiresAt = now + intervalMs
 
   // 防止重复广播（按房间冷却）
-  const existing = lobbyInviteRecord.get(roomId)
+  const existing = lobbyBroadcastRecord.get(roomId)
   if (existing && existing.expiresAt > now) {
     const remainSeconds = Math.ceil((existing.expiresAt - now) / 1000)
     throw new Error(`广播过于频繁，请 ${remainSeconds} 秒后再试`)
   }
 
   // 记录冷却
-  lobbyInviteRecord.set(roomId, { expiresAt })
+  lobbyBroadcastRecord.set(roomId, { expiresAt })
   setTimeout(() => {
-    lobbyInviteRecord.delete(roomId)
+    lobbyBroadcastRecord.delete(roomId)
   }, intervalMs)
 
   // 构造消息（expiresAt 毫秒时间戳）
@@ -576,7 +577,7 @@ const sendLobbyInvite = async (playerId: string) => {
 
   // 广播
   // @TODO: 这里可以只发送给大厅与房间内（排除游戏中的房间）
-  sendToAllPlayer({ type: 'room:event:lobby_invite', ...msg })
+  sendToAllPlayer({ type: 'room:event:lobby_broadcast', ...msg })
 
   return msg
 }
@@ -598,7 +599,7 @@ const invite = async (playerId: string, targetId: string) => {
   if (!room) throw new Error('房间不存在')
 
   const appConfig = await getAppConfig()
-  const validMs = appConfig.game.room.time.invitationValidTimeSecond * 1000
+  const validMs = appConfig.game.room.time.inviteValidSeconds * 1000
   const now = Date.now()
   const expiresAt = now + validMs
 
@@ -889,7 +890,7 @@ export {
   sit,
   setSeatOpen,
   changePassword,
-  sendLobbyInvite,
+  sendLobbyBroadcast,
   invite,
   start,
   end,

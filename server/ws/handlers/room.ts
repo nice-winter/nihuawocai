@@ -1,6 +1,6 @@
 import { defineWsHandlers } from '~~/server/ws/utils'
 import {
-  sendLobbyInvite,
+  sendLobbyBroadcast,
   changePassword,
   createRoom,
   getRoomByNumber,
@@ -68,8 +68,8 @@ export default defineWsHandlers({
 
     return changePassword(user.id, password)
   },
-  'room:lobby_invite': async ({ user }) => {
-    return await sendLobbyInvite(user.id)
+  'room:lobby_broadcast': async ({ user }) => {
+    return await sendLobbyBroadcast(user.id)
   },
   'room:invite': async ({ msg, user }) => {
     const validData = roomInviteSchema.parse(msg)
