@@ -134,7 +134,8 @@ const {
 const playerStore = usePlayerStore()
 const { getPlayerProfile } = playerStore
 const { loggedInPlayer } = storeToRefs(playerStore)
-const { levelHelper } = useAppConfigStore()
+// levelHelper 是 computed，须用 storeToRefs 保持响应性
+const { levelHelper } = storeToRefs(useAppConfigStore())
 
 const isOpen = defineModel<boolean>('isOpen', { default: true })
 
@@ -181,7 +182,7 @@ const onProfilePopoverClose = () => {
 }
 
 const levelInfo = computed(() =>
-  levelHelper.getUserLevelInfo(playerProfile.value?.stats.score || 0)
+  levelHelper.value.getUserLevelInfo(playerProfile.value?.stats.score || 0)
 )
 
 watch(

@@ -1,11 +1,10 @@
-import { defaultAppConfig } from '#shared/defaultAppConfig'
+import { getDefaultAppConfig } from '#shared/defaultAppConfig'
 import { consola } from 'consola/browser'
 
 const logger = consola.withTag('AppConfig')
 
 export const useAppConfigStore = defineStore('appConfig', () => {
-  const def = defaultAppConfig
-  const appConfig = ref(def)
+  const appConfig = ref<AppConfig>(getDefaultAppConfig())
 
   const pull = async () => {
     const remoteAppConfig = await $fetch('/api/app-config')
@@ -15,12 +14,12 @@ export const useAppConfigStore = defineStore('appConfig', () => {
   }
 
   const reset = async () => {
-    appConfig.value = def
+    appConfig.value = getDefaultAppConfig()
   }
 
   const update = async (patch: Partial<AppConfig>) => {
     appConfig.value = defuReplaceArray(patch, unref(appConfig.value))
-    const result = await $fetch('/api/app-config', {
+    await $fetch('/api/app-config', {
       method: 'POST',
       body: patch
     })
@@ -30,7 +29,8 @@ export const useAppConfigStore = defineStore('appConfig', () => {
 
   const getAppConfig = () => appConfig.value
 
-  const levelHelper = new LevelHelper(appConfig.value.game.levels)
+  /** 跟随配置更新：取用时请用 storeToRefs 或 store.levelHelper，直接解构会丢失响应性 */
+  const levelHelper = computed(() => new LevelHelper(appConfig.value.game.levels))
 
   return {
     appConfig,

@@ -1,5 +1,5 @@
-import type { LevelInfo } from '~~/shared/types/level'
-import type { Gender } from '~~/shared/types/gender'
+import type { LevelInfo } from './level'
+import type { Gender } from './gender'
 
 export interface AppConfig {
   /** 后台管理配置 */

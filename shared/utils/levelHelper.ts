@@ -1,5 +1,5 @@
-import type { LevelInfo, UserLevelInfo } from '~~/shared/types/level'
-import { defaultAppConfig } from '#shared/defaultAppConfig'
+import type { LevelInfo, UserLevelInfo } from '../types/level'
+import { defaultAppConfig } from '../defaultAppConfig'
 
 export const defaultLevels: LevelInfo[] = defaultAppConfig.game.levels
 
@@ -7,8 +7,8 @@ export class LevelHelper {
   private levels: LevelInfo[]
 
   constructor(customLevels?: LevelInfo[]) {
-    this.levels = customLevels || defaultLevels
-    this.levels.sort((a, b) => a.minScore - b.minScore)
+    // 复制后再排序：入参可能是冻结的 defaultLevels，也可能是 store 里的活数组
+    this.levels = [...(customLevels ?? defaultLevels)].sort((a, b) => a.minScore - b.minScore)
   }
 
   /**
