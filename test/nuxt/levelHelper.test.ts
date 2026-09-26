@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
-import { LevelHelper, createLevelHelper, defaultLevelHelper } from '#shared/utils/levelHelper'
-import type { LevelInfo } from '#shared/types/level'
+import { LevelHelper, createLevelHelper, defaultLevelHelper } from '../../shared/utils/levelHelper'
+import type { LevelInfo } from '../../shared/types/level'
 
 /** 简化的自定义等级表，方便测试 */
 const testLevels: LevelInfo[] = [
@@ -24,6 +24,18 @@ describe('LevelHelper', () => {
       for (let i = 1; i < levels.length; i++) {
         expect(levels[i]!.minScore).toBeGreaterThanOrEqual(levels[i - 1]!.minScore)
       }
+    })
+
+    it('不修改传入的数组', () => {
+      const arr = [testLevels[2]!, testLevels[0]!]
+      const snapshot = arr.map(l => ({ ...l }))
+      new LevelHelper(arr)
+      expect(arr).toEqual(snapshot)
+    })
+
+    it('传入冻结数组不报错', () => {
+      const frozen = Object.freeze([{ level: 1, minScore: 0, title: 'a' }]) as LevelInfo[]
+      expect(() => new LevelHelper(frozen)).not.toThrow()
     })
   })
 

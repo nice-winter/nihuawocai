@@ -1,6 +1,6 @@
-import type { AppConfig } from '~~/shared/types/appConfig'
+import type { AppConfig } from './types/appConfig'
 
-export const defaultAppConfig: AppConfig = {
+const rawDefaultAppConfig: AppConfig = {
   admin: {
     superAdminId: '', // 首次部署时需要初始化
     adminIds: [],
@@ -202,3 +202,17 @@ export const defaultAppConfig: AppConfig = {
     }
   }
 }
+
+function deepFreeze<T>(obj: T): T {
+  if (obj && typeof obj === 'object' && !Object.isFrozen(obj)) {
+    Object.freeze(obj)
+    for (const value of Object.values(obj)) deepFreeze(value)
+  }
+  return obj
+}
+
+/** 默认配置只读源：深度冻结，任何写入都会抛 TypeError */
+export const defaultAppConfig: AppConfig = deepFreeze(rawDefaultAppConfig)
+
+/** 取一份可修改的默认配置深拷贝：凡是要存/改/提交默认值，一律用它 */
+export const getDefaultAppConfig = (): AppConfig => structuredClone(defaultAppConfig)

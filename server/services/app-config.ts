@@ -1,4 +1,4 @@
-import { defaultAppConfig } from '#shared/defaultAppConfig'
+import { getDefaultAppConfig } from '#shared/defaultAppConfig'
 import { initLogLevel } from '~~/server/utils/logger'
 
 const appStorage = useStorage('app')
@@ -7,7 +7,7 @@ const keyName = 'app_config'
 const getAppConfig = async () => {
   const appConfig = await appStorage.get<AppConfig>(keyName)
   if (!appConfig) {
-    return defaultAppConfig
+    return getDefaultAppConfig()
   }
   initLogLevel(appConfig.admin.logLevel)
   return appConfig
@@ -18,7 +18,7 @@ const setAppConfig = async (appConfig: AppConfig) => {
 }
 
 const updateAppConfig = async (appConfig: Partial<AppConfig>) => {
-  const currentConfig = (await getAppConfig()) || defaultAppConfig
+  const currentConfig = (await getAppConfig()) || getDefaultAppConfig()
   const newAppConfig = defuReplaceArray(appConfig, currentConfig) as AppConfig
 
   await setAppConfig(newAppConfig)
@@ -28,7 +28,7 @@ const updateAppConfig = async (appConfig: Partial<AppConfig>) => {
 }
 
 const resetAppConfig = async () => {
-  return await setAppConfig(defaultAppConfig)
+  return await setAppConfig(getDefaultAppConfig())
 }
 
 const hasAppConfig = async (init?: boolean) => {
