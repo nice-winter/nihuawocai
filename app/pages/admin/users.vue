@@ -46,7 +46,10 @@ const editingUser = ref<UserData | null>(null)
 const showEditModal = ref(false)
 
 const openEditModal = (user: UserData) => {
-  editingUser.value = JSON.parse(JSON.stringify(user))
+  const cloned: UserData = JSON.parse(JSON.stringify(user))
+  // 历史数据可能缺 verification，补默认值避免弹窗崩
+  cloned.verification ??= { verified: false, note: '' }
+  editingUser.value = cloned
   showEditModal.value = true
 }
 
@@ -109,8 +112,8 @@ const columns = [
   { accessorKey: 'email', header: '邮箱' },
   { accessorKey: 'authProvider', header: '登录方式' },
   { accessorKey: 'gender', header: '性别' },
-  { accessorKey: 'stats.score', header: '积分' },
-  { accessorKey: 'stats.totalGames', header: '总局数' },
+  { accessorKey: 'stats.score', id: 'score', header: '积分' },
+  { accessorKey: 'stats.totalGames', id: 'totalGames', header: '总局数' },
   { accessorKey: 'createdAt', header: '注册时间' },
   { id: 'actions', header: '操作' }
 ]
@@ -160,8 +163,13 @@ const columns = [
             </template>
 
             <!-- 积分 -->
-            <template #[`stats.score-cell`]="{ row }">
+            <template #score-cell="{ row }">
               <span class="font-medium text-highlighted">{{ row.original.stats?.score || 0 }}</span>
+            </template>
+
+            <!-- 总局数 -->
+            <template #totalGames-cell="{ row }">
+              <span class="font-medium text-highlighted">{{ row.original.stats?.totalGames || 0 }}</span>
             </template>
 
             <!-- 注册时间 -->

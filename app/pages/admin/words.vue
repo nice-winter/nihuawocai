@@ -65,6 +65,9 @@ const addWord = () => {
 
 const removeWord = (index: number) => {
   editingLibrary.value.words.splice(index, 1)
+  // 删掉当前页最后一个词后页码可能越界
+  const maxPage = Math.max(1, Math.ceil(editingLibrary.value.words.length / wordPageSize))
+  if (wordPage.value > maxPage) wordPage.value = maxPage
 }
 
 const addHint = (wordIndex: number) => {
@@ -234,21 +237,37 @@ const wordColumns = [
                   />
                 </template>
                 <template #hints-cell="{ row }">
-                  <div class="flex flex-wrap gap-1">
-                    <UBadge
-                      v-for="(hint, pIdx) in (editingLibrary.words[row.original._index!]?.hints || [])"
-                      :key="pIdx"
-                      variant="soft"
-                      color="neutral"
-                      size="sm"
+                  <div class="flex flex-col gap-1 min-w-52">
+                    <div
+                      v-for="(hint, hIdx) in (editingLibrary.words[row.original._index!]?.hints || [])"
+                      :key="hIdx"
+                      class="flex items-center gap-1"
                     >
-                      {{ hint }}
-                    </UBadge>
+                      <UInput
+                        :model-value="hint"
+                        size="xs"
+                        class="flex-1"
+                        placeholder="提示词"
+                        @update:model-value="(v: string | number) => {
+                          const w = editingLibrary.words[row.original._index!]
+                          if (w?.hints) w.hints[hIdx] = String(v)
+                        }"
+                      />
+                      <UButton
+                        icon="i-lucide-x"
+                        size="xs"
+                        variant="ghost"
+                        color="error"
+                        @click="removeHint(row.original._index!, hIdx)"
+                      />
+                    </div>
                     <UButton
                       icon="i-lucide-plus"
                       size="xs"
                       variant="ghost"
                       color="neutral"
+                      label="添加提示"
+                      class="self-start"
                       @click="addHint(row.original._index!)"
                     />
                   </div>
