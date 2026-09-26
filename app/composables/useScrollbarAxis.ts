@@ -133,12 +133,13 @@ export function useScrollbarAxis(options: UseScrollbarAxisOptions) {
   }
 
   // --- 拖拽事件 ---
+  // 拖拽期间才监听 document：target 随 trackPressed 变化，松开或组件卸载时自动移除
+  const dragTarget = computed(() => (trackPressed.value ? document : null))
+
   function handleMouseDown(e: MouseEvent): void {
     trackPressed.value = true
     memoScroll.value = scrollPos.value
     memoMouse.value = isY ? e.clientY : e.clientX
-    document.addEventListener('mousemove', handleMouseMove)
-    document.addEventListener('mouseup', handleMouseUp)
     handleMouseMove(e)
   }
 
@@ -162,20 +163,15 @@ export function useScrollbarAxis(options: UseScrollbarAxisOptions) {
       mousePressedLeave.value = false
       debouncedHide()
     }
-    document.removeEventListener('mousemove', handleMouseMove)
-    document.removeEventListener('mouseup', handleMouseUp)
   }
+
+  useEventListener(dragTarget, 'mousemove', handleMouseMove)
+  useEventListener(dragTarget, 'mouseup', handleMouseUp)
 
   // --- 生命周期 ---
   onMounted(() => updateState())
 
   useResizeObserver([containerRef, contentRef, railRef], updateState)
-
-  // 拖拽中组件卸载时清理
-  onUnmounted(() => {
-    document.removeEventListener('mousemove', handleMouseMove)
-    document.removeEventListener('mouseup', handleMouseUp)
-  })
 
   return {
     showTrack,

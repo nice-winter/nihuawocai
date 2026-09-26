@@ -28,7 +28,6 @@ const { duration = 2000, parent = undefined, offsetX = 0, offsetY = 0 } = define
 
 const visible = ref(false)
 const box = ref<HTMLElement | null>(null)
-let timer: number | null = null
 
 const style = computed(() => {
   return {
@@ -37,19 +36,23 @@ const style = computed(() => {
   }
 })
 
+// immediate: false —— 计时从 show() 起算，而不是组件创建时就跑表
+const { start: startHide, stop: stopHide } = useTimeoutFn(
+  () => {
+    visible.value = false
+  },
+  duration,
+  { immediate: false }
+)
+
 const show = () => {
   visible.value = true
-  if (timer) clearTimeout(timer)
-  timer = window.setTimeout(() => {
-    visible.value = false
-  }, duration)
+  stopHide() // 取消上一次计时（无 pending 时是 no-op）
+  startHide()
 }
 
 onMounted(() => {
   show()
-})
-onBeforeUnmount(() => {
-  if (timer) clearTimeout(timer)
 })
 </script>
 

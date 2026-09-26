@@ -37,14 +37,10 @@ const adminIdSet = computed(() => {
   return ids
 })
 
-let searchTimeout: ReturnType<typeof setTimeout> | null = null
-const handleSearch = () => {
-  if (searchTimeout) clearTimeout(searchTimeout)
-  searchTimeout = setTimeout(() => {
-    search.value = searchInput.value
-    page.value = 1
-  }, 300)
-}
+const handleSearch = useDebounceFn(() => {
+  search.value = searchInput.value
+  page.value = 1
+}, 300)
 
 const editingUser = ref<UserData | null>(null)
 const showEditModal = ref(false)
