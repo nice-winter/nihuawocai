@@ -12,15 +12,18 @@ const saving = ref(false)
 
 watchEffect(() => {
   if (config.value) {
-    editingConfig.value = JSON.parse(JSON.stringify(config.value))
+    // 旧配置可能缺新增字段，用默认值补全，避免 undefined 蔓延到表单绑定
+    editingConfig.value = defuReplaceArray(JSON.parse(JSON.stringify(config.value)), getDefaultAppConfig())
   }
 })
 
 const toast = useToast()
 
 // ===== 日志等级（'' = 不覆盖环境变量，用字符串 value 桥接规避 number|'' 混合类型）=====
+// Reka 的 SelectItem 不允许 value 为空串（空串被保留作清除选择语义），用哨兵表示"不覆盖"
+const LOG_LEVEL_KEEP = 'keep'
 const logLevelItems = [
-  { label: '不覆盖（跟随环境变量）', value: '' },
+  { label: '不覆盖（跟随环境变量）', value: LOG_LEVEL_KEEP },
   { label: 'silent（-1）', value: '-1' },
   { label: 'error（0）', value: '0' },
   { label: 'warn（1）', value: '1' },
@@ -29,30 +32,32 @@ const logLevelItems = [
   { label: 'verbose（4）', value: '4' }
 ]
 const logLevelModel = computed({
-  get: () => String(editingConfig.value.admin.logLevel ?? ''),
+  get: () => {
+    const v = editingConfig.value.admin.logLevel
+    return v === '' || v === undefined ? LOG_LEVEL_KEEP : String(v)
+  },
   set: (v: string) => {
-    editingConfig.value.admin.logLevel = v === '' ? '' : Number(v)
+    editingConfig.value.admin.logLevel = v === LOG_LEVEL_KEEP ? '' : Number(v)
   }
 })
 
 // ===== 成对时间字段约束：max 应 ≥ 基础值 =====
-const preStartError = computed(() =>
-  editingConfig.value.game.room.time.preStartWaitSeconds >
-  editingConfig.value.game.room.time.maxPreStartWaitSeconds
-    ? '不能大于「最大准备等待时间」'
-    : ''
-)
-const drawingDurationError = computed(() =>
-  editingConfig.value.game.room.cycle.time.turnDrawingDurationSeconds >
-  editingConfig.value.game.room.cycle.time.maxTurnDrawingDurationSeconds
-    ? '不能大于「最大绘画时间」'
-    : ''
-)
+// 无错误时返回 undefined（UFormField 的 error 默认值），空串会被当成错误态
+const preStartError = computed(() => {
+  const start = Number(editingConfig.value.game.room.time.preStartWaitSeconds)
+  const max = Number(editingConfig.value.game.room.time.maxPreStartWaitSeconds)
+  return start > max ? '不能大于「最大准备等待时间」' : undefined
+})
+const drawingDurationError = computed(() => {
+  const duration = Number(editingConfig.value.game.room.cycle.time.turnDrawingDurationSeconds)
+  const max = Number(editingConfig.value.game.room.cycle.time.maxTurnDrawingDurationSeconds)
+  return duration > max ? '不能大于「最大绘画时间」' : undefined
+})
 
 // ===== 提示词弹出时间点（number[] ↔ string[] 桥接）=====
 // 不用 convertValue 做校验：reka-ui 会把返回值（含 undefined）直接 push 进数组
 const hintOffsetTags = computed({
-  get: () => editingConfig.value.game.room.cycle.time.hintOffsetSeconds.map(String),
+  get: () => (editingConfig.value.game.room.cycle.time.hintOffsetSeconds || []).map(String),
   set: (v: string[]) => {
     const valid: number[] = []
     let rejected = false
@@ -65,9 +70,10 @@ const hintOffsetTags = computed({
     editingConfig.value.game.room.cycle.time.hintOffsetSeconds = [...valid].sort((a, b) => a - b)
   }
 })
-const hintOffsetError = computed(() =>
-  editingConfig.value.game.room.cycle.time.hintOffsetSeconds.length ? '' : '至少保留一个时间点'
-)
+const hintOffsetError = computed(() => {
+  const list = editingConfig.value.game.room.cycle.time.hintOffsetSeconds
+  return Array.isArray(list) && list.length ? undefined : '至少保留一个时间点'
+})
 
 const handleSave = async () => {
   if (preStartError.value || drawingDurationError.value || hintOffsetError.value) {
@@ -128,7 +134,7 @@ const announcementData = computed(() =>
 
 const genderColumns = [
   { accessorKey: 'label', header: '名称' },
-  { accessorKey: 'value', header: '值' },
+  { accessorKey: 'code', header: '值' },
   { accessorKey: 'icon', header: '图标' },
   { accessorKey: 'color', header: '颜色' },
   { id: 'actions', header: '操作' }
@@ -209,7 +215,7 @@ const addGender = () => {
               <template #label-cell="{ row }">
                 <UInput v-model="row.original.label" placeholder="性别名称" size="sm" />
               </template>
-              <template #value-cell="{ row }">
+              <template #code-cell="{ row }">
                 <UInput v-model.number="row.original.code" type="number" size="sm" class="w-20" />
               </template>
               <template #icon-cell="{ row }">

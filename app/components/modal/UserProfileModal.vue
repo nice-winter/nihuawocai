@@ -46,7 +46,7 @@
               <USelect
                 v-model="userData.gender"
                 :icon="currentGender?.icon"
-                :items="appConfig.genders"
+                :items="genderItems"
                 class="w-48"
               />
             </UFormField>
@@ -79,6 +79,11 @@ const { appConfig } = storeToRefs(appConfigStore)
 
 const currentGender = computed(() =>
   appConfig.value.genders.find((g) => g.code === userData.gender)
+)
+
+// USelect 的 item 需要 value 字段，Gender 里存的是 code
+const genderItems = computed(() =>
+  appConfig.value.genders.map(g => ({ label: g.label, value: g.code }))
 )
 
 const save = async () => {
