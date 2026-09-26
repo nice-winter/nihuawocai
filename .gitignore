@@ -19,6 +19,9 @@ logs
 .fleet
 .idea
 
+# TypeScript incremental build cache
+*.tsbuildinfo
+
 # Local env files
 #.env
 .env*
