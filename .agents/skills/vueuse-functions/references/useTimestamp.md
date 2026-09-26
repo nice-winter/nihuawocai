@@ -49,20 +49,6 @@ export interface UseTimestampOptions<Controls extends boolean> extends Configura
    */
   offset?: number
   /**
-   * Update the timestamp immediately
-   *
-   * @deprecated Please use `scheduler` option instead
-   * @default true
-   */
-  immediate?: boolean
-  /**
-   * Update interval, or use requestAnimationFrame
-   *
-   * @deprecated Please use `scheduler` option instead
-   * @default requestAnimationFrame
-   */
-  interval?: 'requestAnimationFrame' | number
-  /**
    * Callback on each update
    */
   callback?: (timestamp: number) => void

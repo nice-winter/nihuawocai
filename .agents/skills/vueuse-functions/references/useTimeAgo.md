@@ -1,5 +1,6 @@
 ---
 category: Time
+utils: formatTimeAgo
 ---
 
 # useTimeAgo
@@ -91,13 +92,6 @@ export interface UseTimeAgoOptions<
    * @default false
    */
   controls?: Controls
-  /**
-   * Intervals to update, set 0 to disable auto update
-   *
-   * @deprecated Please use `scheduler` option instead
-   * @default 30_000
-   */
-  updateInterval?: number
 }
 export interface UseTimeAgoUnit<Unit extends string = UseTimeAgoUnitNamesDefault> {
   max: number

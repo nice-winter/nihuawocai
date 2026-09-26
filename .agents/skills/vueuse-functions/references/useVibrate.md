@@ -53,16 +53,6 @@ export interface UseVibrateOptions extends ConfigurableNavigator, ConfigurableSc
    *
    */
   pattern?: MaybeRefOrGetter<Arrayable<number>>
-  /**
-   * Interval to run a persistent vibration, in ms
-   *
-   * Pass `0` to disable
-   *
-   * @deprecated Please use `scheduler` option instead
-   * @default 0
-   *
-   */
-  interval: number
 }
 export interface UseVibrateReturn extends Supportable {
   pattern: MaybeRefOrGetter<Arrayable<number>>

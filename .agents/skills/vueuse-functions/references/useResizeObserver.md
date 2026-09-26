@@ -97,7 +97,7 @@ export interface UseResizeObserverReturn extends Supportable {
  * @param options
  */
 export declare function useResizeObserver(
-  target: MaybeComputedElementRef | MaybeComputedElementRef[] | MaybeRefOrGetter<MaybeElement[]>,
+  target: MaybeComputedElementRefOrArray,
   callback: globalThis.ResizeObserverCallback,
   options?: UseResizeObserverOptions
 ): UseResizeObserverReturn
