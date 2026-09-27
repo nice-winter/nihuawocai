@@ -191,7 +191,6 @@ useEventBus('ui:screenshot', async () => {
   if (GameAppRef.value) {
     const result = await snapdom(GameAppRef.value, {
       embedFonts: true,
-      cache: 'full',
       width: 1024
     })
     crop(await result.toJpg(), { x: 40, y: 210, width: 946, height: 700 })
