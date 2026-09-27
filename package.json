@@ -7,7 +7,7 @@
   "repository": {
     "url": "git+https://github.com/nice-winter/nihuawocai.git"
   },
-  "packageManager": "pnpm@11.28.0",
+  "packageManager": "pnpm@12.6.0",
   "scripts": {
     "prepare": "husky",
     "postinstall": "nuxt prepare",
@@ -32,7 +32,7 @@
     "@nuxtjs/i18n": "10.6.0",
     "@pinia/nuxt": "1.0.2",
     "@vueuse/nuxt": "^14.4.0",
-    "@zumer/snapdom": "^2.24.18",
+    "@zumer/snapdom": "^3.1.1",
     "better-sqlite3": "^13.0.3",
     "cbor2": "^2.3.0",
     "consola": "^3.4.2",
