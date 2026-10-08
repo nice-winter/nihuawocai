@@ -42,7 +42,7 @@
     "howler": "^2.2.4",
     "mitt": "^3.0.1",
     "nanoid": "^6.0.2",
-    "nuxt": "4.5.2",
+    "nuxt": "4.6.0",
     "nuxt-auth-utils": "0.5.30",
     "pinia": "^4.0.3",
     "unstorage": "^1.17.5",
