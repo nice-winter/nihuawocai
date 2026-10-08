@@ -9,13 +9,17 @@ allowBuilds:
   sharp: true
 
 minimumReleaseAgeExclude:
-  - '@iconify-json/lucide@1.2.129 || 1.2.137'
+  - '@iconify-json/lucide@1.2.129 || 1.2.137 || 1.2.141'
   - happy-dom@20.13.2
   - vue-router@5.3.1
   - '@rolldown/binding-darwin-arm64@1.2.7'
   - '@rolldown/binding-linux-ppc64-gnu@1.2.7'
   - '@nuxt/test-utils@4.3.2'
   - lint-staged@17.6.0
+  - '@iconify-json/tabler@1.2.42'
+  - playwright-core@1.64.0
+  - playwright@1.64.0
+  - '@playwright/test@1.64.0'
 
 patchedDependencies:
   fabric: patches/fabric.patch
